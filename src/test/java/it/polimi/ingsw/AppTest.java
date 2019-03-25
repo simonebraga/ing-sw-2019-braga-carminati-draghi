@@ -1,11 +1,17 @@
 package it.polimi.ingsw;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertTrue;
 
-import static junit.framework.TestCase.assertTrue;
+import org.junit.Test;
 
+/**
+ * Unit test for simple App.
+ */
 public class AppTest
 {
+    /**
+     * Rigorous Test :-)
+     */
     @Test
     public void shouldAnswerWithTrue()
     {
