@@ -2,6 +2,8 @@ package it.polimi.ingsw;
 
 /**
  * This class represents all exceptions related to a deck being empty.
+ *
+ * @author Draghi96
  */
 public class EmptyDeckException extends Exception{
 
