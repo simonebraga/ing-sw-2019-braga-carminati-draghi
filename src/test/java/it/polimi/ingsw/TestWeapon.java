@@ -18,12 +18,12 @@ class TestWeapon {
     /**
      * This attribute is a list of Color that represent a price for a weapon that will be used for testing.
      */
-    ArrayList<Color> price;
+    private ArrayList<Color> price;
 
     /**
      * This attribute is a Weapon object that will be used for testing.
      */
-    Weapon shotgun;
+    private Weapon shotgun;
 
     /**
      * This method creates all objects used to test all methods in this test suit.
@@ -46,6 +46,7 @@ class TestWeapon {
         shotgun.reload(); //method usage
 
         assertTrue(shotgun.getLoaded());
+        tearDown();
     }
 
     /**
