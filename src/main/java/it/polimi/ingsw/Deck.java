@@ -88,9 +88,12 @@ public class Deck {
     }
 
     /**
-     * This recursive method allows to draw a new card from the activeCards list.
+     *
+     *This recursive method allows to draw a new card from the activeCards list.
      *
      * @return The card on top of the activeCards deck.
+     * @throws EmptyDeckException if the activeCards list is empty.
+     * @throws NotEmptyDeckException if the inactiveCards list is empty.
      */
     public Card draw() throws EmptyDeckException, NotEmptyDeckException {
 
