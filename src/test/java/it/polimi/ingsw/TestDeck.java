@@ -93,6 +93,7 @@ class TestDeck {
         assertEquals(deck2.getActiveCards().size(),deck1.getActiveCards().size());
         assertEquals(deck2.getInactiveCards().size(),deck1.getInactiveCards().size());
         assertNotEquals(deck1.getActiveCards(), deck2.getActiveCards());
+        tearDown();
     }
 
     /**
@@ -114,6 +115,7 @@ class TestDeck {
         assertEquals(oldDimInactive,deck1.getActiveCards().size());
         assertTrue(deck1.getInactiveCards().isEmpty());
         assertEquals(oldDimActive + oldDimInactive,deck1.getActiveCards().size());
+        tearDown();
     }
 
     /**
@@ -134,6 +136,7 @@ class TestDeck {
         assertNotNull(output);
         assertEquals(oldActiveDim-1,deck1.getActiveCards().size());
         assertEquals(oldInactiveDim,deck1.getInactiveCards().size());
+        tearDown();
     }
 
     /**
@@ -150,6 +153,7 @@ class TestDeck {
 
         assertEquals(oldActiveDim, deck1.getActiveCards().size());
         assertEquals(oldInactiveDim + 1,deck1.getInactiveCards().size());
+        tearDown();
     }
 
     /**
