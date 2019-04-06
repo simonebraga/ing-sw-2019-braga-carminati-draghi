@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.After;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,6 +84,7 @@ class TestDeck {
     @Test
     void shuffleChangesOrder() throws EmptyDeckException {
 
+        //creating second deck
         ArrayList<Card> inactiveList2 = new ArrayList<>(inactiveList);
         ArrayList<Card> activeList2 = new ArrayList<>(activeList);
 
@@ -107,6 +109,7 @@ class TestDeck {
     @Test
     void resetAddsTwoDecks() throws EmptyDeckException, NotEmptyDeckException {
 
+        deck1.getActiveCards().clear();
         int oldDimActive = deck1.getActiveCards().size();
         int oldDimInactive = deck1.getInactiveCards().size();
 
@@ -159,7 +162,7 @@ class TestDeck {
     /**
      * This method frees all object created for this test suit.
      */
-    @AfterAll
+    @After
     void tearDown(){
         activeList=null;
         inactiveList=null;

@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.After;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class TestWeapon {
     /**
      * This method frees all objects used to test all methods in this test suit.
      */
-    @AfterAll
+    @After
     void tearDown(){
         price=null;
         shotgun=null;
