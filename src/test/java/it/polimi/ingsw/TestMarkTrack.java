@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This is the test suite for MarkTrack class
+ *
+ * @author simonebraga
+ */
 class TestMarkTrack {
     Player player1;
     Player player2;

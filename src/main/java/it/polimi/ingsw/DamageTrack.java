@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 /**
  * This class represents the damage of the player
+ *
+ * @author simonebraga
  */
 public class DamageTrack {
 

@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 /**
  * This class represents the marks of the player
+ *
+ * @author simonebraga
  */
 public class MarkTrack {
 

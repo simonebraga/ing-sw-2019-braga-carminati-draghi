@@ -8,6 +8,11 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This is the test suite for DamageTrack class
+ *
+ * @author simonebraga
+ */
 class TestDamageTrack {
 
     Player player;
