@@ -7,6 +7,11 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This is the test suite for PowerupPocket class
+ *
+ * @author simonebraga
+ */
 class TestPowerupPocket {
 
     PowerupPocket pocket;
@@ -15,6 +20,9 @@ class TestPowerupPocket {
     Powerup powerup3 = new Powerup(Color.RED,PowerupName.TAGBACKGRENADE);
     Powerup powerup4 = new Powerup(Color.YELLOW,PowerupName.NEWTON);
 
+    /**
+     * This test checks if the normal addition of powerups is performed correctly
+     */
     @Test
     void testNormal() {
 
@@ -36,6 +44,9 @@ class TestPowerupPocket {
 
     }
 
+    /**
+     * This test checks if the removal of powerups from a pocket is performed correctly
+     */
     @Test
     void testRemove() {
 
@@ -65,6 +76,9 @@ class TestPowerupPocket {
 
     }
 
+    /**
+     * This test checks if the addition of powerups in a full pocket is handled correctly
+     */
     @Test
     void testFullPocket() {
 

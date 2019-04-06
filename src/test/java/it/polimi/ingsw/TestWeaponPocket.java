@@ -20,7 +20,7 @@ class TestWeaponPocket {
     Weapon weapon4 = new Weapon(new ArrayList<Color>(Arrays.asList(Color.RED,Color.BLUE)) , WeaponName.ROCKETLAUNCHER , true);
 
     /**
-     * This test case checks
+     * This test case checks if normal additions of weapons is performed correctly
      */
     @Test
     void testNormal() {
@@ -40,10 +40,13 @@ class TestWeaponPocket {
             fail();
         }
 
-        assertEquals(new ArrayList<Weapon>(Arrays.asList(weapon1,weapon2)) , pocket.getWeapons());
+        assertEquals(new ArrayList<>(Arrays.asList(weapon1,weapon2)) , pocket.getWeapons());
 
     }
 
+    /**
+     * This test case checks if the addition in a full pocket is handled correctly
+     */
     @Test
     void testFullPocket() {
 
@@ -75,6 +78,9 @@ class TestWeaponPocket {
         }
     }
 
+    /**
+     * This test checks if the switch of weapons in the pocket is performed correctly
+     */
     @Test
     void testSwitchWeapon() {
 
