@@ -30,7 +30,7 @@ class TestKillshotTrack {
         } catch (FrenzyModeException e) {
             fail();
         }
-        track.overkill(player1);
+        track.overKill(player1);
         try {
             track.kill(player2);
         } catch (FrenzyModeException e) {
@@ -53,7 +53,7 @@ class TestKillshotTrack {
         } catch (FrenzyModeException e) {
             fail();
         }
-        track.overkill(player1);
+        track.overKill(player1);
         try {
             track.kill(player2);
         } catch (FrenzyModeException e) {

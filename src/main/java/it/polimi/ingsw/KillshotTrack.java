@@ -65,7 +65,7 @@ public class KillshotTrack {
      * This method adds an element of type player in the killshot track without counting the kill
      * @param killer is the player who made the overkill
      */
-    public void overkill(Player killer) {
+    public void overKill(Player killer) {
 
         killTrack.add(killer);
 
