@@ -1,6 +1,5 @@
 package it.polimi.ingsw;
 
-import com.sun.org.apache.regexp.internal.RE;
 import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,22 +18,22 @@ class TestPay {
     /**
      * This attribute is a test player.
      */
-    Player player;
+    private Player player;
 
     /**
      * This attribute is a payment price.
      */
-    ArrayList<Color> price;
+    private ArrayList<Color> price;
 
     /**
      * This attribute constitutes a player ammo inventory for the test.
      */
-    ArrayList<Color> ammoPocket;
+    private ArrayList<Color> ammoPocket;
 
     /**
      * This attribute is a payment object to be tested.
      */
-    Pay pay;
+    private Pay pay;
 
     /**
      * This method sets up all objects for the test.
