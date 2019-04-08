@@ -23,14 +23,14 @@ class TestAmmoPocket {
 
         pocket = new AmmoPocket();
         pocket.addAmmo(new ArrayList<Color>(Arrays.asList(Color.BLUE,Color.BLUE,Color.YELLOW)));
-        assertEquals(0 , pocket.getAmmo().get(Color.RED));
-        assertEquals(2 , pocket.getAmmo().get(Color.BLUE));
-        assertEquals(1 , pocket.getAmmo().get(Color.YELLOW));
+        assertEquals(0 , pocket.getAmmo(Color.RED));
+        assertEquals(2 , pocket.getAmmo(Color.BLUE));
+        assertEquals(1 , pocket.getAmmo(Color.YELLOW));
 
         pocket.addAmmo(new ArrayList<Color>(Arrays.asList(Color.YELLOW,Color.YELLOW,Color.YELLOW,Color.YELLOW,Color.RED)));
-        assertEquals(1 , pocket.getAmmo().get(Color.RED));
-        assertEquals(2 , pocket.getAmmo().get(Color.BLUE));
-        assertEquals(3 , pocket.getAmmo().get(Color.YELLOW));
+        assertEquals(1 , pocket.getAmmo(Color.RED));
+        assertEquals(2 , pocket.getAmmo(Color.BLUE));
+        assertEquals(3 , pocket.getAmmo(Color.YELLOW));
 
     }
 
@@ -47,9 +47,9 @@ class TestAmmoPocket {
         } catch (InsufficientAmountException e) {
             fail();
         }
-        assertEquals(2 , pocket.getAmmo().get(Color.BLUE));
-        assertEquals(2 , pocket.getAmmo().get(Color.RED));
-        assertEquals(2 , pocket.getAmmo().get(Color.YELLOW));
+        assertEquals(2 , pocket.getAmmo(Color.BLUE));
+        assertEquals(2 , pocket.getAmmo(Color.RED));
+        assertEquals(2 , pocket.getAmmo(Color.YELLOW));
 
     }
 
@@ -66,9 +66,9 @@ class TestAmmoPocket {
         } catch (InsufficientAmountException e) {
             assertTrue(true);
         }
-        assertEquals(1 , pocket.getAmmo().get(Color.BLUE));
-        assertEquals(0 , pocket.getAmmo().get(Color.RED));
-        assertEquals(0 , pocket.getAmmo().get(Color.YELLOW));
+        assertEquals(1 , pocket.getAmmo(Color.BLUE));
+        assertEquals(0 , pocket.getAmmo(Color.RED));
+        assertEquals(0 , pocket.getAmmo(Color.YELLOW));
 
     }
 

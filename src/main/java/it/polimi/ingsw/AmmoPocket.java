@@ -21,8 +21,13 @@ public class AmmoPocket {
             ammo.put(color,0);
     }
 
-    public EnumMap<Color, Integer> getAmmo() {
-        return ammo;
+    /**
+     * This method returns the amount of the ammo of the specified color
+     * @param color is the color which ammo amount is returne
+     * @return amount of ammo of color
+     */
+    public Integer getAmmo(Color color) {
+        return ammo.get(color);
     }
 
     /**
