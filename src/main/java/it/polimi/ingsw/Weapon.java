@@ -29,7 +29,7 @@ public class Weapon implements Card{
 
     /**
      * This constructor initializes a weapon card instance.
-     * <p>This constructor should be invoked only in a game setup phase.</p>
+     * <p>This constructor should only be invoked in a game setup phase.</p>
      *
      * @param price the arraylist of ammunition.
      * @param name the weapon identifier.
@@ -72,16 +72,8 @@ public class Weapon implements Card{
 
     /**
      * This method reloads a weapon.
-     * <p>This method doesn't control if the player can actually pay the reloading price,
-     * it just set the isLoaded attribute to true.<br/>
-     * If a weapon is already loaded the payment will not happen.</p>
-     *
-     * @throws WeaponAlreadyLoadedException if the weapon is already loaded.
      */
-    public void reload() throws WeaponAlreadyLoadedException {
-        if(isLoaded){
-            throw new WeaponAlreadyLoadedException();
-        }
+    public void reload() {
         isLoaded=true;
     }
 }
