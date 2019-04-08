@@ -6,9 +6,4 @@ package it.polimi.ingsw;
  * @author Draghi96
  */
 public interface Effect {
-
-    /**
-     * This method will be implemented by each effect to cause its related effect.
-     */
-    void doAction();
 }
