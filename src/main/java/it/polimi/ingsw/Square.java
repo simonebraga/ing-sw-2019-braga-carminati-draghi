@@ -26,16 +26,22 @@ public class Square {
     private final Border right;
 
     /**
-     * Represent all the players that are positioned in that Square
+     * Represents all the players that are positioned in that Square
      */
     private ArrayList<Player> players;
 
-    public Square(Border up, Border down, Border left, Border right) {
+    /**
+     * Represents a square coordinates in lines and columns indexes.
+     */
+    private ArrayList<Integer> coords;
+
+    public Square(Border up, Border down, Border left, Border right, ArrayList<Integer> coords) {
         this.up = up;
         this.down = down;
         this.left = left;
         this.right = right;
         this.players = new ArrayList<>();
+        this.coords = new ArrayList<>();
     }
 
     public Border getUp() {
@@ -76,5 +82,14 @@ public class Square {
      */
     public void removePlayer(Player player){
         getPlayers().remove(player);
+    }
+
+    /**
+     * This method returns a square coordinates.
+     *
+     * @return an ArrayList of Integers representing a square coordinates.
+     */
+    public ArrayList<Integer> getCoords(){
+        return coords;
     }
 }
