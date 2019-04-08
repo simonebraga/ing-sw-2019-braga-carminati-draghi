@@ -76,12 +76,9 @@ class TestDeck {
 
     /**
      * This test verifies that shuffle() changes at least one card position inside the list.
-     * <p>The list of cards cannot be empty.</p>
-     *
-     * @throws EmptyDeckException if the activeCards list is empty.
      */
     @Test
-    void shuffleChangesOrder() throws EmptyDeckException {
+    void shuffleChangesOrder() {
 
         //creating second deck
         ArrayList<Card> inactiveList2 = new ArrayList<>(inactiveList);
@@ -99,22 +96,16 @@ class TestDeck {
 
     /**
      * This test verifies if reset() add two decks together.
-     * <p>activeCards list must be empty.<br/>
-     * inactiveCards list cannot be empty.</p>
-     *
-     * @throws EmptyDeckException if the inactiveCards list is empty.
-     * @throws NotEmptyDeckException if the activeCards list is not empty.
+     * <p>activeCards list must be empty.<p>
      */
     @Test
-    void resetAddsTwoDecks() throws EmptyDeckException, NotEmptyDeckException {
+    void resetAddsTwoDecks(){
 
-        deck1.getActiveCards().clear();
         int oldDimActive = deck1.getActiveCards().size();
         int oldDimInactive = deck1.getInactiveCards().size();
 
         deck1.reset();   //method usage
 
-        assertEquals(oldDimInactive,deck1.getActiveCards().size());
         assertTrue(deck1.getInactiveCards().isEmpty());
         assertEquals(oldDimActive + oldDimInactive,deck1.getActiveCards().size());
         tearDown();
@@ -122,18 +113,20 @@ class TestDeck {
 
     /**
      * This test verifies if draw() returns a card from deck.
-     * <p>If the activeCards list is empty it automatically calls reset() and then tries again.</p>
-     *
-     * @throws EmptyDeckException if the activeCards list is empty.
-     * @throws NotEmptyDeckException if the inactiveCards list is empty.
      */
     @Test
-    void drawReturnsCardAndDeckSizeIsDecreasing() throws EmptyDeckException, NotEmptyDeckException {
+    void drawReturnsCardAndDeckSizeIsDecreasing() {
 
         int oldActiveDim=activeList.size();
         int oldInactiveDim=inactiveList.size();
 
-        Card output = deck1.draw();  //method usage
+        Card output = null;
+
+        try{
+            output = deck1.draw();  //method usage
+        } catch (EmptyDeckException e){
+            fail();
+        }
 
         assertNotNull(output);
         assertEquals(oldActiveDim-1,deck1.getActiveCards().size());
@@ -142,8 +135,24 @@ class TestDeck {
     }
 
     /**
+     * This test verifies if draw() handles EmptyDeckException correctly.
+     */
+    @Test
+    void drawFail(){
+        deck1.getActiveCards().clear();
+
+        Card output = null;
+        try{
+            output=deck1.draw();
+        }
+        catch (EmptyDeckException e){
+            assertTrue(true);
+        }
+    }
+
+    /**
      *This test verifies if discard() adds a card passed as parameter into the inactiveCards
-     *  list of a deck.
+     * list of a deck.
      */
     @Test
     void discardAddsCardToInactiveList() {
