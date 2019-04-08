@@ -1,7 +1,6 @@
 package it.polimi.ingsw;
 
 import org.junit.After;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,10 +38,10 @@ class TestWeapon {
     }
 
     /**
-     * This test verifies that the reload() operation set the isLoaded attribute to true.
+     * This test verifies that reload() set the isLoaded attribute to true.
      */
     @Test
-    void reloadSetsIsLoadedToTrue() throws WeaponAlreadyLoadedException {
+    void reloadSetsIsLoadedToTrue() {
 
         shotgun.reload(); //method usage
 
