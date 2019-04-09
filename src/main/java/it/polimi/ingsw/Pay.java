@@ -10,12 +10,30 @@ import java.util.ArrayList;
 public class Pay implements Effect{
 
     /**
-     * This method implements a payment which is the relative action for this class effect.
-     *
-     * @param player a Player object that has to pay.
-     * @param price a Color ArrayList that represents the amount of ammo boxes to be paid.
+     * This attribute is a Player object that has to pay.
      */
-    public void doAction(Player player, ArrayList<Color> price) {
-        player.getAmmoPocket().reduceAmmo(price);
+    private Player player;
+
+    /**
+     * This attribute is a Color ArrayList that represents the amount of ammo boxes to be paid.
+     */
+    private ArrayList<Color> price;
+
+    /**
+     * This method is a constructor for a pay object.
+     *
+     * @param player is a Player object that has to pay.
+     * @param price is a Color ArrayList that represents the amount of ammo boxes to be paid.
+     */
+    public Pay(Player player, ArrayList<Color> price) {
+        this.player = player;
+        this.price = price;
+    }
+
+    /**
+     * This method implements a payment which is the relative action for this class effect.
+     */
+    public void doAction() {
+        this.player.getAmmoPocket().reduceAmmo(this.price);
     }
 }
