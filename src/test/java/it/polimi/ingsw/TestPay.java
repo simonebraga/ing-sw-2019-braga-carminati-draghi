@@ -33,15 +33,13 @@ class TestPay {
     /**
      * This attribute is a payment object to be tested.
      */
-    private Pay pay;
+    private Pay payment1;
 
     /**
      * This method sets up all objects for the test.
      */
     @BeforeEach
     void setUp(){
-
-        pay = new Pay();
 
         ammoPocket = new ArrayList<>();
         ammoPocket.add(Color.RED);
@@ -50,7 +48,7 @@ class TestPay {
         ammoPocket.add(Color.BLUE);
         ammoPocket.add(Color.YELLOW);
 
-        player = new Player(Figure.DOZER,"user");
+        player = new Player(Figure.DOZER,"user1");
         player.getAmmoPocket().addAmmo(ammoPocket);
 
         price = new ArrayList<>();
@@ -63,14 +61,16 @@ class TestPay {
     @Test
     void payDecreasesAmmo() {
 
-        pay.doAction(player,price); //method usage
+        payment1 = new Pay(player,price);
+
+        payment1.doAction(); //method usage
 
         assertEquals(2,player.getAmmoPocket().getAmmo(Color.RED));
         assertEquals(1,player.getAmmoPocket().getAmmo(Color.BLUE));
         assertEquals(1,player.getAmmoPocket().getAmmo(Color.YELLOW));
 
-        pay.doAction(player,price);
-        pay.doAction(player,price); //now should be out of red
+        payment1.doAction();
+        payment1.doAction(); //now should be out of red
 
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.RED));
         assertEquals(1,player.getAmmoPocket().getAmmo(Color.BLUE));
@@ -79,7 +79,7 @@ class TestPay {
         price.clear();
         price.add(Color.BLUE);
 
-        pay.doAction(player,price); //should be out of blue
+        payment1.doAction(); //should be out of blue
 
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.RED));
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.BLUE));
@@ -88,7 +88,7 @@ class TestPay {
         price.clear();
         price.add(Color.YELLOW);
 
-        pay.doAction(player,price); //should be out of yellow
+        payment1.doAction(); //should be out of yellow
 
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.RED));
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.BLUE));
@@ -104,6 +104,7 @@ class TestPay {
     void tearDown(){
         player=null;
         price=null;
-        pay=null;
+        ammoPocket=null;
+        payment1=null;
     }
 }
