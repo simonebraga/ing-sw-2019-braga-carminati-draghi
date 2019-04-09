@@ -42,33 +42,10 @@ class TestAmmoPocket {
 
         pocket = new AmmoPocket();
         pocket.addAmmo(new ArrayList<Color>(Arrays.asList(Color.BLUE,Color.BLUE,Color.BLUE,Color.RED,Color.RED,Color.RED,Color.YELLOW,Color.YELLOW,Color.YELLOW)));
-        try {
-            pocket.reduceAmmo(new ArrayList<Color>(Arrays.asList(Color.BLUE,Color.RED,Color.YELLOW)));
-        } catch (InsufficientAmountException e) {
-            fail();
-        }
+        pocket.reduceAmmo(new ArrayList<Color>(Arrays.asList(Color.BLUE,Color.RED,Color.YELLOW)));
         assertEquals(2 , pocket.getAmmo(Color.BLUE));
         assertEquals(2 , pocket.getAmmo(Color.RED));
         assertEquals(2 , pocket.getAmmo(Color.YELLOW));
-
-    }
-
-    /**
-     * This test checks if the removal of ammo in a pocket without them is handled correctly
-     */
-    @Test
-    void testRemoveFail() {
-
-        pocket = new AmmoPocket();
-        pocket.addAmmo(new ArrayList<Color>(Arrays.asList(Color.BLUE)));
-        try {
-            pocket.reduceAmmo(new ArrayList<Color>(Arrays.asList(Color.BLUE,Color.RED,Color.YELLOW)));
-        } catch (InsufficientAmountException e) {
-            assertTrue(true);
-        }
-        assertEquals(1 , pocket.getAmmo(Color.BLUE));
-        assertEquals(0 , pocket.getAmmo(Color.RED));
-        assertEquals(0 , pocket.getAmmo(Color.YELLOW));
 
     }
 
