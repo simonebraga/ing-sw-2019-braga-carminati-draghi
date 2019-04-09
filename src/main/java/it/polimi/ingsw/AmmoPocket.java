@@ -45,22 +45,11 @@ public class AmmoPocket {
     /**
      * This method removes from the pocket the ammo contained in the ArrayList in input
      * @param cost is the ArrayList with the ammo to be removed
-     * @throws InsufficientAmountException is thrown if there are less ammo than how many should be removed
      */
-    public void reduceAmmo(ArrayList<Color> cost) throws InsufficientAmountException {
+    public void reduceAmmo(ArrayList<Color> cost) {
 
-        EnumMap<Color,Integer> convertedCost = new EnumMap<Color, Integer>(Color.class);
-        for (Color color : Color.values())
-            convertedCost.put(color,0);
         for (Color color : cost)
-            convertedCost.put(color,convertedCost.get(color) + 1);
-
-        for (Color color : Color.values())
-            if (convertedCost.get(color) > ammo.get(color))
-                throw new InsufficientAmountException();
-
-        for (Color color : Color.values())
-            ammo.put(color , ammo.get(color) - convertedCost.get(color));
+            ammo.put(color , ammo.get(color) - 1);
     }
 
 }

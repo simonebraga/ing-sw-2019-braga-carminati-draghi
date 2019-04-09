@@ -59,11 +59,9 @@ class TestPay {
 
     /**
      * This test verifies if a payment object decreases a player ammo inventory.
-     *
-     * @throws InsufficientAmountException if a player doesn't own enough ammo to make the payment.
      */
     @Test
-    void payDecreasesAmmo() throws InsufficientAmountException {
+    void payDecreasesAmmo() {
 
         pay.doAction(player,price); //method usage
 

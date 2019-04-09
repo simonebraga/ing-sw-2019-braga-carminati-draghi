@@ -14,9 +14,8 @@ public class Pay implements Effect{
      *
      * @param player a Player object that has to pay.
      * @param price a Color ArrayList that represents the amount of ammo boxes to be paid.
-     * @throws InsufficientAmountException if the player doesn't own enough ammo to make the payment.
      */
-    public void doAction(Player player, ArrayList<Color> price) throws InsufficientAmountException {
+    public void doAction(Player player, ArrayList<Color> price) {
         player.getAmmoPocket().reduceAmmo(price);
     }
 }
