@@ -18,37 +18,37 @@ public class TestMove {
     /**
      * This attribute is a player for the test.
      */
-    Player player;
+    private Player player;
 
     /**
      * This attribute is a map for the test.
      */
-    GameMap map;
+    private GameMap map;
 
     /**
      * This attribute is an Arraylist of all spawn squares for the test map.
      */
-    ArrayList<Square> spawnSquares;
+    private ArrayList<Square> spawnSquares;
 
     /**
      * This attribute is an Arraylist of all tile squares for the test map.
      */
-    ArrayList<Square> tileSquares;
+    private ArrayList<Square> tileSquares;
 
     /**
      * This attribute is the map squares grid for the test.
      */
-    Square[][] grid;
+    private Square[][] grid;
 
     /**
      * This attribute is a square destination for the test.
      */
-    Square destination;
+    private Square destination;
 
     /**
      * This is the object to be tested.
      */
-    Move movement1;
+    private Move movement1;
 
     /**
      * This method sets up al objects needed for this test suit.
