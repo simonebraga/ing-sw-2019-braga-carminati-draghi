@@ -16,7 +16,7 @@ class TestTileSquareRemoveTile {
 
     @BeforeEach
     void setUp() {
-        tile = new AmmoTile(new ArrayList<Color>(), PowerupName.NEWTON);
+        tile = new AmmoTile(new ArrayList<Color>(), 0);
         square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
         square.addTile(tile);
     }

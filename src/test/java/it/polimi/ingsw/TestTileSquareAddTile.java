@@ -17,7 +17,7 @@ class TestTileSquareAddTile {
     @BeforeEach
     void setUp() {
         square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        tile = new AmmoTile(new ArrayList<>(), PowerupName.NEWTON);
+        tile = new AmmoTile(new ArrayList<>(), 0);
     }
 
     @Test

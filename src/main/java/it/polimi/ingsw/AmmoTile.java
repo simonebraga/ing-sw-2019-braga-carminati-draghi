@@ -18,18 +18,18 @@ public class AmmoTile implements Card{
     private ArrayList<Color> ammo;
 
     /**
-     * This attribute contains the enumeration identifier for the tile powerup.
-     * <p>In case the ammo attribute is three elements long this attribute will be set to null.</p>
+     * This attribute contains the number of powerups that the tile allows to draw
+     * <p>In case the ammo attribute is three elements long this attribute will be set to 0.</p>
      */
-    private PowerupName powerup;
+    private Integer powerup;
 
     /**
      * This constructor initializes all ammo tile's attributes.
      *
      * @param ammo an arraylist of Color enumeration that represents the ammo value of that ammo tile.
-     * @param powerup a Powerup enumeration that describes which powerup a tile gives a player access to. It can be null.
+     * @param powerup an integer value that represents how many powerup cards the tile allows to draw.
      */
-    public AmmoTile(ArrayList<Color> ammo, PowerupName powerup) {
+    public AmmoTile(ArrayList<Color> ammo, Integer powerup) {
         this.ammo = ammo;
         this.powerup = powerup;
     }
@@ -44,11 +44,11 @@ public class AmmoTile implements Card{
     }
 
     /**
-     * This method returns the powerup identifier a tile indicates.
+     * This method returns the powerups number.
      *
-     * @return a Color enumeration indicating the powerup obtained by grabbing a tile.
+     * @return an integer indicating the number powerups obtained by grabbing a tile.
      */
-    public PowerupName getPowerup() {
+    public Integer getPowerup() {
         return powerup;
     }
 }
