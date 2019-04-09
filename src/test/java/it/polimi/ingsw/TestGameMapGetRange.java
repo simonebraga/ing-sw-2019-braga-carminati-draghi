@@ -52,6 +52,9 @@ class TestGameMapGetRange {
 
     @AfterEach
     void tearDown() {
+        gamemap = null;
+        expectedRange = null;
+        range = null;
     }
 
     @Test

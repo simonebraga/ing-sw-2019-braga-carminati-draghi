@@ -45,6 +45,9 @@ class TestGameMapGetDistance {
 
     @AfterEach
     void tearDown() {
+        gamemap = null;
+        expectedDistance = null;
+        distance = null;
     }
 
     @Test

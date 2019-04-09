@@ -35,6 +35,8 @@ class TestGameMapGetCoord {
 
     @AfterEach
     void tearDown() {
+        gamemap = null;
+        squareToFindCoords = null;
     }
 
     @Test

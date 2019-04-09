@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,5 +35,12 @@ class TestSquareAddPlayer {
     void addPlayer() {
         square.addPlayer(player);
         assertTrue(square.getPlayers().containsAll(players) && players.containsAll(square.getPlayers()));
+    }
+
+    @AfterEach
+    void tearDown() {
+        square = null;
+        player = null;
+        players = null;
     }
 }

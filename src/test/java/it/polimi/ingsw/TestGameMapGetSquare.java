@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,5 +40,12 @@ class TestGameMapGetSquare {
     void getSquare() {
         assertSame(squareToGet, gamemap.getSquare(XCOORD,YCOORD));
         assertNull(gamemap.getSquare(XCOORDNULL, YCOORDNULL));
+    }
+
+    @AfterEach
+    void tearDown() {
+        gamemap = null;
+        grid = null;
+        squareToGet = null;
     }
 }

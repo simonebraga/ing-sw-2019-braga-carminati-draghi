@@ -38,6 +38,9 @@ class TestGameMapGetRoomOneSquare {
 
     @AfterEach
     void tearDown() {
+        gamemap = null;
+        expectedRoom = null;
+        room = null;
     }
 
     @Test

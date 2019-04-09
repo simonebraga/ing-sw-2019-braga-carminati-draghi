@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,5 +36,13 @@ class TestSpawnSquareSwitchWeapon {
         Weapon weaponThatHasBeenRemoved = square.switchWeapon(weaponToRemove, weaponToAdd);
         assertTrue(weapons.containsAll(square.getWeapons()) && square.getWeapons().containsAll(weapons));
         assertSame(weaponThatHasBeenRemoved, weaponToRemove);
+    }
+
+    @AfterEach
+    void tearDown() {
+        square = null;
+        weaponToAdd = null;
+        weaponToRemove = null;
+        weapons = null;
     }
 }

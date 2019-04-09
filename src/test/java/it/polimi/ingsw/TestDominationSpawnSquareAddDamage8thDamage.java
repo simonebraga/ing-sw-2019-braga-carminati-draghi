@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class TestDominationSpawnSquareAddDamage8thDamage {
         shooter = new Player(Figure.DESTRUCTOR, "nick1");
         anotherShooter = new Player(Figure.DOZER, "nick2");
         anotherShooter2 = new Player(Figure.VIOLET, "nick3");
-        damages = new ArrayList<Player>();
+        damages = new ArrayList<>();
         damages.add(anotherShooter);
         damages.add(anotherShooter);
         damages.add(anotherShooter);
@@ -48,5 +49,14 @@ class TestDominationSpawnSquareAddDamage8thDamage {
             }
             assertTrue(square.getDamage().isEmpty());
         }
+    }
+
+    @AfterEach
+    void tearDown() {
+        square = null;
+        shooter = null;
+        anotherShooter = null;
+        anotherShooter2 = null;
+        damages = null;
     }
 }

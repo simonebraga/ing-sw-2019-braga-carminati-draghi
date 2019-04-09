@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,5 +26,11 @@ class TestTileSquareRemoveTile {
     void removeTile() {
         assertSame(square.removeTile(), tile);
         assertNull(square.getTile());
+    }
+
+    @AfterEach
+    void tearDown() {
+        square = null;
+        tile = null;
     }
 }

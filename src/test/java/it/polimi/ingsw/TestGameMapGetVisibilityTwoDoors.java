@@ -43,6 +43,8 @@ class TestGameMapGetVisibilityTwoDoors {
 
     @AfterEach
     void tearDown() {
+        expectedVisibility = null;
+        visibility = null;
     }
 
     @Test

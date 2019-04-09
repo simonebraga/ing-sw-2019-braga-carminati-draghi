@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,5 +51,14 @@ class TestDominationSpawnSquareAddDamageAfter8Damage {
             damages.remove(0);
         }
         assertTrue(square.getDamage().isEmpty());
+    }
+
+    @AfterEach
+    void tearDown() {
+        square = null;
+        shooter = null;
+        anotherShooter = null;
+        anotherShooter2 = null;
+        damages = null;
     }
 }

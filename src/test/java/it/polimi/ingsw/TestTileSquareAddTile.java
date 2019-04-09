@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,5 +25,11 @@ class TestTileSquareAddTile {
     void addTile() {
         square.addTile(tile);
         assertSame(square.getTile(), tile);
+    }
+
+    @AfterEach
+    void tearDown() {
+        square = null;
+        tile = null;
     }
 }
