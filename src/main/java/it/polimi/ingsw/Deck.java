@@ -12,19 +12,19 @@ import java.util.Collections;
  * @see Powerup
  * @see AmmoTile
  */
-public class Deck {
+public class Deck <T extends Card>{
 
     /**
      * This attribute is the deck from which you draw new cards.
      */
-    private ArrayList<Card> activeCards;
+    private ArrayList<T> activeCards;
 
     /**
      * This attribute is the deck of discarded cards.
      * <p>When there are no more cards to be drawn this deck will be shuffled
      * and reused to generate a new list for activeCards.</p>
      */
-    private ArrayList<Card> inactiveCards;
+    private ArrayList<T> inactiveCards;
 
     /**
      * This constructor initializes the pair of decks.
@@ -33,7 +33,7 @@ public class Deck {
      * @param activeCards a list of cards ready to be drawn.
      * @param inactiveCards a list of discarded cards. During the game setup it is initialized to null.
      */
-    public Deck(ArrayList<Card> activeCards, ArrayList<Card> inactiveCards) {
+    public Deck(ArrayList<T> activeCards, ArrayList<T> inactiveCards) {
         this.activeCards = activeCards;
         this.inactiveCards = inactiveCards;
     }
@@ -43,7 +43,7 @@ public class Deck {
      *
      * @return an arraylist of Cards representing the cards deck.
      */
-    public ArrayList<Card> getActiveCards() {
+    public ArrayList<T> getActiveCards() {
         return activeCards;
     }
 
@@ -52,7 +52,7 @@ public class Deck {
      *
      * @return an arraylist of Cards of the discarded cards deck.
      */
-    public ArrayList<Card> getInactiveCards() {
+    public ArrayList<T> getInactiveCards() {
         return inactiveCards;
     }
 
@@ -81,7 +81,7 @@ public class Deck {
      * @return The card on top of the activeCards deck.
      * @throws EmptyDeckException if the activeCards list is empty.
      */
-    public Card draw() throws EmptyDeckException {
+    public T draw() throws EmptyDeckException {
         if(activeCards.isEmpty()){
             throw new EmptyDeckException();
         }
@@ -91,9 +91,9 @@ public class Deck {
     /**
      * This method add one given card to the inactiveCards deck to be discarded.
      *
-     * @param card Card to be discarded.
+     * @param card a T card to be discarded.
      */
-    public void discard(Card card){
+    public void discard(T card){
         inactiveCards.add(card);
     }
 }
