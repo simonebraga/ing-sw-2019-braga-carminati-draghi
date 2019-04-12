@@ -28,7 +28,12 @@ class TestDeck {
     /**
      * This is a deck used for all tests.
      */
-    private Deck deck1;
+    private Deck<Weapon> deck1;
+
+    /**
+     * This is a Color array list that represents a weapon price.
+     */
+    private ArrayList<Color> price;
 
     /**
      * This method sets up all required object to test all methods in this suit.
@@ -37,7 +42,7 @@ class TestDeck {
     void setUp(){
 
         //creating a list for activeCards
-        ArrayList<Color> price = new ArrayList<>();
+        price = new ArrayList<>();
         price.clear();
         activeList = new ArrayList<>();
         activeList.add(new Weapon(price,WeaponName.LOCKRIFLE,true));
@@ -56,19 +61,14 @@ class TestDeck {
         activeList.add(new Weapon(price,WeaponName.ROCKETLAUNCHER,true));
         activeList.add(new Weapon(price,WeaponName.RAILGUN,true));
         activeList.add(new Weapon(price,WeaponName.CYBERBLADE,true));
-        activeList.add(new Weapon(price,WeaponName.ZX2,true));
-        activeList.add(new Weapon(price,WeaponName.SHOTGUN,true));
-        activeList.add(new Weapon(price,WeaponName.POWERGLOVE,true));
-        activeList.add(new Weapon(price,WeaponName.SHOCKWAVE,true));
-        activeList.add(new Weapon(price,WeaponName.SLEDGEHAMMER,true));
 
         //creating a list for inactiveCards
         inactiveList = new ArrayList<>();
-        inactiveList.add(new Powerup(Color.RED,PowerupName.TELEPORTER));
-        inactiveList.add(new Powerup(Color.YELLOW,PowerupName.TELEPORTER));
-        inactiveList.add(new Powerup(Color.BLUE,PowerupName.TARGETINGSCOPE));
-        inactiveList.add(new Powerup(Color.RED,PowerupName.NEWTON));
-        inactiveList.add(new Powerup(Color.RED,PowerupName.TAGBACKGRENADE));
+        inactiveList.add(new Weapon(price,WeaponName.ZX2,true));
+        inactiveList.add(new Weapon(price,WeaponName.SHOTGUN,true));
+        inactiveList.add(new Weapon(price,WeaponName.POWERGLOVE,true));
+        inactiveList.add(new Weapon(price,WeaponName.SHOCKWAVE,true));
+        inactiveList.add(new Weapon(price,WeaponName.SLEDGEHAMMER,true));
 
         //creating deck
         deck1= new Deck(activeList,inactiveList);
@@ -138,8 +138,8 @@ class TestDeck {
      * This test verifies if draw() handles EmptyDeckException correctly.
      */
     @Test
-    void drawFail(){
-        deck1.getActiveCards().clear();
+    void drawHandlesExceptionCorrectly(){
+        deck1.getActiveCards().clear(); //empty active cards list
 
         Card output = null;
         try{
@@ -160,10 +160,15 @@ class TestDeck {
         int oldActiveDim = activeList.size();
         int oldInactiveDim = inactiveList.size();
 
-        deck1.discard(new Powerup(Color.YELLOW,PowerupName.TARGETINGSCOPE)); //method usage
+        deck1.discard(new Weapon(price,WeaponName.ZX2,true)); //method usage
 
         assertEquals(oldActiveDim, deck1.getActiveCards().size());
         assertEquals(oldInactiveDim + 1,deck1.getInactiveCards().size());
+
+        deck1.discard(new Weapon(price,WeaponName.SLEDGEHAMMER,false)); //method usage
+
+        assertEquals(oldActiveDim, deck1.getActiveCards().size());
+        assertEquals(oldInactiveDim + 2,deck1.getInactiveCards().size());
         tearDown();
     }
 
@@ -175,5 +180,6 @@ class TestDeck {
         activeList=null;
         inactiveList=null;
         deck1=null;
+        price=null;
     }
 }
