@@ -120,13 +120,7 @@ class TestDeck {
         int oldActiveDim=activeList.size();
         int oldInactiveDim=inactiveList.size();
 
-        Card output = null;
-
-        try{
-            output = deck1.draw();  //method usage
-        } catch (EmptyDeckException e){
-            fail();
-        }
+        Card output = deck1.draw();  //method usage
 
         assertNotNull(output);
         assertEquals(oldActiveDim-1,deck1.getActiveCards().size());
@@ -135,19 +129,21 @@ class TestDeck {
     }
 
     /**
-     * This test verifies if draw() handles EmptyDeckException correctly.
+     * This test verifies if the auto-reset mechanism works correctly.
      */
     @Test
-    void drawHandlesExceptionCorrectly(){
-        deck1.getActiveCards().clear(); //empty active cards list
+    void drawAutoReset() {
+        //setting conditions for auto-reset (last card in active list)
+        activeList.clear();
+        activeList.add(new Weapon(price,WeaponName.CYBERBLADE,false));
 
-        Card output = null;
-        try{
-            output=deck1.draw();
-        }
-        catch (EmptyDeckException e){
-            assertTrue(true);
-        }
+        int oldInactiveDim = inactiveList.size();
+
+        deck1.draw();   //should reset deck from inactive list
+
+        assertEquals(oldInactiveDim,deck1.getActiveCards().size());
+        assertEquals(0,deck1.getInactiveCards().size());
+        tearDown();
     }
 
     /**
