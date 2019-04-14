@@ -32,6 +32,8 @@ public class Move implements Effect{
      * This method cause the move action to happen.
      */
     public void doAction(){
+        this.player.getPosition().removePlayer(this.player);
         this.player.move(this.square);
+        this.player.getPosition().addPlayer(this.player);
     }
 }
