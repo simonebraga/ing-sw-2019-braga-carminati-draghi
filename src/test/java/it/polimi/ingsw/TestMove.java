@@ -72,7 +72,9 @@ public class TestMove {
 
         map= new GameMap(grid,spawnSquares,tileSquares);
 
-        player.move(map.getSquare(0,0)); //player set to (0,0) square
+        //player set to (0,0) square
+        player.move(map.getSquare(0,0));
+        player.getPosition().addPlayer(player);
 
         //a random destination
         destination = map.getSquare(4,7);
@@ -82,7 +84,7 @@ public class TestMove {
      * This test verifies that move() actually changes a player position.
      */
     @Test
-    void moveChangesPlayerPosition(){
+    void doActionChangesPlayerPosition(){
         //effect usage
         movement1 = new Move(player,destination);
 
@@ -92,6 +94,25 @@ public class TestMove {
 
         assertEquals(destination,player.getPosition());
         tearDown();
+    }
+
+    /**
+     * This test verifies that doAction updates all interested squares lists of player accordingly to the movement.
+     */
+    @Test
+    void doActionUpdatesSquaresListOfPlayers(){
+        //effect usage
+        movement1 = new Move(player,destination);
+
+        Square start = player.getPosition();
+
+        assertNotEquals(destination, player.getPosition());
+        assertTrue(start.getPlayers().contains(player));
+
+        movement1.doAction();
+
+        assertTrue(!start.getPlayers().contains(player));
+        assertTrue(destination.getPlayers().contains(player));
     }
 
     /**
