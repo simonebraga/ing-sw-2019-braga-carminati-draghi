@@ -60,8 +60,8 @@ public class Deck <T extends Card>{
      * This method randomizes the activeCards list order.
      */
     public void shuffle() {
-        if(!activeCards.isEmpty()){
-            Collections.shuffle(activeCards);
+        if(!getActiveCards().isEmpty()){
+            Collections.shuffle(getActiveCards());
         }
     }
 
@@ -71,21 +71,26 @@ public class Deck <T extends Card>{
      * <p>It should only be invoked when the activeCards list is empty and the inactiveCards list is not empty.</p>
      */
     public void reset() {
-        activeCards.addAll(inactiveCards);
-        inactiveCards.clear();
+        getActiveCards().addAll(getInactiveCards());
+        getInactiveCards().clear();
     }
 
     /**
      *This method allows to draw a new card from the activeCards list.
+     * <p>It will automatically reset and shuffles a deck using its inactive cards if it runs out of cards to be drawn.
+     * If the inactive cards list is not used in a specific deck the reset will not occur.
+     * This excludes the auto-reset for Weapon decks.</p>
      *
      * @return The card on top of the activeCards deck.
      * @throws EmptyDeckException if the activeCards list is empty.
      */
-    public T draw() throws EmptyDeckException {
-        if(activeCards.isEmpty()){
-            throw new EmptyDeckException();
+    public T draw(){
+        T output = getActiveCards().remove(0);
+        if(!getInactiveCards().isEmpty() && getActiveCards().isEmpty()){
+            reset();
+            shuffle();
         }
-        return activeCards.remove(0);
+        return output;
     }
 
     /**
