@@ -16,6 +16,8 @@ public class EmptyDeckException extends Exception{
     /**
      * This method is used to create a new exception that is related to a deck being empty that also
      * generates a message.
+     *
+     * @param message a string containing the error message.
      */
     public EmptyDeckException(String message) {
         super(message);

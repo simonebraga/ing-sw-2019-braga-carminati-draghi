@@ -96,7 +96,7 @@ class TestDeck {
 
     /**
      * This test verifies if reset() add two decks together.
-     * <p>activeCards list must be empty.<p>
+     * <p>activeCards list must be empty.</p>
      */
     @Test
     void resetAddsTwoDecks(){
