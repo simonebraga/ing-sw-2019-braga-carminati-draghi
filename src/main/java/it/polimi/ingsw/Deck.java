@@ -82,7 +82,6 @@ public class Deck <T extends Card>{
      * This excludes the auto-reset for Weapon decks.</p>
      *
      * @return The card on top of the activeCards deck.
-     * @throws EmptyDeckException if the activeCards list is empty.
      */
     public T draw(){
         T output = getActiveCards().remove(0);

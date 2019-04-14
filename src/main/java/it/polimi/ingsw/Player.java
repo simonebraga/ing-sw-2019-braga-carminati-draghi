@@ -81,7 +81,7 @@ public class Player {
 
     /**
      * This method moves the player in another position in the map
-     * @param position
+     * @param position Square in which player is collocated
      */
     public void move(Square position) {
 
