@@ -49,15 +49,15 @@ public class GameTable {
         this.players = players;
     }
 
-    public void setWeaponDeck(Deck weaponDeck) {
+    public void setWeaponDeck(Deck<Weapon> weaponDeck) {
         this.weaponDeck = weaponDeck;
     }
 
-    public void setPowerupDeck(Deck powerupDeck) {
+    public void setPowerupDeck(Deck<Powerup> powerupDeck) {
         this.powerupDeck = powerupDeck;
     }
 
-    public void setAmmoTileDeck(Deck ammoTileDeck) {
+    public void setAmmoTileDeck(Deck<AmmoTile> ammoTileDeck) {
         this.ammoTileDeck = ammoTileDeck;
     }
 
@@ -81,15 +81,15 @@ public class GameTable {
         return players;
     }
 
-    public Deck getWeaponDeck() {
+    public Deck<Weapon> getWeaponDeck() {
         return weaponDeck;
     }
 
-    public Deck getPowerupDeck() {
+    public Deck<Powerup> getPowerupDeck() {
         return powerupDeck;
     }
 
-    public Deck getAmmoTileDeck() {
+    public Deck<AmmoTile> getAmmoTileDeck() {
         return ammoTileDeck;
     }
 

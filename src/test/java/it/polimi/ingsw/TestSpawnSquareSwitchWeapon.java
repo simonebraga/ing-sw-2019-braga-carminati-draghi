@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests the normal functioning of the switchWeapon method: it must add correctly the weapon, remove correctly the weapon and the other weapons must not be changed.
+ * Tests the normal functioning of the switchWeapon method: it must add correctly the weapon, remove correctly the weaponToGet and the other weapons must not be changed.
  */
 class TestSpawnSquareSwitchWeapon {
     SpawnSquare square;
@@ -21,11 +21,11 @@ class TestSpawnSquareSwitchWeapon {
     void setUp() {
         weapons = new ArrayList<>();
         square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, Color.BLUE);
-        weaponToAdd = new Weapon(new ArrayList<Color>(), WeaponName.CYBERBLADE, Boolean.TRUE);
-        weaponToRemove = new Weapon(new ArrayList<Color>(), WeaponName.TRACTORBEAM, Boolean.TRUE);
+        weaponToAdd = new Weapon(new ArrayList<>(), WeaponName.CYBERBLADE, Boolean.TRUE);
+        weaponToRemove = new Weapon(new ArrayList<>(), WeaponName.TRACTORBEAM, Boolean.TRUE);
         weapons.add(weaponToRemove);
-        weapons.add(new Weapon(new ArrayList<Color>(), WeaponName.HEATSEEKER, Boolean.TRUE));
-        weapons.add(new Weapon(new ArrayList<Color>(), WeaponName.MACHINEGUN, Boolean.TRUE));
+        weapons.add(new Weapon(new ArrayList<>(), WeaponName.HEATSEEKER, Boolean.TRUE));
+        weapons.add(new Weapon(new ArrayList<>(), WeaponName.MACHINEGUN, Boolean.TRUE));
         square.setWeapons((ArrayList<Weapon>) weapons.clone());
         weapons.add(weaponToAdd);
         weapons.remove(weaponToRemove);
