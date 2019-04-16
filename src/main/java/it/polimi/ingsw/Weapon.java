@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * <p>Instances of this class will be used as components for Run-Time combinations of effects.</p>
  *
  * @author Draghi96
- * @see Effect
+ * @see FunctionalFactory
  */
 public class Weapon implements Card{
 

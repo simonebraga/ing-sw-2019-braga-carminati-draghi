@@ -5,7 +5,7 @@ package it.polimi.ingsw;
  * <p>Instances of this class will be used as components for Run-Time combinations of effects.</p>
  *
  * @author Draghi96
- * @see Effect
+ * @see FunctionalFactory
  */
 public class Powerup implements Card{
 
