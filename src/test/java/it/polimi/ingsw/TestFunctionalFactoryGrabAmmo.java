@@ -102,5 +102,6 @@ class TestFunctionalFactoryGrabAmmo {
         assertEquals(player.getPowerupPocket().getPowerups().size(), 1);
         assertTrue(player.getPowerupPocket().getPowerups().contains(powerup));
         assertNull(square.getTile());
+        tearDown();
     }
 }
