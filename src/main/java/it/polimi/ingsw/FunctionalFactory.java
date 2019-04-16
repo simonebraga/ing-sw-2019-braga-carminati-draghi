@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import java.util.ArrayList;
+
 /**
  * Factory class that contains the method to create different types of functionalEffect.
  */
@@ -55,6 +57,32 @@ public class FunctionalFactory {
             } catch (FullPocketException e) {
                 e.printStackTrace();
             }
+        };
+    }
+
+    /**
+     *This method returns a FunctionalEffect that performs a payment done by a player.
+     *
+     * @param player a Player that needs to pay a price.
+     * @param price an ArraList of Color that represents the ammo boxes amount to pay.
+     * @return a FunctionalEffect object that performs the payment.
+     */
+    public FunctionalEffect createPay(Player player, ArrayList<Color> price){
+        return () -> player.getAmmoPocket().reduceAmmo(price);
+    }
+
+    /**
+     * This method returns a FunctionalEffect object that performs a player movement.
+     *
+     * @param player a Player to be moved on the map grid.
+     * @param destination the Square destination for a player.
+     * @return a FunctionalEffect object that performs a player movement.
+     */
+    public FunctionalEffect createMove(Player player, Square destination){
+        return () -> {
+            player.getPosition().removePlayer(player);
+            player.move(destination);
+            destination.addPlayer(player);
         };
     }
 }
