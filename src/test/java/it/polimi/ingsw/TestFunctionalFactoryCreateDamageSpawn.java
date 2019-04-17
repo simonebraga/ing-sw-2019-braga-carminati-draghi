@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * This is the test suite for createDamageSpawn in FunctionalFactory class
+ *
+ * @author simonebraga
+ */
 class TestFunctionalFactoryCreateDamageSpawn {
 
     DominationSpawnSquare square;
