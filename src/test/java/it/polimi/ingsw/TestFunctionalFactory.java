@@ -142,6 +142,12 @@ public class TestFunctionalFactory {
             move.doAction();
         } catch (FullPocketException e) {
             fail();
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
+            fail();
         }
 
         assertEquals(destination,player.getPosition());
@@ -164,6 +170,12 @@ public class TestFunctionalFactory {
             pay.doAction();
         } catch (FullPocketException e) {
             fail();
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
+            fail();
         }
 
         assertEquals(1,player.getAmmoPocket().getAmmo(Color.RED));
@@ -177,6 +189,12 @@ public class TestFunctionalFactory {
         try {
             pay1.doAction();
         } catch (FullPocketException e) {
+            fail();
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
             fail();
         }
 

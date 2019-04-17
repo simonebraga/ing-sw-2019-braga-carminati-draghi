@@ -89,6 +89,12 @@ class TestFunctionalFactorySwitchWeapon {
             effect.doAction();
         } catch (FullPocketException e) {
             fail();
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
+            fail();
         }
         assertTrue(player.getWeaponPocket().getWeapons().containsAll(playerWeapons));
         assertTrue(playerWeapons.containsAll(player.getWeaponPocket().getWeapons()));

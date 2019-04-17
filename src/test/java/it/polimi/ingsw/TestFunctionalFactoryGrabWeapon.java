@@ -43,7 +43,13 @@ class TestFunctionalFactoryGrabWeapon {
     void createGrabWeapon() {
         try {
             effect.doAction();
-        }catch (FullPocketException e){
+        } catch (FullPocketException e){
+            fail();
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
             fail();
         }
         assertTrue(player.getWeaponPocket().getWeapons().contains(weapon));
@@ -71,8 +77,14 @@ class TestFunctionalFactoryGrabWeapon {
 
         try{
             effect.doAction();
-        }catch (FullPocketException e){
+        } catch (FullPocketException e){
             return ;
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
+            fail();
         }
         fail();
     }

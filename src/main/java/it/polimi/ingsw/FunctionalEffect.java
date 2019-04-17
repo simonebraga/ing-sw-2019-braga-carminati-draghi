@@ -5,5 +5,5 @@ package it.polimi.ingsw;
  */
 @FunctionalInterface
 interface FunctionalEffect {
-    void doAction() throws FullPocketException;
+    void doAction() throws FullPocketException, KilledPlayerException, OverKilledPlayerException, KilledSpawnSquareException;
 }

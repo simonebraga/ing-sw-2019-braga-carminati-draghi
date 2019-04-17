@@ -85,4 +85,45 @@ public class FunctionalFactory {
             destination.addPlayer(player);
         };
     }
+
+    /**
+     * Creates and returns a FunctionalEffect that adds damage to a player, and commutes the marks of the target player in damage, and adds new marks to the target player
+     * @param killer the player that performs the damage
+     * @param target the player that suffers the damage
+     * @param damage the cardinality of the damage
+     * @param marks the cardinality of the new damage
+     * @return FunctionalEffect that adds damage and marks to a player
+     */
+    public FunctionalEffect createDamagePlayer(Player killer, Player target, Integer damage, Integer marks){
+        return () -> {
+            Integer toAdd = 0;
+            if (damage > 0)
+                toAdd = target.getMarkTrack().removeMarks(killer);
+            try {
+                target.getDamageTrack().addDamage(killer,damage + toAdd);
+            } catch (KilledPlayerException e) {
+                throw new KilledPlayerException();
+            } catch (OverKilledPlayerException e) {
+                throw new OverKilledPlayerException();
+            }
+            target.getMarkTrack().addMarks(killer,marks);
+        };
+    }
+
+    /**
+     * Creates and returns a FunctionalEffect that adds damage to a spawn square (is used only in domination mode)
+     * The cardinality of the damage is not specified because only 1 damage per time can be done to a square
+     * @param killer the player that performs the damage
+     * @param spawnSquare the square that suffers the damage
+     * @return FunctionalEffect that adds 1 damage to a spawn square
+     */
+    public FunctionalEffect createDamageSpawn(Player killer, DominationSpawnSquare spawnSquare){
+        return () -> {
+            try {
+                spawnSquare.addDamage(killer);
+            } catch (KilledSpawnSquareException e) {
+                throw new KilledSpawnSquareException();
+            }
+        };
+    }
 }

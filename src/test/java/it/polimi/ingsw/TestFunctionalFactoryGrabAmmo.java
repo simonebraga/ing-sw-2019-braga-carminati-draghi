@@ -73,7 +73,13 @@ class TestFunctionalFactoryGrabAmmo {
     void createGrabAmmo() {
         try {
             effect.doAction();
-        }catch (FullPocketException e){
+        } catch (FullPocketException e){
+            fail();
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
             fail();
         }
         assertEquals(player.getAmmoPocket().getAmmo(Color.BLUE), 1);
@@ -92,7 +98,13 @@ class TestFunctionalFactoryGrabAmmo {
         effect = new FunctionalFactory().createGrabAmmo(player, table);
         try {
             effect.doAction();
-        }catch (FullPocketException e){
+        } catch (FullPocketException e){
+            fail();
+        } catch (KilledPlayerException e) {
+            fail();
+        } catch (OverKilledPlayerException e) {
+            fail();
+        } catch (KilledSpawnSquareException e) {
             fail();
         }
 
