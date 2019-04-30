@@ -31,6 +31,13 @@
       <version>RELEASE</version>
       <scope>test</scope>
     </dependency>
+    <!--JAVA FX-->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>11.0.2</version>
+    </dependency>
+    <!--end of JAVA FX-->
   </dependencies>
 
   <build>
@@ -86,6 +93,16 @@
                   <target>8</target>
               </configuration>
           </plugin>
+        <!--JAVA FX-->
+        <plugin>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-maven-plugin</artifactId>
+          <version>0.0.1</version>
+          <configuration>
+            <mainClass>org.openjfx.App</mainClass>
+          </configuration>
+        </plugin>
+        <!--end of JAVA FX-->
       </plugins>
   </build>
 </project>
