@@ -42,6 +42,7 @@ public class SpawnSquare extends Square {
      * @param weaponToGive The Weapon to add to the list of Weapons in the SpawnPoint.
      */
     public void addWeapon(Weapon weaponToGive){
+        weaponToGive.reload();
         getWeapons().add(weaponToGive);
     }
 
@@ -51,6 +52,7 @@ public class SpawnSquare extends Square {
      * @return The Weapon that is removed.
      */
     public Weapon takeWeapon(Weapon weaponToTake){
+        weaponToTake.reload();
         getWeapons().remove(weaponToTake);
         return weaponToTake;
     }
@@ -62,6 +64,8 @@ public class SpawnSquare extends Square {
      * @return The Weapon that is removed.
      */
     public Weapon switchWeapon(Weapon weaponToTake, Weapon weaponToGive){
+        weaponToGive.reload();
+        weaponToTake.reload();
         addWeapon(weaponToGive);
         return takeWeapon(weaponToTake);
     }
