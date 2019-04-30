@@ -13,8 +13,9 @@ public class Weapon implements Card{
 
     /**
      * This attribute is an arraylist containing the list of ammo required to load the weapon.
+     * It is initialized when the weapon is created, and it is final because weapon price does not change.
      */
-    private ArrayList<Color> price;
+    private final ArrayList<Color> price;
 
     /**
      * This attribute is the enumeration representing the weapon identifier.
