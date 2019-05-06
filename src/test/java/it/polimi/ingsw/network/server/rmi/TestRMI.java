@@ -24,4 +24,19 @@ class TestRMI {
         assertTrue(true);
     }
 
+    @Test
+    void testTimer() {
+        ClientRMI clientRMI = new ClientRMI("127.0.0.1",5001,"127.0.0.1",5002,"Nickname");
+        ServerRMI serverRMI = new ServerRMI("127.0.0.1",5001);
+        serverRMI.init();
+        clientRMI.init();
+        try {
+            Thread.sleep(15 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        clientRMI.register();
+        assertTrue(true);
+    }
+
 }

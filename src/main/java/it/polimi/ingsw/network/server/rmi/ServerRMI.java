@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServerRMI implements ServerRMIRemoteInterface {
 
+    private Boolean acceptConnections = true;
+
     /**
      * This attribute contains all the skeletons of the players that are using RMI technology
      */
@@ -25,6 +27,18 @@ public class ServerRMI implements ServerRMIRemoteInterface {
     public ServerRMI(String serverIp, int serverPort) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
+        timer();
+    }
+
+    private void timer() {
+        Thread time = new Thread(()->{
+            try {
+                Thread.sleep(10 * 1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        time.start();
     }
 
     /**
@@ -49,6 +63,9 @@ public class ServerRMI implements ServerRMIRemoteInterface {
      */
     @Override
     public synchronized boolean register(String s, ClientRMIRemoteInterface o) throws RemoteException {
+        if (!acceptConnections) {
+            return false;
+        }
         if (clientList.containsKey(s)) {
             return false;
         } else {
@@ -65,7 +82,7 @@ public class ServerRMI implements ServerRMIRemoteInterface {
     public void sendMessage(String s) throws RemoteException {
         for (Map.Entry<String,ClientRMIRemoteInterface> entry : clientList.entrySet()) {
             try {
-                entry.getValue().message("Hello from a server");
+                entry.getValue().message(s);
             } catch (RemoteException e) {
                 System.err.println("Error in sending message to client: " + entry.getValue());
             }
