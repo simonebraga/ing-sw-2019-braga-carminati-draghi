@@ -50,4 +50,16 @@ public class Client extends UnicastRemoteObject implements ClientRemote {
             System.err.println("Something went wrong with the login");
         }
     }
+
+    /**
+     * This method calls the remote logout method on the server with the correct parameters
+     */
+    public void logout() {
+
+        try {
+            controller.logout(this);
+        } catch (RemoteException e) {
+            System.err.println("Something went wrong with the logout");
+        }
+    }
 }

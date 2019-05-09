@@ -47,7 +47,14 @@ public class Controller extends UnicastRemoteObject implements ControllerRemote 
      * This method stops the registration phase, and allows the controller accepting login only from users already registered
      */
     public synchronized void stopLoginPhase() {
-        loginPhase = false;
+        if ((clientMap.keySet().size() >= 3) && (clientMap.keySet().size() <= 5)) {
+            loginPhase = false;
+            System.out.println("Login closed");
+        } else if (clientMap.keySet().size() > 5) {
+            System.err.println("Something went wrong, more clients registered than allowed");
+        } else {
+            System.out.println("Login not closed");
+        }
     }
 
     /**
@@ -87,7 +94,6 @@ public class Controller extends UnicastRemoteObject implements ControllerRemote 
                             }
                         }
                         stopLoginPhase();
-                        System.out.println("Login closed");
                     }).start();
                 }
 
@@ -110,6 +116,23 @@ public class Controller extends UnicastRemoteObject implements ControllerRemote 
                 c.printMessage("Registration not allowed");
             }
 
+        }
+    }
+
+    /**
+     * This method removes a client from the client map
+     * @param c the client to be removed
+     * @throws RemoteException if there is any issue with the network
+     */
+    @Override
+    public synchronized void logout(ClientRemote c) throws RemoteException {
+
+        if (clientMap.containsValue(c)) {
+            while (clientMap.values().remove(c));
+            System.out.println(clientMap.toString());
+            c.printMessage("Logout successful");
+        } else {
+            c.printMessage("Client not registered");
         }
     }
 }
