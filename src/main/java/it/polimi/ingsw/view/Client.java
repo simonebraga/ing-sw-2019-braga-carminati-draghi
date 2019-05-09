@@ -8,8 +8,14 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * This class contains all the necessary methods of the client-side application to communicate with the server-side applications, and implements the remote methods that can be called by the controller
+ */
 public class Client extends UnicastRemoteObject implements ClientRemote {
 
+    /**
+     * This attribute points the remote interface of the controller, used to communicate with the controller-side application
+     */
     ControllerRemote controller;
 
     private String remoteName = "ControllerRemote";
@@ -32,6 +38,10 @@ public class Client extends UnicastRemoteObject implements ClientRemote {
         System.out.println(s);
     }
 
+    /**
+     * This method login/register the client to the server using the nickname in input
+     * @param s in the nickname used for the registration
+     */
     public void login(String s) {
 
         try {
