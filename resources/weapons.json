@@ -1,0 +1,23 @@
+[
+  {"price":["BLUE","BLUE"],"name":"LOCKRIFLE","isLoaded":true},
+  {"price":["BLUE"],"name":"ELECTROSCYTHE","isLoaded":true},
+  {"price":["BLUE","RED"],"name":"MACHINEGUN","isLoaded":true},
+  {"price":["BLUE"],"name":"TRACTORBEAM","isLoaded":true},
+  {"price":["RED","BLUE"],"name":"VORTEXCANNON","isLoaded":true},
+  {"price":["BLUE","RED"],"name":"THOR","isLoaded":true},
+  {"price":["RED","BLUE"],"name":"FURNACE","isLoaded":true},
+  {"price":["BLUE","YELLOW"],"name":"PLASMAGUN","isLoaded":true},
+  {"price":["RED","RED","YELLOW"],"name":"HEATSEEKER","isLoaded":true},
+  {"price":["BLUE","BLUE","YELLOW"],"name":"WHISPER","isLoaded":true},
+  {"price":["RED","YELLOW"],"name":"HELLION","isLoaded":true},
+  {"price":["RED"],"name":"FLAMETHROWER","isLoaded":true},
+  {"price":["YELLOW","RED"],"name":"ZX2","isLoaded":true},
+  {"price":["RED"],"name":"GRENADELAUNCHER","isLoaded":true},
+  {"price":["YELLOW","YELLOW"],"name":"SHOTGUN","isLoaded":true},
+  {"price":["RED","RED"],"name":"ROCKETLAUNCHER","isLoaded":true},
+  {"price":["YELLOW","BLUE"],"name":"POWERGLOVE","isLoaded":true},
+  {"price":["YELLOW","YELLOW","BLUE"],"name":"RAILGUN","isLoaded":true},
+  {"price":["YELLOW"],"name":"SHOCKWAVE","isLoaded":true},
+  {"price":["YELLOW","RED"],"name":"CYBERBLADE","isLoaded":true},
+  {"price":["YELLOW"],"name":"SLEDGEHAMMER","isLoaded":true}
+]
