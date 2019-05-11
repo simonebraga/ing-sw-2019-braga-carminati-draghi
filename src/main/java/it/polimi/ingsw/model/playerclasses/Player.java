@@ -100,4 +100,10 @@ public class Player {
         this.points += points;
 
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Player player = (Player) obj;
+        return player.getFigure()==this.figure || player.getUsername().equals(this.username);
+    }
 }
