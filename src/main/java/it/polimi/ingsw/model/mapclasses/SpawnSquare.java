@@ -73,4 +73,18 @@ public class SpawnSquare extends Square {
         addWeapon(weaponToGive);
         return takeWeapon(weaponToTake);
     }
+
+    /**
+     * This method compares two SpawnSquares objects and returns true if they are to be considered equals.
+     *
+     * @param obj a SpawnSquare to be compared with the one that calls this method.
+     * @return true if the two SpawnSquares objects have same color, same weapons arrays,
+     * same players lists and same borders values.
+     * @author Draghi96
+     */
+    @Override
+    public boolean equals(Object obj) {
+        SpawnSquare spawnSquare = (SpawnSquare) obj;
+        return super.equals(obj) && spawnSquare.getColor()==this.color && spawnSquare.getWeapons().equals(this.weapons);
+    }
 }
