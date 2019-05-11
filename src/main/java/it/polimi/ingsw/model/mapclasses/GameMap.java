@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.mapclasses;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
@@ -218,5 +219,23 @@ public class GameMap {
         ArrayList<Square> squaresToReturn = getRange(square, distance);
         squaresToReturn.removeAll(getRange(square, distance - 1));
         return squaresToReturn;
+    }
+
+    /**
+     * This method compares two GameMap objects and returns true if they are to be considered equals.
+     *
+     * @param obj a GameMap object to be compared with the GameMap object that called this method.
+     * @return true if the two objects have the same Square[][] grid.
+     * @author Draghi96
+     */
+    @Override
+    public boolean equals(Object obj) {
+        GameMap gameMap = (GameMap) obj;
+        for (int i = 0; i <this.grid.length ; i++) {
+            if (!Arrays.equals(this.getGrid()[i],gameMap.getGrid()[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }
