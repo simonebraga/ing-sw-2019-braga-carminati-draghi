@@ -28,6 +28,13 @@ public class GameTable {
     Deck<Powerup> powerupDeck;
     Deck<AmmoTile> ammoTileDeck;
 
+    /**
+     * This attribute indicates which player that has the current turn.
+     *
+     * @author Draghi96
+     */
+    private Player currentTurnPlayer;
+
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck) {
         this.startingPlayerMarker = startingPlayerMarker;
         this.killshotTrack = killshotTrack;
@@ -37,6 +44,7 @@ public class GameTable {
         this.weaponDeck = weaponDeck;
         this.powerupDeck = powerupDeck;
         this.ammoTileDeck = ammoTileDeck;
+        this.currentTurnPlayer = startingPlayerMarker.getTarget();
     }
 
     public void setStartingPlayerMarker(StartingPlayerMarker startingPlayerMarker) {
@@ -71,6 +79,14 @@ public class GameTable {
         this.ammoTileDeck = ammoTileDeck;
     }
 
+    /**
+     * This method sets which player that has the current turn.
+     *
+     * @param player the Player that has the current turn.
+     * @author Draghi96
+     */
+    public void setCurrentTurnPlayer(Player player) {this.currentTurnPlayer=player; }
+
     public StartingPlayerMarker getStartingPlayerMarker() {
         return startingPlayerMarker;
     }
@@ -102,5 +118,13 @@ public class GameTable {
     public Deck<AmmoTile> getAmmoTileDeck() {
         return ammoTileDeck;
     }
+
+    /**
+     * This method returns the player that has the current turn.
+     *
+     * @return a Player that has the current turn.
+     * @author Draghi96
+     */
+    public Player getCurrentTurnPlayer() { return this.currentTurnPlayer; }
 
 }
