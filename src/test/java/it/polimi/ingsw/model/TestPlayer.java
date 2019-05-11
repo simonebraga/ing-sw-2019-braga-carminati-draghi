@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,18 @@ class TestPlayer {
         player.move(position);
         assertEquals(position , player.getPosition());
 
+    }
+
+    @Test
+    void testEquals() {
+        Player player1 = new Player(Figure.DOZER,"User2");
+        assertFalse(player.equals(player1));
+        player1 = new Player(Figure.DESTRUCTOR,"nickname");
+        assertTrue(player.equals(player1));
+    }
+
+    @AfterEach
+    void tearDown() {
+        player = null;
     }
 }
