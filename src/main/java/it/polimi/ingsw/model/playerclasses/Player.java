@@ -104,6 +104,6 @@ public class Player {
     @Override
     public boolean equals(Object obj) {
         Player player = (Player) obj;
-        return player.getFigure()==this.figure || player.getUsername().equals(this.username);
+        return player.getFigure()==this.figure && player.getUsername().equals(this.username);
     }
 }
