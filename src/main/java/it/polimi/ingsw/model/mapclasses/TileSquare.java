@@ -44,4 +44,16 @@ public class TileSquare extends Square {
     public void addTile(AmmoTile tile){
         setTile(tile);
     }
+
+    /**
+     * This method compares two TileSquare objects and returns true if they are to be considered equals.
+     *
+     * @param obj a TileSquare object to be compared with the TileSquare object that calls this method.
+     * @return true if the two objects have same Border values and same players lists.
+     * @author Draghi96
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
