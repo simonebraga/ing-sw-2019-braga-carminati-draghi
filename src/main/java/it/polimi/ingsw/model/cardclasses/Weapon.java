@@ -81,4 +81,16 @@ public class Weapon implements Card{
     public void reload() {
         isLoaded=true;
     }
+
+    /**
+     * This method compares two Weapon objects and returns true if they are to be considered equals.
+     *
+     * @param obj a Weapon object to be compared with the Weapon object that called this method.
+     * @return true if two Weapon objects have the same name (There is only 1 sample of each weapon in a match).
+     */
+    @Override
+    public boolean equals(Object obj) {
+        Weapon weapon = (Weapon) obj;
+        return weapon.name==this.name;
+    }
 }

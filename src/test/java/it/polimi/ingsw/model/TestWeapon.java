@@ -53,6 +53,20 @@ class TestWeapon {
     }
 
     /**
+     * This test verifies that equals() compares two weapons correctly.
+     */
+    @Test
+    void testEquals() {
+        ArrayList<Color> priceZx2 = new ArrayList<>();
+        priceZx2.add(Color.YELLOW);
+        priceZx2.add(Color.RED);
+        Weapon zx2 = new Weapon(priceZx2,WeaponName.ZX2,true);
+        assertFalse(shotgun.equals(zx2));
+        Weapon anotherShotgun = new Weapon(price,WeaponName.SHOTGUN,false);
+        assertTrue(shotgun.equals(anotherShotgun));
+    }
+
+    /**
      * This method frees all objects used to test all methods in this test suit.
      */
     @After
