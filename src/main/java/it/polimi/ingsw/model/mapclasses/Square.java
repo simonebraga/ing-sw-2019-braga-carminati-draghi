@@ -81,4 +81,11 @@ public class Square {
         getPlayers().remove(player);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        Square square = (Square) obj;
+        return square.getDown()==this.down && square.getUp()==this.up &&
+                square.getLeft()==this.left && square.getRight()==this.right &&
+                ((square.getPlayers()==null && this.getPlayers() == null)||square.getPlayers().equals(this.players));
+    }
 }
