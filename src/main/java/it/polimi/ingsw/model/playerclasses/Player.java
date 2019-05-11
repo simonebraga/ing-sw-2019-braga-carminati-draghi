@@ -101,6 +101,13 @@ public class Player {
 
     }
 
+    /**
+     * This method compares two Player objects and returns true if they are to be considered equals.
+     *
+     * @param obj a Player to be confronted with the Player object that called this method.
+     * @return true if two Players have same nickname and same Figure.
+     * @author Draghi96
+     */
     @Override
     public boolean equals(Object obj) {
         Player player = (Player) obj;

@@ -81,6 +81,12 @@ public class Square {
         getPlayers().remove(player);
     }
 
+    /**
+     * This method compares two Square objects and returns true if they are to be considered equals.
+     *
+     * @param obj a Player object to be compared with the Player object that called the method.
+     * @return true if two Square objects have same Border values and same players lists.
+     */
     @Override
     public boolean equals(Object obj) {
         Square square = (Square) obj;

@@ -50,6 +50,9 @@ class TestPlayer {
 
     }
 
+    /**
+     * This test verifies that equals() compares two Player objects correctly.
+     */
     @Test
     void testEquals() {
         Player player1 = new Player(Figure.DOZER,"User2");
