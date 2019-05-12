@@ -40,7 +40,7 @@ class TestAmmoPocket {
      * This test checks if the removal of ammo is performed correctly on a pocket with sufficient ammo
      */
     @Test
-    void testRemoveSuccessfull() {
+    void testRemoveSuccessful() {
 
         pocket = new AmmoPocket();
         pocket.addAmmo(new ArrayList<Color>(Arrays.asList(Color.BLUE,Color.BLUE,Color.BLUE,Color.RED,Color.RED,Color.RED,Color.YELLOW,Color.YELLOW,Color.YELLOW)));

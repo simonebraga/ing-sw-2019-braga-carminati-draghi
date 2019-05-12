@@ -3,6 +3,8 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ControllerRemote;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -16,26 +18,39 @@ public class Client extends UnicastRemoteObject implements ClientRemote {
     /**
      * This attribute points the remote interface of the controller, used to communicate with the controller-side application
      */
-    ControllerRemote controller;
+    private ControllerRemote controller;
 
     private String remoteName = "ControllerRemote";
     private String serverIp = "127.0.0.1";
-    private int serverPort = 5001;
+    private int serverPortRMI = 5001;
+    private int serverPortSocket = 6001;
 
-    protected Client() throws RemoteException {
+    /**
+     * @param i = 0 to use RMI technology
+     *          = 1 to use Socket technology
+     * @throws RemoteException if there is any problem with the connection
+     */
+    public Client(int i) throws RemoteException {
 
-        try {
-            controller = (ControllerRemote) LocateRegistry.getRegistry(serverIp,serverPort).lookup(remoteName);
-            System.out.println("Ready");
-        } catch (NotBoundException e) {
-            System.err.println("Something went wrong with registry lookup");
+        if (i == 0) {
+            // RMI setup
+            try {
+                controller = (ControllerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
+                System.out.println("RMI ready");
+            } catch (NotBoundException e) {
+                System.err.println("Something went wrong with registry lookup");
+            }
+        } else if (i == 1) {
+            // Socket setup
+            try {
+                controller = new ControllerSocket(new Socket(serverIp,serverPortSocket),this);
+                System.out.println("Socket ready");
+            } catch (IOException e) {
+                System.err.println("Something went wrong with socket setup");
+            }
+        } else {
+            System.err.println("Incorrect parameter in constructor of Client");
         }
-    }
-
-    @Override
-    public void printMessage(String s) throws RemoteException {
-
-        System.out.println(s);
     }
 
     /**
@@ -61,5 +76,11 @@ public class Client extends UnicastRemoteObject implements ClientRemote {
         } catch (RemoteException e) {
             System.err.println("Something went wrong with the logout");
         }
+    }
+
+    @Override
+    public void printMessage(String s) throws RemoteException {
+
+        System.out.println(s);
     }
 }

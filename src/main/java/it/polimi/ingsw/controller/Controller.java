@@ -30,10 +30,11 @@ public class Controller extends UnicastRemoteObject implements ControllerRemote 
     private String ip = "127.0.0.1";
     private int port = 5001;
 
-    protected Controller() throws RemoteException {
+    public Controller() throws RemoteException {
 
+        new Thread(new ControllerSocketAcceptor(this)).start();
         LocateRegistry.createRegistry(port).rebind(remoteName,this);
-        System.out.println("Ready");
+        System.out.println("Controller ready");
     }
 
     /**
