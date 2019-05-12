@@ -1,50 +1,50 @@
 [
-  {"ammo":["RED","RED"],"powerUp": 1},
-  {"ammo":["RED","RED"],"powerUp": 1},
+  {"ammo":["RED","RED"],"powerup": 1},
+  {"ammo":["RED","RED"],"powerup": 1},
 
-  {"ammo":["BLUE","BLUE"],"powerUp": 1},
-  {"ammo":["BLUE","BLUE"],"powerUp": 1},
+  {"ammo":["BLUE","BLUE"],"powerup": 1},
+  {"ammo":["BLUE","BLUE"],"powerup": 1},
 
-  {"ammo":["YELLOW","YELLOW"],"powerUp": 1},
-  {"ammo":["YELLOW","YELLOW"],"powerUp": 1},
+  {"ammo":["YELLOW","YELLOW"],"powerup": 1},
+  {"ammo":["YELLOW","YELLOW"],"powerup": 1},
 
-  {"ammo":["YELLOW","RED"],"powerUp": 1},
-  {"ammo":["YELLOW","RED"],"powerUp": 1},
-  {"ammo":["YELLOW","RED"],"powerUp": 1},
-  {"ammo":["YELLOW","RED"],"powerUp": 1},
+  {"ammo":["YELLOW","RED"],"powerup": 1},
+  {"ammo":["YELLOW","RED"],"powerup": 1},
+  {"ammo":["YELLOW","RED"],"powerup": 1},
+  {"ammo":["YELLOW","RED"],"powerup": 1},
 
-  {"ammo":["YELLOW","BLUE"],"powerUp": 1},
-  {"ammo":["YELLOW","BLUE"],"powerUp": 1},
-  {"ammo":["YELLOW","BLUE"],"powerUp": 1},
-  {"ammo":["YELLOW","BLUE"],"powerUp": 1},
+  {"ammo":["YELLOW","BLUE"],"powerup": 1},
+  {"ammo":["YELLOW","BLUE"],"powerup": 1},
+  {"ammo":["YELLOW","BLUE"],"powerup": 1},
+  {"ammo":["YELLOW","BLUE"],"powerup": 1},
 
-  {"ammo":["BLUE","RED"],"powerUp": 1},
-  {"ammo":["BLUE","RED"],"powerUp": 1},
-  {"ammo":["BLUE","RED"],"powerUp": 1},
-  {"ammo":["BLUE","RED"],"powerUp": 1},
+  {"ammo":["BLUE","RED"],"powerup": 1},
+  {"ammo":["BLUE","RED"],"powerup": 1},
+  {"ammo":["BLUE","RED"],"powerup": 1},
+  {"ammo":["BLUE","RED"],"powerup": 1},
 
-  {"ammo":["YELLOW","BLUE","BLUE"],"powerUp": 0},
-  {"ammo":["YELLOW","BLUE","BLUE"],"powerUp": 0},
-  {"ammo":["YELLOW","BLUE","BLUE"],"powerUp": 0},
+  {"ammo":["YELLOW","BLUE","BLUE"],"powerup": 0},
+  {"ammo":["YELLOW","BLUE","BLUE"],"powerup": 0},
+  {"ammo":["YELLOW","BLUE","BLUE"],"powerup": 0},
 
-  {"ammo":["YELLOW","YELLOW","BLUE"],"powerUp": 0},
-  {"ammo":["YELLOW","YELLOW","BLUE"],"powerUp": 0},
-  {"ammo":["YELLOW","YELLOW","BLUE"],"powerUp": 0},
+  {"ammo":["YELLOW","YELLOW","BLUE"],"powerup": 0},
+  {"ammo":["YELLOW","YELLOW","BLUE"],"powerup": 0},
+  {"ammo":["YELLOW","YELLOW","BLUE"],"powerup": 0},
 
-  {"ammo":["YELLOW","RED","RED"],"powerUp": 0},
-  {"ammo":["YELLOW","RED","RED"],"powerUp": 0},
-  {"ammo":["YELLOW","RED","RED"],"powerUp": 0},
+  {"ammo":["YELLOW","RED","RED"],"powerup": 0},
+  {"ammo":["YELLOW","RED","RED"],"powerup": 0},
+  {"ammo":["YELLOW","RED","RED"],"powerup": 0},
 
-  {"ammo":["BLUE","RED","RED"],"powerUp": 0},
-  {"ammo":["BLUE","RED","RED"],"powerUp": 0},
-  {"ammo":["BLUE","RED","RED"],"powerUp": 0},
+  {"ammo":["BLUE","RED","RED"],"powerup": 0},
+  {"ammo":["BLUE","RED","RED"],"powerup": 0},
+  {"ammo":["BLUE","RED","RED"],"powerup": 0},
 
-  {"ammo":["BLUE","BLUE","RED"],"powerUp": 0},
-  {"ammo":["BLUE","BLUE","RED"],"powerUp": 0},
-  {"ammo":["BLUE","BLUE","RED"],"powerUp": 0},
+  {"ammo":["BLUE","BLUE","RED"],"powerup": 0},
+  {"ammo":["BLUE","BLUE","RED"],"powerup": 0},
+  {"ammo":["BLUE","BLUE","RED"],"powerup": 0},
 
-  {"ammo":["YELLOW","YELLOW","RED"],"powerUp": 0},
-  {"ammo":["YELLOW","YELLOW","RED"],"powerUp": 0},
-  {"ammo":["YELLOW","YELLOW","RED"],"powerUp": 0}
+  {"ammo":["YELLOW","YELLOW","RED"],"powerup": 0},
+  {"ammo":["YELLOW","YELLOW","RED"],"powerup": 0},
+  {"ammo":["YELLOW","YELLOW","RED"],"powerup": 0}
 
 ]
