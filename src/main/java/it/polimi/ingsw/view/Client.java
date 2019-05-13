@@ -13,7 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * This class contains all the necessary methods of the client-side application to communicate with the server-side applications, and implements the remote methods that can be called by the controller
  */
-public class Client extends UnicastRemoteObject implements ClientRemote {
+public class Client implements ClientRemote {
 
     /**
      * This attribute points the remote interface of the controller, used to communicate with the controller-side application
@@ -21,8 +21,9 @@ public class Client extends UnicastRemoteObject implements ClientRemote {
     private ControllerRemote controller;
 
     private String remoteName = "ControllerRemote";
-    private String serverIp = "127.0.0.1";
+    private String serverIp = "192.168.1.2";
     private int serverPortRMI = 5001;
+    private int clientPortRMI = 5002;
     private int serverPortSocket = 6001;
 
     /**
@@ -35,6 +36,8 @@ public class Client extends UnicastRemoteObject implements ClientRemote {
         if (i == 0) {
             // RMI setup
             try {
+                System.setProperty("java.rmi.server.hostname","192.168.1.4");
+                UnicastRemoteObject.exportObject(this,clientPortRMI);
                 controller = (ControllerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
                 System.out.println("RMI ready");
             } catch (NotBoundException e) {

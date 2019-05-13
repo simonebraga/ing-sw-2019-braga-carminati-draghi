@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class contains all the methods used to communicate with the client-side application
  * @author simonebraga
  */
-public class Controller extends UnicastRemoteObject implements ControllerRemote {
+public class Controller implements ControllerRemote {
 
     /**
      * This attribute determines if the controller is open to new connections
@@ -34,7 +34,8 @@ public class Controller extends UnicastRemoteObject implements ControllerRemote 
     public Controller() throws RemoteException {
 
         new Thread(new ControllerSocketAcceptor(this)).start();
-        //System.setProperty("java.rmi.server.hostname",ip);
+        System.setProperty("java.rmi.server.hostname",ip);
+        UnicastRemoteObject.exportObject(this,port);
         try {
             LocateRegistry.createRegistry(port).bind(remoteName,this);
         } catch (AlreadyBoundException e) {
