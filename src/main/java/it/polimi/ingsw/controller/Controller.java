@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ControllerRemote;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,13 +28,18 @@ public class Controller extends UnicastRemoteObject implements ControllerRemote 
     private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
 
     private String remoteName = "ControllerRemote";
-    private String ip = "127.0.0.1";
+    private String ip = "192.168.1.2";
     private int port = 5001;
 
     public Controller() throws RemoteException {
 
         new Thread(new ControllerSocketAcceptor(this)).start();
-        LocateRegistry.createRegistry(port).rebind(remoteName,this);
+        //System.setProperty("java.rmi.server.hostname",ip);
+        try {
+            LocateRegistry.createRegistry(port).bind(remoteName,this);
+        } catch (AlreadyBoundException e) {
+            e.printStackTrace();
+        }
         System.out.println("Controller ready");
     }
 

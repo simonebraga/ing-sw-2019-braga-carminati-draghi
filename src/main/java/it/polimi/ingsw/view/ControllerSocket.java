@@ -19,7 +19,7 @@ public class ControllerSocket implements ControllerRemote {
     public ControllerSocket(Socket socket, Client client) {
 
         this.socket = socket;
-        new Thread(new ClientSocketListener(client, this));
+        new Thread(new ClientSocketListener(client, this)).start();
         try {
             out = new PrintWriter(socket.getOutputStream());
         } catch (IOException e) {
@@ -34,11 +34,13 @@ public class ControllerSocket implements ControllerRemote {
 
     @Override
     public void login(String s, ClientRemote c) throws RemoteException {
-
+        out.println("login;" + s);
+        out.flush();
     }
 
     @Override
     public void logout(ClientRemote c) throws RemoteException {
-
+        out.println("logout;");
+        out.flush();
     }
 }

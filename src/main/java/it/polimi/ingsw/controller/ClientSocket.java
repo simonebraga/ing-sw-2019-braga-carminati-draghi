@@ -34,6 +34,7 @@ public class ClientSocket implements ClientRemote {
 
     @Override
     public void printMessage(String s) throws RemoteException {
-
+        out.println("printMessage;" + s);
+        out.flush();
     }
 }

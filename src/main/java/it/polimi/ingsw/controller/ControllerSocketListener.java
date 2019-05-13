@@ -25,16 +25,39 @@ public class ControllerSocketListener implements Runnable {
             in = new Scanner(clientSocket.getSocket().getInputStream());
 
             while (true) {
+
+                String method = "";
+                String parameters = "";
                 String line = in.nextLine();
+                int pos = 0;
 
                 if (line.equals("quit")) {
                     break;
                 }
 
-                // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
-                switch (line) {
-                    default: {
-                        System.out.println("Received: " + line);
+                while ((pos < line.length() && (line.charAt(pos) != ';'))) {
+                    pos++;
+                }
+
+                if (pos >= line.length()) {
+                    System.out.println("Received invalid syntax message: " + line);
+                } else {
+                    method = line.substring(0,pos);
+                    parameters = line.substring(pos + 1);
+
+                    // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
+                    switch (method) {
+                        case "login": {
+                            controller.login(parameters,clientSocket);
+                            break;
+                        }
+                        case "logout": {
+                            controller.logout(clientSocket);
+                            break;
+                        }
+                        default: {
+                            System.out.println("Received: " + line);
+                        }
                     }
                 }
             }
