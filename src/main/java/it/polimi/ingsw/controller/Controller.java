@@ -40,7 +40,7 @@ public class Controller implements ControllerRemote {
         try {
 
             Properties properties = new Properties();
-            properties.load(new FileReader("resources/network_settings.properties"));
+            properties.load(new FileReader("src/main/resources/network_settings.properties"));
 
             this.remoteName = properties.getProperty("controllerRemoteName");
             this.ip = properties.getProperty("serverIp");
