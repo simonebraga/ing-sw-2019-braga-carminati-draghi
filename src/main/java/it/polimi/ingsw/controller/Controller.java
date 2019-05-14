@@ -3,11 +3,15 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ControllerRemote;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,21 +31,37 @@ public class Controller implements ControllerRemote {
      */
     private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
 
-    private String remoteName = "ControllerRemote";
-    private String ip = "192.168.1.2";
-    private int port = 5001;
+    private String remoteName;
+    private String ip;
+    private int port;
 
     public Controller() throws RemoteException {
 
-        new Thread(new ControllerSocketAcceptor(this)).start();
-        System.setProperty("java.rmi.server.hostname",ip);
-        UnicastRemoteObject.exportObject(this,port);
         try {
-            LocateRegistry.createRegistry(port).bind(remoteName,this);
-        } catch (AlreadyBoundException e) {
+
+            Properties properties = new Properties();
+            properties.load(new FileReader("resources/network_settings.properties"));
+
+            this.remoteName = properties.getProperty("controllerRemoteName");
+            this.ip = properties.getProperty("serverIp");
+            this.port = Integer.parseInt(properties.getProperty("serverRmiPort"));
+
+            new Thread(new ControllerSocketAcceptor(this)).start();
+            System.setProperty("java.rmi.server.hostname",ip);
+            UnicastRemoteObject.exportObject(this,port);
+
+            try {
+                LocateRegistry.createRegistry(port).bind(remoteName,this);
+            } catch (AlreadyBoundException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Controller ready");
+
+        } catch (IOException e) {
+            System.err.println("Error while loading properties");
             e.printStackTrace();
         }
-        System.out.println("Controller ready");
     }
 
     /**
