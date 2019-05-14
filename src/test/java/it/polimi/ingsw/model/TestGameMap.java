@@ -34,7 +34,7 @@ public class TestGameMap {
     @BeforeEach
     void setUp() {
         try {
-            FileReader fileReader = new FileReader("resources/maps.json");
+            FileReader fileReader = new FileReader("src/main/resources/maps.json");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             Gson gson = new Gson();
             fetchedMaps = gson.fromJson(bufferedReader,GameMap[].class);
