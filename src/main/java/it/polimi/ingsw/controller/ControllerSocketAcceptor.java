@@ -20,7 +20,7 @@ public class ControllerSocketAcceptor implements Runnable {
         try {
 
             Properties properties = new Properties();
-            properties.load(new FileReader("src/main/java/resources/network_settings.properties"));
+            properties.load(new FileReader("src/main/resources/network_settings.properties"));
 
             this.port = Integer.parseInt(properties.getProperty("serverSocketPort"));
             this.controller = controller;

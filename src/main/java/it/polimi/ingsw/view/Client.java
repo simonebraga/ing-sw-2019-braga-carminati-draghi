@@ -39,7 +39,7 @@ public class Client implements ClientRemote {
         try {
 
             Properties properties = new Properties();
-            properties.load(new FileReader("src/main/java/resources/network_settings.properties"));
+            properties.load(new FileReader("src/main/resources/network_settings.properties"));
 
             this.remoteName = properties.getProperty("controllerRemoteName");
             this.serverIp = properties.getProperty("serverIp");
