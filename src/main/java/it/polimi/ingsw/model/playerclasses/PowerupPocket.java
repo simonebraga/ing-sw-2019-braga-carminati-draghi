@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.playerclasses;
 
 import it.polimi.ingsw.model.cardclasses.Powerup;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 
 import java.util.ArrayList;
 
@@ -28,14 +27,11 @@ public class PowerupPocket {
     /**
      * This method tries to add a powerup in the powerup pocket of the player
      * @param powerup is the powerup to be added
-     * @throws FullPocketException is thrown if the weapon pocket is full
      */
-    public void addPowerup(Powerup powerup) throws FullPocketException {
+    public void addPowerup(Powerup powerup) {
 
         if (powerups.size() < 3)
             powerups.add(powerup);
-        else
-            throw new FullPocketException();
 
     }
 

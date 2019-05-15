@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
@@ -32,12 +31,8 @@ public class FunctionalFactory {
             TileSquare square = (TileSquare) player.getPosition();
             AmmoTile tileTemp = square.removeTile();
             player.getAmmoPocket().addAmmo(tileTemp.getAmmo());
-            if(tileTemp.getPowerup() == 1){
-                try {
-                    player.getPowerupPocket().addPowerup(table.getPowerupDeck().draw());
-                } catch (FullPocketException e) {
-                    e.printStackTrace();
-                }
+            if(tileTemp.getPowerup() == 1 && player.getPowerupPocket().getPowerups().size()<3){
+                player.getPowerupPocket().addPowerup(table.getPowerupDeck().draw());
             }
         };
     }
@@ -66,11 +61,7 @@ public class FunctionalFactory {
         return () -> {
             player.getWeaponPocket().getWeapons().remove(weaponToGive);
             SpawnSquare square = (SpawnSquare) player.getPosition();
-            try {
-                player.getWeaponPocket().addWeapon(square.switchWeapon(weaponToTake, weaponToGive));
-            } catch (FullPocketException e) {
-                e.printStackTrace();
-            }
+            player.getWeaponPocket().addWeapon(square.switchWeapon(weaponToTake, weaponToGive));
         };
     }
 

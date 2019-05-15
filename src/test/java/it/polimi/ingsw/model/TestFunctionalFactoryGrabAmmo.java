@@ -10,7 +10,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
@@ -94,8 +93,6 @@ class TestFunctionalFactoryGrabAmmo {
     void createGrabAmmo() {
         try {
             effect.doAction();
-        } catch (FullPocketException e){
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
@@ -119,8 +116,6 @@ class TestFunctionalFactoryGrabAmmo {
         effect = new FunctionalFactory().createGrabAmmo(player, table);
         try {
             effect.doAction();
-        } catch (FullPocketException e){
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {

@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.playerclasses.WeaponPocket;
 import org.junit.jupiter.api.Test;
 
@@ -33,54 +32,13 @@ class TestWeaponPocket {
         pocket = new WeaponPocket();
         assertEquals(new ArrayList<Weapon>() , pocket.getWeapons());
 
-        try {
-            pocket.addWeapon(weapon1);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addWeapon(weapon1);
 
-        try {
-            pocket.addWeapon(weapon2);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addWeapon(weapon2);
+
 
         assertEquals(new ArrayList<>(Arrays.asList(weapon1,weapon2)) , pocket.getWeapons());
 
-    }
-
-    /**
-     * This test case checks if the addition in a full pocket is handled correctly
-     */
-    @Test
-    void testFullPocket() {
-
-        pocket = new WeaponPocket();
-        assertEquals(new ArrayList<Weapon>() , pocket.getWeapons());
-
-        try {
-            pocket.addWeapon(weapon1);
-        } catch (FullPocketException e) {
-            fail();
-        }
-
-        try {
-            pocket.addWeapon(weapon2);
-        } catch (FullPocketException e) {
-            fail();
-        }
-
-        try {
-            pocket.addWeapon(weapon3);
-        } catch (FullPocketException e) {
-            fail();
-        }
-
-        try {
-            pocket.addWeapon(weapon4);
-        } catch (FullPocketException e) {
-            assertTrue(true);
-        }
     }
 
     /**
@@ -91,23 +49,11 @@ class TestWeaponPocket {
 
         pocket = new WeaponPocket();
 
-        try {
-            pocket.addWeapon(weapon1);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addWeapon(weapon1);
 
-        try {
-            pocket.addWeapon(weapon2);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addWeapon(weapon2);
 
-        try {
-            pocket.addWeapon(weapon3);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addWeapon(weapon3);
 
         Weapon weaponOut = pocket.switchWeapon(weapon4,1);
         assertEquals(weapon2 , weaponOut);

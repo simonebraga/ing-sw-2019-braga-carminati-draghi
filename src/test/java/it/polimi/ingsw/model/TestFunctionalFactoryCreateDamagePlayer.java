@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
@@ -54,9 +53,7 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         try {
             effect.doAction();
-        } catch (FullPocketException e) {
-            fail();
-        } catch (KilledPlayerException e) {
+        }catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
             fail();
@@ -70,8 +67,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         try {
             effect.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             assertTrue(true);
         } catch (OverKilledPlayerException e) {
@@ -84,8 +79,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         try {
             effect.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
@@ -111,8 +104,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         try {
             effect.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
@@ -127,8 +118,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         try {
             effect.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
@@ -143,8 +132,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         try {
             effect.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {

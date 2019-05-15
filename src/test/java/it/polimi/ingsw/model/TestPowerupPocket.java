@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.playerclasses.PowerupPocket;
 import org.junit.jupiter.api.Test;
 
@@ -33,17 +32,10 @@ class TestPowerupPocket {
 
         pocket = new PowerupPocket();
 
-        try {
-            pocket.addPowerup(powerup1);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addPowerup(powerup1);
 
-        try {
-            pocket.addPowerup(powerup2);
-        } catch (FullPocketException e) {
-            fail();
-        }
+
+        pocket.addPowerup(powerup2);
 
         assertEquals(pocket.getPowerups(), new ArrayList<Powerup>(Arrays.asList(powerup1,powerup2)));
 
@@ -57,62 +49,15 @@ class TestPowerupPocket {
 
         pocket = new PowerupPocket();
 
-        try {
-            pocket.addPowerup(powerup1);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addPowerup(powerup1);
 
-        try {
-            pocket.addPowerup(powerup2);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addPowerup(powerup2);
 
-        try {
-            pocket.addPowerup(powerup3);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        pocket.addPowerup(powerup3);
 
         Powerup returnPowerup = pocket.removePowerup(0);
         assertEquals(powerup1 , returnPowerup);
         assertEquals(2 , pocket.getPowerups().size());
 
     }
-
-    /**
-     * This test checks if the addition of powerups in a full pocket is handled correctly
-     */
-    @Test
-    void testFullPocket() {
-
-        pocket = new PowerupPocket();
-
-        try {
-            pocket.addPowerup(powerup1);
-        } catch (FullPocketException e) {
-            fail();
-        }
-
-        try {
-            pocket.addPowerup(powerup2);
-        } catch (FullPocketException e) {
-            fail();
-        }
-
-        try {
-            pocket.addPowerup(powerup3);
-        } catch (FullPocketException e) {
-            fail();
-        }
-
-        try {
-            pocket.addPowerup(powerup4);
-        } catch (FullPocketException e) {
-            assertTrue(true);
-        }
-
-    }
-
 }

@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
@@ -152,8 +151,6 @@ public class TestFunctionalFactory {
 
         try {
             move.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
@@ -180,8 +177,6 @@ public class TestFunctionalFactory {
 
         try {
             pay.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
@@ -200,8 +195,6 @@ public class TestFunctionalFactory {
 
         try {
             pay1.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {

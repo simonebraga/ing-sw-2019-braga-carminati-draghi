@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.playerclasses;
 
 import it.polimi.ingsw.model.cardclasses.Weapon;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 
 import java.util.ArrayList;
 
@@ -28,14 +27,11 @@ public class WeaponPocket {
     /**
      * This method tries to add a weapon in the weapon pocket of the player
      * @param weapon is the weapon to be added
-     * @throws FullPocketException is thrown if the weapon pocket is full
      */
-    public void addWeapon(Weapon weapon) throws FullPocketException {
+    public void addWeapon(Weapon weapon) {
 
         if (weapons.size() < 3)
             weapons.add(weapon);
-        else
-            throw new FullPocketException();
 
     }
 

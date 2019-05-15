@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
@@ -24,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Tests the normal functioning of the function that grabs a Weapon: the Weapon gets added
  * to the Pocket of the Player and the Square contains no more the Weapon.
- * Also tests that, when the Player has already 3 Weapon, the FunctionalEffect throws a
- * FullPocketException.
  */
 class TestFunctionalFactoryGrabWeapon {
 
@@ -56,8 +53,6 @@ class TestFunctionalFactoryGrabWeapon {
     void createGrabWeapon() {
         try {
             effect.doAction();
-        } catch (FullPocketException e){
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
@@ -67,38 +62,5 @@ class TestFunctionalFactoryGrabWeapon {
         }
         assertTrue(player.getWeaponPocket().getWeapons().contains(weapon));
         assertFalse(square.getWeapons().contains(weapon));
-    }
-    @Test
-    void createGrabWeaponException(){
-        try {
-            player.getWeaponPocket().addWeapon(new Weapon(new ArrayList<>(), WeaponName.WHISPER, Boolean.TRUE));
-        }catch (FullPocketException e){
-            fail();
-        }
-
-        try {
-            player.getWeaponPocket().addWeapon(new Weapon(new ArrayList<>(), WeaponName.FURNACE, Boolean.TRUE));
-        }catch (FullPocketException e){
-            fail();
-        }
-
-        try {
-            player.getWeaponPocket().addWeapon(new Weapon(new ArrayList<>(), WeaponName.SHOCKWAVE, Boolean.TRUE));
-        }catch (FullPocketException e){
-            fail();
-        }
-
-        try{
-            effect.doAction();
-        } catch (FullPocketException e){
-            return ;
-        } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
-        }
-        fail();
     }
 }

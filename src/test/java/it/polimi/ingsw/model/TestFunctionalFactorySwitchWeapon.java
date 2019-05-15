@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
@@ -48,26 +47,15 @@ class TestFunctionalFactorySwitchWeapon {
         weaponToGive = new Weapon(new ArrayList<>(), WeaponName.WHISPER, Boolean.TRUE);
 
         square.addWeapon(weaponToTake);
-        try {
-            player.getWeaponPocket().addWeapon(weaponToGive);
-        } catch (FullPocketException e) {
-            fail();
-        }
+
+        player.getWeaponPocket().addWeapon(weaponToGive);
 
         weaponTemp = new Weapon(new ArrayList<>(), WeaponName.CYBERBLADE, Boolean.TRUE);
-        try {
-            player.getWeaponPocket().addWeapon(weaponTemp);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        player.getWeaponPocket().addWeapon(weaponTemp);
         playerWeapons.add(weaponTemp);
 
         weaponTemp = new Weapon(new ArrayList<>(), WeaponName.SHOCKWAVE, Boolean.TRUE);
-        try {
-            player.getWeaponPocket().addWeapon(weaponTemp);
-        } catch (FullPocketException e) {
-            fail();
-        }
+        player.getWeaponPocket().addWeapon(weaponTemp);
         playerWeapons.add(weaponTemp);
 
         weaponTemp = new Weapon(new ArrayList<>(), WeaponName.FURNACE, Boolean.TRUE);
@@ -100,8 +88,6 @@ class TestFunctionalFactorySwitchWeapon {
     void createSwitchWeapon() {
         try {
             effect.doAction();
-        } catch (FullPocketException e) {
-            fail();
         } catch (KilledPlayerException e) {
             fail();
         } catch (OverKilledPlayerException e) {
