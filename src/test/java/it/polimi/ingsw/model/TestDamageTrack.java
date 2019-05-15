@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.playerclasses.DamageTrack;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is the test suite for DamageTrack class
@@ -33,27 +33,11 @@ class TestDamageTrack {
      */
     @Test
     void testReset() {
-        try {
-            track.addDamage(player,3);
-        } catch (KilledPlayerException e){
-            fail();
-        }
+        track.addDamage(player,3);
         assertEquals(new ArrayList<Player>(Arrays.asList(player,player,player)) , track.getDamage());
 
         track.resetDamage();
         assertTrue(track.getDamage().size() == 0);
-    }
-
-    /**
-     * This test checks if exceptions are thrown correctly
-     */
-    @Test
-    void testExceptions() {
-        try {
-            track.addDamage(player,11);
-        } catch (KilledPlayerException e) {
-            assertTrue(true);
-        }
     }
 
 }

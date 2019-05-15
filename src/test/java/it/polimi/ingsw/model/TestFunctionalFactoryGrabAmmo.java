@@ -10,7 +10,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.mapclasses.TileSquare;
@@ -89,11 +88,8 @@ class TestFunctionalFactoryGrabAmmo {
 
     @Test
     void createGrabAmmo() {
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
+
         assertEquals(player.getAmmoPocket().getAmmo(Color.BLUE), 1);
         assertEquals(player.getAmmoPocket().getAmmo(Color.YELLOW), 1);
         assertEquals(player.getAmmoPocket().getAmmo(Color.RED), 1);
@@ -108,11 +104,7 @@ class TestFunctionalFactoryGrabAmmo {
         square.addTile(tile);
 
         effect = new FunctionalFactory().createGrabAmmo(player, table);
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
 
         assertEquals(player.getAmmoPocket().getAmmo(Color.BLUE), 2);
         assertEquals(player.getAmmoPocket().getAmmo(Color.YELLOW), 1);

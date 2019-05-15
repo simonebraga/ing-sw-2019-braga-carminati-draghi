@@ -3,12 +3,11 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This is the test suite for createDamagePlayer in FunctionalFactory class
@@ -31,11 +30,8 @@ class TestFunctionalFactoryCreateDamagePlayer {
         player = new Player(Figure.BANSHEE,"nickname2");
         playerAboutToDie = new Player(Figure.DESTRUCTOR,"nickname3");
 
-        try {
-            playerAboutToDie.getDamageTrack().addDamage(killer,10);
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        playerAboutToDie.getDamageTrack().addDamage(killer,10);
+
 
     }
 
@@ -47,29 +43,17 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         effect = new FunctionalFactory().createDamagePlayer(killer,player,1,0);
 
-        try {
-            effect.doAction();
-        }catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
 
         assertEquals(1,player.getDamageTrack().getDamage().size());
 
         effect = new FunctionalFactory().createDamagePlayer(killer,playerAboutToDie,1,0);
 
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            assertTrue(true);
-        }
+        effect.doAction();
 
         assertEquals(11,playerAboutToDie.getDamageTrack().getDamage().size());
 
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            assertTrue(true);
-        }
+        effect.doAction();
 
         assertEquals(12,playerAboutToDie.getDamageTrack().getDamage().size());
 
@@ -86,31 +70,19 @@ class TestFunctionalFactoryCreateDamagePlayer {
 
         effect = new FunctionalFactory().createDamagePlayer(marker,player,1,0);
 
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
 
         assertEquals(3 , player.getDamageTrack().getDamage().size());
 
         effect = new FunctionalFactory().createDamagePlayer(marker,playerAboutToDie,0,0);
 
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
 
         assertEquals(10 , playerAboutToDie.getDamageTrack().getDamage().size());
 
         effect = new FunctionalFactory().createDamagePlayer(marker,playerAboutToDie,1,0);
 
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            assertTrue(true);
-        }
+        effect.doAction();
 
         assertEquals(12 , playerAboutToDie.getDamageTrack().getDamage().size());
 

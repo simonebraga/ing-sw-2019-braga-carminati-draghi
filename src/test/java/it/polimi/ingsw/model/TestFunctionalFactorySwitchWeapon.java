@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.AfterEach;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests the normal functioning of the function that switches two weapons between a Square and a Player:
@@ -85,11 +83,8 @@ class TestFunctionalFactorySwitchWeapon {
 
     @Test
     void createSwitchWeapon() {
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
+
         assertTrue(player.getWeaponPocket().getWeapons().containsAll(playerWeapons));
         assertTrue(playerWeapons.containsAll(player.getWeaponPocket().getWeapons()));
 

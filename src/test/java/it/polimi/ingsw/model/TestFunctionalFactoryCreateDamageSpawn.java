@@ -4,14 +4,12 @@ import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This is the test suite for createDamageSpawn in FunctionalFactory class
@@ -39,17 +37,9 @@ class TestFunctionalFactoryCreateDamageSpawn {
 
         effect = new FunctionalFactory().createDamageSpawn(player,square);
 
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
 
-        try {
-            effect.doAction();
-        } catch (KilledPlayerException e) {
-            fail();
-        }
+        effect.doAction();
 
         assertEquals(8, square.getDamage().size());
     }

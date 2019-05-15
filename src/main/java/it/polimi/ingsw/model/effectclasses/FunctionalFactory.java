@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
@@ -102,11 +101,7 @@ public class FunctionalFactory {
             Integer toAdd = 0;
             if (damage > 0)
                 toAdd = target.getMarkTrack().removeMarks(killer);
-            try {
-                target.getDamageTrack().addDamage(killer,damage + toAdd);
-            } catch (KilledPlayerException e) {
-                throw new KilledPlayerException();
-            }
+            target.getDamageTrack().addDamage(killer,damage + toAdd);
             target.getMarkTrack().addMarks(killer,marks);
         };
     }
