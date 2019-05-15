@@ -55,6 +55,42 @@ public class ClientSocketListener implements Runnable {
                             client.printMessage(parameters);
                             break;
                         }
+                        case "choosePlayer": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseSquare": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseMultiplePowerUps": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseWeapon": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseMultipleWeapons": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseDirection": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseString": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseYesNo": {
+                            //TO DO
+                            break;
+                        }
+                        case "chooseColor": {
+                            //TO DO
+                            break;
+                        }
                         default: {
                             System.out.println("Received: " + line);
                         }

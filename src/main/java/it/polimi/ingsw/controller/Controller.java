@@ -1,15 +1,20 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.cardclasses.Powerup;
+import it.polimi.ingsw.model.cardclasses.Weapon;
+import it.polimi.ingsw.model.enumeratedclasses.Color;
+import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ControllerRemote;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -162,5 +167,95 @@ public class Controller implements ControllerRemote {
         } else {
             c.printMessage("Client not registered");
         }
+    }
+
+    public void printMessage(String nickname, String s){
+
+        try {
+            clientMap.get(nickname).printMessage(s);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Player choosePlayer(String nickname, ArrayList<Player> p){
+
+        try {
+            return clientMap.get(nickname).choosePlayer(p);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
+    }
+
+    public Square chooseSquare(String nickname, ArrayList<Square> s){
+
+        try {
+            return clientMap.get(nickname).chooseSquare(s);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
+    }
+
+    public ArrayList<Powerup> chooseMultiplePowerUps(String nickname, ArrayList<Powerup> p){
+
+        try {
+            return clientMap.get(nickname).chooseMultiplePowerUps(p);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
+    }
+
+    public Weapon chooseWeapon(String nickname, ArrayList<Weapon> w){
+
+        try {
+            return clientMap.get(nickname).chooseWeapon(w);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
+    }
+
+    public ArrayList<Weapon> chooseMultipleWeapons(String nickname, ArrayList<Weapon> w){
+
+        try {
+            return clientMap.get(nickname).chooseMultipleWeapons(w);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
+    }
+
+    public char chooseDirection(String nickname){
+
+        try {
+            return clientMap.get(nickname).chooseDirection();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return 'N';
+    }
+
+    public String chooseString(String nickname, ArrayList<String> s){
+
+        try {
+            return clientMap.get(nickname).chooseString(s);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
+    }
+
+    public Boolean chooseYesNo(String nickname, String s){
+
+        try {
+            return clientMap.get(nickname).chooseYesNo(s);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
+    }
+
+    public Color chooseColor(String nickname){
+
+        try {
+            return clientMap.get(nickname).chooseColor();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } return null;
     }
 }
