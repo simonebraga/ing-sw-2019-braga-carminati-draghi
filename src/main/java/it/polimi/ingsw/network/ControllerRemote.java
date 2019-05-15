@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 
 /**
  * This interface lists all the methods of the controller accessible from the client
+ * @author simonebraga
  */
 public interface ControllerRemote extends Remote {
 

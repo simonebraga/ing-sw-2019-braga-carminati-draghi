@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import com.google.gson.Gson;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
@@ -7,6 +8,7 @@ import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ControllerRemote;
+import it.polimi.ingsw.network.UnavailableUserException;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,10 +16,7 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,6 +39,12 @@ public class Controller implements ControllerRemote {
     private String ip;
     private int port;
 
+    private Gson gson = new Gson();
+
+    /**
+     * This method is the constructor of the class. It initializes the controller and creates the necessary objects to support RMI and Socket connections
+     * @throws RemoteException if there are problems with the network during the initialization
+     */
     public Controller() throws RemoteException {
 
         try {
@@ -90,20 +95,21 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    /**
-     * This method is used to get the list of the registered nicknames
-     * @return a set containing all the registered nicknames
-     */
     public Set<String> getNicknameSet() {
         return clientMap.keySet();
     }
 
+    public Map<String, ClientRemote> getClientMap() {
+        return clientMap;
+    }
+
     /**
-     * This remote method is used by the client to login/register themselves
-     * @param s is the nickname for the registration
-     * @param c is the client associated to the nickname
-     * @throws RemoteException when there is any problem during the connection
+     * This method creates a new empty clientMap
      */
+    public void resetClientMap() {
+        clientMap = new ConcurrentHashMap<>();
+    }
+
     @Override
     public synchronized void login(String s, ClientRemote c) throws RemoteException {
 
@@ -152,11 +158,6 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    /**
-     * This method removes a client from the client map
-     * @param c the client to be removed
-     * @throws RemoteException if there is any issue with the network
-     */
     @Override
     public synchronized void logout(ClientRemote c) throws RemoteException {
 
@@ -169,93 +170,141 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    public void printMessage(String nickname, String s){
+    // 1
+    public Player choosePlayer(Player player, ArrayList<Player> arrayList) throws UnavailableUserException {
 
         try {
-            clientMap.get(nickname).printMessage(s);
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("player",gson.toJson(arrayList)),Player.class);
         } catch (RemoteException e) {
             e.printStackTrace();
+            throw new UnavailableUserException();
         }
     }
 
-    public Player choosePlayer(String nickname, ArrayList<Player> p){
+    // 2
+    public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).choosePlayer(p);
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("square",gson.toJson(arrayList)),Square.class);
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 
-    public Square chooseSquare(String nickname, ArrayList<Square> s){
+    // 3
+    public ArrayList<Powerup> chooseMultiplePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).chooseSquare(s);
+            ArrayList<Powerup> retVal = new ArrayList<>();
+            ArrayList<Powerup> toCast = gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("powerup",gson.toJson(arrayList)),ArrayList.class);
+            for (int i = 0 ; i < toCast.size() ; i++) {
+                retVal.add(toCast.get(i));
+            }
+            return retVal;
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 
-    public ArrayList<Powerup> chooseMultiplePowerUps(String nickname, ArrayList<Powerup> p){
+    // 4
+    public Weapon chooseWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).chooseMultiplePowerUps(p);
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("weapon",gson.toJson(arrayList)),Weapon.class);
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 
-    public Weapon chooseWeapon(String nickname, ArrayList<Weapon> w){
-
+    // 5
+    public Character chooseDirection(Player player) throws UnavailableUserException {
         try {
-            return clientMap.get(nickname).chooseWeapon(w);
+            String retVal = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(new ArrayList<>(Arrays.asList("North","South","West","East")))),String.class);
+            switch (retVal) {
+                case "North": return 'N';
+                case "South": return 'S';
+                case "West": return 'W';
+                case "East": return 'E';
+                default: {
+                    System.err.println("Invalid return value");
+                    return 'N';
+                }
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 
-    public ArrayList<Weapon> chooseMultipleWeapons(String nickname, ArrayList<Weapon> w){
+    // 6
+    public String chooseString(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).chooseMultipleWeapons(w);
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(arrayList)),String.class);
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 
-    public char chooseDirection(String nickname){
+    // 7
+    public Boolean booleanQuestion(Player player, String string) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).chooseDirection();
+            return clientMap.get(player.getUsername()).booleanQuestion(string);
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return 'N';
+            throw new UnavailableUserException();
+        }
     }
 
-    public String chooseString(String nickname, ArrayList<String> s){
+    // 8
+    public ArrayList<Weapon> chooseMultipleWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).chooseString(s);
+            ArrayList<Weapon> retVal = new ArrayList<>();
+            ArrayList<Weapon> toCast = gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("weapon",gson.toJson(arrayList)),ArrayList.class);
+            for (int i = 0 ; i < toCast.size() ; i++) {
+                retVal.add(toCast.get(i));
+            }
+            return retVal;
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 
-    public Boolean chooseYesNo(String nickname, String s){
+    // 9
+    public Color chooseColor(Player player) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).chooseYesNo(s);
+            String retVal = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(new ArrayList<>(Arrays.asList("Red","Blue","Yellow")))),String.class);
+            switch (retVal) {
+                case "Red": return Color.RED;
+                case "Blue": return Color.BLUE;
+                case "Yellow": return Color.YELLOW;
+                default: {
+                    System.err.println("Invalid return value");
+                    return Color.RED;
+                }
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 
-    public Color chooseColor(String nickname){
+    // 10
+    public void sendMessage(Player player, String message) throws UnavailableUserException {
 
         try {
-            return clientMap.get(nickname).chooseColor();
+            clientMap.get(player.getUsername()).printMessage(message);
         } catch (RemoteException e) {
             e.printStackTrace();
-        } return null;
+            throw new UnavailableUserException();
+        }
     }
 }

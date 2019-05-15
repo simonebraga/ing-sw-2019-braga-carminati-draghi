@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import com.google.gson.Gson;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
@@ -21,6 +22,7 @@ import java.util.Scanner;
 
 /**
  * This class contains all the necessary methods of the client-side application to communicate with the server-side applications, and implements the remote methods that can be called by the controller
+ * @author simonebraga
  */
 public class Client implements ClientRemote {
 
@@ -35,6 +37,8 @@ public class Client implements ClientRemote {
     private int serverPortRMI;
     private int clientPortRMI;
     private int serverPortSocket;
+
+    private Gson gson = new Gson();
 
     /**
      * @param i = 0 to use RMI technology
@@ -81,10 +85,7 @@ public class Client implements ClientRemote {
         }
     }
 
-    /**
-     * This method login/register the client to the server using the nickname in input
-     * @param s in the nickname used for the registration
-     */
+    //Javadoc TO DO
     public void login(String s) {
 
         try {
@@ -94,9 +95,7 @@ public class Client implements ClientRemote {
         }
     }
 
-    /**
-     * This method calls the remote logout method on the server with the correct parameters
-     */
+    //Javadoc TO DO
     public void logout() {
 
         try {
@@ -113,148 +112,105 @@ public class Client implements ClientRemote {
     }
 
     @Override
-    public Player choosePlayer(ArrayList<Player> p) throws RemoteException {
+    public String singleChoice(String obj, String s) throws RemoteException {
 
-        System.out.println("Make a choose");
-        System.out.println(p);
-        int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index < p.size())&&(index >= 0))) {
-            System.out.println("Invalid input");
-            index = Integer.parseInt(new Scanner(System.in).nextLine());
-        }
-        return p.get(index);
-    }
+        System.out.println("Make a choice:");
 
-    @Override
-    public Square chooseSquare(ArrayList<Square> s) throws RemoteException {
-
-        System.out.println("Make a choose");
-        System.out.println(s);
-        int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index < s.size())&&(index >= 0))) {
-            System.out.println("Invalid input");
-            index = Integer.parseInt(new Scanner(System.in).nextLine());
-        }
-        return s.get(index);
-    }
-
-    @Override
-    public ArrayList<Powerup> chooseMultiplePowerUps(ArrayList<Powerup> p) throws RemoteException {
-
-        ArrayList<Powerup> retVal = new ArrayList<>();
-        System.out.println("Make a multiple choose");
-        for (Powerup powerup : p) {
-            System.out.println(powerup);
-            System.out.println("1. Yes\n0. No");
-            int index = Integer.parseInt(new Scanner(System.in).nextLine());
-            while (!((index <= 1)&&(index >= 0))) {
-                System.out.println("Invalid input");
-                index = Integer.parseInt(new Scanner(System.in).nextLine());
+        switch (obj) {
+            case "player": {
+                ArrayList<Player> arrayList = gson.fromJson(s,ArrayList.class);
+                System.out.println(arrayList);
+                int index = Integer.parseInt(new Scanner(System.in).nextLine());
+                while (!((index >= 0)&&(index < arrayList.size()))) {
+                    System.out.println("Not valid selection");
+                    index = Integer.parseInt(new Scanner(System.in).nextLine());
+                } return gson.toJson(arrayList.get(index));
             }
-            if (index == 1)
-                retVal.add(powerup);
-        }
-        return retVal;
-    }
-
-    @Override
-    public Weapon chooseWeapon(ArrayList<Weapon> w) throws RemoteException {
-
-        System.out.println("Make a choose");
-        System.out.println(w);
-        int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index < w.size())&&(index >= 0))) {
-            System.out.println("Invalid input");
-            index = Integer.parseInt(new Scanner(System.in).nextLine());
-        }
-        return w.get(index);
-    }
-
-    @Override
-    public ArrayList<Weapon> chooseMultipleWeapons(ArrayList<Weapon> w) throws RemoteException {
-
-        ArrayList<Weapon> retVal = new ArrayList<>();
-        System.out.println("Make a multiple choose");
-        for (Weapon weapon : w) {
-            System.out.println(weapon);
-            System.out.println("1. Yes\n0. No");
-            int index = Integer.parseInt(new Scanner(System.in).nextLine());
-            while (!((index <= 1)&&(index >= 0))) {
-                System.out.println("Invalid input");
-                index = Integer.parseInt(new Scanner(System.in).nextLine());
+            case "square": {
+                ArrayList<Square> arrayList = gson.fromJson(s,ArrayList.class);
+                System.out.println(arrayList);
+                int index = Integer.parseInt(new Scanner(System.in).nextLine());
+                while (!((index >= 0)&&(index < arrayList.size()))) {
+                    System.out.println("Not valid selection");
+                    index = Integer.parseInt(new Scanner(System.in).nextLine());
+                } return gson.toJson(arrayList.get(index));
             }
-            if (index == 1)
-                retVal.add(weapon);
+            case "string": {
+                ArrayList<String> arrayList = gson.fromJson(s,ArrayList.class);
+                System.out.println(arrayList);
+                int index = Integer.parseInt(new Scanner(System.in).nextLine());
+                while (!((index >= 0)&&(index < arrayList.size()))) {
+                    System.out.println("Not valid selection");
+                    index = Integer.parseInt(new Scanner(System.in).nextLine());
+                } return gson.toJson(arrayList.get(index));
+            }
+            case "weapon": {
+                ArrayList<Weapon> arrayList = gson.fromJson(s,ArrayList.class);
+                System.out.println(arrayList);
+                int index = Integer.parseInt(new Scanner(System.in).nextLine());
+                while (!((index >= 0)&&(index < arrayList.size()))) {
+                    System.out.println("Not valid selection");
+                    index = Integer.parseInt(new Scanner(System.in).nextLine());
+                } return gson.toJson(arrayList.get(index));
+            }
+            default: {
+                System.err.println("Unsupported type");
+            }
         }
-        return retVal;
+        return null;
     }
 
     @Override
-    public char chooseDirection() throws RemoteException {
+    public String multipleChoice(String obj, String s) throws RemoteException {
+        System.out.println("Make a multiple choice:");
 
-        System.out.println("Make a choose");
-        System.out.println("1. North\n2. South\n3. West\n4. East");
-        int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index <= 4)&&(index >= 1))) {
-            System.out.println("Invalid input");
-            index = Integer.parseInt(new Scanner(System.in).nextLine());
+        switch (obj) {
+            case "powerup": {
+                ArrayList<Powerup> arrayList = gson.fromJson(s,ArrayList.class);
+                ArrayList<Powerup> retVal = new ArrayList<>();
+                for (int i = 0 ; i < arrayList.size() ; i++) {
+                    System.out.println(arrayList.get(i) + "\n1. Yes\n0. No");
+                    int index = Integer.parseInt(new Scanner(System.in).nextLine());
+                    while (!((index == 0)||(index == 1))) {
+                        System.out.println("Not valid selection");
+                        index = Integer.parseInt(new Scanner(System.in).nextLine());
+                    }
+                    if (index == 1) retVal.add(arrayList.get(i));
+                }
+                return gson.toJson(retVal);
+            }
+            case "weapon": {
+                ArrayList<Weapon> arrayList = gson.fromJson(s,ArrayList.class);
+                ArrayList<Weapon> retVal = new ArrayList<>();
+                for (int i = 0 ; i < arrayList.size() ; i++) {
+                    System.out.println(arrayList.get(i) + "\n1. Yes\n0. No");
+                    int index = Integer.parseInt(new Scanner(System.in).nextLine());
+                    while (!((index == 0)||(index == 1))) {
+                        System.out.println("Not valid selection");
+                        index = Integer.parseInt(new Scanner(System.in).nextLine());
+                    }
+                    if (index == 1) retVal.add(arrayList.get(i));
+                }
+                return gson.toJson(retVal);
+            }
+            default: {
+                System.err.println("Unsupported type");
+            }
         }
-        switch (index) {
-            case 1:
-                return 'N';
-            case 2:
-                return 'S';
-            case 3:
-                return 'W';
-            default:
-                return 'E';
-        }
+        return null;
     }
 
     @Override
-    public String chooseString(ArrayList<String> s) throws RemoteException {
-
-        System.out.println("Make a choose");
+    public Boolean booleanQuestion(String s) throws RemoteException {
         System.out.println(s);
-        int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index < s.size())&&(index >= 0))) {
-            System.out.println("Invalid input");
-            index = Integer.parseInt(new Scanner(System.in).nextLine());
-        }
-        return s.get(index);
-    }
-
-    @Override
-    public Boolean chooseYesNo(String s) throws RemoteException {
-
-        System.out.println(s);
-        System.out.println("Answer Yes/No");
         System.out.println("1. Yes\n0. No");
         int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index <= 1)&&(index >= 0))) {
-            System.out.println("Invalid input");
+        while (!((index == 0)||(index == 1))) {
+            System.out.println("Not valid selection");
             index = Integer.parseInt(new Scanner(System.in).nextLine());
         }
-        if (index == 1)
-            return true;
-        else
-            return false;
-    }
 
-    @Override
-    public Color chooseColor() throws RemoteException {
-        System.out.println("Make a choose");
-        System.out.println("1. RED\n2. BLUE\n3. YELLOW");
-        int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index <= 3)&&(index >= 1))) {
-            System.out.println("Invalid input");
-            index = Integer.parseInt(new Scanner(System.in).nextLine());
-        }
-        if (index == 1)
-            return Color.RED;
-        else if (index == 2)
-            return Color.BLUE;
-        else
-            return Color.YELLOW;
+        if (index == 1) return true;
+        return false;
     }
 }

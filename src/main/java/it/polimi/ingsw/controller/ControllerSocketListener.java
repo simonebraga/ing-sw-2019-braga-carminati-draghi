@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 /**
  * This class keeps running during the game and receives the socket method invocations from client to controller
+ * @author simonebraga
  */
 public class ControllerSocketListener implements Runnable {
 
@@ -12,6 +13,11 @@ public class ControllerSocketListener implements Runnable {
     private Controller controller;
     private ClientSocket clientSocket;
 
+    /**
+     * This method initializes the class with the correct parameters
+     * @param controller is the controller whose methods are invoked
+     * @param clientSocket is the class used to answer to the client
+     */
     public ControllerSocketListener(Controller controller, ClientSocket clientSocket) {
 
         this.controller = controller;
@@ -19,6 +25,9 @@ public class ControllerSocketListener implements Runnable {
         System.out.println("ControllerSocketListener created");
     }
 
+    /**
+     * This method keeps running waiting messages from the client-side socket
+     */
     @Override
     public void run() {
         try {

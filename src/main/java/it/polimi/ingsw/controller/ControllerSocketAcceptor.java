@@ -8,6 +8,7 @@ import java.util.Properties;
 
 /**
  * This runnable class keeps waiting for new socket connections, and create a new thread for every socket connection in input
+ * @author simonebraga
  */
 public class ControllerSocketAcceptor implements Runnable {
 
@@ -15,6 +16,10 @@ public class ControllerSocketAcceptor implements Runnable {
     private ServerSocket serverSocket = null;
     private Controller controller;
 
+    /**
+     * This method initializes the socket acceptor with the correct parameters
+     * @param controller is the controller where new clients connected using socket are stored
+     */
     public ControllerSocketAcceptor(Controller controller) {
 
         try {

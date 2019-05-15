@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 /**
  * This class keeps running during the game and receives the socket method invocations from controller to client
+ * @author simonebraga
  */
 public class ClientSocketListener implements Runnable {
 
@@ -13,6 +14,11 @@ public class ClientSocketListener implements Runnable {
     private Scanner in;
 
 
+    /**
+     * This method initializes the class with the correct parameters
+     * @param client is the client associated to the listener
+     * @param controllerSocket is the class used to communicate with the controller
+     */
     public ClientSocketListener(Client client, ControllerSocket controllerSocket) {
         this.client = client;
         this.controllerSocket = controllerSocket;
@@ -53,42 +59,6 @@ public class ClientSocketListener implements Runnable {
                     switch (method) {
                         case "printMessage": {
                             client.printMessage(parameters);
-                            break;
-                        }
-                        case "choosePlayer": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseSquare": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseMultiplePowerUps": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseWeapon": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseMultipleWeapons": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseDirection": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseString": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseYesNo": {
-                            //TO DO
-                            break;
-                        }
-                        case "chooseColor": {
-                            //TO DO
                             break;
                         }
                         default: {

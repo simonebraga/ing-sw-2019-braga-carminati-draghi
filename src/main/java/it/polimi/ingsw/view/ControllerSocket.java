@@ -10,12 +10,18 @@ import java.rmi.RemoteException;
 
 /**
  * This class contains the socket implementation used to call the remote methods of the controller
+ * @author simonebraga
  */
 public class ControllerSocket implements ControllerRemote {
 
     private Socket socket;
     private PrintWriter out;
 
+    /**
+     * This methods initializes the class with the correct parameters
+     * @param socket is the socket to which this class sends messages
+     * @param client is used to create a socket listener on this socket
+     */
     public ControllerSocket(Socket socket, Client client) {
 
         this.socket = socket;
