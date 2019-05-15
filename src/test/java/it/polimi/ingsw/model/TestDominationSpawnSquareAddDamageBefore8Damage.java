@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.AfterEach;
@@ -12,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the normal functioning of the method addDamage before the SpawnPoint has been killed: the Player mark must be added to the list of Players marks, the other Players mark must not be modified.
@@ -43,11 +42,7 @@ class TestDominationSpawnSquareAddDamageBefore8Damage {
 
     @Test
     void addDamage() {
-        try {
-            square.addDamage(shooter);
-        } catch (KilledSpawnSquareException e) {
-            fail();
-        }
+        square.addDamage(shooter);
         while(!damages.isEmpty()){
             assertTrue(square.getDamage().remove(damages.get(0)));
             damages.remove(0);

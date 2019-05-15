@@ -5,10 +5,6 @@ import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
@@ -16,10 +12,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * This test suit verifies that createPay() and createMove() in FunctionalFactory class work correctly.
@@ -150,17 +146,8 @@ public class TestFunctionalFactory {
         int oldStartSquarePlayerNumber=player.getPosition().getPlayers().size();
         int oldDestinationSquarePlayerNumber=destination.getPlayers().size();
 
-        try {
-            move.doAction();
-        } catch (FullPocketException e) {
-            fail();
-        } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
-        }
+
+        move.doAction();
 
         assertEquals(destination,player.getPosition());
         assertEquals(oldStartSquarePlayerNumber-1,start.getPlayers().size());
@@ -178,17 +165,8 @@ public class TestFunctionalFactory {
         assertEquals(1, player.getAmmoPocket().getAmmo(Color.YELLOW));
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.BLUE));
 
-        try {
-            pay.doAction();
-        } catch (FullPocketException e) {
-            fail();
-        } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
-        }
+
+        pay.doAction();
 
         assertEquals(1,player.getAmmoPocket().getAmmo(Color.RED));
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.YELLOW));
@@ -198,17 +176,7 @@ public class TestFunctionalFactory {
         price1.add(Color.RED);
         FunctionalEffect pay1 = new FunctionalFactory().createPay(player,price1);
 
-        try {
-            pay1.doAction();
-        } catch (FullPocketException e) {
-            fail();
-        } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
-        }
+        pay1.doAction();
 
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.RED));
         assertEquals(0,player.getAmmoPocket().getAmmo(Color.YELLOW));

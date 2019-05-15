@@ -4,10 +4,6 @@ import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
-import it.polimi.ingsw.model.exceptionclasses.FullPocketException;
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
@@ -32,12 +28,8 @@ public class FunctionalFactory {
             TileSquare square = (TileSquare) player.getPosition();
             AmmoTile tileTemp = square.removeTile();
             player.getAmmoPocket().addAmmo(tileTemp.getAmmo());
-            if(tileTemp.getPowerup() == 1){
-                try {
-                    player.getPowerupPocket().addPowerup(table.getPowerupDeck().draw());
-                } catch (FullPocketException e) {
-                    e.printStackTrace();
-                }
+            if(tileTemp.getPowerup() == 1 && player.getPowerupPocket().getPowerups().size()<3){
+                player.getPowerupPocket().addPowerup(table.getPowerupDeck().draw());
             }
         };
     }
@@ -66,11 +58,7 @@ public class FunctionalFactory {
         return () -> {
             player.getWeaponPocket().getWeapons().remove(weaponToGive);
             SpawnSquare square = (SpawnSquare) player.getPosition();
-            try {
-                player.getWeaponPocket().addWeapon(square.switchWeapon(weaponToTake, weaponToGive));
-            } catch (FullPocketException e) {
-                e.printStackTrace();
-            }
+            player.getWeaponPocket().addWeapon(square.switchWeapon(weaponToTake, weaponToGive));
         };
     }
 
@@ -113,13 +101,7 @@ public class FunctionalFactory {
             Integer toAdd = 0;
             if (damage > 0)
                 toAdd = target.getMarkTrack().removeMarks(killer);
-            try {
-                target.getDamageTrack().addDamage(killer,damage + toAdd);
-            } catch (KilledPlayerException e) {
-                throw new KilledPlayerException();
-            } catch (OverKilledPlayerException e) {
-                throw new OverKilledPlayerException();
-            }
+            target.getDamageTrack().addDamage(killer,damage + toAdd);
             target.getMarkTrack().addMarks(killer,marks);
         };
     }
@@ -132,12 +114,6 @@ public class FunctionalFactory {
      * @return FunctionalEffect that adds 1 damage to a spawn square
      */
     public FunctionalEffect createDamageSpawn(Player killer, DominationSpawnSquare spawnSquare){
-        return () -> {
-            try {
-                spawnSquare.addDamage(killer);
-            } catch (KilledSpawnSquareException e) {
-                throw new KilledSpawnSquareException();
-            }
-        };
+        return () -> spawnSquare.addDamage(killer);
     }
 }

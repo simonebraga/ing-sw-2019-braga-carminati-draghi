@@ -1,8 +1,5 @@
 package it.polimi.ingsw.model.playerclasses;
 
-import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
-
 import java.util.ArrayList;
 
 /**
@@ -36,18 +33,11 @@ public class DamageTrack {
      * This method adds damage to the damage track, and signals if the target player has been killed
      * @param player is who made damage
      * @param n is how much damage the target player received
-     * @throws KilledPlayerException when the target player gets killed
-     * @throws OverKilledPlayerException when the target player gets overkilled
      */
-    public void addDamage(Player player, Integer n) throws KilledPlayerException, OverKilledPlayerException {
+    public void addDamage(Player player, Integer n) {
 
         for (int i = 0; i < n; i++)
             if (damage.size() < 12)
                 damage.add(player);
-
-        if (damage.size() == 11)
-            throw new KilledPlayerException();
-        else if (damage.size() == 12)
-            throw new OverKilledPlayerException();
     }
 }
