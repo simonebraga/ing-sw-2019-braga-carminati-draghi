@@ -8,7 +8,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.AfterEach;
@@ -89,8 +88,6 @@ class TestFunctionalFactorySwitchWeapon {
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
             fail();
         }
         assertTrue(player.getWeaponPocket().getWeapons().containsAll(playerWeapons));

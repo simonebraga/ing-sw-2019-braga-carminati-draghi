@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,8 +51,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         }catch (KilledPlayerException e) {
             fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         assertEquals(1,player.getDamageTrack().getDamage().size());
@@ -64,8 +61,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         } catch (KilledPlayerException e) {
             assertTrue(true);
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         assertEquals(11,playerAboutToDie.getDamageTrack().getDamage().size());
@@ -74,8 +69,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         } catch (KilledPlayerException e) {
             assertTrue(true);
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         assertEquals(12,playerAboutToDie.getDamageTrack().getDamage().size());
@@ -97,8 +90,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         assertEquals(3 , player.getDamageTrack().getDamage().size());
@@ -108,8 +99,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
             fail();
         }
 
@@ -121,8 +110,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         } catch (KilledPlayerException e) {
             assertTrue(true);
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         assertEquals(12 , playerAboutToDie.getDamageTrack().getDamage().size());

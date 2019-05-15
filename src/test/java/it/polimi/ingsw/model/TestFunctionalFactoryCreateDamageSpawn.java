@@ -5,13 +5,12 @@ import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -30,11 +29,7 @@ class TestFunctionalFactoryCreateDamageSpawn {
 
         square = new DominationSpawnSquare(null,null,null,null, Color.YELLOW);
         for (int i = 0; i < 6; i++) {
-            try {
-                square.addDamage(player);
-            } catch (KilledSpawnSquareException e) {
-                fail();
-            }
+            square.addDamage(player);
         }
 
     }
@@ -48,16 +43,14 @@ class TestFunctionalFactoryCreateDamageSpawn {
             effect.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (KilledSpawnSquareException e) {
-            assertTrue(true);
         }
+
+        assertEquals(8, square.getDamage().size());
     }
 }

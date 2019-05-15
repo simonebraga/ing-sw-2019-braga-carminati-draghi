@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
@@ -120,12 +119,6 @@ public class FunctionalFactory {
      * @return FunctionalEffect that adds 1 damage to a spawn square
      */
     public FunctionalEffect createDamageSpawn(Player killer, DominationSpawnSquare spawnSquare){
-        return () -> {
-            try {
-                spawnSquare.addDamage(killer);
-            } catch (KilledSpawnSquareException e) {
-                throw new KilledSpawnSquareException();
-            }
-        };
+        return () -> spawnSquare.addDamage(killer);
     }
 }

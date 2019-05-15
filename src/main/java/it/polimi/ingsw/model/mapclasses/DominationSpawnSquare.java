@@ -2,8 +2,6 @@ package it.polimi.ingsw.model.mapclasses;
 
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.playerclasses.DoubleKillCounter;
 import it.polimi.ingsw.model.playerclasses.Player;
 
 import java.util.ArrayList;
@@ -59,14 +57,9 @@ public class DominationSpawnSquare extends SpawnSquare{
 
     /**
      * Adds one damage from the Player to the SpawnPoint.
-     * <p>When the SpawnPoint gets the 8th damage it also throws a KilledSpawnSquareException.</p>
      * @param shooter The Player that has done the damage.
-     * @throws KilledSpawnSquareException The SpawnSquare has been killed: it has received the 8th damage mark.
      */
-    public void addDamage(Player shooter) throws KilledSpawnSquareException{
+    public void addDamage(Player shooter){
         getDamage().add(shooter);
-        if(getDamage().size()==8){
-            throw new KilledSpawnSquareException();
-        }
     }
 }

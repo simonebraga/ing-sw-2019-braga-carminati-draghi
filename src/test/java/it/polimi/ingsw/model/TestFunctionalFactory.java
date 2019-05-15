@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
@@ -151,8 +150,6 @@ public class TestFunctionalFactory {
             move.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         assertEquals(destination,player.getPosition());
@@ -175,8 +172,6 @@ public class TestFunctionalFactory {
             pay.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (KilledSpawnSquareException e) {
-            fail();
         }
 
         assertEquals(1,player.getAmmoPocket().getAmmo(Color.RED));
@@ -190,8 +185,6 @@ public class TestFunctionalFactory {
         try {
             pay1.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
             fail();
         }
 
