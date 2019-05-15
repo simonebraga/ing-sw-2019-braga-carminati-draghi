@@ -35,6 +35,23 @@ public class GameTable {
      */
     private Player currentTurnPlayer;
 
+    /**
+     * This constructor initializes all attributes to null.
+     *
+     * @author Draghi96
+     */
+    public GameTable() {
+        this.startingPlayerMarker=null;
+        this.killshotTrack=null;
+        this.doubleKillCounter=null;
+        this.gameMap=null;
+        this.players=null;
+        this.weaponDeck=null;
+        this.powerupDeck=null;
+        this.ammoTileDeck=null;
+        this.currentTurnPlayer=null;
+    }
+
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck) {
         this.startingPlayerMarker = startingPlayerMarker;
         this.killshotTrack = killshotTrack;

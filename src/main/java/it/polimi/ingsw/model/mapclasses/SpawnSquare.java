@@ -14,13 +14,21 @@ public class SpawnSquare extends Square {
     /**
      * Represents the color of the SpawnPoint.
      */
-    private final Color color;
+    private Color color;
 
     /**
      * Represents the Weapons that can be bought in the SpawnPoint.
      */
     private ArrayList<Weapon> weapons;
 
+    /**
+     * This constructor initializes all attributes to null.
+     */
+    public SpawnSquare() {
+        super(null,null,null,null);
+        this.color=null;
+        this.weapons=null;
+    }
 
     public SpawnSquare(Border up, Border down, Border left, Border right, Color color) {
         super(up, down, left, right);
@@ -28,6 +36,12 @@ public class SpawnSquare extends Square {
         this.weapons = new ArrayList<>();
     }
 
+    /**
+     * This method sets the color attribute to a new Color value.
+     *
+     * @param color a Color value to which the color attribute will be set.
+     */
+    public void setColor(Color color) {this.color=color;}
 
     public Color getColor() {
         return color;

@@ -26,6 +26,14 @@ public class AmmoTile implements Card{
     private Integer powerup;
 
     /**
+     * This constructor initializes all attributes to null.
+     */
+    public AmmoTile() {
+        this.ammo=null;
+        this.powerup=null;
+    }
+
+    /**
      * This constructor initializes all ammo tile's attributes.
      *
      * @param ammo an arraylist of Color enumeration that represents the ammo value of that ammo tile.
@@ -52,5 +60,23 @@ public class AmmoTile implements Card{
      */
     public Integer getPowerup() {
         return powerup;
+    }
+
+    /**
+     * This method sets a new ArrayList of Color as new ammo list.
+     *
+     * @param ammo a new ArrayList of Color to which ammo will be set.
+     */
+    public void setAmmo(ArrayList<Color> ammo) {
+        this.ammo = ammo;
+    }
+
+    /**
+     * This method sets a new value for the powerup attribute.
+     *
+     * @param powerup an Integer value to which powerup will be changed to.
+     */
+    public void setPowerup(Integer powerup) {
+        this.powerup = powerup;
     }
 }

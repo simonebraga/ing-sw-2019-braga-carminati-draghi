@@ -15,19 +15,28 @@ public class GameMap {
      * Contains the Squares of the map and the position of each Square in the map.
      * <p>It can contain some Square null when there is no Square in that position</p>
      */
-    private final Square[][] grid;
+    private Square[][] grid;
 
     /**
      * Contains the list of Squares that are SpawnSquare. It makes faster to see which Squares
      * are SpawnSquare.
      */
-    private final ArrayList<Square> spawnSquares;
+    private ArrayList<Square> spawnSquares;
 
     /**
      * Contains the list of Squares that are TileSquare. It makes faster to see which Squares
      * are TileSquare.
      */
-    private final ArrayList<Square> tileSquares;
+    private ArrayList<Square> tileSquares;
+
+    /**
+     * This constructors initializes all attributes to null.
+     */
+    public GameMap() {
+        this.grid=null;
+        this.spawnSquares=null;
+        this.tileSquares=null;
+    }
 
     public GameMap(Square[][] grid, ArrayList<Square> spawnSquares, ArrayList<Square> tileSquares) {
         this.grid = grid;
@@ -46,6 +55,27 @@ public class GameMap {
     public ArrayList<Square> getTileSquares() {
         return tileSquares;
     }
+
+    /**
+     * This method sets a new Square[][] grid as attribute.
+     *
+     * @param grid a new Square[][] to which the grid attribute will be set.
+     */
+    public void setGrid(Square[][] grid) {this.grid=grid;}
+
+    /**
+     * This method sets a new ArrayList of Square as spawnSquares attribute.
+     *
+     * @param spawnSquares a new ArrayList of Square to which this attribute will be set.
+     */
+    public void setSpawnSquares(ArrayList<Square> spawnSquares) {this.spawnSquares=spawnSquares;}
+
+    /**
+     * This method sets a new ArrayList of Square as tileSquares attribute.
+     *
+     * @param tileSquares a new ArrayList of Square o which this attribute will be set.
+     */
+    public void setTileSquares(ArrayList<Square> tileSquares) {this.tileSquares=tileSquares;}
 
     /**
      * Return the coordinates of the Square passed by parameter.

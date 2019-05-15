@@ -25,6 +25,14 @@ public class Powerup implements Card{
     private PowerupName name;
 
     /**
+     * This constructor initializes all values to null.
+     */
+    public Powerup() {
+        this.color=null;
+        this.name=null;
+    }
+
+    /**
      * This constructor initializes a powerup instance and its attributes values.
      * <p>This constructor should be invoked only in a game setup phase.</p>
      *
@@ -52,5 +60,23 @@ public class Powerup implements Card{
      */
     public PowerupName getName() {
         return name;
+    }
+
+    /**
+     * This method sets a new value for color attribute.
+     *
+     * @param color a new Color to which the color attribute will be set.
+     */
+    public void setColor(Color color){
+        this.color=color;
+    }
+
+    /**
+     * This method sets a new value for the name attribute.
+     *
+     * @param name a new PowerupName to which the name attribute will be set.
+     */
+    public void setName(PowerupName name) {
+        this.name=name;
     }
 }
