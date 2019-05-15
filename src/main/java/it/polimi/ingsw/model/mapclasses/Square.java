@@ -12,26 +12,37 @@ public class Square {
     /**
      * Represents the upper border of the Square
      */
-    private final Border up;
+    private Border up;
     /**
      * Represents the inferior border of the Square
      */
-    private final Border down;
+    private Border down;
 
     /**
      * Represents the left border of the Square
      */
-    private final Border left;
+    private Border left;
 
     /**
      * Represents the right border of the Square
      */
-    private final Border right;
+    private Border right;
 
     /**
      * Represents all the players that are positioned in that Square
      */
     private ArrayList<Player> players;
+
+    /**
+     * This constructor initializes all attributes to null.
+     */
+    public Square() {
+        this.right=null;
+        this.left=null;
+        this.up=null;
+        this.down=null;
+        this.players=null;
+    }
 
     public Square(Border up, Border down, Border left, Border right) {
         this.up = up;
@@ -40,6 +51,34 @@ public class Square {
         this.right = right;
         this.players = new ArrayList<>();
     }
+
+    /**
+     * This method sets the up attribute to a new value.
+     *
+     * @param up a new Border value for up attribute.
+     */
+    public void setUp(Border up) {this.up=up;}
+
+    /**
+     * This method sets the down attribute to a new value.
+     *
+     * @param down a new Border value for down attribute.
+     */
+    public void setDown(Border down) {this.down=down;}
+
+    /**
+     * This method sets the left attribute to a new value.
+     *
+     * @param left a new Border value for left attribute.
+     */
+    public void setLeft(Border left) {this.left=left;}
+
+    /**
+     * This method sets the right attribute to a new value.
+     *
+     * @param right a new Border value for right attribute.
+     */
+    public void setRight(Border right) {this.right=right;}
 
     public Border getUp() {
         return up;

@@ -19,7 +19,7 @@ public class Weapon implements Card{
      * This attribute is an arraylist containing the list of ammo required to load the weapon.
      * It is initialized when the weapon is created, and it is final because weapon price does not change.
      */
-    private final ArrayList<Color> price;
+    private ArrayList<Color> price;
 
     /**
      * This attribute is the enumeration representing the weapon identifier.
@@ -31,6 +31,15 @@ public class Weapon implements Card{
      * This attribute is a boolean that knows if the weapon is loaded or not.
      */
     private Boolean isLoaded;
+
+    /**
+     * This constructor initializes all values to null.
+     */
+    public Weapon() {
+        this.price = null;
+        this.name=null;
+        this.isLoaded=null;
+    }
 
     /**
      * This constructor initializes a weapon card instance.
@@ -73,6 +82,33 @@ public class Weapon implements Card{
      */
     public Boolean getLoaded() {
         return isLoaded;
+    }
+
+    /**
+     * This method sets the name value to another enumerated WeaponName class.
+     *
+     * @param name is a WeaponName enum object to which set the new name.
+     */
+    public void setName(WeaponName name) {
+        this.name = name;
+    }
+
+    /**
+     * This method sets a new arraylist of Color as new price.
+     *
+     * @param price a new ArrayList of Color to which set the new price.
+     */
+    public void setPrice(ArrayList<Color> price) {
+        this.price=price;
+    }
+
+    /**
+     * This method sets the new Boolean value for the isLoaded attribute.
+     *
+     * @param value a Boolean to which isLoaded will be set.
+     */
+    public void setIsLoaded(Boolean value) {
+        this.isLoaded=value;
     }
 
     /**

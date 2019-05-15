@@ -13,6 +13,14 @@ public class TileSquare extends Square {
      */
     private AmmoTile tile;
 
+    /**
+     * This constructor sets all attributes to null.
+     */
+    public TileSquare() {
+        super(null,null,null,null);
+        this.tile=null;
+    }
+
     public TileSquare(Border up, Border down, Border left, Border right) {
         super(up, down, left, right);
         tile = null;
