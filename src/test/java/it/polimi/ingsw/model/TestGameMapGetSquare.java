@@ -2,7 +2,9 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.mapclasses.GameMap;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.mapclasses.TileSquare;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +37,7 @@ class TestGameMapGetSquare {
         grid[1][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
         grid[1][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
         grid[2][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        gamemap = new GameMap(grid, new ArrayList<Square>(), new ArrayList<Square>());
+        gamemap = new GameMap(grid, new ArrayList<SpawnSquare>(), new ArrayList<TileSquare>());
         squareToGet = grid[XCOORD][YCOORD];
     }
 

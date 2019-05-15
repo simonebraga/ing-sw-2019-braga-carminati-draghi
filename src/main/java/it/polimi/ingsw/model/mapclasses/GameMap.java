@@ -21,13 +21,13 @@ public class GameMap {
      * Contains the list of Squares that are SpawnSquare. It makes faster to see which Squares
      * are SpawnSquare.
      */
-    private ArrayList<Square> spawnSquares;
+    private ArrayList<SpawnSquare> spawnSquares;
 
     /**
      * Contains the list of Squares that are TileSquare. It makes faster to see which Squares
      * are TileSquare.
      */
-    private ArrayList<Square> tileSquares;
+    private ArrayList<TileSquare> tileSquares;
 
     /**
      * This constructors initializes all attributes to null.
@@ -38,7 +38,7 @@ public class GameMap {
         this.tileSquares=null;
     }
 
-    public GameMap(Square[][] grid, ArrayList<Square> spawnSquares, ArrayList<Square> tileSquares) {
+    public GameMap(Square[][] grid, ArrayList<SpawnSquare> spawnSquares, ArrayList<TileSquare> tileSquares) {
         this.grid = grid;
         this.spawnSquares = spawnSquares;
         this.tileSquares = tileSquares;
@@ -48,11 +48,11 @@ public class GameMap {
         return grid;
     }
 
-    public ArrayList<Square> getSpawnSquares() {
+    public ArrayList<SpawnSquare> getSpawnSquares() {
         return spawnSquares;
     }
 
-    public ArrayList<Square> getTileSquares() {
+    public ArrayList<TileSquare> getTileSquares() {
         return tileSquares;
     }
 
@@ -68,14 +68,14 @@ public class GameMap {
      *
      * @param spawnSquares a new ArrayList of Square to which this attribute will be set.
      */
-    public void setSpawnSquares(ArrayList<Square> spawnSquares) {this.spawnSquares=spawnSquares;}
+    public void setSpawnSquares(ArrayList<SpawnSquare> spawnSquares) {this.spawnSquares=spawnSquares;}
 
     /**
      * This method sets a new ArrayList of Square as tileSquares attribute.
      *
      * @param tileSquares a new ArrayList of Square o which this attribute will be set.
      */
-    public void setTileSquares(ArrayList<Square> tileSquares) {this.tileSquares=tileSquares;}
+    public void setTileSquares(ArrayList<TileSquare> tileSquares) {this.tileSquares=tileSquares;}
 
     /**
      * Return the coordinates of the Square passed by parameter.

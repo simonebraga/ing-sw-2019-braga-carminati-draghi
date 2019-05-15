@@ -30,7 +30,7 @@ public class DamageTrack {
     }
 
     /**
-     * This method adds damage to the damage track, and signals if the target player has been killed
+     * This method adds damage to the damage track.
      * @param player is who made damage
      * @param n is how much damage the target player received
      */

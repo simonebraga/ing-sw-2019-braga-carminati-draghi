@@ -6,7 +6,9 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.mapclasses.GameMap;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,12 +65,12 @@ public class TestFunctionalFactory {
     /**
      * This is a list of spawn squares created to fill the map grid.
      */
-    private ArrayList<Square> spawnSquares;
+    private ArrayList<SpawnSquare> spawnSquares;
 
     /**
      * This is a list of tile squares created to fill the map grid.
      */
-    private ArrayList<Square> tileSquares;
+    private ArrayList<TileSquare> tileSquares;
 
     //effects
     /**
@@ -107,7 +109,7 @@ public class TestFunctionalFactory {
         spawnSquares.clear();
         tileSquares = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            tileSquares.add(new Square(Border.WALL,Border.WALL,Border.WALL,Border.WALL));
+            tileSquares.add(new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL));
         }
         int k=0;
         for (int i = 0; i < 4; i++) {
