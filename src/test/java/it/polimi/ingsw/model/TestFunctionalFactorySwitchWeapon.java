@@ -9,7 +9,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.AfterEach;
@@ -18,7 +17,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests the normal functioning of the function that switches two weapons between a Square and a Player:
@@ -89,8 +89,6 @@ class TestFunctionalFactorySwitchWeapon {
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
             fail();
         } catch (KilledSpawnSquareException e) {
             fail();

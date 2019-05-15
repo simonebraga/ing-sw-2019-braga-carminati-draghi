@@ -12,7 +12,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.mapclasses.TileSquare;
@@ -95,9 +94,7 @@ class TestFunctionalFactoryGrabAmmo {
             effect.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
-        } catch (KilledSpawnSquareException e) {
+        }  catch (KilledSpawnSquareException e) {
             fail();
         }
         assertEquals(player.getAmmoPocket().getAmmo(Color.BLUE), 1);
@@ -117,8 +114,6 @@ class TestFunctionalFactoryGrabAmmo {
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
             fail();
         } catch (KilledSpawnSquareException e) {
             fail();

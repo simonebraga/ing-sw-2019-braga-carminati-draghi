@@ -6,13 +6,13 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This is the test suite for createDamageSpawn in FunctionalFactory class
@@ -48,8 +48,6 @@ class TestFunctionalFactoryCreateDamageSpawn {
             effect.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         } catch (KilledSpawnSquareException e) {
             fail();
         }
@@ -57,8 +55,6 @@ class TestFunctionalFactoryCreateDamageSpawn {
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
             fail();
         } catch (KilledSpawnSquareException e) {
             assertTrue(true);

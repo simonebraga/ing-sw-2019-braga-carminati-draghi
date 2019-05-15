@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
@@ -15,10 +14,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.ArrayList;
 
 /**
  * This test suit verifies that createPay() and createMove() in FunctionalFactory class work correctly.
@@ -153,8 +151,6 @@ public class TestFunctionalFactory {
             move.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         } catch (KilledSpawnSquareException e) {
             fail();
         }
@@ -179,8 +175,6 @@ public class TestFunctionalFactory {
             pay.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         } catch (KilledSpawnSquareException e) {
             fail();
         }
@@ -196,8 +190,6 @@ public class TestFunctionalFactory {
         try {
             pay1.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
             fail();
         } catch (KilledSpawnSquareException e) {
             fail();

@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,8 +36,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             playerAboutToDie.getDamageTrack().addDamage(killer,10);
         } catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         }
 
     }
@@ -55,8 +52,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         }catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         } catch (KilledSpawnSquareException e) {
             fail();
         }
@@ -69,8 +64,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         } catch (KilledPlayerException e) {
             assertTrue(true);
-        } catch (OverKilledPlayerException e) {
-            fail();
         } catch (KilledSpawnSquareException e) {
             fail();
         }
@@ -80,8 +73,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
             assertTrue(true);
         } catch (KilledSpawnSquareException e) {
             fail();
@@ -106,8 +97,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         } catch (KilledSpawnSquareException e) {
             fail();
         }
@@ -120,8 +109,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
             effect.doAction();
         } catch (KilledPlayerException e) {
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         } catch (KilledSpawnSquareException e) {
             fail();
         }
@@ -133,8 +120,6 @@ class TestFunctionalFactoryCreateDamagePlayer {
         try {
             effect.doAction();
         } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
             assertTrue(true);
         } catch (KilledSpawnSquareException e) {
             fail();

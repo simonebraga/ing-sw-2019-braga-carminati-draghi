@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
 import it.polimi.ingsw.model.exceptionclasses.KilledSpawnSquareException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
@@ -108,8 +107,6 @@ public class FunctionalFactory {
                 target.getDamageTrack().addDamage(killer,damage + toAdd);
             } catch (KilledPlayerException e) {
                 throw new KilledPlayerException();
-            } catch (OverKilledPlayerException e) {
-                throw new OverKilledPlayerException();
             }
             target.getMarkTrack().addMarks(killer,marks);
         };

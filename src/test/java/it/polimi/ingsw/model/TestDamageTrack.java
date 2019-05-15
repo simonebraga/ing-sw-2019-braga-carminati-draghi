@@ -2,7 +2,6 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.KilledPlayerException;
-import it.polimi.ingsw.model.exceptionclasses.OverKilledPlayerException;
 import it.polimi.ingsw.model.playerclasses.DamageTrack;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,8 +37,6 @@ class TestDamageTrack {
             track.addDamage(player,3);
         } catch (KilledPlayerException e){
             fail();
-        } catch (OverKilledPlayerException e) {
-            fail();
         }
         assertEquals(new ArrayList<Player>(Arrays.asList(player,player,player)) , track.getDamage());
 
@@ -55,16 +52,6 @@ class TestDamageTrack {
         try {
             track.addDamage(player,11);
         } catch (KilledPlayerException e) {
-            assertTrue(true);
-        } catch (OverKilledPlayerException e) {
-            fail();
-        }
-
-        try {
-            track.addDamage(player,1);
-        } catch (KilledPlayerException e) {
-            fail();
-        } catch (OverKilledPlayerException e) {
             assertTrue(true);
         }
     }
