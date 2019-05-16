@@ -44,6 +44,22 @@ public class GameMap {
         this.tileSquares = tileSquares;
     }
 
+    /**
+     * This private method sets to null Square elements of the grid attribute that show borders equals to null.
+     *
+     * @param grid a grid to be formatted.
+     * @author Draghi96
+     */
+    private void setValuesGrid(Square[][] grid) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (grid[i][j].getUp()==null) {
+                    grid[i][j] = null;
+                }
+            }
+        }
+    }
+
     public Square[][] getGrid() {
         return grid;
     }
@@ -61,7 +77,10 @@ public class GameMap {
      *
      * @param grid a new Square[][] to which the grid attribute will be set.
      */
-    public void setGrid(Square[][] grid) {this.grid=grid;}
+    public void setGrid(Square[][] grid) {
+        setValuesGrid(grid);
+        this.grid=grid;
+    }
 
     /**
      * This method sets a new ArrayList of Square as spawnSquares attribute.

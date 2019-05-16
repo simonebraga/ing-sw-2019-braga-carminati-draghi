@@ -1,14 +1,26 @@
 package it.polimi.ingsw.model.mapclasses;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.playerclasses.Player;
 
 import java.util.ArrayList;
 
+@JsonTypeInfo(  use = JsonTypeInfo.Id.NAME,
+                include = JsonTypeInfo.As.PROPERTY,
+                property = "type")
+
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TileSquare.class, name = "TileSquare"),
+        @JsonSubTypes.Type(value = SpawnSquare.class, name = "SpawnSquare"),
+        @JsonSubTypes.Type(value = DominationSpawnSquare.class, name = "DominationSpawnSquare")
+        })
+
 /**
  * Represent a single Square on the map of the game.
  */
-public class Square {
+public class Square{
     /**
      * Represents the upper border of the Square
      */
@@ -41,7 +53,7 @@ public class Square {
         this.left=null;
         this.up=null;
         this.down=null;
-        this.players=null;
+        this.players=new ArrayList<>();
     }
 
     public Square(Border up, Border down, Border left, Border right) {

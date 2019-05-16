@@ -36,9 +36,9 @@ public class Weapon implements Card{
      * This constructor initializes all values to null.
      */
     public Weapon() {
-        this.price = null;
-        this.name=null;
-        this.isLoaded=null;
+        this.price = new ArrayList<>();
+        this.name = null;
+        this.isLoaded = null;
     }
 
     /**

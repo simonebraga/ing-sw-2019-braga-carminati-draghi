@@ -29,7 +29,7 @@ public class AmmoTile implements Card{
      * This constructor initializes all attributes to null.
      */
     public AmmoTile() {
-        this.ammo=null;
+        this.ammo=new ArrayList<>();
         this.powerup=null;
     }
 

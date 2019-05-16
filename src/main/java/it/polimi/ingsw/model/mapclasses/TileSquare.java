@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.mapclasses;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.cardclasses.AmmoTile;
 
@@ -24,6 +26,13 @@ public class TileSquare extends Square {
     public TileSquare(Border up, Border down, Border left, Border right) {
         super(up, down, left, right);
         tile = null;
+    }
+
+    @JsonCreator
+    public TileSquare(@JsonProperty("up") Border up, @JsonProperty("down") Border down, @JsonProperty("left") Border left, @JsonProperty("right") Border right,
+                      @JsonProperty("tile") AmmoTile tile) {
+        super(up,down,left,right);
+        this.tile=tile;
     }
 
     public AmmoTile getTile() {

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.mapclasses;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.playerclasses.Player;
@@ -27,13 +29,19 @@ public class DominationSpawnSquare extends SpawnSquare{
      */
     public DominationSpawnSquare() {
         super(null,null,null,null,null);
-        this.damage=null;
-        this.value=null;
+        this.damage=new ArrayList<>();
     }
 
     public DominationSpawnSquare(Border up, Border down, Border left, Border right, Color color) {
         super(up, down, left, right, color);
         damage = new ArrayList<>();
+    }
+
+    @JsonCreator
+    public DominationSpawnSquare(@JsonProperty("up") Border up, @JsonProperty("down") Border down, @JsonProperty("left") Border left, @JsonProperty("right") Border right,
+                                 @JsonProperty("color") Color color, @JsonProperty("damage") ArrayList<Player> damage) {
+        super(up,down,left,right,color);
+        this.damage=damage;
     }
 
     public static ArrayList<Integer> getValue() {

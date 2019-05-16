@@ -1,10 +1,22 @@
 package it.polimi.ingsw.model.mapclasses;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 
 import java.util.ArrayList;
+
+@JsonTypeInfo(  use = JsonTypeInfo.Id.NAME,
+                include = JsonTypeInfo.As.PROPERTY,
+                property = "type")
+
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = DominationSpawnSquare.class, name = "DominationSpawnSquare"),
+        })
 
 /**
  * Represent a Square that is also a SpawnPoint.
@@ -34,6 +46,14 @@ public class SpawnSquare extends Square {
         super(up, down, left, right);
         this.color = color;
         this.weapons = new ArrayList<>();
+    }
+
+    @JsonCreator
+    public SpawnSquare(@JsonProperty("up") Border up, @JsonProperty("down") Border down, @JsonProperty("left") Border left, @JsonProperty("right") Border right,
+                       @JsonProperty("color") Color color, @JsonProperty("weapons") ArrayList<Weapon> weapons) {
+        super(up, down, left, right);
+        this.color=color;
+        this.weapons=weapons;
     }
 
     /**
