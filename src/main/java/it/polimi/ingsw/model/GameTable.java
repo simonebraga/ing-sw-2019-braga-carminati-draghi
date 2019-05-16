@@ -52,6 +52,18 @@ public class GameTable {
         this.currentTurnPlayer=null;
     }
 
+    public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck, Player currentTurnPlayer) {
+        this.startingPlayerMarker = startingPlayerMarker;
+        this.killshotTrack = killshotTrack;
+        this.doubleKillCounter = doubleKillCounter;
+        this.gameMap = gameMap;
+        this.players = players;
+        this.weaponDeck = weaponDeck;
+        this.powerupDeck = powerupDeck;
+        this.ammoTileDeck = ammoTileDeck;
+        this.currentTurnPlayer = currentTurnPlayer;
+    }
+
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck) {
         this.startingPlayerMarker = startingPlayerMarker;
         this.killshotTrack = killshotTrack;
