@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
+import it.polimi.ingsw.model.enumeratedclasses.Figure;
+import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.ClientRemote;
@@ -31,6 +33,11 @@ public class Client implements ClientRemote {
      */
     private ControllerRemote controller;
 
+    /**
+     * This attribute points to the view of the client. It is an interface to allow both GUI and CLI implementations
+     */
+    private ViewInterface view;
+
     private String remoteName;
     private String serverIp;
     private String clientIp;
@@ -41,13 +48,17 @@ public class Client implements ClientRemote {
     private Gson gson = new Gson();
 
     /**
+     *
      * @param i = 0 to use RMI technology
      *          = 1 to use Socket technology
+     * @param view is the view implementation on the client (it must be instantiated previously, CLI or GUI)
      * @throws RemoteException if there is any problem with the connection
      */
-    public Client(int i) throws RemoteException {
+    public Client(int i, ViewInterface view) throws RemoteException {
 
         try {
+
+            this.view = view;
 
             Properties properties = new Properties();
             properties.load(new FileReader("src/main/resources/network_settings.properties"));
@@ -85,7 +96,10 @@ public class Client implements ClientRemote {
         }
     }
 
-    //Javadoc TO DO
+    /**
+     * This method is used to register the client on the controller. It does not handle the outcome of the login procedure; it just request to the controller to login
+     * @param s is the nickname used for the login/registration
+     */
     public void login(String s) {
 
         try {
@@ -95,7 +109,9 @@ public class Client implements ClientRemote {
         }
     }
 
-    //Javadoc TO DO
+    /**
+     * This  methods is used to logout from the server, and should be used for the correct disconnection procedure. It does not handle the outcome of the procedure.
+     */
     public void logout() {
 
         try {
@@ -114,103 +130,52 @@ public class Client implements ClientRemote {
     @Override
     public String singleChoice(String obj, String s) throws RemoteException {
 
-        System.out.println("Make a choice:");
-
         switch (obj) {
             case "player": {
-                ArrayList<Player> arrayList = gson.fromJson(s,ArrayList.class);
-                System.out.println(arrayList);
-                int index = Integer.parseInt(new Scanner(System.in).nextLine());
-                while (!((index >= 0)&&(index < arrayList.size()))) {
-                    System.out.println("Not valid selection");
-                    index = Integer.parseInt(new Scanner(System.in).nextLine());
-                } return gson.toJson(arrayList.get(index));
-            }
-            case "square": {
-                ArrayList<Square> arrayList = gson.fromJson(s,ArrayList.class);
-                System.out.println(arrayList);
-                int index = Integer.parseInt(new Scanner(System.in).nextLine());
-                while (!((index >= 0)&&(index < arrayList.size()))) {
-                    System.out.println("Not valid selection");
-                    index = Integer.parseInt(new Scanner(System.in).nextLine());
-                } return gson.toJson(arrayList.get(index));
-            }
-            case "string": {
-                ArrayList<String> arrayList = gson.fromJson(s,ArrayList.class);
-                System.out.println(arrayList);
-                int index = Integer.parseInt(new Scanner(System.in).nextLine());
-                while (!((index >= 0)&&(index < arrayList.size()))) {
-                    System.out.println("Not valid selection");
-                    index = Integer.parseInt(new Scanner(System.in).nextLine());
-                } return gson.toJson(arrayList.get(index));
+                Figure[] figures = gson.fromJson(s,Figure[].class);
+                return gson.toJson(view.choosePlayer(figures));
             }
             case "weapon": {
-                ArrayList<Weapon> arrayList = gson.fromJson(s,ArrayList.class);
-                System.out.println(arrayList);
-                int index = Integer.parseInt(new Scanner(System.in).nextLine());
-                while (!((index >= 0)&&(index < arrayList.size()))) {
-                    System.out.println("Not valid selection");
-                    index = Integer.parseInt(new Scanner(System.in).nextLine());
-                } return gson.toJson(arrayList.get(index));
+                WeaponName[] weapons = gson.fromJson(s,WeaponName[].class);
+                return gson.toJson(view.chooseWeapon(weapons));
+            }
+            case "string": {
+                String[] strings = gson.fromJson(s,String[].class);
+                return gson.toJson(view.chooseString(strings));
+            }
+            case "powerup": {
+                Powerup[] powerups = gson.fromJson(s,Powerup[].class);
+                return gson.toJson(view.choosePowerup(powerups));
             }
             default: {
                 System.err.println("Unsupported type");
+                throw new RemoteException();
             }
         }
-        return null;
     }
 
     @Override
     public String multipleChoice(String obj, String s) throws RemoteException {
-        System.out.println("Make a multiple choice:");
 
         switch (obj) {
             case "powerup": {
-                ArrayList<Powerup> arrayList = gson.fromJson(s,ArrayList.class);
-                ArrayList<Powerup> retVal = new ArrayList<>();
-                for (int i = 0 ; i < arrayList.size() ; i++) {
-                    System.out.println(arrayList.get(i) + "\n1. Yes\n0. No");
-                    int index = Integer.parseInt(new Scanner(System.in).nextLine());
-                    while (!((index == 0)||(index == 1))) {
-                        System.out.println("Not valid selection");
-                        index = Integer.parseInt(new Scanner(System.in).nextLine());
-                    }
-                    if (index == 1) retVal.add(arrayList.get(i));
-                }
-                return gson.toJson(retVal);
+                Powerup[] powerups = gson.fromJson(s,Powerup[].class);
+                return gson.toJson(view.chooseMultiplePowerups(powerups));
             }
             case "weapon": {
-                ArrayList<Weapon> arrayList = gson.fromJson(s,ArrayList.class);
-                ArrayList<Weapon> retVal = new ArrayList<>();
-                for (int i = 0 ; i < arrayList.size() ; i++) {
-                    System.out.println(arrayList.get(i) + "\n1. Yes\n0. No");
-                    int index = Integer.parseInt(new Scanner(System.in).nextLine());
-                    while (!((index == 0)||(index == 1))) {
-                        System.out.println("Not valid selection");
-                        index = Integer.parseInt(new Scanner(System.in).nextLine());
-                    }
-                    if (index == 1) retVal.add(arrayList.get(i));
-                }
-                return gson.toJson(retVal);
+                WeaponName[] weapons = gson.fromJson(s,WeaponName[].class);
+                return gson.toJson(view.chooseMultipleWeapons(weapons));
             }
             default: {
                 System.err.println("Unsupported type");
+                throw new RemoteException();
             }
         }
-        return null;
     }
 
     @Override
     public Boolean booleanQuestion(String s) throws RemoteException {
-        System.out.println(s);
-        System.out.println("1. Yes\n0. No");
-        int index = Integer.parseInt(new Scanner(System.in).nextLine());
-        while (!((index == 0)||(index == 1))) {
-            System.out.println("Not valid selection");
-            index = Integer.parseInt(new Scanner(System.in).nextLine());
-        }
 
-        if (index == 1) return true;
-        return false;
+        return view.booleanQuestion(s);
     }
 }
