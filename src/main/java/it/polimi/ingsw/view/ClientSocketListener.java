@@ -61,6 +61,15 @@ public class ClientSocketListener implements Runnable {
                             client.printMessage(parameters);
                             break;
                         }
+                        case "singleChoice": {
+                            // TO DO
+                        }
+                        case "multipleChoice": {
+                            // TO DO
+                        }
+                        case "booleanQuestion": {
+                            // TO DO
+                        }
                         default: {
                             System.out.println("Received: " + line);
                         }

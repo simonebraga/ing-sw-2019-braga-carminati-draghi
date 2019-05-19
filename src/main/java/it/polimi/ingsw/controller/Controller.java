@@ -34,7 +34,7 @@ public class Controller implements ControllerRemote {
     private Boolean loginPhase = false;
 
     /**
-     * This attribute contains the association between nicknames and clients interfaces
+     * This attribute contains the association between nicknames and clients interfaces, keeping only the links to the currently connected players
      */
     private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
 
@@ -104,6 +104,17 @@ public class Controller implements ControllerRemote {
 
     public synchronized Map<String, ClientRemote> getClientMap() {
         return clientMap;
+    }
+
+    /**
+     * This method checks if the user associated to a player is connected
+     * @param player is the player to be checked
+     * @return boolean value true iff the user associated to player is connected
+     */
+    public synchronized Boolean isConnected(Player player) {
+
+        if (clientMap.containsKey(player.getUsername())) return true;
+        return false;
     }
 
     /**
