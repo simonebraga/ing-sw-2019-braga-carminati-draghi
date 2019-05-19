@@ -1,0 +1,45 @@
+{
+  "BasicEffect":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "ChainReaction":
+    [
+      {
+        "type": "ShootChain",
+        "player": null,
+        "numberOfReflections": 1
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE"]
+      }
+    ],
+  "HighVoltage":
+    [
+      {
+        "type": "ShootChain",
+        "player": null,
+        "numberOfReflections": 2
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE", "BLUE"]
+      }
+    ]
+}

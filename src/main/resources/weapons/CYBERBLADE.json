@@ -1,0 +1,227 @@
+{
+  "BasicEffect":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "BasicEffect+ShadowStep":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 1,
+        "sameDirection": false
+      }
+    ],
+  "ShadowStep+BasicEffect":
+    [
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 1,
+        "sameDirection": false
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "BasicEffect+Slice":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["YELLOW"]
+      }
+    ],
+  "BasicEffect+Slice+ShadowStep":
+  [
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 1,
+      "sameDirection": false
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["YELLOW"]
+    }
+  ],
+  "BasicEffect+ShadowStep+Slice":
+  [
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 1,
+      "sameDirection": false
+    },
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["YELLOW"]
+    }
+  ],
+  "ShadowStep+BasicEffect+Slice":
+  [
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 1,
+      "sameDirection": false
+    },
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["YELLOW"]
+    }
+  ]
+}

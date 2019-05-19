@@ -1,0 +1,23 @@
+{
+  "BasicMode":
+    [
+      {
+        "type": "ShootShockWave",
+        "player": null,
+        "tsunami": false
+      }
+    ],
+  "TsunamiMode":
+    [
+      {
+        "type": "ShootShockWave",
+        "player": null,
+        "tsunami": true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["YELLOW"]
+      }
+    ]
+}

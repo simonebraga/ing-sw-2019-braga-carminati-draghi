@@ -1,0 +1,25 @@
+{
+  "BasicMode":
+    [
+      {
+        "type": "ShootAndMarkAOE",
+        "player": null,
+        "damages": 1,
+        "marks": 1
+      }
+    ],
+  "NanoTracerMode":
+    [
+      {
+        "type": "ShootAndMarkAOE",
+        "player": null,
+        "damages": 1,
+        "marks": 2
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["RED"]
+      }
+    ]
+}

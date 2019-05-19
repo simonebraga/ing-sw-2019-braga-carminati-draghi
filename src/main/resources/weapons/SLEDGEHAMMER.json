@@ -1,0 +1,60 @@
+{
+  "BasicMode":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "PulverizeMode":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":3,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["RED"]
+      }
+    ],
+  "PulverizeMode+Move":
+    [
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 3,
+        "marks": 0,
+        "minDistShoot": 0,
+        "maxDistShoot": 0,
+        "maxMoves": 2,
+        "moveBeforeShoot": false,
+        "moveTargetOrShooter": true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["RED"]
+      }
+    ]
+}
