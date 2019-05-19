@@ -36,7 +36,6 @@ public class MarkTrack {
      * @param marks an HashMap of Player objects associated to Integer objects that will be the new attribute value.
      * @author Draghi96
      */
-    //TODO (for some reason this method destroys the whole program, solve the issue or delete the method)
     public void setMarks(HashMap<Player,Integer> marks) {
         this.marks=marks;
     }
