@@ -20,6 +20,17 @@ public class DoubleKillCounter {
     private Integer doubleKillValue;
 
     /**
+     * This constructor initializes all attributes to null.<br>
+     *     It's mainly used in Jackson JSON files fetching.
+     *
+     * @author Draghi96
+     */
+    public DoubleKillCounter() {
+        this.doubleKillValue=null;
+        this.list=new ArrayList<Player>();
+    }
+
+    /**
      * This method is the constructor of the class
      * @param doubleKillValue is the value of the double kill
      */
@@ -36,6 +47,28 @@ public class DoubleKillCounter {
 
     public Integer getDoubleKillValue() {
         return doubleKillValue;
+    }
+
+    /**
+     * This method sets a new value for list attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param list an ArrayList of Players that will represent the new list attribute.
+     * @author Draghi96
+     */
+    public void setList(ArrayList<Player> list) {
+        this.list=list;
+    }
+
+    /**
+     * This method sets a new value for the doubleKillValue attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param doubleKillValue an Integer that will represent the new doubleKillValue attribute.
+     * @author Draghi96
+     */
+    public void setDoubleKillValue(Integer doubleKillValue) {
+        this.doubleKillValue=doubleKillValue;
     }
 
     /**

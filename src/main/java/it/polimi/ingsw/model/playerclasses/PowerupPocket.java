@@ -25,6 +25,17 @@ public class PowerupPocket {
     }
 
     /**
+     * This method sets a new value for powerups attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param powerups an ArrayList of Powerup enumerated objects that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setPowerups(ArrayList<Powerup> powerups) {
+        this.powerups = powerups;
+    }
+
+    /**
      * This method tries to add a powerup in the powerup pocket of the player
      * @param powerup is the powerup to be added
      */

@@ -39,6 +39,15 @@ public class Deck <T extends Card>{
     }
 
     /**
+     * This constructor initializes all attributes to null.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     */
+    public Deck() {
+        this.activeCards=new ArrayList<>();
+        this.inactiveCards=new ArrayList<>();
+    }
+
+    /**
      * This method returns the arraylist of Cards of the deck from which all players draw new cards.
      *
      * @return an arraylist of Cards representing the cards deck.
@@ -54,6 +63,26 @@ public class Deck <T extends Card>{
      */
     public ArrayList<T> getInactiveCards() {
         return inactiveCards;
+    }
+
+    /**
+     * This method sets a ArrayList of Cards to be the new activeCards attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param activeCards an ArrayList of Cards to be used as new activeCards attribute.
+     */
+    public void setActiveCards(ArrayList<T> activeCards) {
+        this.activeCards=activeCards;
+    }
+
+    /**
+     * This method sets a ArrayList of Cards to be the new inactiveCards attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param inactiveCards an ArrayList of Cards to be used as new inactiveCards attribute.
+     */
+    public void setInactiveCards(ArrayList<T> inactiveCards) {
+        this.inactiveCards=inactiveCards;
     }
 
     /**

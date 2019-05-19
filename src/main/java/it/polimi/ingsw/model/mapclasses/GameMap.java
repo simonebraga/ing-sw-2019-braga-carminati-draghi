@@ -33,9 +33,9 @@ public class GameMap {
      * This constructors initializes all attributes to null.
      */
     public GameMap() {
-        this.grid=null;
-        this.spawnSquares=null;
-        this.tileSquares=null;
+        this.grid=new Square[3][4];
+        this.spawnSquares=new ArrayList<>();
+        this.tileSquares=new ArrayList<>();
     }
 
     public GameMap(Square[][] grid, ArrayList<SpawnSquare> spawnSquares, ArrayList<TileSquare> tileSquares) {

@@ -12,8 +12,8 @@ import java.util.ArrayList;
  */
 public class Player {
 
-    private final Figure figure;
-    private final String username;
+    private Figure figure;
+    private String username;
     private Square position;
     private Integer points;
     private DamageTrack damageTrack;
@@ -22,6 +22,25 @@ public class Player {
     private WeaponPocket weaponPocket;
     private PowerupPocket powerupPocket;
     private AmmoPocket ammoPocket;
+
+    /**
+     * This constructor sets all attributes to null.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @author Draghi96
+     */
+    public Player() {
+        this.figure=null;
+        this.username=null;
+        this.position=null;
+        this.points=0;
+        this.damageTrack=new DamageTrack();
+        this.markTrack=new MarkTrack();
+        this.pointTrack=new PointTrack(new ArrayList<Integer>());
+        this.weaponPocket=new WeaponPocket();
+        this.powerupPocket=new PowerupPocket();
+        this.ammoPocket=new AmmoPocket();
+    }
 
     /**
      * This method is the constructor of the class
@@ -79,6 +98,116 @@ public class Player {
 
     public AmmoPocket getAmmoPocket() {
         return ammoPocket;
+    }
+
+    /**
+     * This method sets a new value for figure attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param figure a Figure object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setFigure(Figure figure) {
+        this.figure=figure;
+    }
+
+    /**
+     * This method sets a new value for username attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param username a String object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setUsername(String username) {
+        this.username=username;
+    }
+
+    /**
+     * This method sets a new value for position attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param position a Square object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setPosition(Square position) {
+        this.position = position;
+    }
+
+    /**
+     * This method sets a new value for points attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param points an Integer object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+
+    /**
+     * This method sets a new value for damageTrack attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param damageTrack a DamageTrack object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setDamageTrack(DamageTrack damageTrack) {
+        this.damageTrack = damageTrack;
+    }
+
+    /**
+     * This method sets a new value for markTrack attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param markTrack a MarkTrack object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setMarkTrack(MarkTrack markTrack) {
+        this.markTrack = markTrack;
+    }
+
+    /**
+     * This method sets a new value for pointTrack attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param pointTrack a PointTrack object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setPointTrack(PointTrack pointTrack) {
+        this.pointTrack = pointTrack;
+    }
+
+    /**
+     * This method sets a new value for weaponPocket attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param weaponPocket a WeaponPocket object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setWeaponPocket(WeaponPocket weaponPocket) {
+        this.weaponPocket = weaponPocket;
+    }
+
+    /**
+     * This method sets a new value for powerupPocket attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param powerupPocket a PowerupPocket object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setPowerupPocket(PowerupPocket powerupPocket) {
+        this.powerupPocket = powerupPocket;
+    }
+
+    /**
+     * This method sets a new value for ammoPocket attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param ammoPocket a AmmoPocket object that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setAmmoPocket(AmmoPocket ammoPocket) {
+        this.ammoPocket = ammoPocket;
     }
 
     /**

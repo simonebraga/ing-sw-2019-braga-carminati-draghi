@@ -15,6 +15,16 @@ public class PointTrack {
     private ArrayList<Integer> value;
 
     /**
+     * This constructor sets all attributes to null.<br>
+     *     It's mainly used in Jackson JSON files fetching.
+     *
+     * @author Draghi96
+     */
+    public PointTrack() {
+        this.value=new ArrayList<>();
+    }
+
+    /**
      * This method is the constructor of the class
      * @param value is the default points-for-damage list, and must be specified by the caller
      */

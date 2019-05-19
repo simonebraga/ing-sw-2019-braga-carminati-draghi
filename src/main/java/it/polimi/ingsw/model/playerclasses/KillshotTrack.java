@@ -27,6 +27,18 @@ public class KillshotTrack {
     private ArrayList<Integer> value;
 
     /**
+     * This constructor initializes all attributes to null.<br>
+     *     It's mainly used in Jackson JSON files fetching.
+     *
+     * @author Draghi96
+     */
+    public KillshotTrack() {
+        this.value=new ArrayList<>();
+        this.killCount=null;
+        this.killTrack=new ArrayList<>();
+    }
+
+    /**
      * This method is the constructor of the class
      * @param killCount is the number of kills necessary to finish the game
      * @param value is the points for damage track of the killshot track
@@ -47,6 +59,39 @@ public class KillshotTrack {
 
     public ArrayList<Integer> getValue() {
         return value;
+    }
+
+    /**
+     * This method sets a new value for killTrack attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param killTrack an ArrayList of Players that will be the new killTrack attribute.
+     * @author Draghi96
+     */
+    public void setKillTrack(ArrayList<Player> killTrack) {
+        this.killTrack=killTrack;
+    }
+
+    /**
+     * This method sets a new value for killCount attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param killCount an Integer that will represent the new killCount attribute.
+     * @author Draghi96
+     */
+    public void setKillCount(Integer killCount) {
+        this.killCount=killCount;
+    }
+
+    /**
+     * This method sets a new value for value attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param value an ArrayList of Integer that will represent the new value attribute.
+     * @author Draghi96
+     */
+    public void setValue(ArrayList<Integer> value) {
+        this.value=value;
     }
 
     /**

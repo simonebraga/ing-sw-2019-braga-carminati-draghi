@@ -25,6 +25,17 @@ public class WeaponPocket {
     }
 
     /**
+     * This method sets a new value for weapons attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param weapons an ArrayList of Weapons enumerated objects that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setWeapons(ArrayList<Weapon> weapons) {
+        this.weapons = weapons;
+    }
+
+    /**
      * This method tries to add a weapon in the weapon pocket of the player
      * @param weapon is the weapon to be added
      */

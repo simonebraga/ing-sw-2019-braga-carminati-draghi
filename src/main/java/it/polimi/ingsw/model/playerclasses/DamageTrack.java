@@ -23,6 +23,17 @@ public class DamageTrack {
     }
 
     /**
+     * This method sets a new value for damage attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param damage an ArrayList of Player objects that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setDamage(ArrayList<Player> damage) {
+        this.damage=damage;
+    }
+
+    /**
      * This method resets to empty state the damage track
      */
     public void resetDamage() {

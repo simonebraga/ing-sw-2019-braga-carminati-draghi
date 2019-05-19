@@ -33,6 +33,17 @@ public class AmmoPocket {
     }
 
     /**
+     * This method sets a new value for ammo attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param ammo an EnumMap of Color objects associated to Integer objects that will be the new attribute value.
+     * @author Draghi96
+     */
+    public void setAmmo(EnumMap<Color,Integer> ammo) {
+        this.ammo=ammo;
+    }
+
+    /**
      * This method adds ammo to the ammo pocket of the player, considering the maximum limit, and handling locally the exceeding ammo
      * @param ammo is the ArrayList of ammo to add
      */

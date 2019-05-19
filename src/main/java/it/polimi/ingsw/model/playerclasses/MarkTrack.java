@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.playerclasses;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.util.HashMap;
 
 /**
@@ -9,10 +11,11 @@ import java.util.HashMap;
  */
 public class MarkTrack {
 
+    @JsonDeserialize(keyUsing = MarkTrackMapKeyDeserializer.class)
     private HashMap<Player,Integer> marks;
 
     public MarkTrack() {
-        marks = new HashMap<>();
+        this.marks = new HashMap<>();
     }
 
     /**
@@ -24,6 +27,18 @@ public class MarkTrack {
         if (marks.containsKey(player))
             return marks.get(player);
         return 0;
+    }
+
+    /**
+     * This method sets a new value for marks attribute.<br>
+     *     It's mainly used for Jackson JSON files fetching.
+     *
+     * @param marks an HashMap of Player objects associated to Integer objects that will be the new attribute value.
+     * @author Draghi96
+     */
+    //TODO (for some reason this method destroys the whole program, solve the issue or delete the method)
+    public void setMarks(HashMap<Player,Integer> marks) {
+        this.marks=marks;
     }
 
     /**
