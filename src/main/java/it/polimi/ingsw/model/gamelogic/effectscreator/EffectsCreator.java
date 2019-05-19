@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.gamelogic.effectscreator;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import it.polimi.ingsw.IllegalActionException;
+import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
-import it.polimi.ingsw.IllegalActionException;
+import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
