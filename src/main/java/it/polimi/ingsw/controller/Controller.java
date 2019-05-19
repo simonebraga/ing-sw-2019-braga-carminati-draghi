@@ -196,7 +196,14 @@ public class Controller implements ControllerRemote {
     }
 
     // 1
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to make a choice in a set of players
+     * @param player Player who must choose
+     * @param arrayList Set of players to choose from
+     * @return Player chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public Player choosePlayer(Player player, ArrayList<Player> arrayList) throws UnavailableUserException {
 
         Figure[] figures = new Figure[arrayList.size()];
@@ -225,7 +232,14 @@ public class Controller implements ControllerRemote {
     }
 
     // 3
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to make a choice in a set of powerups
+     * @param player Player who must choose
+     * @param arrayList Set of powerups to choose from
+     * @return Powerup chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public ArrayList<Powerup> chooseMultiplePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
 
         Powerup[] powerups = new Powerup[arrayList.size()];
@@ -240,7 +254,14 @@ public class Controller implements ControllerRemote {
     }
 
     // 4
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to make a choice in a set of weapons
+     * @param player Player who must choose
+     * @param arrayList Set of weapons to choose from
+     * @return Weapon chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public Weapon chooseWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
@@ -263,7 +284,13 @@ public class Controller implements ControllerRemote {
     }
 
     // 5
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to choose a direction
+     * @param player Player who must choose
+     * @return Direction chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public Character chooseDirection(Player player) throws UnavailableUserException {
 
         String[] directions = new String[4];
@@ -288,7 +315,14 @@ public class Controller implements ControllerRemote {
     }
 
     // 6
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to make a choice in a set of strings
+     * @param player Player who must choose
+     * @param arrayList Set of strings to choose from
+     * @return String chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public String chooseString(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
 
         String[] strings = new String[arrayList.size()];
@@ -303,7 +337,14 @@ public class Controller implements ControllerRemote {
     }
 
     // 7
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to answer yes or not to a question
+     * @param player Player who must answer
+     * @param string Boolean question
+     * @return Boolean answer of the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public Boolean booleanQuestion(Player player, String string) throws UnavailableUserException {
 
         try {
@@ -315,7 +356,14 @@ public class Controller implements ControllerRemote {
     }
 
     // 8
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to make a multiple choice in a set of weapons
+     * @param player Player who must choose
+     * @param arrayList Set of weapons to choose from
+     * @return Set of weapons selected by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public ArrayList<Weapon> chooseMultipleWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
@@ -340,7 +388,13 @@ public class Controller implements ControllerRemote {
     }
 
     // 9
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to choose a color
+     * @param player Player who must choose
+     * @return Color chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public Color chooseColor(Player player) throws UnavailableUserException {
 
         String[] colors = new String[3];
@@ -363,7 +417,13 @@ public class Controller implements ControllerRemote {
     }
 
     // 10
-    // TO DO Javadoc
+
+    /**
+     * This methods sends a message to a user
+     * @param player Player to send the message to
+     * @param message Message to be sent
+     * @throws UnavailableUserException if the user is not connected
+     */
     public void sendMessage(Player player, String message) throws UnavailableUserException {
 
         try {
@@ -375,7 +435,14 @@ public class Controller implements ControllerRemote {
     }
 
     // 11
-    // TO DO Javadoc
+
+    /**
+     * This methods asks the user to make a multiple choice in a set of powerups
+     * @param player Player who must choose
+     * @param arrayList Set of powerups to choose from
+     * @return Set of powerups selected by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public Powerup choosePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
 
         Powerup[] powerups = new Powerup[arrayList.size()];
