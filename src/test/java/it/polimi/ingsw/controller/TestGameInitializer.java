@@ -89,14 +89,14 @@ class TestGameInitializer {
 
             gameInitializer.setGameMode('n');
             for (int i = 0; i < actualGameMaps.size()/2; i++) {
-                gameInitializer.setMap(i);
+                gameInitializer.setIndex(i);
                 returnedGameTable =  gameInitializer.run();
                 assertEquals(actualGameMaps.get(i), returnedGameTable.getGameMap());
             }
 
             gameInitializer.setGameMode('d');
             for (int i = 0;i < actualGameMaps.size()/2; i++) {
-                gameInitializer.setMap(i);
+                gameInitializer.setIndex(i);
                 returnedGameTable = gameInitializer.run();
                 assertEquals(actualGameMaps.get(i),returnedGameTable.getGameMap());
             }
@@ -126,7 +126,7 @@ class TestGameInitializer {
     
     @Test
     void runFetchesOldGameSavesCorrectly() {
-        //TODO
+        //TODO (save files non existing yet)
     }
 
     /**

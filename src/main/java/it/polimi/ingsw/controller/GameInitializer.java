@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Deck;
@@ -60,10 +59,11 @@ public class GameInitializer {
     private Character gameMode;     //'n': normal mode, 'd' : domination mode, 's' : resume old save
 
     /**
-     * This attribute indicates the maps list index from which fetch the map that will be used.<br>
-     *     This attribute is assigned by users.
+     * In case of a new match this attribute indicates the maps list index from which fetch the map to will be used.<br>
+     *     In case of an old match loading this attribute indicates the file index in a save file list.
+     *     <p>This attribute is chosen by users.</p>
      */
-    private Integer map;
+    private Integer index;
 
     /**
      * This attribute contains all connected users nicknames.<br>
@@ -75,12 +75,12 @@ public class GameInitializer {
      * This method is the class constructor.
      *
      * @param gameMode is a Character that indicates the game mode chosen by users.
-     * @param map is an integer chosen by users that indicates the maps list index from which fetch the map.
+     * @param index is an integer chosen by users that indicates the maps list index or the save file index to be loaded.
      * @param nicknames is a Set of strings that represents all connected players nicknames.
      */
-    public GameInitializer(Character gameMode, Integer map, Set<String> nicknames) {
+    public GameInitializer(Character gameMode, Integer index, Set<String> nicknames) {
         this.gameMode = gameMode;
-        this.map = map;
+        this.index = index;
         this.nicknames=nicknames;
     }
 
@@ -88,8 +88,8 @@ public class GameInitializer {
         this.gameMode = gameMode;
     }
 
-    public void setMap(Integer map) {
-        this.map = map;
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     public Integer getMaxKills() {
@@ -132,7 +132,7 @@ public class GameInitializer {
 
         if (this.gameMode == 's') {         //users choose to load an old match
             try {
-                return fetchSavedGame();    //fetching old match from "save.json" file
+                return fetchSavedGame(this.index);    //fetching old match from "save.json" file
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -144,7 +144,7 @@ public class GameInitializer {
         try {
 
             //fetching GameMaps from JSON
-            GameMap chosenGameMap = fetchGameMap(this.map,this.gameMode);
+            GameMap chosenGameMap = fetchGameMap(this.index,this.gameMode);
 
             //initializing killShotTrack
             KillshotTrack chosenKillshotTrack = new KillshotTrack(this.maxKills,this.bountyValues);
@@ -168,8 +168,13 @@ public class GameInitializer {
             }
 
             //StartingPlayerMarker
-            int randomNum = ThreadLocalRandom.current().nextInt(0, maxPlayers);
+            int randomNum = ThreadLocalRandom.current().nextInt(0, nicknames.size());
             StartingPlayerMarker chosenStartingPlayerMarker = new StartingPlayerMarker(connectedPlayers.get(randomNum));
+
+            //draw 1 powerup card each player before starting the game
+            for (Player player: connectedPlayers) {
+                player.getPowerupPocket().addPowerup(loadedPowerupDeck.draw());
+            }
 
             return new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,connectedPlayers,loadedWeaponDeck,
@@ -208,16 +213,17 @@ public class GameInitializer {
     /**
      * This method fetches a GameTable from a JSON file and returns it to be used for the current match.
      *
+     * @param fileIndex an Integer that represents the index of the selected save file.
      * @return a GameTable loaded from "save.json" file.
      * @throws IOException if "save.json" is not found or can't be opened.
      */
-    private GameTable fetchSavedGame() throws IOException {
-        FileReader fileReader = new FileReader("src/main/resources/save.json");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        Gson gSon = new Gson();
-        GameTable gameTable = gSon.fromJson(bufferedReader,GameTable.class);
-        fileReader.close();
-        bufferedReader.close();
-        return gameTable;
+    private GameTable fetchSavedGame(Integer fileIndex) throws IOException {
+        File file = new File("src/main/resources/save_list.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String[] saveFileNameList = objectMapper.readValue(file,String[].class);
+        String chosenFileName = saveFileNameList[fileIndex];
+
+        file = new File("src/main/resources/"+chosenFileName+".json");
+        return objectMapper.readValue(file,GameTable.class);
     }
 }
