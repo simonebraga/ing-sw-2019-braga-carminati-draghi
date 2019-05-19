@@ -118,6 +118,17 @@ public class Controller implements ControllerRemote {
     }
 
     /**
+     * This method is used to force teh disconnection of a player
+     * @param player is the player to be disconnected
+     */
+    public synchronized void forceLogout(Player player) {
+
+        if (clientMap.containsKey(player.getUsername())) {
+            clientMap.remove(player.getUsername());
+        }
+    }
+
+    /**
      * This method creates a new empty clientMap
      */
     public synchronized void resetClientMap() {
@@ -137,7 +148,7 @@ public class Controller implements ControllerRemote {
                 if (clientMap.keySet().size() == 3) {
                     new Thread(()->{
                         int i = 10;
-                        while (i > 0) {
+                        while ((i > 0) && (clientMap.keySet().size() >= 3)) {
                             System.out.println("Closing login in "+ i +" seconds");
                             i--;
                             try {
