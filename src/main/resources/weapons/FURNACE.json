@@ -1,0 +1,25 @@
+{
+  "BasicMode":
+    [
+      {
+        "type": "ShootRoom",
+        "player": null,
+        "damages": 1,
+        "marks": 0
+      }
+    ],
+  "CozyFireMode":
+    [
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":1,
+        "minDist":1,
+        "maxDist":1,
+        "optional":false
+      }
+    ]
+}

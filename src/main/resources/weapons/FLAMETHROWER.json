@@ -1,0 +1,27 @@
+{
+  "BasicMode":
+    [
+      {
+        "type": "ShootDirection",
+        "player": null,
+        "throughWalls": false,
+        "directShoot": true,
+        "twoTargets": true
+      }
+    ],
+  "BarbecueMode":
+    [
+      {
+        "type": "ShootDirection",
+        "player": null,
+        "throughWalls": false,
+        "directShoot": false,
+        "twoTargets": true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["YELLOW","YELLOW"]
+      }
+    ]
+}

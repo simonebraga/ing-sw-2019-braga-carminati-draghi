@@ -1,0 +1,35 @@
+{
+  "BasicMode":
+    [
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false
+      }
+    ],
+  "ReaperMode":
+  [
+    {
+      "type": "ShootAOE",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["RED","BLUE"]
+    }
+  ]
+}

@@ -1,0 +1,352 @@
+{
+  "BasicEffect":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":1,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "BasicEffect+Move":
+    [
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 2,
+        "marks": 0,
+        "minDistShoot": 1,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": false,
+        "moveTargetOrShooter": true
+      }
+    ],
+  "RocketJump+BasicEffect":
+    [
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":1,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE"]
+      }
+    ],
+  "RocketJump+BasicEffect+Move":
+    [
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 2,
+        "marks": 0,
+        "minDistShoot": 1,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": false,
+        "moveTargetOrShooter": true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE"]
+      }
+    ],
+  "BasicEffect+RocketJump":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":1,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE"]
+      }
+    ],
+  "BasicEffect+Move+RocketJump":
+    [
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 2,
+        "marks": 0,
+        "minDistShoot": 1,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": false,
+        "moveTargetOrShooter": true
+      },
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE"]
+      }
+    ],
+  "BasicEffect+FragmentingWarHead":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":1,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["YELLOW"]
+      }
+    ],
+  "BasicEffect+Move+FragmentingWarHead":
+    [
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 2,
+        "marks": 0,
+        "minDistShoot": 1,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": false,
+        "moveTargetOrShooter": true
+      },
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["YELLOW"]
+      }
+    ],
+  "RocketJump+BasicEffect+FragmentingWarHead":
+    [
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":1,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE","YELLOW"]
+      }
+    ],
+  "RocketJump+BasicEffect+Move+FragmentingWarHead":
+    [
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 2,
+        "marks": 0,
+        "minDistShoot": 1,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": false,
+        "moveTargetOrShooter": true
+      },
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE","YELLOW"]
+      }
+    ],
+  "BasicEffect+FragmentingWarHead+RocketJump":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":1,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false
+      },
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE","YELLOW"]
+      }
+    ],
+  "BasicEffect+Move+FragmentingWarHead+RocketJump":
+  [
+    {
+      "type": "MoveAndShoot",
+      "player": null,
+      "damages": 2,
+      "marks": 0,
+      "minDistShoot": 1,
+      "maxDistShoot": -1,
+      "maxMoves": 1,
+      "moveBeforeShoot": false,
+      "moveTargetOrShooter": true
+    },
+    {
+      "type": "ShootAOE",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":1,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false
+    },
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 2,
+      "sameDirection": false
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["BLUE","YELLOW"]
+    }
+  ]
+}

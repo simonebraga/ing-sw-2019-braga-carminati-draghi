@@ -26,6 +26,10 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class GameInitializer {
 
+    /**
+     * This attribute indicates the maximum amount of players this game can be played with.<br>
+     *     It's value in this game is constant.
+     */
     private static int maxPlayers = 5;
 
     /**

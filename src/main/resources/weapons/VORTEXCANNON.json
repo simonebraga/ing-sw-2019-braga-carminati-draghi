@@ -1,0 +1,23 @@
+{
+  "BasicEffect":
+    [
+      {
+        "type": "ShootVortex",
+        "player": null,
+        "multipleTargets": false
+      }
+    ],
+  "BlackHole":
+    [
+      {
+        "type": "ShootVortex",
+        "player": null,
+        "multipleTargets": true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["RED"]
+      }
+    ]
+}

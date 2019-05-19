@@ -1,0 +1,126 @@
+{
+  "BasicEffect":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "BasicEffect+Move":
+    [
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 1,
+        "marks": 0,
+        "minDistShoot": 0,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": true,
+        "moveTargetOrShooter": true
+      }
+    ],
+  "BasicEffect+ExtraGrenade":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["RED"]
+      }
+    ],
+  "BasicEffect+Move+ExtraGrenade":
+    [
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 1,
+        "marks": 0,
+        "minDistShoot": 0,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": true,
+        "moveTargetOrShooter": true
+      },
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["RED"]
+      }
+    ],
+  "ExtraGrenade+BasicEffect+Move":
+    [
+      {
+        "type": "ShootAOE",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":true
+      },
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 1,
+        "marks": 0,
+        "minDistShoot": 0,
+        "maxDistShoot": -1,
+        "maxMoves": 1,
+        "moveBeforeShoot": true,
+        "moveTargetOrShooter": true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["RED"]
+      }
+    ]
+}

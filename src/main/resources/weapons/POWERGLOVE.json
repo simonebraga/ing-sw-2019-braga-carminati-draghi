@@ -1,0 +1,44 @@
+{
+  "BasicMode":
+    [
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":2,
+        "minDist":0,
+        "maxDist":0,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "RocketFistMode":
+    [
+      {
+        "type": "MoveAndShoot",
+        "player": null,
+        "damages": 2,
+        "marks": 0,
+        "minDistShoot": 0,
+        "maxDistShoot": 0,
+        "maxMoves": 2,
+        "moveBeforeShoot": true,
+        "moveTargetOrShooter": false
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE"]
+      }
+    ]
+}

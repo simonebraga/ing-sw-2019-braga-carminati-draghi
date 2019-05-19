@@ -1,0 +1,22 @@
+{
+  "BasicMode":
+    [
+      {
+        "type": "ShootDirection",
+        "player": null,
+        "throughWalls": true,
+        "directShoot": true,
+        "twoTargets": false
+      }
+    ],
+  "PiercingMode":
+    [
+      {
+        "type": "ShootDirection",
+        "player": null,
+        "throughWalls": true,
+        "directShoot": true,
+        "twoTargets": true
+      }
+    ]
+}
