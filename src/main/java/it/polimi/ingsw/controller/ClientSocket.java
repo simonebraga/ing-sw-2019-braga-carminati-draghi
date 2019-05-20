@@ -46,19 +46,19 @@ public class ClientSocket implements ClientRemote {
 
     @Override
     public String singleChoice(String obj, String s) throws RemoteException {
-        // TO DO
+        // TODO
         return null;
     }
 
     @Override
     public String multipleChoice(String obj, String s) throws RemoteException {
-        // TO DO
+        // TODO
         return null;
     }
 
     @Override
     public Boolean booleanQuestion(String s) throws RemoteException {
-        // TO DO
+        // TODO
         return null;
     }
 }

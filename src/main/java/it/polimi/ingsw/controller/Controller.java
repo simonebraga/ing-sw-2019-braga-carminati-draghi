@@ -41,6 +41,7 @@ public class Controller implements ControllerRemote {
     private String remoteName;
     private String ip;
     private int port;
+    private int timerLength;
 
     private Gson gson = new Gson();
 
@@ -58,6 +59,7 @@ public class Controller implements ControllerRemote {
             this.remoteName = properties.getProperty("controllerRemoteName");
             this.ip = properties.getProperty("serverIp");
             this.port = Integer.parseInt(properties.getProperty("serverRmiPort"));
+            this.timerLength = Integer.parseInt(properties.getProperty("loginTimerLength"));
 
             new Thread(new ControllerSocketAcceptor(this)).start();
             System.setProperty("java.rmi.server.hostname",ip);
@@ -147,7 +149,7 @@ public class Controller implements ControllerRemote {
 
                 if (clientMap.keySet().size() == 3) {
                     new Thread(()->{
-                        int i = 10;
+                        int i = timerLength;
                         while ((i > 0) && (clientMap.keySet().size() >= 3)) {
                             System.out.println("Closing login in "+ i +" seconds");
                             i--;
@@ -225,9 +227,9 @@ public class Controller implements ControllerRemote {
     }
 
     // 2
-    // TO DO Javadoc
+    // TODO Javadoc
     public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
-        // TO DO
+        // TODO
         return null;
     }
 
