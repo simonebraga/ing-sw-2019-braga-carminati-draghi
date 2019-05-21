@@ -78,6 +78,21 @@ class TestControllerMethods {
             retVal[1] = w[2];
             return retVal;
         }
+
+        @Override
+        public String chooseMap(String[] s) {
+            return s[0];
+        }
+
+        @Override
+        public String chooseMode(String[] s) {
+            return s[0];
+        }
+
+        @Override
+        public String chooseSave(String[] s) {
+            return s[0];
+        }
     }
 
     @BeforeAll
@@ -300,4 +315,42 @@ class TestControllerMethods {
         }
     }
 
+    @Test
+    void testChooseMap() {
+
+        int returned = 0;
+        try {
+            returned = controller.chooseMap(new Player(Figure.DESTRUCTOR,"RmiUser"),2,4);
+            assertEquals(2,returned);
+        } catch (UnavailableUserException e) {
+            fail();
+        }
+    }
+
+    @Test
+    void testChooseMode() {
+
+        try {
+            assertEquals('N',controller.chooseMode(new Player(Figure.DESTRUCTOR,"RmiUser")));
+        } catch (UnavailableUserException e) {
+            fail();
+        }
+    }
+
+    @Test
+    void testChooseSave() {
+
+        String string1 = "Savegame1";
+        String string2 = "Savegame2";
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add(string1);
+        strings.add(string2);
+
+        try {
+            String retVal = controller.chooseString(new Player(Figure.DESTRUCTOR,"RmiUser"),strings);
+            assertEquals(string1,retVal);
+        } catch (UnavailableUserException e) {
+            fail();
+        }
+    }
 }

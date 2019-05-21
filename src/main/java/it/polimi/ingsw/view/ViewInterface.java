@@ -13,4 +13,7 @@ public interface ViewInterface {
     Boolean booleanQuestion(String s);
     Powerup[] chooseMultiplePowerups(Powerup[] p);
     WeaponName[] chooseMultipleWeapons(WeaponName[] w);
+    String chooseMap(String[] s);
+    String chooseMode(String[] s);
+    String chooseSave(String[] s);
 }
