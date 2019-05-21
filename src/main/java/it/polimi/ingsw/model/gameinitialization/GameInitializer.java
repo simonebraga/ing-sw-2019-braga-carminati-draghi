@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.model.gameinitialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.GameTable;
@@ -13,8 +13,13 @@ import it.polimi.ingsw.model.playerclasses.KillshotTrack;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.playerclasses.StartingPlayerMarker;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

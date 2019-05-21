@@ -1,9 +1,10 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Deck;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
+import it.polimi.ingsw.model.gameinitialization.DecksInitializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

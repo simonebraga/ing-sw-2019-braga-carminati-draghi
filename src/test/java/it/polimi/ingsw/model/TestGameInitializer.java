@@ -1,7 +1,8 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.GameTable;
+import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.AfterEach;
