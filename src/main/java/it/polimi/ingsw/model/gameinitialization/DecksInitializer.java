@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.model.gameinitialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.cardclasses.AmmoTile;
