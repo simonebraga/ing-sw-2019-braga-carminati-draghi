@@ -172,9 +172,16 @@ public class GameInitializer {
                 player.getPowerupPocket().addPowerup(loadedPowerupDeck.draw());
             }
 
-            return new GameTable(this.chosenStartingPlayerMarker,chosenKillshotTrack,
+            if (gameMode=='d') {
+                return new GameTable(this.chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
-                            loadedPowerupDeck,loadedAmmoTileDeck,this.chosenStartingPlayerMarker.getTarget());
+                            loadedPowerupDeck,loadedAmmoTileDeck,this.chosenStartingPlayerMarker.getTarget(),true);
+            } else {    //gameMode == 'n' true
+                return new GameTable(this.chosenStartingPlayerMarker,chosenKillshotTrack,
+                        chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
+                        loadedPowerupDeck,loadedAmmoTileDeck,this.chosenStartingPlayerMarker.getTarget(),false);
+
+            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
