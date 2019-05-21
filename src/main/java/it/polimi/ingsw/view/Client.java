@@ -147,6 +147,18 @@ public class Client implements ClientRemote {
                 Powerup[] powerups = gson.fromJson(s,Powerup[].class);
                 return gson.toJson(view.choosePowerup(powerups));
             }
+            case "map": {
+                String[] maps = gson.fromJson(s,String[].class);
+                return gson.toJson(view.chooseMap(maps));
+            }
+            case "mode": {
+                String[] modes = gson.fromJson(s,String[].class);
+                return gson.toJson(view.chooseMode(modes));
+            }
+            case "save": {
+                String[] saves = gson.fromJson(s,String[].class);
+                return gson.toJson(view.chooseSave(saves));
+            }
             default: {
                 System.err.println("Unsupported type");
                 throw new RemoteException();

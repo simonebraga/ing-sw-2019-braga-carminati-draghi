@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -452,6 +451,82 @@ public class Controller implements ControllerRemote {
 
         try {
             return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)),Powerup.class);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        }
+    }
+
+    // 12
+
+    /**
+     * This method asks the user to choose an ID representing a map
+     * @param player Player who must choose
+     * @param min Minimum ID
+     * @param max Maximum ID
+     * @return ID chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
+    public int chooseMap(Player player, int min, int max) throws UnavailableUserException {
+
+        String[] maps = new String[max-min+1];
+        for (int i = 0 ; i <= max-min ; i++) {
+            maps[i] = "" + (max-min+i);
+        }
+
+        try {
+            return Integer.parseInt(gson.fromJson(clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps)),String.class));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        }
+    }
+
+    // 13
+
+    /**
+     * This method asks the user to choose a game mode
+     * @param player Player who must choose
+     * @return Character representing the chosen game mode
+     * @throws UnavailableUserException if the user is not connected
+     */
+    public Character chooseMode(Player player) throws UnavailableUserException {
+
+        String[] modes = new String[3];
+        modes[0] = "Normal";
+        modes[1] = "Domination";
+        modes[2] = "Load existing match";
+
+        try {
+            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("mode",gson.toJson(modes)),String.class);
+            switch (choice) {
+                case "Normal": return 'N';
+                case "Domination": return 'D';
+                case "Load existing match": return 'S';
+                default: throw new UnavailableUserException();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        }
+    }
+
+    // 14
+
+    /**
+     * This method asks the user to choose a save game
+     * @param player Player who must choose
+     * @param arrayList List of the unique names of the save games
+     * @return Name of the chosen save game
+     * @throws UnavailableUserException if the user is not connected
+     */
+    public String chooseSave(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
+
+        String[] saves = new String[arrayList.size()];
+        saves = arrayList.toArray(saves);
+
+        try {
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("save", gson.toJson(saves)),String.class);
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
