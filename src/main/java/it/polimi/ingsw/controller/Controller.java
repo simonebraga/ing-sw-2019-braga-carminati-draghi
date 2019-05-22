@@ -21,8 +21,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO: Add forceLogout invocation every time UnavailableUserException is thrown
-// TODO: Add memorization of nickname list when the logout closes
 // TODO: Add timer on every network call
 /**
  * This class contains all the methods used to communicate with the client-side application
@@ -40,6 +38,8 @@ public class Controller implements ControllerRemote {
      */
     private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
 
+    private ArrayList<String> usernameList;
+
     private String remoteName;
     private String ip;
     private int port;
@@ -54,6 +54,8 @@ public class Controller implements ControllerRemote {
     public Controller() throws RemoteException {
 
         try {
+
+            usernameList = new ArrayList<>();
 
             Properties properties = new Properties();
             properties.load(new FileReader("src/main/resources/network_settings.properties"));
@@ -94,6 +96,7 @@ public class Controller implements ControllerRemote {
     public synchronized void stopLoginPhase() {
         if ((clientMap.keySet().size() >= 3) && (clientMap.keySet().size() <= 5)) {
             loginPhase = false;
+            usernameList = new ArrayList<>(clientMap.keySet());
             System.out.println("Login closed");
         } else if (clientMap.keySet().size() > 5) {
             System.err.println("Something went wrong, more clients registered than allowed");
@@ -110,12 +113,21 @@ public class Controller implements ControllerRemote {
         return loginPhase;
     }
 
+    // TODO Change this method to return usernameList
+    /**
+     * This method returns an ArrayList containing the nicknames of the players registered when the game started
+     * @return ArrayList containing the nicknames of the players registered when the game started
+     */
     public synchronized Set<String> getNicknameSet() {
         return clientMap.keySet();
     }
 
-    public synchronized Map<String, ClientRemote> getClientMap() {
-        return clientMap;
+    /**
+     * This method returns the nicknames of the currently connected users
+     * @return set of strings containing the nicknames of the currently connected players
+     */
+    public synchronized Set<String> getActivePlayers() {
+        return clientMap.keySet();
     }
 
     /**
@@ -136,6 +148,10 @@ public class Controller implements ControllerRemote {
     public synchronized void forceLogout(Player player) {
 
         if (clientMap.containsKey(player.getUsername())) {
+            try {
+                clientMap.get(player.getUsername()).printMessage("You have been disconnected");
+            } catch (RemoteException e) {
+            }
             clientMap.remove(player.getUsername());
         }
     }
@@ -150,46 +166,58 @@ public class Controller implements ControllerRemote {
     @Override
     public synchronized void login(String s, ClientRemote c) throws RemoteException {
 
-        if (loginPhase && (clientMap.keySet().size() < 5)) {
+        if (loginPhase) {
+        // Behavior if the login phase is running
 
-            if (!(clientMap.containsKey(s))) {
-                clientMap.put(s,c);
-                System.out.println(clientMap.toString());
-                c.printMessage("Successful registration");
-
-                if (clientMap.keySet().size() == 3) {
-                    new Thread(()->{
-                        int i = timerLength;
-                        while ((i > 0) && (clientMap.keySet().size() >= 3)) {
-                            System.out.println("Closing login in "+ i +" seconds");
-                            i--;
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
+            if (clientMap.keySet().size() < 5) {
+                if (clientMap.containsKey(s)) {
+                    if (clientMap.get(s) == c)
+                        c.printMessage("You are already registered");
+                    else
+                        c.printMessage("Nickname already chosen");
+                } else {
+                    clientMap.put(s,c);
+                    System.out.println(clientMap.toString());
+                    c.printMessage("Successful registration");
+                    if (clientMap.keySet().size() >= 5)
                         stopLoginPhase();
-                    }).start();
+                    else if (clientMap.keySet().size() == 3)
+                        new Thread(()->{
+                            int i = timerLength;
+                            while ((i > 0) && (clientMap.keySet().size() >= 3)) {
+                                System.out.println("Closing login in "+ i +" seconds");
+                                i--;
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            stopLoginPhase();
+                        }).start();
                 }
-
-                if (clientMap.keySet().size() >= 5) {
-                    stopLoginPhase();
-                }
-
-            } else if (clientMap.get(s).equals(c)){
-                c.printMessage("Already registered");
-            } else {
-                c.printMessage("Nickname already chosen");
-            }
+            } else
+                c.printMessage("Registration not allowed");
 
         } else {
+        // Behavior if the login phase is closed
 
             if (clientMap.containsKey(s)) {
-                clientMap.put(s,c);
-                c.printMessage("Successful login");
+                if (clientMap.get(s) == c)
+                    c.printMessage("You are already logged in");
+                else {
+                    clientMap.get(s).printMessage("You have been disconnected");
+                    clientMap.put(s,c);
+                    System.out.println(clientMap.toString());
+                    c.printMessage("Successful login");
+                }
             } else {
-                c.printMessage("Registration not allowed");
+                if (usernameList.contains(s)) {
+                    clientMap.put(s,c);
+                    System.out.println(clientMap.toString());
+                    c.printMessage("Successful login");
+                } else
+                    c.printMessage("You are not registered");
             }
 
         }
@@ -203,7 +231,7 @@ public class Controller implements ControllerRemote {
             System.out.println(clientMap.toString());
             c.printMessage("Logout successful");
         } else {
-            c.printMessage("Client not registered");
+            c.printMessage("You are not logged in");
         }
     }
 
@@ -230,11 +258,9 @@ public class Controller implements ControllerRemote {
                 if (player1.getFigure() == choice)
                     return player1;
             } throw new UnavailableUserException();
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -269,11 +295,9 @@ public class Controller implements ControllerRemote {
 
         try {
             return new ArrayList<>(Arrays.asList(gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("powerup",gson.toJson(powerups)),Powerup[].class)));
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -302,11 +326,9 @@ public class Controller implements ControllerRemote {
                     return weapon;
                 }
             } throw new UnavailableUserException();
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -336,11 +358,9 @@ public class Controller implements ControllerRemote {
                 case "West": return 'W';
                 default: throw new UnavailableUserException();
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -361,11 +381,9 @@ public class Controller implements ControllerRemote {
 
         try {
             return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(strings)),String.class);
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -383,11 +401,9 @@ public class Controller implements ControllerRemote {
 
         try {
             return clientMap.get(player.getUsername()).booleanQuestion(string);
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -418,11 +434,9 @@ public class Controller implements ControllerRemote {
                         retVal.add(weapon);
                 }
             } return retVal;
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -450,11 +464,9 @@ public class Controller implements ControllerRemote {
                 case "Yellow": return Color.YELLOW;
                 default: throw new UnavailableUserException();
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -471,11 +483,9 @@ public class Controller implements ControllerRemote {
 
         try {
             clientMap.get(player.getUsername()).printMessage(message);
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -496,11 +506,9 @@ public class Controller implements ControllerRemote {
 
         try {
             return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)),Powerup.class);
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -524,11 +532,9 @@ public class Controller implements ControllerRemote {
 
         try {
             return Integer.parseInt(gson.fromJson(clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps)),String.class));
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -556,11 +562,9 @@ public class Controller implements ControllerRemote {
                 case "Load existing match": return 'S';
                 default: throw new UnavailableUserException();
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
@@ -581,11 +585,9 @@ public class Controller implements ControllerRemote {
 
         try {
             return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("save", gson.toJson(saves)),String.class);
-        } catch (RemoteException e) {
+        } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
-            throw new UnavailableUserException();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            forceLogout(player);
             throw new UnavailableUserException();
         }
     }
