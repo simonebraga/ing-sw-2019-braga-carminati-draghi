@@ -36,6 +36,13 @@ public class GameTable {
     private Player currentTurnPlayer;
 
     /**
+     * This attribute indicates if this match is a domination mode or normal mode.
+     *
+     * @author Draghi96
+     */
+    private Boolean isDomination;
+
+    /**
      * This constructor initializes all attributes to null.
      *
      * @author Draghi96
@@ -50,9 +57,10 @@ public class GameTable {
         this.powerupDeck=null;
         this.ammoTileDeck=null;
         this.currentTurnPlayer=null;
+        this.isDomination=false;
     }
 
-    public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck, Player currentTurnPlayer) {
+    public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck, Player currentTurnPlayer,Boolean isDomination) {
         this.startingPlayerMarker = startingPlayerMarker;
         this.killshotTrack = killshotTrack;
         this.doubleKillCounter = doubleKillCounter;
@@ -62,6 +70,7 @@ public class GameTable {
         this.powerupDeck = powerupDeck;
         this.ammoTileDeck = ammoTileDeck;
         this.currentTurnPlayer = currentTurnPlayer;
+        this.isDomination=isDomination;
     }
 
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck) {
@@ -74,6 +83,7 @@ public class GameTable {
         this.powerupDeck = powerupDeck;
         this.ammoTileDeck = ammoTileDeck;
         this.currentTurnPlayer = startingPlayerMarker.getTarget();
+        this.isDomination=false;
     }
 
     public void setStartingPlayerMarker(StartingPlayerMarker startingPlayerMarker) {
@@ -116,6 +126,16 @@ public class GameTable {
      */
     public void setCurrentTurnPlayer(Player player) {this.currentTurnPlayer=player; }
 
+    /**
+     * This method sets the domination mode flag.
+     *
+     * @param isDomination a Boolean that is true if the match is in domination mode.
+     * @author Draghi96
+     */
+    public void setIsDomination(Boolean isDomination) {
+        this.isDomination=isDomination;
+    }
+
     public StartingPlayerMarker getStartingPlayerMarker() {
         return startingPlayerMarker;
     }
@@ -155,5 +175,15 @@ public class GameTable {
      * @author Draghi96
      */
     public Player getCurrentTurnPlayer() { return this.currentTurnPlayer; }
+
+    /**
+     * This method returns the isDomination attribute value.
+     *
+     * @return true if the match is in domination mode.
+     * @author Draghi96
+     */
+    public Boolean getIsDomination() {
+        return isDomination;
+    }
 
 }

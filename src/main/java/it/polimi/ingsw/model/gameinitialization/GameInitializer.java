@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Deck;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
-import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.playerclasses.DoubleKillCounter;
 import it.polimi.ingsw.model.playerclasses.KillshotTrack;
@@ -19,8 +18,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class creates an object that has the duty to generate a ready-to-play game table
@@ -71,22 +68,29 @@ public class GameInitializer {
     private Integer index;
 
     /**
-     * This attribute contains all connected users nicknames.<br>
-     *     To each nickname will be associated a Player object.
+     * This attribute contains all connected players as Player objects.
      */
-    private Set<String> nicknames;
+    private ArrayList<Player> connectedPlayers;
+
+    /**
+     * This attribute represent the chosen StartingPlayerMarker object.
+     */
+    private StartingPlayerMarker chosenStartingPlayerMarker;
 
     /**
      * This method is the class constructor.
      *
      * @param gameMode is a Character that indicates the game mode chosen by users.
      * @param index is an integer chosen by users that indicates the maps list index or the save file index to be loaded.
-     * @param nicknames is a Set of strings that represents all connected players nicknames.
+     * @param connectedPlayers is an ArrayList of strings that represents all connected players nicknames.
+     * @param chosenStartingPlayerMarker is a StartingPlayerMarker object that represents the starting player.
      */
-    public GameInitializer(Character gameMode, Integer index, Set<String> nicknames) {
+    public GameInitializer(Character gameMode, Integer index, ArrayList<Player> connectedPlayers,
+                           StartingPlayerMarker chosenStartingPlayerMarker) {
         this.gameMode = gameMode;
         this.index = index;
-        this.nicknames=nicknames;
+        this.connectedPlayers= new ArrayList<>(connectedPlayers);
+        this.chosenStartingPlayerMarker = chosenStartingPlayerMarker;
     }
 
     public void setGameMode(Character gameMode) {
@@ -163,27 +167,21 @@ public class GameInitializer {
             Deck<Weapon> loadedWeaponDeck = decksInitializer.initDeck("weapons");
             Deck<Powerup> loadedPowerupDeck = decksInitializer.initDeck("powerups");
 
-            //creating ArrayList<Player> and binding it with connected clients
-            Figure[] allFigures = Figure.values();
-            int i=0;
-            ArrayList<Player> connectedPlayers = new ArrayList<>();
-            for (String nick : this.nicknames) {
-                connectedPlayers.add(new Player(allFigures[i],nick));    //nicknames never outnumbers figures
-                i++;
-            }
-
-            //StartingPlayerMarker
-            int randomNum = ThreadLocalRandom.current().nextInt(0, nicknames.size());
-            StartingPlayerMarker chosenStartingPlayerMarker = new StartingPlayerMarker(connectedPlayers.get(randomNum));
-
             //draw 1 powerup card each player before starting the game
             for (Player player: connectedPlayers) {
                 player.getPowerupPocket().addPowerup(loadedPowerupDeck.draw());
             }
 
-            return new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
-                            chosenDoubleKillCounter,chosenGameMap,connectedPlayers,loadedWeaponDeck,
-                            loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget());
+            if (gameMode=='d') {
+                return new GameTable(this.chosenStartingPlayerMarker,chosenKillshotTrack,
+                            chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
+                            loadedPowerupDeck,loadedAmmoTileDeck,this.chosenStartingPlayerMarker.getTarget(),true);
+            } else {    //gameMode == 'n' true
+                return new GameTable(this.chosenStartingPlayerMarker,chosenKillshotTrack,
+                        chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
+                        loadedPowerupDeck,loadedAmmoTileDeck,this.chosenStartingPlayerMarker.getTarget(),false);
+
+            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

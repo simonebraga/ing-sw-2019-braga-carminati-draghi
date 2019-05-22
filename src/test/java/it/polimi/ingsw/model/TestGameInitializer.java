@@ -1,10 +1,11 @@
 package it.polimi.ingsw.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polimi.ingsw.model.GameTable;
+import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.playerclasses.Player;
+import it.polimi.ingsw.model.playerclasses.StartingPlayerMarker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,17 +28,28 @@ class TestGameInitializer {
     private GameInitializer gameInitializer;
 
     /**
-     * This attribute represents five hypothetical users. It's used to create a GameInitializer object.
+     * This attribute represents five hypothetical players. It's used to create a GameInitializer object.
      */
-    private String[] nicks = {"User1","Users2","User3","User4","User5"};
+    private ArrayList<Player> players;
+
+    /**
+     * This attribute represent the first player that get to play. It's used to create a GameInitializer object.
+     */
+    private StartingPlayerMarker startingPlayerMarker;
 
     /**
      * This method initializes all objects that will be used for the test.
      */
     @BeforeEach
     void setup() {
-        Set<String> nickSet = new HashSet<>(Arrays.asList(nicks));
-        gameInitializer = new GameInitializer('n',2,nickSet);
+        players = new ArrayList<>();
+        players.add(new Player(Figure.DOZER,"User1"));
+        players.add(new Player(Figure.BANSHEE,"User2"));
+        players.add(new Player(Figure.DESTRUCTOR,"User3"));
+        players.add(new Player(Figure.VIOLET,"User4"));
+        players.add(new Player(Figure.SPROG,"User5"));
+        startingPlayerMarker=new StartingPlayerMarker(players.get(4));
+        gameInitializer = new GameInitializer('n',2,players,startingPlayerMarker);
     }
 
     /**
@@ -106,24 +118,6 @@ class TestGameInitializer {
             e.printStackTrace();
         }
     }
-
-    /**
-     * This test verifies that run() associates each connected user to a player and its figure correctly.
-     */
-    @Test
-    void runBindsUsersToPlayersCorrectly() {
-        GameTable returnedGameTable = gameInitializer.run();
-        for (Player player:returnedGameTable.getPlayers()) {
-            boolean flag=false;
-            for (String nick : nicks) {
-                if (player.getUsername().equals(nick)) {
-                    flag = true;
-                }
-                assertNotNull(player.getFigure());
-            }
-            assertTrue(flag);
-        }
-    }
     
     @Test
     void runFetchesOldGameSavesCorrectly() {
@@ -136,6 +130,7 @@ class TestGameInitializer {
     @AfterEach
     void teardown() {
         gameInitializer = null;
-        nicks=null;
+        players=null;
+        startingPlayerMarker=null;
     }
 }
