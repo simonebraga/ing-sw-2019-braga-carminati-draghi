@@ -8,9 +8,8 @@
   <artifactId>AM42</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>AM00</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <name>AM42</name>
+  <url>https://github.com/simonebraga/ing-sw-2019-braga-carminati-draghi</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,16 +42,9 @@
       <version>2.8.5</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>RELEASE</version>
-      <scope>test</scope>
+      <version>5.4.2</version>
     </dependency>
     <!--JAVA FX-->
     <dependency>

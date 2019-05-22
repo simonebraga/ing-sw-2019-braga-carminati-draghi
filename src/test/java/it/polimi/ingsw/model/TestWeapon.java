@@ -3,7 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import org.junit.After;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,12 +21,12 @@ class TestWeapon {
     /**
      * This attribute is a list of Color that represent a price for a weapon that will be used for testing.
      */
-    private ArrayList<Color> price;
+    private static ArrayList<Color> price;
 
     /**
      * This attribute is a Weapon object that will be used for testing.
      */
-    private Weapon shotgun;
+    private static Weapon shotgun;
 
     /**
      * This method creates all objects used to test all methods in this test suit.
@@ -69,8 +69,8 @@ class TestWeapon {
     /**
      * This method frees all objects used to test all methods in this test suit.
      */
-    @After
-    void tearDown(){
+    @AfterAll
+    static void tearDown(){
         price=null;
         shotgun=null;
     }

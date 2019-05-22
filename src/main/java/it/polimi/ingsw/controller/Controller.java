@@ -21,7 +21,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO: Add timer on every network call
 /**
  * This class contains all the methods used to communicate with the client-side application
  * @author simonebraga

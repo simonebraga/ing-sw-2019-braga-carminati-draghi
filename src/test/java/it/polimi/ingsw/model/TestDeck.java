@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.cardclasses.Deck;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import org.junit.After;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,22 +23,22 @@ class TestDeck {
     /**
      * This attribute is the list of cards that can be drawn that composes half of a deck.
      */
-    private ArrayList<Card> activeList;
+    private static ArrayList<Card> activeList;
 
     /**
      * This attribute is the list of cards that cannot be drawn that composes half of a deck.
      */
-    private ArrayList<Card> inactiveList;
+    private static ArrayList<Card> inactiveList;
 
     /**
      * This is a deck used for all tests.
      */
-    private Deck<Weapon> deck1;
+    private static Deck<Weapon> deck1;
 
     /**
      * This is a Color array list that represents a weapon price.
      */
-    private ArrayList<Color> price;
+    private static ArrayList<Color> price;
 
     /**
      * This method sets up all required object to test all methods in this suit.
@@ -176,8 +176,8 @@ class TestDeck {
     /**
      * This method frees all object created for this test suit.
      */
-    @After
-    void tearDown(){
+    @AfterAll
+    static void tearDown(){
         activeList=null;
         inactiveList=null;
         deck1=null;
