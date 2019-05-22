@@ -170,7 +170,7 @@ public class MoveAndShootCreator implements EffectsCreator{
                 }else{
                     throw new IllegalActionException();
                 }
-            }else{
+            }else{ //PowerGlove
                 Character direction;
                 boolean noTargets = true;
 
@@ -182,48 +182,66 @@ public class MoveAndShootCreator implements EffectsCreator{
                     throw new IllegalActionException();
                 }
                 boolean canShootSpawnSquare = table.getIsDomination() && table.getGameMap().getSpawnSquares().contains(squaresAssigned.get(0)) && targets.getSquaresDamaged().contains(squaresAssigned.get((0)));
-                if(!squaresAssigned.get(0).getPlayers().isEmpty() || canShootSpawnSquare){
-                    Boolean playerOrSquare = true;
-                    if(table.getIsDomination()){
-                        playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+                if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))) {
+                    if (!squaresAssigned.get(0).getPlayers().isEmpty() || canShootSpawnSquare) {
+                        Boolean playerOrSquare = true;
+                        if (table.getIsDomination()) {
+                            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+                        }
+                        if (playerOrSquare) {
+                            if (!squaresAssigned.get(0).getPlayers().isEmpty()) {
+                                effects.addAll(new ShootCreator(player, damages, marks, true, squaresAssigned.get(0)).run(controller, table, targets));
+                                noTargets = false;
+                            }
+                        } else {
+                            if (canShootSpawnSquare) {
+                                effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squaresAssigned.get(0)));
+                                targets.getSquaresDamaged().add((DominationSpawnSquare) squaresAssigned.get(0));
+                                noTargets = false;
+                            }
+                        }
                     }
-                    if(playerOrSquare) {
-                        if(!squaresAssigned.get(0).getPlayers().isEmpty()) {
-                            effects.addAll(new ShootCreator(player, damages, marks, true, squaresAssigned.get(0)).run(controller, table, targets));
-                            noTargets = false;
-                        }
-                    }else{
-                        if(canShootSpawnSquare){
-                            effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squaresAssigned.get(0)));
-                            targets.getSquaresDamaged().add((DominationSpawnSquare) squaresAssigned.get(0));
-                            noTargets = false;
-                        }
+                }
 
+                if(!noTargets){
+                    if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToMove"))){
+                        return effects;
                     }
                 }
 
                 squaresAssigned = new SquaresVisibleInADirection(direction, 2, player).run(table);
-                canShootSpawnSquare = table.getIsDomination() && !squaresAssigned.isEmpty() && table.getGameMap().getSpawnSquares().contains(squaresAssigned.get(0)) && targets.getSquaresDamaged().contains(squaresAssigned.get((0)));
-                if(noTargets && (squaresAssigned.isEmpty() || (squaresAssigned.get(0).getPlayers().isEmpty() && !canShootSpawnSquare))){
+                if(squaresAssigned.isEmpty()){
                     throw new IllegalActionException();
                 }
-                Boolean playerOrSquare = true;
-                if(table.getIsDomination()){
-                    playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
-                }
-                if(playerOrSquare) {
-                    if(!squaresAssigned.get(0).getPlayers().isEmpty()) {
-                        effects.addAll(new ShootCreator(player, damages, marks, true, squaresAssigned.get(0)).run(controller, table, targets));
-                    }
-                }else{
-                    if(canShootSpawnSquare){
-                        effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squaresAssigned.get(0)));
-                        targets.getSquaresDamaged().add((DominationSpawnSquare) squaresAssigned.get(0));
-                    }
-                }
+                canShootSpawnSquare = table.getIsDomination() && table.getGameMap().getSpawnSquares().contains(squaresAssigned.get(0)) && targets.getSquaresDamaged().contains(squaresAssigned.get((0)));
 
                 //Move the Player
                 new FunctionalFactory().createMove(player, squaresAssigned.get(0)).doAction();
+
+                if(!noTargets){
+                    if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                        return effects;
+                    }
+                }
+
+                Boolean playerOrSquare = true;
+                if (table.getIsDomination()) {
+                    playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+                }
+                if (playerOrSquare) {
+                    if (!squaresAssigned.get(0).getPlayers().isEmpty()) {
+                        effects.addAll(new ShootCreator(player, damages, marks, true, squaresAssigned.get(0)).run(controller, table, targets));
+                    }else {
+                        throw new IllegalActionException();
+                    }
+                } else {
+                    if (canShootSpawnSquare) {
+                        effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squaresAssigned.get(0)));
+                        targets.getSquaresDamaged().add((DominationSpawnSquare) squaresAssigned.get(0));
+                    }else{
+                        throw new IllegalActionException();
+                    }
+                }
             }
         }else{
             if(maxDistShoot == 0){

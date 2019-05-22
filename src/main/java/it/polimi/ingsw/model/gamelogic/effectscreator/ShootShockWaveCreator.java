@@ -95,8 +95,16 @@ public class ShootShockWaveCreator implements EffectsCreator{
         }else{
             effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
 
+            if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                return effects;
+            }
+
             if(!playersTarget.isEmpty() || (table.getIsDomination() && !squaresTarget.isEmpty())){
                 effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
+
+                if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                    return effects;
+                }
 
                 if(!playersTarget.isEmpty() || (table.getIsDomination() && !squaresTarget.isEmpty())) {
                     effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
