@@ -77,7 +77,11 @@ public class ClientSocketListener implements Runnable {
         }
     }
 
-    // TODO Javadoc
+    /**
+     * This method parses a string using our custom protocol
+     * @param s The string to be parsed
+     * @return firstPartOfTheString of firstPartOfTheString;lastPartOfTheString
+     */
     private String getHeading(String s) {
         int pos = 0;
         while ((pos < s.length()) && (s.charAt(pos) != ';'))
@@ -86,7 +90,11 @@ public class ClientSocketListener implements Runnable {
         return s.substring(0,pos);
     }
 
-    // TODO Javadoc
+    /**
+     * This method parses a string using our custom protocol
+     * @param s The string to be parsed
+     * @return lastPartOfTheString of firstPartOfTheString;lastPartOfTheString
+     */
     private String getBody(String s) {
         int pos = 0;
         while ((pos < s.length()) && (s.charAt(pos) != ';'))

@@ -22,7 +22,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 // TODO: Add forceLogout invocation every time UnavailableUserException is thrown
-// TODO: Add check with UnavailableUserException thrown every time clientMap.get throws missing key exception
+// TODO: Add memorization of nickname list when the logout closes
+// TODO: Add timer on every network call
 /**
  * This class contains all the methods used to communicate with the client-side application
  * @author simonebraga
@@ -232,11 +233,21 @@ public class Controller implements ControllerRemote {
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
         }
     }
 
     // 2
-    // TODO Javadoc
+
+    /**
+     * This method asks the user to make a choice in a set o squares
+     * @param player Player who must choose
+     * @param arrayList Set of squares to choose from
+     * @return Square chosen by the user
+     * @throws UnavailableUserException if the user is not connected
+     */
     public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
         // TODO
         return null;
@@ -259,6 +270,9 @@ public class Controller implements ControllerRemote {
         try {
             return new ArrayList<>(Arrays.asList(gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("powerup",gson.toJson(powerups)),Powerup[].class)));
         } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
         }
@@ -289,6 +303,9 @@ public class Controller implements ControllerRemote {
                 }
             } throw new UnavailableUserException();
         } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
         }
@@ -322,6 +339,9 @@ public class Controller implements ControllerRemote {
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
         }
     }
 
@@ -344,6 +364,9 @@ public class Controller implements ControllerRemote {
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
         }
     }
 
@@ -361,6 +384,9 @@ public class Controller implements ControllerRemote {
         try {
             return clientMap.get(player.getUsername()).booleanQuestion(string);
         } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
         }
@@ -395,6 +421,9 @@ public class Controller implements ControllerRemote {
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
         }
     }
 
@@ -424,6 +453,9 @@ public class Controller implements ControllerRemote {
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
         }
     }
 
@@ -440,6 +472,9 @@ public class Controller implements ControllerRemote {
         try {
             clientMap.get(player.getUsername()).printMessage(message);
         } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
         }
@@ -462,6 +497,9 @@ public class Controller implements ControllerRemote {
         try {
             return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)),Powerup.class);
         } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
         }
@@ -487,6 +525,9 @@ public class Controller implements ControllerRemote {
         try {
             return Integer.parseInt(gson.fromJson(clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps)),String.class));
         } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
         }
@@ -518,6 +559,9 @@ public class Controller implements ControllerRemote {
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
         }
     }
 
@@ -538,6 +582,9 @@ public class Controller implements ControllerRemote {
         try {
             return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("save", gson.toJson(saves)),String.class);
         } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new UnavailableUserException();
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new UnavailableUserException();
         }
