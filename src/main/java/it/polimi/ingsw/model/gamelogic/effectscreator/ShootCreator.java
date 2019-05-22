@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -76,7 +77,7 @@ public class ShootCreator extends ShootCreatorAbstract implements EffectsCreator
         this.marks = marks;
         this.minDist = null;
         this.maxDist = null;
-        this.optional = null;
+        this.optional = false;
         this.target = null;
         this.squareAssigned = squareAssigned;
         this.squareTarget = squareTarget;
@@ -118,6 +119,12 @@ public class ShootCreator extends ShootCreatorAbstract implements EffectsCreator
         ArrayList<Square> squaresTarget = new ArrayList<>();
         ArrayList<Player> playersAvailable = new ArrayList<>();
         ArrayList<FunctionalEffect> effects= new ArrayList<>();
+
+        if(optional){
+            if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("WantToShoot"))){
+                return effects;
+            }
+        }
 
         if(!squareAssigned){
             findSquares(squaresTarget, table);

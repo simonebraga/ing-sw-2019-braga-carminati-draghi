@@ -92,7 +92,7 @@ public class ShootDirectionCreator implements EffectsCreator{
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         Character direction;
 
-        if(throughWalls){
+        if(throughWalls){ //RailGun
             ArrayList<Square> map = new ArrayList<>(table.getGameMap().getSpawnSquares());
             map.addAll(table.getGameMap().getTileSquares());
 
@@ -161,6 +161,10 @@ public class ShootDirectionCreator implements EffectsCreator{
             }
 
             if(twoTargets){
+                if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                    return effects;
+                }
+
                 if(playersTarget.isEmpty() && !(!table.getIsDomination() || squaresTarget.isEmpty())){
                     throw new IllegalActionException();
                 }
@@ -222,6 +226,12 @@ public class ShootDirectionCreator implements EffectsCreator{
                             targets.getSquaresDamaged().add((DominationSpawnSquare) square);
                         });
                     }
+                }
+            }
+
+            if(!noTargets && directShoot){
+                if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                    return effects;
                 }
             }
 

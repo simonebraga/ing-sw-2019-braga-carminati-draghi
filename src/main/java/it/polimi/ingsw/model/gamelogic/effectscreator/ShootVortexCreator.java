@@ -84,6 +84,10 @@ public class ShootVortexCreator implements EffectsCreator{
             }
             canShootVortex = shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 1, effects);
 
+            if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                return effects;
+            }
+
             if(!playersAvailable.isEmpty() || canShootVortex){
                 shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 1, effects);
             }

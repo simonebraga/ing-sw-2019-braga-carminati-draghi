@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
@@ -44,6 +45,12 @@ public class ShootSpawnSquareCreator extends ShootCreatorAbstract implements Eff
     public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         ArrayList<Square> squaresTarget = new ArrayList<>();
+
+        if(optional){
+            if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("WantToShoot"))){
+                return effects;
+            }
+        }
 
         findSquares(squaresTarget, table);
         squaresTarget = squaresTarget.stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
