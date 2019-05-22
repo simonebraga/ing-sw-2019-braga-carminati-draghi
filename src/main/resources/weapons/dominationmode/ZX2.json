@@ -1,0 +1,16 @@
+{
+  "BasicModeOnSpawnSquare":
+  [
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 2,
+      "minDist": 0,
+      "maxDist": -1,
+      "optional": false
+    }
+  ]
+}

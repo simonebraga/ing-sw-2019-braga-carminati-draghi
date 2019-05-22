@@ -1,0 +1,311 @@
+{
+  "BasicEffectOnOneSpawnSquare":
+    [
+      {
+        "type":"ShootSpawnSquare",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":true,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      }
+    ],
+  "BasicEffectOnTwoSpawnSquares":
+  [
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":1,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":false
+    },
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":1,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":true
+    }
+  ],
+  "BasicEffectOnSpawnSquare+FocusShot":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"ShootSpawnSquare",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["YELLOW"]
+      }
+    ],
+  "BasicEffectOnOneSpawnSquare+TurretTripod":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type": "ShootSpawnSquare",
+        "from": null,
+        "player": null,
+        "visibility": true,
+        "damages": 1,
+        "marks": 0,
+        "minDist": 0,
+        "maxDist": -1,
+        "optional": true
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":true,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE"]
+      }
+    ],
+  "BasicEffectOnTwoSpawnSquares+TurretTripod":
+  [
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": -1,
+      "optional": true
+    },
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":1,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":true
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["BLUE"]
+    }
+  ],
+  "BasicEffectOnThreeSpawnSquares+TurretTripod":
+  [
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":false
+    },
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": -1,
+      "optional": true
+    },
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":1,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":true
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["BLUE"]
+    }
+  ],
+  "BasicEffectOnOneSpawnSquare+FocusShot+TurretTripod":
+    [
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"Shoot",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false,
+        "target":null,
+        "squareAssigned":false,
+        "squareTarget":null
+      },
+      {
+        "type":"ShootSpawnSquare",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":1,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":true
+      },
+      {
+        "type":"Pay",
+        "player":null,
+        "price":["BLUE", "YELLOW"]
+      }
+    ],
+  "BasicEffectOnTwoSpawnSquares+FocusShot+TurretTripod":
+  [
+    {
+      "type":"Shoot",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":false,
+      "target":null,
+      "squareAssigned":false,
+      "squareTarget":null
+    },
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":false
+    },
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":1,
+      "marks":0,
+      "minDist":0,
+      "maxDist":-1,
+      "optional":true
+    },
+    {
+      "type":"Pay",
+      "player":null,
+      "price":["BLUE", "YELLOW"]
+    }
+  ]
+}

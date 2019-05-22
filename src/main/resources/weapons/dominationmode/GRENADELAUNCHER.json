@@ -1,0 +1,46 @@
+{
+  "BasicEffectOnSpawnSquare": [
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": -1,
+      "optional": false
+    }
+  ],
+  "BasicEffectOnSpawnSquare+ExtraGrenade": [
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": -1,
+      "optional": false
+    },
+    {
+      "type": "ShootAOE",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": -1,
+      "optional": true
+    },
+    {
+      "type": "Pay",
+      "player": null,
+      "price": [
+        "RED"
+      ]
+    }
+  ]
+}

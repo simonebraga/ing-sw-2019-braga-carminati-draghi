@@ -1,0 +1,30 @@
+{
+  "BasicModeOnSpawnSquare":
+  [
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":3,
+      "marks":0,
+      "minDist":0,
+      "maxDist":0,
+      "optional":false
+    }
+  ],
+  "LongBarrelModeOnSpawnSquare":
+  [
+    {
+      "type":"ShootSpawnSquare",
+      "from":null,
+      "player":null,
+      "visibility":true,
+      "damages":2,
+      "marks":0,
+      "minDist":1,
+      "maxDist":1,
+      "optional":false
+    }
+  ]
+}

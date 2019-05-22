@@ -1,0 +1,56 @@
+{
+  "BasicEffectOnSpawnSquare":
+    [
+      {
+        "type":"ShootSpawnSquare",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false
+      }
+    ],
+  "PhaseGlide+BasicEffectOnSpawnSquare":
+    [
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      },
+      {
+        "type":"ShootSpawnSquare",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false
+      }
+    ],
+  "BasicEffectOnSpawnSquare+PhaseGlide":
+    [
+      {
+        "type":"ShootSpawnSquare",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":2,
+        "marks":0,
+        "minDist":0,
+        "maxDist":-1,
+        "optional":false
+      },
+      {
+        "type": "Move",
+        "player": null,
+        "distance": 2,
+        "sameDirection": false
+      }
+    ]
+}

@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.GameTable;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -64,16 +65,22 @@ public class ShootRoomCreator implements EffectsCreator{
             throw new IllegalActionException();
         }
 
-        roomTarget.forEach(square ->
-            square.getPlayers().forEach(playerTarget ->{
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, playerTarget, damages, marks));
-                    if(!targets.getPlayersTargeted().contains(playerTarget)){
-                        targets.getPlayersTargeted().add(playerTarget);
-                    }
-                    if(!targets.getPlayersDamaged().contains(playerTarget)){
-                        targets.getPlayersDamaged().add(playerTarget);
-                    }
-            }));
+        roomTarget.forEach(square -> {
+            square.getPlayers().forEach(playerTarget -> {
+                effects.add(new FunctionalFactory().createDamagePlayer(player, playerTarget, damages, marks));
+                if (!targets.getPlayersTargeted().contains(playerTarget)) {
+                    targets.getPlayersTargeted().add(playerTarget);
+                }
+                if (!targets.getPlayersDamaged().contains(playerTarget)) {
+                    targets.getPlayersDamaged().add(playerTarget);
+                }
+            });
+            if(table.getIsDomination() && table.getGameMap().getSpawnSquares().contains(square) &&
+                    !targets.getSquaresDamaged().contains(square)){
+                effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) square));
+                targets.getSquaresDamaged().add((DominationSpawnSquare) square);
+            }
+        });
 
         if(effects.isEmpty()){
             throw new IllegalActionException();

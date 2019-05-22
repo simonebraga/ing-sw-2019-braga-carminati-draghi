@@ -28,7 +28,8 @@ import java.util.ArrayList;
         @JsonSubTypes.Type(value = ShootDirectionCreator.class, name = "ShootDirection"),
         @JsonSubTypes.Type(value = ShootRoomCreator.class, name = "ShootRoom"),
         @JsonSubTypes.Type(value = ShootShockWaveCreator.class, name = "ShootShockWave"),
-        @JsonSubTypes.Type(value = ShootVortexCreator.class, name = "ShootVortex")
+        @JsonSubTypes.Type(value = ShootVortexCreator.class, name = "ShootVortex"),
+        @JsonSubTypes.Type(value = ShootSpawnSquareCreator.class, name = "ShootSpawnSquare")
 })
 public interface EffectsCreator {
     void setPlayer(Player player);
