@@ -5,6 +5,8 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.GameTable;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -55,126 +57,6 @@ public class ShootDirectionCreator implements EffectsCreator{
         this.player = player;
     }
 
-    @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
-        ArrayList<Square> squaresTarget;
-        ArrayList<Player> playersTarget = new ArrayList<>();
-        ArrayList<FunctionalEffect> effects = new ArrayList<>();
-        Character direction;
-
-        if(throughWalls){
-            ArrayList<Square> map = new ArrayList<>(table.getGameMap().getSpawnSquares());
-            map.addAll(table.getGameMap().getTileSquares());
-
-            direction = controller.chooseDirection(player);
-
-            switch(direction){
-                case 'N':
-                    squaresTarget = new ArrayList<>(map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
-                                    table.getGameMap().getCoord(square).get(1) > table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toList()));
-                    break;
-                case 'S':
-                    squaresTarget = new ArrayList<>(map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
-                                    table.getGameMap().getCoord(square).get(1) < table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toList()));
-                    break;
-                case 'W':
-                    squaresTarget = new ArrayList<>(map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0) < table.getGameMap().getCoord(player.getPosition()).get(0) &&
-                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toList()));
-                    break;
-                default:
-                    squaresTarget = new ArrayList<>(map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0) > table.getGameMap().getCoord(player.getPosition()).get(0) &&
-                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toList()));
-                    break;
-            }
-
-            squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
-
-            if(playersTarget.isEmpty()){
-                throw new IllegalActionException();
-            }
-
-            Player target1;
-
-            target1 = controller.choosePlayer(player, playersTarget);
-            targets.getPlayersTargeted().add(target1);
-            targets.getPlayersDamaged().add(target1);
-
-            playersTarget.remove(target1);
-
-            if(twoTargets){
-                effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 2, 0));
-                if(!playersTarget.isEmpty()){
-                    Player target2 = controller.choosePlayer(player, playersTarget);
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, target2, 2, 0));
-                    targets.getPlayersTargeted().add(target2);
-                    targets.getPlayersDamaged().add(target2);
-                }
-            }else{
-                effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 3, 0));
-            }
-        }else{ //FlameThrower
-            boolean noPlayer = false;
-
-            direction = controller.chooseDirection(player);
-
-            squaresTarget = new SquaresVisibleInADirection(direction, 1, player).run(table);
-
-            squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
-            if(playersTarget.isEmpty()){
-                noPlayer = true;
-            }else{
-                if(directShoot){
-                    Player target = controller.choosePlayer(player, playersTarget);
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, target, 1, 0));
-                    targets.getPlayersTargeted().add(target);
-                    targets.getPlayersDamaged().add(target);
-                }else{
-                    playersTarget.forEach(playerTarget -> {
-                        new FunctionalFactory().createDamagePlayer(this.player, playerTarget, 2, 0);
-                        if(!targets.getPlayersTargeted().contains(playerTarget)){
-                            targets.getPlayersTargeted().add(playerTarget);
-                        }
-                        if(!targets.getPlayersDamaged().contains(playerTarget)){
-                            targets.getPlayersDamaged().add(playerTarget);
-                        }
-                    });
-                }
-            }
-
-            squaresTarget = new SquaresVisibleInADirection(direction, 2, player).run(table);
-
-            playersTarget.clear();
-            squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
-            if(playersTarget.isEmpty()) {
-                if (noPlayer) {
-                    throw new IllegalActionException();
-                }
-            }else{
-                if(directShoot){
-                    Player target = controller.choosePlayer(player, playersTarget);
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, target, 1, 0));
-                    targets.getPlayersTargeted().add(target);
-                    targets.getPlayersDamaged().add(target);
-                }else{
-                    playersTarget.forEach(playerTarget -> {
-                        new FunctionalFactory().createDamagePlayer(player, playerTarget, 2, 0);
-                        if(!targets.getPlayersTargeted().contains(playerTarget)){
-                            targets.getPlayersTargeted().add(playerTarget);
-                        }
-                        if(!targets.getPlayersDamaged().contains(playerTarget)){
-                            targets.getPlayersDamaged().add(playerTarget);
-                        }
-                    });
-                }
-            }
-        }
-        return effects;
-    }
-
     public Player getPlayer() {
         return player;
     }
@@ -201,5 +83,208 @@ public class ShootDirectionCreator implements EffectsCreator{
 
     public void setTwoTargets(Boolean twoTargets) {
         this.twoTargets = twoTargets;
+    }
+
+    @Override
+    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+        ArrayList<Square> squaresTarget;
+        ArrayList<Player> playersTarget = new ArrayList<>();
+        ArrayList<FunctionalEffect> effects = new ArrayList<>();
+        Character direction;
+
+        if(throughWalls){
+            ArrayList<Square> map = new ArrayList<>(table.getGameMap().getSpawnSquares());
+            map.addAll(table.getGameMap().getTileSquares());
+
+            direction = controller.chooseDirection(player);
+
+            switch(direction){
+                case 'N':
+                    squaresTarget = map.stream().filter(square ->
+                            table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
+                                    table.getGameMap().getCoord(square).get(1) > table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
+                    break;
+                case 'S':
+                    squaresTarget = map.stream().filter(square ->
+                            table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
+                                    table.getGameMap().getCoord(square).get(1) < table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
+                    break;
+                case 'W':
+                    squaresTarget = map.stream().filter(square ->
+                            table.getGameMap().getCoord(square).get(0) < table.getGameMap().getCoord(player.getPosition()).get(0) &&
+                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
+                    break;
+                default:
+                    squaresTarget = map.stream().filter(square ->
+                            table.getGameMap().getCoord(square).get(0) > table.getGameMap().getCoord(player.getPosition()).get(0) &&
+                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
+                    break;
+            }
+
+            squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
+            squaresTarget = squaresTarget.stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square) &&
+                    !targets.getSquaresDamaged().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+
+            if(playersTarget.isEmpty() && !(!table.getIsDomination() || squaresTarget.isEmpty())){
+                throw new IllegalActionException();
+            }
+
+            Boolean playerOrSquare = true;
+            if(table.getIsDomination()){
+                playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+            }
+
+            if(playerOrSquare) {
+                if(playersTarget.isEmpty()){
+                    throw new IllegalActionException();
+                }
+
+                Player target1 = controller.choosePlayer(player, playersTarget);
+                if(twoTargets){
+                    effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 2, 0));
+                }else{
+                    effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 3, 0));
+                }
+                targets.getPlayersTargeted().add(target1);
+                targets.getPlayersDamaged().add(target1);
+
+                playersTarget.remove(target1);
+            }else{
+                if(squaresTarget.isEmpty()){
+                    throw new IllegalActionException();
+                }
+
+                DominationSpawnSquare target1 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+                effects.add(new FunctionalFactory().createDamageSpawn(player, target1));
+                targets.getSquaresDamaged().add(target1);
+                squaresTarget.remove(target1);
+            }
+
+            if(twoTargets){
+                if(playersTarget.isEmpty() && !(!table.getIsDomination() || squaresTarget.isEmpty())){
+                    throw new IllegalActionException();
+                }
+
+                playerOrSquare = true;
+                if(table.getIsDomination()){
+                    playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+                }
+
+                if(playerOrSquare) {
+                    if(playersTarget.isEmpty()){
+                        throw new IllegalActionException();
+                    }
+                    Player target2 = controller.choosePlayer(player, playersTarget);
+                    effects.add(new FunctionalFactory().createDamagePlayer(player, target2, 2, 0));
+                    targets.getPlayersTargeted().add(target2);
+                    targets.getPlayersDamaged().add(target2);
+
+                    playersTarget.remove(target2);
+                }else{
+                    if(squaresTarget.isEmpty()){
+                        throw new IllegalActionException();
+                    }
+
+                    DominationSpawnSquare target2 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+                    effects.add(new FunctionalFactory().createDamageSpawn(player, target2));
+                    targets.getSquaresDamaged().add(target2);
+                    squaresTarget.remove(target2);
+                }
+            }
+        }else{ //FlameThrower
+            boolean noTargets = false;
+
+            direction = controller.chooseDirection(player);
+
+            squaresTarget = new SquaresVisibleInADirection(direction, 1, player).run(table);
+
+            squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
+            squaresTarget = squaresTarget.stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square) &&
+                    !targets.getSquaresDamaged().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+            if(playersTarget.isEmpty() && !(!table.getIsDomination() || squaresTarget.isEmpty())){
+                noTargets = true;
+            }else{
+                if(directShoot){
+                    effects.addAll(directShoot(controller, table, playersTarget, squaresTarget, targets));
+                }else{
+                    playersTarget.forEach(playerTarget -> {
+                        effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, 2, 0));
+                        if(!targets.getPlayersTargeted().contains(playerTarget)){
+                            targets.getPlayersTargeted().add(playerTarget);
+                        }
+                        if(!targets.getPlayersDamaged().contains(playerTarget)){
+                            targets.getPlayersDamaged().add(playerTarget);
+                        }
+                    });
+                    if(table.getIsDomination()) {
+                        squaresTarget.forEach(square -> {
+                            effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) square));
+                            targets.getSquaresDamaged().add((DominationSpawnSquare) square);
+                        });
+                    }
+                }
+            }
+
+            squaresTarget = new SquaresVisibleInADirection(direction, 2, player).run(table);
+
+            playersTarget.clear();
+            squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
+            squaresTarget = squaresTarget.stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square) &&
+                    !targets.getSquaresDamaged().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+            if(playersTarget.isEmpty() && !(!table.getIsDomination() || squaresTarget.isEmpty())){
+                if (noTargets) {
+                    throw new IllegalActionException();
+                }
+            }else{
+                if(directShoot){
+                    effects.addAll(directShoot(controller, table, playersTarget, squaresTarget, targets));
+                }else{
+                    playersTarget.forEach(playerTarget -> {
+                        effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, 1, 0));
+                        if(!targets.getPlayersTargeted().contains(playerTarget)){
+                            targets.getPlayersTargeted().add(playerTarget);
+                        }
+                        if(!targets.getPlayersDamaged().contains(playerTarget)){
+                            targets.getPlayersDamaged().add(playerTarget);
+                        }
+                    });
+                    if(table.getIsDomination()) {
+                        squaresTarget.forEach(square -> {
+                            effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) square));
+                            targets.getSquaresDamaged().add((DominationSpawnSquare) square);
+                        });
+                    }
+                }
+            }
+        }
+        return effects;
+    }
+
+    private ArrayList<FunctionalEffect> directShoot(Controller controller,GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets) throws IllegalActionException, UnavailableUserException {
+        ArrayList<FunctionalEffect> effects = new ArrayList<>();
+        Boolean playerOrSquare = true;
+        if(table.getIsDomination()){
+            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+        }
+        if(playerOrSquare) {
+            if (playersTarget.isEmpty()) {
+                throw new IllegalActionException();
+            }
+            Player target = controller.choosePlayer(player, playersTarget);
+            effects.add(new FunctionalFactory().createDamagePlayer(player, target, 1, 0));
+            targets.getPlayersTargeted().add(target);
+            targets.getPlayersDamaged().add(target);
+            playersTarget.remove(target);
+        }else {
+            if (squaresTarget.isEmpty()) {
+                throw new IllegalActionException();
+            }
+
+            DominationSpawnSquare target2 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+            effects.add(new FunctionalFactory().createDamageSpawn(player, target2));
+            targets.getSquaresDamaged().add(target2);
+            squaresTarget.remove(target2);
+        }
+        return effects;
     }
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -60,6 +61,12 @@ public class ShootAOECreator extends ShootCreatorAbstract implements EffectsCrea
                     targets.getPlayersDamaged().add(a);
             }
         });
+        if(table.getIsDomination() && table.getGameMap().getSpawnSquares().contains(target) &&
+                !targets.getSquaresDamaged().contains(target)){
+            effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) target));
+            targets.getSquaresDamaged().add((DominationSpawnSquare) target);
+        }
+
         if(!optional && effects.isEmpty()){
             throw new IllegalActionException();
         }

@@ -45,7 +45,7 @@ public class ActionManager {
      * The method that creates and executes an action.
      * @return A boolean value that represents if the action has been successfully completed or not. If the player disconnects during the action, the method will return true because the action has been completed.
      */
-    public Boolean runAction(Controller controller, GameTable table) {
+    public Boolean runAction(Controller controller, GameTable table, Targets targets) {
 
 
         final String MOVE = new MessageRetriever().retrieveMessage("move");
@@ -59,7 +59,6 @@ public class ActionManager {
         ArrayList<String> possibleActions = new ArrayList<>();
         Map<Player, Square> initialSituation = sandboxInitialize(table);
         ArrayList<Action> actions = new ArrayList<>();
-        Targets targets = new Targets();
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
         possibleActions.add(GRAB);

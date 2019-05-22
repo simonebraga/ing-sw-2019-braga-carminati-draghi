@@ -3,12 +3,15 @@ package it.polimi.ingsw.model.gamelogic.turn;
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
+import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
 import it.polimi.ingsw.model.gamelogic.actions.ActionManager;
 import it.polimi.ingsw.model.gamelogic.actions.PowerUpAction;
 import it.polimi.ingsw.model.gamelogic.actions.ReloadAction;
 import it.polimi.ingsw.model.gamelogic.effectscreator.Targets;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
@@ -61,7 +64,8 @@ public class TurnManager {
         }
 
         //Do the actions
-        doAction(controller, table);
+        Targets targets = new Targets();
+        doAction(controller, table, targets);
         try {
             new PowerUpAction().newtonUse(controller, table, player);
         } catch (UnavailableUserException e) {
@@ -71,7 +75,7 @@ public class TurnManager {
         } catch (UnavailableUserException e) {
         }
         if(!(finalFrenzy && !beforeFirstPlayer) && controller.isConnected(player)){
-            doAction(controller,table);
+            doAction(controller,table, targets);
             try {
                 new PowerUpAction().newtonUse(controller, table, player);
             } catch (UnavailableUserException e) {
@@ -86,7 +90,7 @@ public class TurnManager {
         boolean resultAction = true;
         ArrayList<FunctionalEffect> reload = new ArrayList<>();
         try {
-             reload.addAll(new ReloadAction().run(controller, table, player, new Targets()));
+            reload.addAll(new ReloadAction().run(controller, table, player, new Targets()));
         } catch (IllegalActionException | UnavailableUserException e) {
             resultAction = false;
         }
@@ -115,6 +119,14 @@ public class TurnManager {
 
         timerTurn.setStop(true);
 
+        //Damage player on SpawnSquare (domination)
+        if(table.getIsDomination() && table.getGameMap().getSpawnSquares().contains(player.getPosition())) {
+            new FunctionalFactory().createDamagePlayer(player, player, 1, 0).doAction();
+            if (player.getPosition().getPlayers().size() == 1) {
+                new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) player.getPosition()).doAction();
+            }
+        }
+
         //Control if someone is dead
         new DeathsFinder().runDeathsFinder(controller, table, player);
 
@@ -136,15 +148,18 @@ public class TurnManager {
                 });
     }
 
-    private void doAction (Controller controller, GameTable table){
+    private void doAction (Controller controller, GameTable table, Targets targets){
         final String errorProperty = "error";
-        boolean resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(controller, table);
+        targets.reset();
+        ArrayList<DominationSpawnSquare> targetsInitial = new ArrayList<>(targets.getSquaresDamaged());
+        boolean resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(controller, table, targets);
         while (!resultAction && controller.isConnected(player)){
+            targets = new Targets(new ArrayList<>(targetsInitial));
             try {
                 controller.sendMessage(player, new MessageRetriever().retrieveMessage(errorProperty));
             } catch (UnavailableUserException e) {
             }
-            resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(controller, table);
+            resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(controller, table, targets);
         }
     }
 }

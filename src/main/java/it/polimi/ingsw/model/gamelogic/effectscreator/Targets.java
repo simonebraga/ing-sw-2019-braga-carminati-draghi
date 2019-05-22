@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 
 import java.util.ArrayList;
@@ -24,9 +25,20 @@ public class Targets {
      */
     private ArrayList<Player> playersDamaged;
 
+    /**
+     * The spawn squares that have been damaged from a shoot.
+     * <p>This attribute is used only in domination mode.</p>
+     */
+    private ArrayList<DominationSpawnSquare> squaresDamaged;
+
     public Targets() {
         playersDamaged = new ArrayList<>();
         playersTargeted = new ArrayList<>();
+        squaresDamaged = new ArrayList<>();
+    }
+
+    public Targets(ArrayList<DominationSpawnSquare> squaresDamaged) {
+        this.squaresDamaged = squaresDamaged;
     }
 
     public ArrayList<Player> getPlayersTargeted() {
@@ -35,5 +47,19 @@ public class Targets {
 
     public ArrayList<Player> getPlayersDamaged() {
         return playersDamaged;
+    }
+
+    public ArrayList<DominationSpawnSquare> getSquaresDamaged() {
+        return squaresDamaged;
+    }
+
+    /**
+     * Resets the targets list between two actions.
+     * <p>It doesn't reset the list of spawn squares because each spawn square can be
+     * hit only one time each turn.</p>
+     */
+    public void reset(){
+        playersDamaged = new ArrayList<>();
+        playersTargeted = new ArrayList<>();
     }
 }

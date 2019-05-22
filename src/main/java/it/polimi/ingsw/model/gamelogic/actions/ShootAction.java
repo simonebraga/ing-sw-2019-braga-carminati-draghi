@@ -15,6 +15,7 @@ import it.polimi.ingsw.network.UnavailableUserException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +44,18 @@ public class ShootAction implements Action{
             map = objectMapper.readValue(weaponFile, new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if(table.getIsDomination()){
+            File weaponDominationFile = new File("src/main/resources/weapons/dominationmode"+weaponToUse.getName()+".json");
+            try {
+                Map<String, ArrayList<EffectsCreator>> maptemp = objectMapper.readValue(weaponDominationFile, new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
+                for (String s : maptemp.keySet()) {
+                    map.put(s, maptemp.get(s));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         ArrayList<String> useCases = new ArrayList<>(map.keySet());

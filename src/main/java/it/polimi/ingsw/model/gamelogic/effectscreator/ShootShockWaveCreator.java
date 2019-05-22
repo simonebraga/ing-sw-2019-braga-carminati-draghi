@@ -5,11 +5,14 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Creates and sets the effect that shoots around the player to targets on different squares
@@ -43,6 +46,18 @@ public class ShootShockWaveCreator implements EffectsCreator{
         this.player = player;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Boolean getTsunami() {
+        return tsunami;
+    }
+
+    public void setTsunami(Boolean tsunami) {
+        this.tsunami = tsunami;
+    }
+
     @Override
     public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects =new ArrayList<>();
@@ -50,7 +65,11 @@ public class ShootShockWaveCreator implements EffectsCreator{
         ArrayList<Player> playersTarget = new ArrayList<>();
 
         squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
-        if(playersTarget.isEmpty()){
+        squaresTarget = squaresTarget.stream().
+                filter(square -> table.getGameMap().getSpawnSquares().contains(square) &&
+                        !targets.getSquaresDamaged().contains(square))
+                .collect(Collectors.toCollection(ArrayList::new));
+        if(playersTarget.isEmpty() && !(table.getIsDomination() && !squaresTarget.isEmpty())){
             throw new IllegalActionException();
         }
 
@@ -64,43 +83,59 @@ public class ShootShockWaveCreator implements EffectsCreator{
                     targets.getPlayersDamaged().add(playerTarget);
                 }
             });
+            if(table.getIsDomination()) {
+                squaresTarget.forEach(target -> {
+                    if(table.getIsDomination() &&
+                            !targets.getSquaresDamaged().contains(target)){
+                        effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) target));
+                        targets.getSquaresDamaged().add((DominationSpawnSquare) target);
+                    }
+                });
+            }
         }else{
-            Player target1;
-            Player target2;
-            Player target3;
-            target1 = controller.choosePlayer(player, playersTarget);
-            effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 1, 0));
-            targets.getPlayersTargeted().add(target1);
-            targets.getPlayersDamaged().add(target1);
-            playersTarget.removeAll(target1.getPosition().getPlayers());
+            effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
 
-            if(!playersTarget.isEmpty()){
-                target2 = controller.choosePlayer(player, playersTarget);
-                effects.add(new FunctionalFactory().createDamagePlayer(player, target2, 1, 0));
-                targets.getPlayersTargeted().add(target2);
-                targets.getPlayersDamaged().add(target2);
-                playersTarget.removeAll(target1.getPosition().getPlayers());
+            if(!playersTarget.isEmpty() || (table.getIsDomination() && !squaresTarget.isEmpty())){
+                effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
 
-                if (!playersTarget.isEmpty()){
-                    target3 = controller.choosePlayer(player, playersTarget);
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, target3, 1, 0));
-                    targets.getPlayersTargeted().add(target3);
-                    targets.getPlayersDamaged().add(target3);
+                if(!playersTarget.isEmpty() || (table.getIsDomination() && !squaresTarget.isEmpty())) {
+                    effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
                 }
             }
         }
         return effects;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
+    private ArrayList<FunctionalEffect> shootSomething(Controller controller, GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets) throws  UnavailableUserException, IllegalActionException{
+        Boolean playerOrSquare = true;
+        ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
-    public Boolean getTsunami() {
-        return tsunami;
-    }
-
-    public void setTsunami(Boolean tsunami) {
-        this.tsunami = tsunami;
+        if(table.getIsDomination()){
+            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+        }
+        if(playerOrSquare) {
+            if(playersTarget.isEmpty()) {
+                throw new IllegalActionException();
+            }
+            Player target1 = controller.choosePlayer(player, playersTarget);
+            effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 1, 0));
+            targets.getPlayersTargeted().add(target1);
+            targets.getPlayersDamaged().add(target1);
+            playersTarget.removeAll(target1.getPosition().getPlayers());
+            squaresTarget.remove(target1.getPosition());
+        }else{
+            if(squaresTarget.isEmpty()){
+                throw new IllegalActionException();
+            }
+            DominationSpawnSquare target1 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+            if (targets.getSquaresDamaged().contains(target1)){
+                throw new IllegalActionException();
+            }
+            effects.add(new FunctionalFactory().createDamageSpawn(player, target1));
+            targets.getSquaresDamaged().add(target1);
+            playersTarget.removeAll(target1.getPlayers());
+            squaresTarget.remove(target1);
+        }
+        return effects;
     }
 }

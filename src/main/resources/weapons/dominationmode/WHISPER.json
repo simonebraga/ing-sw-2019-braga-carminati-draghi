@@ -1,0 +1,16 @@
+{
+  "BasicEffectOnSpawnSquare":
+    [
+      {
+        "type":"ShootSpawnSquare",
+        "from":null,
+        "player":null,
+        "visibility":true,
+        "damages":3,
+        "marks":1,
+        "minDist":2,
+        "maxDist":-1,
+        "optional":false
+      }
+    ]
+}

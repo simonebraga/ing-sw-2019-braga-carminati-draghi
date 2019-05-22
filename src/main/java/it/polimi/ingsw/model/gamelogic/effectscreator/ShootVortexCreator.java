@@ -5,6 +5,8 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -41,57 +43,6 @@ public class ShootVortexCreator implements EffectsCreator{
         this.player = player;
     }
 
-    @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
-        ArrayList<FunctionalEffect> effects = new ArrayList<>();
-        ArrayList<Player> playersAvailable = new ArrayList<>();
-        Player target;
-        ArrayList<Square> squares= new ArrayList<>(table.getGameMap().getVisibility(player.getPosition()));
-        squares.remove(player.getPosition());
-
-        Square vortex = controller.chooseSquare(player, squares);
-
-        squares = new ArrayList<>(table.getGameMap().getRange(vortex, 1));
-        squares.forEach(square -> playersAvailable.addAll(square.getPlayers()));
-
-        if(playersAvailable.isEmpty()){
-            throw new IllegalActionException();
-        }
-
-        target = controller.choosePlayer(player, playersAvailable);
-
-        effects.add(new FunctionalFactory().createDamagePlayer(player, target, 2, 0));
-        targets.getPlayersTargeted().add(target);
-        targets.getPlayersDamaged().add(target);
-        effects.add(new FunctionalFactory().createMove(target, vortex));
-
-        playersAvailable.remove(target);
-
-        if (multipleTargets){
-            if(playersAvailable.isEmpty()){
-                throw new IllegalActionException();
-            }
-
-            target = controller.choosePlayer(player, playersAvailable);
-
-            effects.add(new FunctionalFactory().createDamagePlayer(player, target, 1, 0));
-            targets.getPlayersTargeted().add(target);
-            targets.getPlayersDamaged().add(target);
-            effects.add(new FunctionalFactory().createMove(target, vortex));
-
-            playersAvailable.remove(target);
-
-            if(!playersAvailable.isEmpty()){
-                target = controller.choosePlayer(player, playersAvailable);
-                effects.add(new FunctionalFactory().createDamagePlayer(player, target, 1, 0));
-                targets.getPlayersTargeted().add(target);
-                targets.getPlayersDamaged().add(target);
-                effects.add(new FunctionalFactory().createMove(target, vortex));
-            }
-        }
-        return effects;
-    }
-
     public Player getPlayer() {
         return player;
     }
@@ -102,5 +53,66 @@ public class ShootVortexCreator implements EffectsCreator{
 
     public void setMultipleTargets(Boolean multipleTargets) {
         this.multipleTargets = multipleTargets;
+    }
+
+    @Override
+    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+        ArrayList<FunctionalEffect> effects = new ArrayList<>();
+        ArrayList<Player> playersAvailable = new ArrayList<>();
+        Player target;
+        ArrayList<Square> squares= new ArrayList<>(table.getGameMap().getVisibility(player.getPosition()));
+        squares.remove(player.getPosition());
+
+        Square vortex = controller.chooseSquare(player, squares);
+
+        Boolean canShootVortex = table.getIsDomination() &&
+                table.getGameMap().getSpawnSquares().contains(vortex) &&
+                !targets.getSquaresDamaged().contains(vortex);
+
+        squares = new ArrayList<>(table.getGameMap().getRange(vortex, 1));
+        squares.forEach(square -> playersAvailable.addAll(square.getPlayers()));
+
+        if(playersAvailable.isEmpty() && !canShootVortex){
+            throw new IllegalActionException();
+        }
+
+        canShootVortex = shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 2, effects);
+
+        if (multipleTargets){
+            if(playersAvailable.isEmpty() && !canShootVortex){
+                throw new IllegalActionException();
+            }
+            canShootVortex = shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 1, effects);
+
+            if(!playersAvailable.isEmpty() || canShootVortex){
+                shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 1, effects);
+            }
+        }
+        return effects;
+    }
+
+    private Boolean shootSomething(Controller controller, Boolean canShootVortex, ArrayList<Player> playersAvailable, Square vortex, Targets targets, Integer damages, ArrayList<FunctionalEffect> effects) throws UnavailableUserException, IllegalActionException {
+        Boolean playerOrSquare = true;
+        if(canShootVortex){
+            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+        }
+        if(playerOrSquare) {
+            if (playersAvailable.isEmpty()){
+                throw new IllegalActionException();
+            }
+            Player target = controller.choosePlayer(player, playersAvailable);
+
+            effects.add(new FunctionalFactory().createDamagePlayer(player, target, damages, 0));
+            targets.getPlayersTargeted().add(target);
+            targets.getPlayersDamaged().add(target);
+            effects.add(new FunctionalFactory().createMove(target, vortex));
+
+            playersAvailable.remove(target);
+        }else{
+            effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) vortex));
+            canShootVortex = false;
+            targets.getSquaresDamaged().add((DominationSpawnSquare) vortex);
+        }
+        return canShootVortex;
     }
 }

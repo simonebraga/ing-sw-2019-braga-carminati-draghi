@@ -1,0 +1,174 @@
+{
+  "BasicEffectOnSpawnSquare": [
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 2,
+      "marks": 0,
+      "minDist": 1,
+      "maxDist": -1,
+      "optional": false
+    }
+  ],
+  "RocketJump+BasicEffectOnSpawnSquare": [
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 2,
+      "sameDirection": false
+    },
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 2,
+      "marks": 0,
+      "minDist": 1,
+      "maxDist": -1,
+      "optional": false
+    },
+    {
+      "type": "Pay",
+      "player": null,
+      "price": [
+        "BLUE"
+      ]
+    }
+  ],
+  "BasicEffectOnSpawnSquare+RocketJump": [
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 2,
+      "marks": 0,
+      "minDist": 1,
+      "maxDist": -1,
+      "optional": false
+    },
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 2,
+      "sameDirection": false
+    },
+    {
+      "type": "Pay",
+      "player": null,
+      "price": [
+        "BLUE"
+      ]
+    }
+  ],
+  "BasicEffectOnSpawnSquare+FragmentingWarHead": [
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 2,
+      "marks": 0,
+      "minDist": 1,
+      "maxDist": -1,
+      "optional": false
+    },
+    {
+      "type": "ShootAOE",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": 0,
+      "optional": false
+    },
+    {
+      "type": "Pay",
+      "player": null,
+      "price": [
+        "YELLOW"
+      ]
+    }
+  ],
+  "RocketJump+BasicEffectOnSpawnSquare+FragmentingWarHead": [
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 2,
+      "sameDirection": false
+    },
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 2,
+      "marks": 0,
+      "minDist": 1,
+      "maxDist": -1,
+      "optional": false
+    },
+    {
+      "type": "ShootAOE",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": 0,
+      "optional": false
+    },
+    {
+      "type": "Pay",
+      "player": null,
+      "price": [
+        "BLUE",
+        "YELLOW"
+      ]
+    }
+  ],
+  "BasicEffectOnSpawnSquare+FragmentingWarHead+RocketJump": [
+    {
+      "type": "ShootSpawnSquare",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 2,
+      "marks": 0,
+      "minDist": 1,
+      "maxDist": -1,
+      "optional": false
+    },
+    {
+      "type": "ShootAOE",
+      "from": null,
+      "player": null,
+      "visibility": true,
+      "damages": 1,
+      "marks": 0,
+      "minDist": 0,
+      "maxDist": 0,
+      "optional": false
+    },
+    {
+      "type": "Move",
+      "player": null,
+      "distance": 2,
+      "sameDirection": false
+    },
+    {
+      "type": "Pay",
+      "player": null,
+      "price": [
+        "BLUE",
+        "YELLOW"
+      ]
+    }
+  ]
+}
