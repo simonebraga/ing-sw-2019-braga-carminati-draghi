@@ -21,6 +21,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO: Add forceLogout invocation every time UnavailableUserException is thrown
+// TODO: Add check with UnavailableUserException thrown every time clientMap.get throws missing key exception
 /**
  * This class contains all the methods used to communicate with the client-side application
  * @author simonebraga
@@ -97,6 +99,14 @@ public class Controller implements ControllerRemote {
         } else {
             System.out.println("Login not closed");
         }
+    }
+
+    /**
+     * This method checks if the controller is in login phase
+     * @return boolean value true iff login phase is running
+     */
+    public synchronized Boolean loginPhase() {
+        return loginPhase;
     }
 
     public synchronized Set<String> getNicknameSet() {

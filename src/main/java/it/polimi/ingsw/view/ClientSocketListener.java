@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -36,43 +38,35 @@ public class ClientSocketListener implements Runnable {
 
             while (true) {
 
-                String method = "";
-                String parameters = "";
                 String line = in.nextLine();
-                int pos = 0;
 
                 if (line.equals("quit")) {
                     break;
                 }
 
-                while ((pos < line.length() && (line.charAt(pos) != ';'))) {
-                    pos++;
-                }
+                String method = getHeading(line);
+                String parameters = getBody(line);
 
-                if (pos >= line.length()) {
-                    System.out.println("Received invalid syntax message: " + line);
-                } else {
-                    method = line.substring(0,pos);
-                    parameters = line.substring(pos + 1);
-
-                    // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
-                    switch (method) {
-                        case "printMessage": {
-                            client.printMessage(parameters);
-                            break;
-                        }
-                        case "singleChoice": {
-                            // TODO
-                        }
-                        case "multipleChoice": {
-                            // TODO
-                        }
-                        case "booleanQuestion": {
-                            // TODO
-                        }
-                        default: {
-                            System.out.println("Received: " + line);
-                        }
+                // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
+                switch (method) {
+                    case "printMessage": {
+                        client.printMessage(parameters);
+                        break;
+                    }
+                    case "singleChoice": {
+                        controllerSocket.returnMessage(client.singleChoice(getHeading(parameters),getBody(parameters)));
+                        break;
+                    }
+                    case "multipleChoice": {
+                        controllerSocket.returnMessage(client.multipleChoice(getHeading(parameters),getBody(parameters)));
+                        break;
+                    }
+                    case "booleanQuestion": {
+                        controllerSocket.returnMessage(new Gson().toJson(client.booleanQuestion(parameters)));
+                        break;
+                    }
+                    default: {
+                        System.out.println("Received invalid message: " + line);
                     }
                 }
             }
@@ -81,5 +75,23 @@ public class ClientSocketListener implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // TODO Javadoc
+    private String getHeading(String s) {
+        int pos = 0;
+        while ((pos < s.length()) && (s.charAt(pos) != ';'))
+            pos++;
+        if (pos >= s.length()) return "";
+        return s.substring(0,pos);
+    }
+
+    // TODO Javadoc
+    private String getBody(String s) {
+        int pos = 0;
+        while ((pos < s.length()) && (s.charAt(pos) != ';'))
+            pos++;
+        if (pos >= s.length()) return "";
+        return s.substring(pos + 1);
     }
 }

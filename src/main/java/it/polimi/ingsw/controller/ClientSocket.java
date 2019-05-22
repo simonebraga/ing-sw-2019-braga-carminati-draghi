@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import com.google.gson.Gson;
 import it.polimi.ingsw.network.ClientRemote;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class ClientSocket implements ClientRemote {
 
     private Socket socket;
     private PrintWriter out;
+    private CustomStream customStream;
 
     /**
      * This method is the constructor of the class. It initializes the socket connection used to communicate with the client
@@ -23,7 +25,8 @@ public class ClientSocket implements ClientRemote {
      */
     public ClientSocket(Socket socket, Controller controller) {
         this.socket = socket;
-        new Thread(new ControllerSocketListener(controller, this)).start();
+        customStream = new CustomStream();
+        new Thread(new ControllerSocketListener(controller, this, customStream)).start();
 
         try {
             out = new PrintWriter(socket.getOutputStream());
@@ -46,19 +49,25 @@ public class ClientSocket implements ClientRemote {
 
     @Override
     public String singleChoice(String obj, String s) throws RemoteException {
-        // TODO
-        return null;
+        customStream.resetBuffer();
+        out.println("singleChoice;" + obj + ";" + s);
+        out.flush();
+        return customStream.getLine();
     }
 
     @Override
     public String multipleChoice(String obj, String s) throws RemoteException {
-        // TODO
-        return null;
+        customStream.resetBuffer();
+        out.println("multipleChoice;" + obj + ";" + s);
+        out.flush();
+        return customStream.getLine();
     }
 
     @Override
     public Boolean booleanQuestion(String s) throws RemoteException {
-        // TODO
-        return null;
+        customStream.resetBuffer();
+        out.println("booleanQuestion;" + s);
+        out.flush();
+        return new Gson().fromJson(customStream.getLine(),Boolean.class);
     }
 }

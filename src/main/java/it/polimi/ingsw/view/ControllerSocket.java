@@ -49,4 +49,9 @@ public class ControllerSocket implements ControllerRemote {
         out.println("logout;");
         out.flush();
     }
+
+    public void returnMessage(String s) {
+        out.println("return;" + s);
+        out.flush();
+    }
 }
