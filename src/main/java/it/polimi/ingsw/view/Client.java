@@ -56,43 +56,45 @@ public class Client implements ClientRemote {
      */
     public Client(int i, ViewInterface view) throws RemoteException {
 
+        this.view = view;
+
+        Properties properties = new Properties();
         try {
-
-            this.view = view;
-
-            Properties properties = new Properties();
             properties.load(new FileReader("src/main/resources/network_settings.properties"));
-
-            this.remoteName = properties.getProperty("controllerRemoteName");
-            this.serverIp = properties.getProperty("serverIp");
-            this.clientIp = properties.getProperty("clientIp");
-            this.serverPortRMI = Integer.parseInt(properties.getProperty("serverRmiPort"));
-            this.clientPortRMI = Integer.parseInt(properties.getProperty("clientRmiPort"));
-            this.serverPortSocket = Integer.parseInt(properties.getProperty("serverSocketPort"));
-
-            if (i == 0) {
-                // RMI setup
-                try {
-                    System.setProperty("java.rmi.server.hostname",clientIp);
-                    UnicastRemoteObject.exportObject(this,clientPortRMI);
-                    controller = (ControllerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
-                    System.out.println("RMI ready");
-                } catch (NotBoundException e) {
-                    System.err.println("Something went wrong with registry lookup");
-                }
-            } else if (i == 1) {
-                // Socket setup
-                try {
-                    controller = new ControllerSocket(new Socket(serverIp,serverPortSocket),this);
-                    System.out.println("Socket ready");
-                } catch (IOException e) {
-                    System.err.println("Something went wrong with socket setup");
-                }
-            } else {
-                System.err.println("Incorrect parameter in constructor of Client");
-            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error reading the configuration file");
+            throw new RemoteException();
+        }
+
+        this.remoteName = properties.getProperty("controllerRemoteName");
+        this.serverIp = properties.getProperty("serverIp");
+        this.clientIp = properties.getProperty("clientIp");
+        this.serverPortRMI = Integer.parseInt(properties.getProperty("serverRmiPort"));
+        this.clientPortRMI = Integer.parseInt(properties.getProperty("clientRmiPort"));
+        this.serverPortSocket = Integer.parseInt(properties.getProperty("serverSocketPort"));
+
+        if (i == 0) {
+            // RMI setup
+            try {
+                System.setProperty("java.rmi.server.hostname",clientIp);
+                UnicastRemoteObject.exportObject(this,clientPortRMI);
+                controller = (ControllerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
+                System.out.println("RMI ready");
+            } catch (NotBoundException | IOException e) {
+                System.err.println("Something went wrong with RMI setup");
+                throw new RemoteException();
+            }
+        } else if (i == 1) {
+            // Socket setup
+            try {
+                controller = new ControllerSocket(new Socket(serverIp,serverPortSocket),this);
+                System.out.println("Socket ready");
+            } catch (IOException e) {
+                System.err.println("Something went wrong with socket setup");
+                throw new RemoteException();
+            }
+        } else {
+            System.err.println("Incorrect parameter in constructor of Client");
         }
     }
 
