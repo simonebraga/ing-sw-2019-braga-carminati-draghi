@@ -21,6 +21,10 @@ import javafx.stage.Stage;
 
 import java.rmi.RemoteException;
 
+/**
+ * This class contains the JavaFX application of the client
+ * @author simonebraga
+ */
 public class GuiMain extends Application implements ViewInterface {
 
     private BorderPane root = new BorderPane();
@@ -167,51 +171,61 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public Figure choosePlayer(Figure[] f) {
+        // TODO
         return null;
     }
 
     @Override
     public WeaponName chooseWeapon(WeaponName[] w) {
+        // TODO
         return null;
     }
 
     @Override
     public String chooseString(String[] s) {
+        // TODO
         return null;
     }
 
     @Override
     public Powerup choosePowerup(Powerup[] p) {
+        // TODO
         return null;
     }
 
     @Override
     public Boolean booleanQuestion(String s) {
+        // TODO
         return null;
     }
 
     @Override
     public Powerup[] chooseMultiplePowerups(Powerup[] p) {
+        // TODO
         return new Powerup[0];
     }
 
     @Override
     public WeaponName[] chooseMultipleWeapons(WeaponName[] w) {
+        // TODO
         return new WeaponName[0];
     }
 
     @Override
     public String chooseMap(String[] s) {
+        // TODO
         return null;
     }
 
     @Override
     public String chooseMode(String[] s) {
+        // TODO
         return null;
     }
 
     @Override
     public String chooseSave(String[] s) {
+        // TODO
         return null;
     }
 }
