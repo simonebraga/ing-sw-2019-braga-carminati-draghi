@@ -101,13 +101,18 @@ public class Client implements ClientRemote {
     /**
      * This method is used to register the client on the controller. It does not handle the outcome of the login procedure; it just request to the controller to login
      * @param s is the nickname used for the login/registration
+     * @return  0 - Registration successful
+     *          1 - Nickname already chosen
+     *          2 - Login successful
+     *          3 - Nickname not registered
+     * @throws NetworkException if something goes wrong with the network
      */
-    public void login(String s) {
+    public int login(String s) throws NetworkException {
 
         try {
-            controller.login(s,this);
+            return controller.login(s,this);
         } catch (RemoteException e) {
-            System.err.println("Something went wrong with the login");
+            throw new NetworkException();
         }
     }
 

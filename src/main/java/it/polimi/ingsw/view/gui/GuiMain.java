@@ -58,12 +58,7 @@ public class GuiMain extends Application implements ViewInterface {
 
         Button loginButton = new Button("Login");
         loginButton.setOnAction(behav -> {
-            try {
-                client = new Client(networkType,this);
-                client.login(nicknameField.getText());
-            } catch (RemoteException e) {
-                loginOutcomeText.setText("Server not connected");
-            }
+            // TODO
         });
 
         GridPane loginPane = new GridPane();

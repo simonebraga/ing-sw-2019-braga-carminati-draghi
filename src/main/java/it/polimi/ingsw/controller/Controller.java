@@ -163,62 +163,44 @@ public class Controller implements ControllerRemote {
     }
 
     @Override
-    public synchronized void login(String s, ClientRemote c) throws RemoteException {
+    public synchronized int login(String s, ClientRemote c) throws RemoteException {
 
-        if (loginPhase) {
-        // Behavior if the login phase is running
+        if (loginPhase) { // Behavior if the login phase is running
 
-            if (clientMap.keySet().size() < 5) {
-                if (clientMap.containsKey(s)) {
-                    if (clientMap.get(s) == c)
-                        c.printMessage("You are already registered");
-                    else
-                        c.printMessage("Nickname already chosen");
-                } else {
-                    clientMap.put(s,c);
-                    System.out.println(clientMap.toString());
-                    c.printMessage("Successful registration");
-                    if (clientMap.keySet().size() >= 5)
-                        stopLoginPhase();
-                    else if (clientMap.keySet().size() == 3)
-                        new Thread(()->{
-                            int i = timerLength;
-                            while ((i > 0) && (clientMap.keySet().size() >= 3)) {
-                                System.out.println("Closing login in "+ i +" seconds");
-                                i--;
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+            if (!clientMap.containsKey(s)) {
+                clientMap.put(s,c);
+
+                if (clientMap.keySet().size() >= 5)
+                    stopLoginPhase();
+
+                if (clientMap.keySet().size() == 3)
+                    new Thread(() -> {
+                        int i = timerLength;
+                        while ((i > 0) && (clientMap.keySet().size() >= 3)) {
+                            System.out.println("Closing login in "+ i +" seconds");
+                            i--;
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-                            stopLoginPhase();
-                        }).start();
-                }
-            } else
-                c.printMessage("Registration not allowed");
+                        }
+                        stopLoginPhase();
+                    }).start();
 
-        } else {
-        // Behavior if the login phase is closed
-
-            if (clientMap.containsKey(s)) {
-                if (clientMap.get(s) == c)
-                    c.printMessage("You are already logged in");
-                else {
-                    clientMap.get(s).printMessage("You have been disconnected");
-                    clientMap.put(s,c);
-                    System.out.println(clientMap.toString());
-                    c.printMessage("Successful login");
-                }
+                return 0; // Successful registration
             } else {
-                if (usernameList.contains(s)) {
-                    clientMap.put(s,c);
-                    System.out.println(clientMap.toString());
-                    c.printMessage("Successful login");
-                } else
-                    c.printMessage("You are not registered");
+                return 1; // Nickname already chosen
             }
 
+        } else { // Behavior if the login phase is not running
+
+            if (usernameList.contains(s)) {
+                clientMap.put(s, c);
+                return 2; // Successful login
+            } else {
+                return 3; // Nickname not registered
+            }
         }
     }
 

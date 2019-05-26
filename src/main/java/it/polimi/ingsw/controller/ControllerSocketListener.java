@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -49,7 +51,7 @@ public class ControllerSocketListener implements Runnable {
                 // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
                 switch (method) {
                     case "login": {
-                        controller.login(parameters,clientSocket);
+                        clientSocket.returnMessage(new Gson().toJson(controller.login(parameters,clientSocket)));
                         break;
                     }
                     case "logout": {

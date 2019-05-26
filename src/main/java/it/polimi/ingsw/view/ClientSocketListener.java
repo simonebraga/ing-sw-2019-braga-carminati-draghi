@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.controller.CustomStream;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -14,16 +15,17 @@ public class ClientSocketListener implements Runnable {
     private Client client;
     private ControllerSocket controllerSocket;
     private Scanner in;
-
+    private CustomStream customStream;
 
     /**
      * This method initializes the class with the correct parameters
      * @param client is the client associated to the listener
      * @param controllerSocket is the class used to communicate with the controller
      */
-    public ClientSocketListener(Client client, ControllerSocket controllerSocket) {
+    public ClientSocketListener(Client client, ControllerSocket controllerSocket, CustomStream customStream) {
         this.client = client;
         this.controllerSocket = controllerSocket;
+        this.customStream = customStream;
         System.out.println("ClientSocketListener created");
     }
 
@@ -63,6 +65,10 @@ public class ClientSocketListener implements Runnable {
                     }
                     case "booleanQuestion": {
                         controllerSocket.returnMessage(new Gson().toJson(client.booleanQuestion(parameters)));
+                        break;
+                    }
+                    case "return": {
+                        customStream.putLine(parameters);
                         break;
                     }
                     default: {

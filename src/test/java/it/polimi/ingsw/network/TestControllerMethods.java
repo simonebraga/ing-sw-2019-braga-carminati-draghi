@@ -9,6 +9,7 @@ import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.view.Client;
+import it.polimi.ingsw.view.NetworkException;
 import it.polimi.ingsw.view.ViewInterface;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -118,7 +119,7 @@ class TestControllerMethods {
             client2.login("User2");
             client3.login("User3");
             controller.stopLoginPhase();
-        } catch (RemoteException e) {
+        } catch (RemoteException | NetworkException e) {
             fail();
         }
     }
@@ -131,13 +132,13 @@ class TestControllerMethods {
 
         try {
             Client client = new Client(0, null);
-            client.login("Nickname");
+            assertEquals(0,client.login("Nickname"));
 
             Set<String> set = new HashSet<>();
             set.add("Nickname");
 
             assertEquals(set , controller.getNicknameSet());
-        } catch (RemoteException e) {
+        } catch (RemoteException | NetworkException e) {
             fail();
         }
     }
@@ -159,7 +160,7 @@ class TestControllerMethods {
             set.add("Nickname2");
 
             assertEquals(set,controller.getNicknameSet());
-        } catch (RemoteException e) {
+        } catch (RemoteException | NetworkException e) {
             fail();
         }
     }

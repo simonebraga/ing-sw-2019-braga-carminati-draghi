@@ -70,4 +70,9 @@ public class ClientSocket implements ClientRemote {
         out.flush();
         return new Gson().fromJson(customStream.getLine(),Boolean.class);
     }
+
+    public void returnMessage(String s) {
+        out.println("return;" + s);
+        out.flush();
+    }
 }

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view;
 
+import com.google.gson.Gson;
+import it.polimi.ingsw.controller.CustomStream;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ControllerRemote;
 
@@ -16,6 +18,7 @@ public class ControllerSocket implements ControllerRemote {
 
     private Socket socket;
     private PrintWriter out;
+    private CustomStream customStream;
 
     /**
      * This methods initializes the class with the correct parameters
@@ -25,7 +28,8 @@ public class ControllerSocket implements ControllerRemote {
     public ControllerSocket(Socket socket, Client client) {
 
         this.socket = socket;
-        new Thread(new ClientSocketListener(client, this)).start();
+        customStream = new CustomStream();
+        new Thread(new ClientSocketListener(client, this,customStream)).start();
         try {
             out = new PrintWriter(socket.getOutputStream());
         } catch (IOException e) {
@@ -39,9 +43,11 @@ public class ControllerSocket implements ControllerRemote {
     }
 
     @Override
-    public void login(String s, ClientRemote c) throws RemoteException {
+    public int login(String s, ClientRemote c) throws RemoteException {
+        customStream.resetBuffer();
         out.println("login;" + s);
         out.flush();
+        return new Gson().fromJson(customStream.getLine(),int.class);
     }
 
     @Override

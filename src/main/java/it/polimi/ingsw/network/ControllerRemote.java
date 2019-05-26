@@ -9,6 +9,6 @@ import java.rmi.RemoteException;
  */
 public interface ControllerRemote extends Remote {
 
-    void login(String s, ClientRemote c) throws RemoteException;
+    int login(String s, ClientRemote c) throws RemoteException;
     void logout(ClientRemote c) throws RemoteException;
 }
