@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.view.Client;
+import it.polimi.ingsw.view.NetworkException;
 import it.polimi.ingsw.view.ViewInterface;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -33,6 +34,7 @@ public class GuiMain extends Application implements ViewInterface {
     private Client client;
 
     private int networkType;
+    private String nickname;
 
     public static void main(String[] args) {
         launch(args);
@@ -58,7 +60,37 @@ public class GuiMain extends Application implements ViewInterface {
 
         Button loginButton = new Button("Login");
         loginButton.setOnAction(behav -> {
-            // TODO
+            nickname = nicknameField.getText();
+            try {
+                client = new Client(networkType,this);
+                int ret = client.login(nickname);
+                switch (ret) {
+                    case 0: {
+                        root.setCenter(null);
+                        root.setTop(null);
+                        // TODO Game to start scenario
+                        break;
+                    }
+                    case 1: {
+                        loginOutcomeText.setText("Nickname already chosen");
+                        break;
+                    }
+                    case 2: {
+                        root.setTop(null);
+                        root.setCenter(null);
+                        // TODO Game started scenario
+                        break;
+                    }
+                    case 3: {
+                        loginOutcomeText.setText("Nickname not registered");
+                        break;
+                    }
+                    default:
+                        loginOutcomeText.setText("Something very bad went wrong");
+                }
+            } catch (NetworkException | RemoteException e) {
+                loginOutcomeText.setText("Server not available");
+            }
         });
 
         GridPane loginPane = new GridPane();

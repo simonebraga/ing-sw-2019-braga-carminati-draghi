@@ -169,6 +169,7 @@ public class Controller implements ControllerRemote {
 
             if (!clientMap.containsKey(s)) {
                 clientMap.put(s,c);
+                System.out.println(clientMap.toString());
 
                 if (clientMap.keySet().size() >= 5)
                     stopLoginPhase();
@@ -197,6 +198,7 @@ public class Controller implements ControllerRemote {
 
             if (usernameList.contains(s)) {
                 clientMap.put(s, c);
+                System.out.println(clientMap.toString());
                 return 2; // Successful login
             } else {
                 return 3; // Nickname not registered
