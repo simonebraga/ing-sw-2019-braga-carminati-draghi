@@ -42,8 +42,8 @@ public class ClientSocket implements ClientRemote {
     }
 
     @Override
-    public void printMessage(String s) throws RemoteException {
-        out.println("printMessage;" + s);
+    public void noChoice(String obj, String s) throws RemoteException {
+        out.println("noChoice;" + s);
         out.flush();
     }
 

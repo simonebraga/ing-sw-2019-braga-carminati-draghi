@@ -51,8 +51,8 @@ public class ClientSocketListener implements Runnable {
 
                 // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
                 switch (method) {
-                    case "printMessage": {
-                        client.printMessage(parameters);
+                    case "noChoice": {
+                        client.noChoice(getHeading(parameters),getBody(parameters));
                         break;
                     }
                     case "singleChoice": {

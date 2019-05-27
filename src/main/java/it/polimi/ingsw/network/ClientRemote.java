@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  */
 public interface ClientRemote extends Remote {
 
-    void printMessage(String s) throws RemoteException;
+    void noChoice(String obj, String s) throws RemoteException;
     String singleChoice(String obj, String s) throws RemoteException;
     String multipleChoice(String obj, String s) throws RemoteException;
     Boolean booleanQuestion(String s) throws RemoteException;

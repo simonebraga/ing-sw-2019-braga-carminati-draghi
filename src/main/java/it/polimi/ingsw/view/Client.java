@@ -2,12 +2,8 @@ package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.cardclasses.Powerup;
-import it.polimi.ingsw.model.cardclasses.Weapon;
-import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.mapclasses.Square;
-import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ControllerRemote;
 
@@ -18,9 +14,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Scanner;
 
 /**
  * This class contains all the necessary methods of the client-side application to communicate with the server-side applications, and implements the remote methods that can be called by the controller
@@ -129,9 +123,18 @@ public class Client implements ClientRemote {
     }
 
     @Override
-    public void printMessage(String s) throws RemoteException {
+    public void noChoice(String obj, String s) throws RemoteException {
 
-        System.out.println(s);
+        switch (obj) {
+            case "systemMessage": {
+                System.out.println(s);
+                break;
+            }
+            default: {
+                System.err.println("Unsupported type");
+                throw new RemoteException();
+            }
+        }
     }
 
     @Override

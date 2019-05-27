@@ -148,7 +148,7 @@ public class Controller implements ControllerRemote {
 
         if (clientMap.containsKey(player.getUsername())) {
             try {
-                clientMap.get(player.getUsername()).printMessage("You have been disconnected");
+                clientMap.get(player.getUsername()).noChoice("systemMessage", "You have been disconnected");
             } catch (RemoteException e) {
             }
             clientMap.remove(player.getUsername());
@@ -212,9 +212,9 @@ public class Controller implements ControllerRemote {
         if (clientMap.containsValue(c)) {
             while (clientMap.values().remove(c));
             System.out.println(clientMap.toString());
-            c.printMessage("Logout successful");
+            c.noChoice("systemMessage", "Logout successful");
         } else {
-            c.printMessage("You are not logged in");
+            c.noChoice("systemMessage", "You are not logged in");
         }
     }
 
@@ -465,7 +465,7 @@ public class Controller implements ControllerRemote {
     public void sendMessage(Player player, String message) throws UnavailableUserException {
 
         try {
-            clientMap.get(player.getUsername()).printMessage(message);
+            clientMap.get(player.getUsername()).noChoice("systemMessage", message);
         } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
             forceLogout(player);
