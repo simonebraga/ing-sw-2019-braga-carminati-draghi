@@ -94,6 +94,10 @@ class TestControllerMethods {
         public String chooseSave(String[] s) {
             return s[0];
         }
+
+        @Override
+        public void startGame(String[] s) {
+        }
     }
 
     @BeforeAll

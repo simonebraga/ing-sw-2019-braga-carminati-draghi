@@ -574,4 +574,15 @@ public class Controller implements ControllerRemote {
             throw new UnavailableUserException();
         }
     }
+
+    public void startGame() {
+        String[] array = new String[usernameList.size()];
+        array = usernameList.toArray(array);
+        for (String nick : usernameList) {
+            try {
+                clientMap.get(nick).noChoice("startGame",gson.toJson(array));
+            } catch (RemoteException | NullPointerException e) {
+            }
+        }
+    }
 }

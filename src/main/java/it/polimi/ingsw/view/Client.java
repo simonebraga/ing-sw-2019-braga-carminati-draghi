@@ -130,6 +130,10 @@ public class Client implements ClientRemote {
                 System.out.println(s);
                 break;
             }
+            case "startGame": {
+                view.startGame(gson.fromJson(s,String[].class));
+                break;
+            }
             default: {
                 System.err.println("Unsupported type");
                 throw new RemoteException();

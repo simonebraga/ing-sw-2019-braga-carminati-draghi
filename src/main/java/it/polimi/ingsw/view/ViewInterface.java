@@ -16,4 +16,5 @@ public interface ViewInterface {
     String chooseMap(String[] s);
     String chooseMode(String[] s);
     String chooseSave(String[] s);
+    void startGame(String[] s);
 }

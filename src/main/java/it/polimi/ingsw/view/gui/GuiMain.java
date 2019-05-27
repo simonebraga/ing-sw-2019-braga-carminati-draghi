@@ -7,12 +7,15 @@ import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.NetworkException;
 import it.polimi.ingsw.view.ViewInterface;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -20,7 +23,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class contains the JavaFX application of the client
@@ -35,9 +42,58 @@ public class GuiMain extends Application implements ViewInterface {
 
     private int networkType;
     private String nickname;
+    private ArrayList<String> nicknameList;
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void setGamemapScenario() {
+
+        ImageView map = null;
+        try {
+            map = new ImageView(new Image(new FileInputStream("src/main/resources/graphics/maps/test.png")));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        map.fitWidthProperty().bind(stage.widthProperty());
+        map.fitHeightProperty().bind(stage.heightProperty());
+        root.setCenter(map);
+
+    }
+
+    private void setStartwaitScenario() {
+
+        Text waitText = new Text("Waiting for the game to start");
+        waitText.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+        HBox hbWaitText = new HBox();
+        hbWaitText.setAlignment(Pos.CENTER);
+        hbWaitText.setPadding(new Insets(10,10,10,10));
+        hbWaitText.getChildren().add(waitText);
+
+        root.setCenter(hbWaitText);
+
+    }
+
+    private void setLogoutButtonScenario() {
+
+        Button logoutButton = new Button("Logout");
+        logoutButton.setOnAction(behav -> {
+            client.logout();
+            client = null;
+            root.setCenter(null);
+            root.setTop(null);
+            setLoginScenario();
+            setNetworkChoiceScenarioBack();
+        });
+
+        HBox hbLogoutButton = new HBox();
+        hbLogoutButton.setPadding(new Insets(10,10,10,10));
+        hbLogoutButton.setAlignment(Pos.CENTER_RIGHT);
+        hbLogoutButton.getChildren().add(logoutButton);
+
+        root.setTop(hbLogoutButton);
+
     }
 
     private void setLoginScenario() {
@@ -68,7 +124,8 @@ public class GuiMain extends Application implements ViewInterface {
                     case 0: {
                         root.setCenter(null);
                         root.setTop(null);
-                        // TODO Game to start scenario
+                        setStartwaitScenario();
+                        setLogoutButtonScenario();
                         break;
                     }
                     case 1: {
@@ -254,5 +311,11 @@ public class GuiMain extends Application implements ViewInterface {
     public String chooseSave(String[] s) {
         // TODO
         return null;
+    }
+
+    @Override
+    public void startGame(String[] s) {
+        nicknameList = new ArrayList<>(Arrays.asList(s));
+        Platform.runLater(this::setGamemapScenario);
     }
 }

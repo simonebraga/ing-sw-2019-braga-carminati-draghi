@@ -43,7 +43,7 @@ public class ClientSocket implements ClientRemote {
 
     @Override
     public void noChoice(String obj, String s) throws RemoteException {
-        out.println("noChoice;" + s);
+        out.println("noChoice;" + obj + ";" + s);
         out.flush();
     }
 
