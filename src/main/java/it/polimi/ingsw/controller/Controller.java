@@ -227,7 +227,7 @@ public class Controller implements ControllerRemote {
 
         String nick = "Player";
         for (String n : clientMap.keySet())
-            if (clientMap.get(n) == c)
+            if (clientMap.get(n).equals(c))
                 nick = n;
         if (clientMap.containsValue(c)) {
             while (clientMap.values().remove(c));
