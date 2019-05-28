@@ -54,7 +54,7 @@ public class Client implements ClientRemote {
 
         Properties properties = new Properties();
         try {
-            properties.load(new FileReader("src/main/resources/network_settings.properties"));
+            properties.load(Client.class.getClassLoader().getResourceAsStream("network_settings.properties"));
         } catch (IOException e) {
             System.err.println("Error reading the configuration file");
             throw new RemoteException();
@@ -131,7 +131,7 @@ public class Client implements ClientRemote {
                 break;
             }
             case "startGame": {
-                view.startGame(gson.fromJson(s,String[].class));
+                view.startGame();
                 break;
             }
             default: {
@@ -206,8 +206,8 @@ public class Client implements ClientRemote {
     }
 
     @Override
-    public void notifyDisconnection(String s) throws RemoteException {
-        view.notifyDisconnection(s);
-        System.out.println("Here");
+    public void notifyEvent(String s) throws RemoteException {
+        if (view != null)
+            view.notifyEvent(s);
     }
 }

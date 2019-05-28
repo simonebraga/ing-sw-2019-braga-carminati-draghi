@@ -52,12 +52,12 @@ public class GuiMain extends Application implements ViewInterface {
 
         ImageView map = null;
         try {
-            map = new ImageView(new Image(new FileInputStream("src/main/resources/graphics/maps/test.png")));
+            map = new ImageView(new Image(new FileInputStream("src/main/resources/graphics/maps/test.png"),700,500,false,false));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        map.fitWidthProperty().bind(stage.widthProperty());
-        map.fitHeightProperty().bind(stage.heightProperty());
+        //map.fitWidthProperty().bind(stage.widthProperty());
+        //map.fitHeightProperty().bind(stage.heightProperty());
         root.setCenter(map);
         Platform.runLater(this::setLogoutButtonScenario);
 
@@ -226,20 +226,20 @@ public class GuiMain extends Application implements ViewInterface {
 
     private void setFullscreenButtonScenario() {
 
-        Button fullscreenButton = new Button("⤢");
-        fullscreenButton.setOnAction(behav -> {
-            if (!stage.isFullScreen())
-                stage.setFullScreen(true);
-            else
-                stage.setFullScreen(false);
-        });
+        //Button fullscreenButton = new Button("⤢");
+        //fullscreenButton.setOnAction(behav -> {
+        //    if (!stage.isFullScreen())
+        //        stage.setFullScreen(true);
+        //    else
+        //        stage.setFullScreen(false);
+        //});
 
-        HBox hbFullscreen = new HBox();
-        hbFullscreen.setPadding(new Insets(10,10,10,10));
-        hbFullscreen.setAlignment(Pos.CENTER_RIGHT);
-        hbFullscreen.getChildren().add(fullscreenButton);
+        //HBox hbFullscreen = new HBox();
+        //hbFullscreen.setPadding(new Insets(10,10,10,10));
+        //hbFullscreen.setAlignment(Pos.CENTER_RIGHT);
+        //hbFullscreen.getChildren().add(fullscreenButton);
 
-        root.setBottom(hbFullscreen);
+        //root.setBottom(hbFullscreen);
     }
 
     @Override
@@ -315,18 +315,18 @@ public class GuiMain extends Application implements ViewInterface {
     }
 
     @Override
-    public void startGame(String[] s) {
-        nicknameList = new ArrayList<>(Arrays.asList(s));
+    public void startGame() {
         Platform.runLater(this::setGamemapScenario);
     }
 
     @Override
-    public void notifyDisconnection(String s) {
+    public void notifyEvent(String s) {
         Platform.runLater(() -> {
-            Text popup = new Text(s + " disconnected");
-            HBox hbPopup = new HBox();
-            hbPopup.getChildren().add(popup);
-            root.setLeft(hbPopup);
+            Text event = new Text(s);
+            HBox hbEvent = new HBox();
+            hbEvent.setAlignment(Pos.CENTER);
+            hbEvent.getChildren().add(event);
+            root.setBottom(hbEvent);
         });
     }
 }

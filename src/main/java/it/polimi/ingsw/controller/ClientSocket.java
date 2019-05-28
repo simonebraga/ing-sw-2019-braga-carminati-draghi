@@ -72,8 +72,8 @@ public class ClientSocket implements ClientRemote {
     }
 
     @Override
-    public void notifyDisconnection(String s) throws RemoteException {
-        out.println("notifyDisconnection;" + s);
+    public void notifyEvent(String s) throws RemoteException {
+        out.println("notifyEvent;" + s);
         out.flush();
         return;
     }

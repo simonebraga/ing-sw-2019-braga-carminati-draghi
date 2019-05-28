@@ -67,8 +67,8 @@ public class ClientSocketListener implements Runnable {
                         controllerSocket.returnMessage(new Gson().toJson(client.booleanQuestion(parameters)));
                         break;
                     }
-                    case "notifyDisconnection": {
-                        client.notifyDisconnection(parameters);
+                    case "notifyEvent": {
+                        client.notifyEvent(parameters);
                     }
                     case "return": {
                         customStream.putLine(parameters);

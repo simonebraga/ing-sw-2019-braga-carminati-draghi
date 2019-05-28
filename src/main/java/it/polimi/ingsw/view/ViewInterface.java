@@ -16,6 +16,6 @@ public interface ViewInterface {
     String chooseMap(String[] s);
     String chooseMode(String[] s);
     String chooseSave(String[] s);
-    void startGame(String[] s);
-    void notifyDisconnection(String s);
+    void startGame();
+    void notifyEvent(String s);
 }

@@ -97,6 +97,7 @@ public class Controller implements ControllerRemote {
             loginPhase = false;
             usernameList = new ArrayList<>(clientMap.keySet());
             System.out.println("Login closed");
+            startGame();
         } else if (clientMap.keySet().size() > 5) {
             System.err.println("Something went wrong, more clients registered than allowed");
         } else {
@@ -189,6 +190,10 @@ public class Controller implements ControllerRemote {
                         stopLoginPhase();
                     }).start();
 
+                for (String n : clientMap.keySet()) {
+                    if (n != s)
+                        clientMap.get(n).notifyEvent(s + " connected");
+                }
                 return 0; // Successful registration
             } else {
                 return 1; // Nickname already chosen
@@ -199,6 +204,17 @@ public class Controller implements ControllerRemote {
             if (usernameList.contains(s)) {
                 clientMap.put(s, c);
                 System.out.println(clientMap.toString());
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }startGame();
+                }).start();
+                for (String n : clientMap.keySet()) {
+                    if (n != s)
+                        clientMap.get(n).notifyEvent(s + " connected");
+                }
                 return 2; // Successful login
             } else {
                 return 3; // Nickname not registered
@@ -218,7 +234,7 @@ public class Controller implements ControllerRemote {
             System.out.println(clientMap.toString());
             c.noChoice("systemMessage", "Logout successful");
             for (String s : clientMap.keySet()) {
-                clientMap.get(s).notifyDisconnection(nick);
+                clientMap.get(s).notifyEvent(nick + " disconnected");
             }
         } else {
             c.noChoice("systemMessage", "You are not logged in");
@@ -583,12 +599,11 @@ public class Controller implements ControllerRemote {
     }
 
     public void startGame() {
-        String[] array = new String[usernameList.size()];
-        array = usernameList.toArray(array);
-        for (String nick : usernameList) {
+        for (String nick : clientMap.keySet()) {
             try {
-                clientMap.get(nick).noChoice("startGame",gson.toJson(array));
-            } catch (RemoteException | NullPointerException e) {
+                clientMap.get(nick).noChoice("startGame","");
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
     }
