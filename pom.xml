@@ -115,7 +115,7 @@
           <version>0.0.2</version>
           <configuration>
             <!-- fix with the correct GUI application -->
-            <mainClass>it.polimi.ingsw.view.gui.GuiMain</mainClass>
+            <mainClass>it.polimi.ingsw.MainClient</mainClass>
           </configuration>
         </plugin>
         <!--end of JAVA FX-->
