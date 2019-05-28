@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
 import it.polimi.ingsw.model.gamelogic.effectscreator.EffectsCreator;
+import it.polimi.ingsw.model.gamelogic.effectscreator.ShootSpawnSquareCreator;
 import it.polimi.ingsw.model.gamelogic.effectscreator.Targets;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -38,18 +39,16 @@ public class ShootAction implements Action{
 
         //Import from Json
         ObjectMapper objectMapper = new ObjectMapper();
-        File weaponFile = new File("src/main/resources/weapons/"+weaponToUse.getName()+".json");
         Map<String, ArrayList<EffectsCreator>> map = null;
         try {
-            map = objectMapper.readValue(weaponFile, new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
+            map = objectMapper.readValue(ShootAction.class.getClassLoader().getResourceAsStream("weapons/"+weaponToUse.getName()+".json"), new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         if(table.getIsDomination()){
-            File weaponDominationFile = new File("src/main/resources/weapons/dominationmode"+weaponToUse.getName()+".json");
             try {
-                Map<String, ArrayList<EffectsCreator>> maptemp = objectMapper.readValue(weaponDominationFile, new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
+                Map<String, ArrayList<EffectsCreator>> maptemp = objectMapper.readValue(ShootAction.class.getClassLoader().getResourceAsStream("weapons/dominationmode/"+weaponToUse.getName()+".json"), new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
                 for (String s : maptemp.keySet()) {
                     map.put(s, maptemp.get(s));
                 }

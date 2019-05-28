@@ -16,11 +16,7 @@ public class MessageRetriever {
     public String retrieveMessage(String message){
         InputStream inputStream = null;
 
-        try {
-            inputStream = new FileInputStream(PATH);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        inputStream = MessageRetriever.class.getClassLoader().getResourceAsStream("messages.properties");
         Properties properties = new Properties();
         try {
             properties.load(inputStream);
