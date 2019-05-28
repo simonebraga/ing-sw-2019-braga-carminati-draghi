@@ -51,11 +51,7 @@ public class GuiMain extends Application implements ViewInterface {
     private void setGamemapScenario() {
 
         ImageView map = null;
-        try {
-            map = new ImageView(new Image(new FileInputStream("src/main/resources/graphics/maps/test.png"),700,500,false,false));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        map = new ImageView(new Image(GuiMain.class.getClassLoader().getResourceAsStream("graphics/maps/test.png"),700,500,false,false));
         //map.fitWidthProperty().bind(stage.widthProperty());
         //map.fitHeightProperty().bind(stage.heightProperty());
         root.setCenter(map);
