@@ -319,4 +319,14 @@ public class GuiMain extends Application implements ViewInterface {
         nicknameList = new ArrayList<>(Arrays.asList(s));
         Platform.runLater(this::setGamemapScenario);
     }
+
+    @Override
+    public void notifyDisconnection(String s) {
+        Platform.runLater(() -> {
+            Text popup = new Text(s + " disconnected");
+            HBox hbPopup = new HBox();
+            hbPopup.getChildren().add(popup);
+            root.setLeft(hbPopup);
+        });
+    }
 }

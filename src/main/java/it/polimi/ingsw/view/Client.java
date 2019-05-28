@@ -204,4 +204,10 @@ public class Client implements ClientRemote {
 
         return view.booleanQuestion(s);
     }
+
+    @Override
+    public void notifyDisconnection(String s) throws RemoteException {
+        view.notifyDisconnection(s);
+        System.out.println("Here");
+    }
 }

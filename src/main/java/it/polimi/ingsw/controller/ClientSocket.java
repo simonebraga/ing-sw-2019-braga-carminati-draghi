@@ -71,6 +71,13 @@ public class ClientSocket implements ClientRemote {
         return new Gson().fromJson(customStream.getLine(),Boolean.class);
     }
 
+    @Override
+    public void notifyDisconnection(String s) throws RemoteException {
+        out.println("notifyDisconnection;" + s);
+        out.flush();
+        return;
+    }
+
     public void returnMessage(String s) {
         out.println("return;" + s);
         out.flush();

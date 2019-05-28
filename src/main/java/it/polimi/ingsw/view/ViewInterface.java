@@ -17,4 +17,5 @@ public interface ViewInterface {
     String chooseMode(String[] s);
     String chooseSave(String[] s);
     void startGame(String[] s);
+    void notifyDisconnection(String s);
 }

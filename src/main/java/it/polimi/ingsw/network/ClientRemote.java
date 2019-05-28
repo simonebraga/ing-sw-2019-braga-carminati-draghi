@@ -13,4 +13,5 @@ public interface ClientRemote extends Remote {
     String singleChoice(String obj, String s) throws RemoteException;
     String multipleChoice(String obj, String s) throws RemoteException;
     Boolean booleanQuestion(String s) throws RemoteException;
+    void notifyDisconnection(String s) throws RemoteException;
 }

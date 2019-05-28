@@ -209,10 +209,17 @@ public class Controller implements ControllerRemote {
     @Override
     public synchronized void logout(ClientRemote c) throws RemoteException {
 
+        String nick = "Player";
+        for (String n : clientMap.keySet())
+            if (clientMap.get(n) == c)
+                nick = n;
         if (clientMap.containsValue(c)) {
             while (clientMap.values().remove(c));
             System.out.println(clientMap.toString());
             c.noChoice("systemMessage", "Logout successful");
+            for (String s : clientMap.keySet()) {
+                clientMap.get(s).notifyDisconnection(nick);
+            }
         } else {
             c.noChoice("systemMessage", "You are not logged in");
         }

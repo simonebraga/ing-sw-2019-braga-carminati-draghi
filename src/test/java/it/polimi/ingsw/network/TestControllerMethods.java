@@ -98,6 +98,11 @@ class TestControllerMethods {
         @Override
         public void startGame(String[] s) {
         }
+
+        @Override
+        public void notifyDisconnection(String s) {
+
+        }
     }
 
     @BeforeAll
