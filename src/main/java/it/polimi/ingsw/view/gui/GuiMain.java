@@ -59,6 +59,7 @@ public class GuiMain extends Application implements ViewInterface {
         map.fitWidthProperty().bind(stage.widthProperty());
         map.fitHeightProperty().bind(stage.heightProperty());
         root.setCenter(map);
+        Platform.runLater(this::setLogoutButtonScenario);
 
     }
 
@@ -124,8 +125,8 @@ public class GuiMain extends Application implements ViewInterface {
                     case 0: {
                         root.setCenter(null);
                         root.setTop(null);
-                        setStartwaitScenario();
-                        setLogoutButtonScenario();
+                        Platform.runLater(this::setStartwaitScenario);
+                        Platform.runLater(this::setLogoutButtonScenario);
                         break;
                     }
                     case 1: {
@@ -143,10 +144,10 @@ public class GuiMain extends Application implements ViewInterface {
                         break;
                     }
                     default:
-                        loginOutcomeText.setText("Something very bad went wrong");
+                        Platform.runLater(() -> loginOutcomeText.setText("Something very bad went wrong"));
                 }
             } catch (NetworkException | RemoteException e) {
-                loginOutcomeText.setText("Server not available");
+                Platform.runLater(() -> loginOutcomeText.setText("Server not available"));
             }
         });
 
