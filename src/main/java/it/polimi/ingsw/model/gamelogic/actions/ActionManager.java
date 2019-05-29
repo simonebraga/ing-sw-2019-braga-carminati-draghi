@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.actions;
 
 import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
@@ -45,7 +45,7 @@ public class ActionManager {
      * The method that creates and executes an action.
      * @return A boolean value that represents if the action has been successfully completed or not. If the player disconnects during the action, the method will return true because the action has been completed.
      */
-    public Boolean runAction(Controller controller, GameTable table, Targets targets) {
+    public Boolean runAction(Server server, GameTable table, Targets targets) {
 
 
         final String MOVE = new MessageRetriever().retrieveMessage("move");
@@ -78,7 +78,7 @@ public class ActionManager {
 
         String choice = null;
         try {
-            choice = controller.chooseString(player, possibleActions);
+            choice = server.chooseString(player, possibleActions);
         } catch (UnavailableUserException e) {
             return false;
         }
@@ -126,7 +126,7 @@ public class ActionManager {
 
         for (Action action : actions) {
             try {
-                effects.addAll(action.run(controller, table, player, targets));
+                effects.addAll(action.run(server, table, player, targets));
             } catch (IllegalActionException | UnavailableUserException e) {
                 initialSituation.keySet().forEach(player1 ->
                         new FunctionalFactory().createMove(player1, initialSituation.get(player1)).doAction());
@@ -141,10 +141,10 @@ public class ActionManager {
         effects = new ArrayList<>();
         boolean nextTarget;
         for (Player target : targets.getPlayersDamaged()) {
-            if (controller.isConnected(player)) {
+            if (server.isConnected(player)) {
                 do {
                     try {
-                        effects.addAll(new PowerUpAction().targetingScopeUse(controller, table, player, target));
+                        effects.addAll(new PowerUpAction().targetingScopeUse(server, table, player, target));
                         nextTarget = true;
                     } catch (IllegalActionException e) {
                         nextTarget = false;
@@ -158,9 +158,9 @@ public class ActionManager {
 
         //Use tagBack Grenade
         for (Player target : targets.getPlayersDamaged()) {
-            if(target.getDamageTrack().getDamage().size()<11 && controller.isConnected(target)){ //Makes sure that the player is alive and connected
+            if(target.getDamageTrack().getDamage().size()<11 && server.isConnected(target)){ //Makes sure that the player is alive and connected
                 try {
-                    effects.addAll(new PowerUpAction().tagBackGrenadeUse(controller, table, target, player));
+                    effects.addAll(new PowerUpAction().tagBackGrenadeUse(server, table, target, player));
                 } catch (UnavailableUserException e) {
                 }
             }

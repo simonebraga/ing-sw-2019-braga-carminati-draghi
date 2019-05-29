@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.turn;
 
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.playerclasses.Player;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,12 +15,12 @@ public class TimerTurn extends Thread{
 
     private int time;
 
-    private Controller controller;
+    private Server server;
 
     private Player playerOfTurn;
 
-    public TimerTurn(Controller controller, Integer time, Player playerOfTurn) {
-        this.controller = controller;
+    public TimerTurn(Server server, Integer time, Player playerOfTurn) {
+        this.server = server;
         this.time = time;
         this.playerOfTurn = playerOfTurn;
     }
@@ -41,7 +41,7 @@ public class TimerTurn extends Thread{
             }
         }
         if(!stop.get()){
-            controller.forceLogout(playerOfTurn);
+            server.forceLogout(playerOfTurn);
         }
     }
 }

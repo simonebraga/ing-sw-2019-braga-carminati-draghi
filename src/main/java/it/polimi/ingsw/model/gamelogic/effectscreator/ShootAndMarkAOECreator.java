@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.GameTable;
@@ -49,17 +49,17 @@ public class ShootAndMarkAOECreator implements EffectsCreator{
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects;
         Boolean playerOrSquare = true;
 
         if (table.getIsDomination()) {
-            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+            playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
         }
 
         if(playerOrSquare) {
             ShootCreator shootCreator = new ShootCreator(player, player, true, damages, 0, 1, -1, false);
-            effects = new ArrayList<> (shootCreator.run(controller, table, targets));
+            effects = new ArrayList<> (shootCreator.run(server, table, targets));
 
             shootCreator.getTarget().getPosition().getPlayers().forEach(player -> {
                 effects.add(new FunctionalFactory().createDamagePlayer(this.player, player, 0, marks));
@@ -69,7 +69,7 @@ public class ShootAndMarkAOECreator implements EffectsCreator{
             });
         }else{
             ShootSpawnSquareCreator shootSpawnSquareCreator = new ShootSpawnSquareCreator(player, player, true, damages, 0, 1, -1, false);
-            effects = new ArrayList<> (shootSpawnSquareCreator.run(controller, table, targets));
+            effects = new ArrayList<> (shootSpawnSquareCreator.run(server, table, targets));
 
             shootSpawnSquareCreator.getTarget().getPlayers().forEach(player -> {
                 effects.add(new FunctionalFactory().createDamagePlayer(this.player, player, 0, marks));

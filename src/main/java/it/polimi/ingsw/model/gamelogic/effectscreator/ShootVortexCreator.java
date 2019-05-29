@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
@@ -56,14 +56,14 @@ public class ShootVortexCreator implements EffectsCreator{
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         ArrayList<Player> playersAvailable = new ArrayList<>();
         Player target;
         ArrayList<Square> squares= new ArrayList<>(table.getGameMap().getVisibility(player.getPosition()));
         squares.remove(player.getPosition());
 
-        Square vortex = controller.chooseSquare(player, squares);
+        Square vortex = server.chooseSquare(player, squares);
 
         Boolean canShootVortex = table.getIsDomination() &&
                 table.getGameMap().getSpawnSquares().contains(vortex) &&
@@ -76,35 +76,35 @@ public class ShootVortexCreator implements EffectsCreator{
             throw new IllegalActionException();
         }
 
-        canShootVortex = shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 2, effects);
+        canShootVortex = shootSomething(server, canShootVortex, playersAvailable, vortex, targets, 2, effects);
 
         if (multipleTargets){
             if(playersAvailable.isEmpty() && !canShootVortex){
                 throw new IllegalActionException();
             }
-            canShootVortex = shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 1, effects);
+            canShootVortex = shootSomething(server, canShootVortex, playersAvailable, vortex, targets, 1, effects);
 
-            if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+            if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
                 return effects;
             }
 
             if(!playersAvailable.isEmpty() || canShootVortex){
-                shootSomething(controller, canShootVortex, playersAvailable, vortex, targets, 1, effects);
+                shootSomething(server, canShootVortex, playersAvailable, vortex, targets, 1, effects);
             }
         }
         return effects;
     }
 
-    private Boolean shootSomething(Controller controller, Boolean canShootVortex, ArrayList<Player> playersAvailable, Square vortex, Targets targets, Integer damages, ArrayList<FunctionalEffect> effects) throws UnavailableUserException, IllegalActionException {
+    private Boolean shootSomething(Server server, Boolean canShootVortex, ArrayList<Player> playersAvailable, Square vortex, Targets targets, Integer damages, ArrayList<FunctionalEffect> effects) throws UnavailableUserException, IllegalActionException {
         Boolean playerOrSquare = true;
         if(canShootVortex){
-            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+            playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
         }
         if(playerOrSquare) {
             if (playersAvailable.isEmpty()){
                 throw new IllegalActionException();
             }
-            Player target = controller.choosePlayer(player, playersAvailable);
+            Player target = server.choosePlayer(player, playersAvailable);
 
             effects.add(new FunctionalFactory().createDamagePlayer(player, target, damages, 0));
             targets.getPlayersTargeted().add(target);

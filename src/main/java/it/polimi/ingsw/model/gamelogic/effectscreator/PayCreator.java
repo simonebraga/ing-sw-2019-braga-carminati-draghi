@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
@@ -51,14 +51,14 @@ public class PayCreator implements EffectsCreator{
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<Powerup> powerUps;
         ArrayList<Color> priceReduced = new ArrayList<>(price);
         ArrayList<FunctionalEffect> effects =new ArrayList<>();
 
         powerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
         if(!powerUps.isEmpty()){
-            powerUps = controller.chooseMultiplePowerup(player, powerUps);
+            powerUps = server.chooseMultiplePowerup(player, powerUps);
 
             for (Powerup powerUp : powerUps) {
                 if (!priceReduced.remove(powerUp.getColor())){
@@ -82,7 +82,7 @@ public class PayCreator implements EffectsCreator{
         return effects;
     }
 
-    public ArrayList<FunctionalEffect> payAnyColor(Controller controller, GameTable table, ArrayList<Powerup> powerUpsCaller, Integer price) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> payAnyColor(Server server, GameTable table, ArrayList<Powerup> powerUpsCaller, Integer price) throws IllegalActionException, UnavailableUserException {
         ArrayList<Powerup> powerUps;
         ArrayList<FunctionalEffect> effects =new ArrayList<>();
         powerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
@@ -104,7 +104,7 @@ public class PayCreator implements EffectsCreator{
 
         Color choice;
         for(; price>0; price--){
-            choice = controller.chooseColor(player);
+            choice = server.chooseColor(player);
             if(player.getAmmoPocket().getAmmo(choice)<0){
                 throw new IllegalActionException();
             }

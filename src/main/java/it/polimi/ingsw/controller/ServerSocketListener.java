@@ -1,27 +1,26 @@
-package it.polimi.ingsw.view;
+package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
-import it.polimi.ingsw.controller.CustomStream;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
-public class ClientSocketListener implements Runnable {
+public class ServerSocketListener implements Runnable {
 
-    private Client client;
-    private ClientSocketSpeaker clientSocketSpeaker;
+    private Server server;
+    private ServerSocketSpeaker serverSocketSpeaker;
     private Socket socket;
     private Scanner in;
     private CustomStream customStream;
 
     private Gson gson = new Gson();
 
-    public ClientSocketListener(Socket socket, Client client, ClientSocketSpeaker clientSocketSpeaker, CustomStream customStream) throws Exception {
+    public ServerSocketListener(Socket socket, Server server, ServerSocketSpeaker serverSocketSpeaker, CustomStream customStream) throws Exception {
 
-        this.client = client;
-        this.clientSocketSpeaker = clientSocketSpeaker;
+        this.server = server;
+        this.serverSocketSpeaker = serverSocketSpeaker;
         this.socket = socket;
         this.customStream = customStream;
         in = new Scanner(socket.getInputStream());
@@ -39,30 +38,14 @@ public class ClientSocketListener implements Runnable {
                 String method = getHeading(line);
                 String parameters = getBody(line);
                 try {
-                    // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
+                    // This switch-case must be configured to invoke all the remote methods of Server with the correct parameters
                     switch (method) {
-                        case "notifyLogout": {
-                            client.notifyLogout();
+                        case "login": {
+                            serverSocketSpeaker.returnMessage(gson.toJson(server.login(parameters,serverSocketSpeaker)));
                             break;
                         }
-                        case "genericWithoutResponse": {
-                            client.genericWithoutResponse(getHeading(parameters),getBody(parameters));
-                            break;
-                        }
-                        case "genericWithResponse": {
-                            clientSocketSpeaker.returnMessage(client.genericWithResponse(getHeading(parameters),getBody(parameters)));
-                            break;
-                        }
-                        case "singleChoice": {
-                            clientSocketSpeaker.returnMessage(client.singleChoice(getHeading(parameters),getBody(parameters)));
-                            break;
-                        }
-                        case "multipleChoice": {
-                            clientSocketSpeaker.returnMessage(client.multipleChoice(getHeading(parameters),getBody(parameters)));
-                            break;
-                        }
-                        case "booleanQuestion": {
-                            clientSocketSpeaker.returnMessage(gson.toJson(client.booleanQuestion(parameters)));
+                        case "logout": {
+                            server.logout(serverSocketSpeaker);
                             break;
                         }
                         case "return": {
@@ -84,7 +67,7 @@ public class ClientSocketListener implements Runnable {
         } catch (IOException ignored) {
             // It is useless to handle this exception, because if thrown the socket is already closed
         }
-        clientSocketSpeaker.kill();
+        serverSocketSpeaker.kill();
     }
 
     private String getHeading(String s) {

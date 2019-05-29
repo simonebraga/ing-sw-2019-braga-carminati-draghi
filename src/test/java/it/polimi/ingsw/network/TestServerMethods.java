@@ -1,6 +1,6 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * It is not a test-suite of the network itself, it is a test-suite used to check if the serialization protocol of the objects is implemented correctly.
  * @author simonebraga
  */
-class TestControllerMethods {
+class TestServerMethods {
 
-    static Controller controller;
+    static Server server;
     static Client client1;
     static Client client2;
     static Client client3;
@@ -111,8 +111,8 @@ class TestControllerMethods {
     static void initController() {
 
         try {
-            controller = new Controller();
-        } catch (RemoteException e) {
+            server = new Server();
+        } catch (Exception e) {
             fail();
         }
     }
@@ -121,16 +121,16 @@ class TestControllerMethods {
     void initUser() {
 
         try {
-            controller.resetClientMap();
-            controller.startLoginPhase();
+            server.resetClientMap();
+            server.startLoginPhase();
             client1 = new Client(0,new TestView());
             client2 = new Client(0,new TestView());
             client3 = new Client(0,new TestView());
             client1.login("User1");
             client2.login("User2");
             client3.login("User3");
-            controller.stopLoginPhase();
-        } catch (RemoteException | NetworkException e) {
+            server.stopLoginPhase();
+        } catch (Exception e) {
             fail();
         }
     }
@@ -138,8 +138,8 @@ class TestControllerMethods {
     @Test
     void testLogin() {
 
-        controller.resetClientMap();
-        controller.startLoginPhase();
+        server.resetClientMap();
+        server.startLoginPhase();
 
         try {
             Client client = new Client(0, null);
@@ -148,8 +148,8 @@ class TestControllerMethods {
             Set<String> set = new HashSet<>();
             set.add("Nickname");
 
-            assertEquals(set , controller.getNicknameSet());
-        } catch (RemoteException | NetworkException e) {
+            assertEquals(set , server.getActivePlayers());
+        } catch (Exception e) {
             fail();
         }
     }
@@ -157,8 +157,8 @@ class TestControllerMethods {
     @Test
     void testLogout() {
 
-        controller.resetClientMap();
-        controller.startLoginPhase();
+        server.resetClientMap();
+        server.startLoginPhase();
 
         try {
             Client client1 = new Client(0, null);
@@ -170,8 +170,8 @@ class TestControllerMethods {
             Set<String> set = new HashSet<>();
             set.add("Nickname2");
 
-            assertEquals(set,controller.getNicknameSet());
-        } catch (RemoteException | NetworkException e) {
+            assertEquals(set, server.getActivePlayers());
+        } catch (Exception e) {
             fail();
         }
     }
@@ -186,7 +186,7 @@ class TestControllerMethods {
         players.add(player2);
 
         try {
-            Player retVal = controller.choosePlayer(new Player(Figure.VIOLET,"User1"),players);
+            Player retVal = server.choosePlayer(new Player(Figure.VIOLET,"User1"),players);
             assertEquals(player1,retVal);
         } catch (UnavailableUserException e) {
             fail();
@@ -205,7 +205,7 @@ class TestControllerMethods {
         weapons.add(weapon3);
 
         try {
-            Weapon retVal = controller.chooseWeapon(new Player(Figure.DOZER,"User1"),weapons);
+            Weapon retVal = server.chooseWeapon(new Player(Figure.DOZER,"User1"),weapons);
             assertEquals(weapon1,retVal);
         } catch (UnavailableUserException e) {
             fail();
@@ -216,7 +216,7 @@ class TestControllerMethods {
     void testChooseDirection() {
 
         try {
-            Character retVal = controller.chooseDirection(new Player(Figure.VIOLET,"User1"));
+            Character retVal = server.chooseDirection(new Player(Figure.VIOLET,"User1"));
             assertEquals('N',retVal);
         } catch (UnavailableUserException e) {
             fail();
@@ -233,7 +233,7 @@ class TestControllerMethods {
         strings.add(string2);
 
         try {
-            String retVal = controller.chooseString(new Player(Figure.DESTRUCTOR,"User1"),strings);
+            String retVal = server.chooseString(new Player(Figure.DESTRUCTOR,"User1"),strings);
             assertEquals(string1,retVal);
         } catch (UnavailableUserException e) {
             fail();
@@ -252,7 +252,7 @@ class TestControllerMethods {
         powerups.add(powerup3);
 
         try {
-            Powerup retVal = controller.choosePowerup(new Player(Figure.BANSHEE,"User1"),powerups);
+            Powerup retVal = server.choosePowerup(new Player(Figure.BANSHEE,"User1"),powerups);
             assertEquals(powerup1.getColor(),retVal.getColor());
             assertEquals(powerup1.getName(),retVal.getName());
         } catch (UnavailableUserException e) {
@@ -264,7 +264,7 @@ class TestControllerMethods {
     void testBooleanQuestion() {
 
         try {
-            assertEquals(true,controller.booleanQuestion(new Player(Figure.SPROG,"User1"),"Question"));
+            assertEquals(true, server.booleanQuestion(new Player(Figure.SPROG,"User1"),"Question"));
         } catch (UnavailableUserException e) {
             fail();
         }
@@ -274,7 +274,7 @@ class TestControllerMethods {
     void testChooseColor() {
 
         try {
-            Color retVal = controller.chooseColor(new Player(Figure.BANSHEE,"User1"));
+            Color retVal = server.chooseColor(new Player(Figure.BANSHEE,"User1"));
             assertEquals(Color.RED,retVal);
         } catch (UnavailableUserException e) {
             fail();
@@ -295,7 +295,7 @@ class TestControllerMethods {
         powerups.add(powerup4);
 
         try {
-            ArrayList<Powerup> returned = controller.chooseMultiplePowerup(new Player(Figure.BANSHEE,"User1"),powerups);
+            ArrayList<Powerup> returned = server.chooseMultiplePowerup(new Player(Figure.BANSHEE,"User1"),powerups);
             assertEquals(powerups.get(1).getName(),returned.get(0).getName());
             assertEquals(powerups.get(1).getColor(),returned.get(0).getColor());
             assertEquals(powerups.get(2).getName(),returned.get(1).getName());
@@ -320,7 +320,7 @@ class TestControllerMethods {
         expected.add(weapon3);
 
         try {
-            ArrayList<Weapon> returned = controller.chooseMultipleWeapon(new Player(Figure.DESTRUCTOR,"User1"),weapons);
+            ArrayList<Weapon> returned = server.chooseMultipleWeapon(new Player(Figure.DESTRUCTOR,"User1"),weapons);
             assertEquals(returned,expected);
         } catch (UnavailableUserException e) {
             fail();
@@ -332,7 +332,7 @@ class TestControllerMethods {
 
         int returned = 0;
         try {
-            returned = controller.chooseMap(new Player(Figure.DESTRUCTOR,"User1"),2,4);
+            returned = server.chooseMap(new Player(Figure.DESTRUCTOR,"User1"),2,4);
             assertEquals(2,returned);
         } catch (UnavailableUserException e) {
             fail();
@@ -343,7 +343,7 @@ class TestControllerMethods {
     void testChooseMode() {
 
         try {
-            assertEquals('N',controller.chooseMode(new Player(Figure.DESTRUCTOR,"User1")));
+            assertEquals('N', server.chooseMode(new Player(Figure.DESTRUCTOR,"User1")));
         } catch (UnavailableUserException e) {
             fail();
         }
@@ -359,7 +359,7 @@ class TestControllerMethods {
         strings.add(string2);
 
         try {
-            String retVal = controller.chooseString(new Player(Figure.DESTRUCTOR,"User1"),strings);
+            String retVal = server.chooseString(new Player(Figure.DESTRUCTOR,"User1"),strings);
             assertEquals(string1,retVal);
         } catch (UnavailableUserException e) {
             fail();

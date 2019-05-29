@@ -3,15 +3,13 @@ package it.polimi.ingsw.network;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-/**
- * This interface lists all the methods of the client accessible from the controller
- * @author simonebraga
- */
 public interface ClientRemote extends Remote {
 
-    void noChoice(String obj, String s) throws RemoteException;
-    String singleChoice(String obj, String s) throws RemoteException;
-    String multipleChoice(String obj, String s) throws RemoteException;
-    Boolean booleanQuestion(String s) throws RemoteException;
-    void notifyEvent(String s) throws RemoteException;
+    int ping() throws RemoteException;
+    void notifyLogout() throws RemoteException;
+    void genericWithoutResponse(String id, String parameters) throws RemoteException;
+    String genericWithResponse(String id, String parameters) throws RemoteException;
+    String singleChoice(String id, String parameters) throws RemoteException;
+    String multipleChoice(String id, String parameters) throws RemoteException;
+    Boolean booleanQuestion(String parameters) throws RemoteException;
 }

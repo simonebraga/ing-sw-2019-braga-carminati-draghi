@@ -142,7 +142,7 @@ public class GuiMain extends Application implements ViewInterface {
                     default:
                         Platform.runLater(() -> loginOutcomeText.setText("Something very bad went wrong"));
                 }
-            } catch (NetworkException | RemoteException e) {
+            } catch (Exception e) {
                 Platform.runLater(() -> loginOutcomeText.setText("Server not available"));
             }
         });

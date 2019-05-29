@@ -9,10 +9,10 @@ import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.ClientRemote;
-import it.polimi.ingsw.network.ControllerRemote;
+import it.polimi.ingsw.network.ServerRemote;
 import it.polimi.ingsw.network.UnavailableUserException;
+import it.polimi.ingsw.view.Client;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
@@ -21,146 +21,133 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * This class contains all the methods used to communicate with the client-side application
- * @author simonebraga
- */
-public class Controller implements ControllerRemote {
-
-    /**
-     * This attribute determines if the controller is open to new connections
-     */
-    private Boolean loginPhase = false;
-
-    /**
-     * This attribute contains the association between nicknames and clients interfaces, keeping only the links to the currently connected players
-     */
-    private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
-
-    private ArrayList<String> usernameList;
+public class Server implements ServerRemote {
 
     private String remoteName;
     private String ip;
-    private int port;
+    private int rmiPort;
+    private int socketPort;
     private int timerLength;
+    private int pingFrequency;
+
+    private Boolean loginPhase = false;
+    private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
+    private ArrayList<String> nicknameList = new ArrayList<>();
 
     private Gson gson = new Gson();
 
-    /**
-     * This method is the constructor of the class. It initializes the controller and creates the necessary objects to support RMI and Socket connections
-     * @throws RemoteException if there are problems with the network during the initialization
-     */
-    public Controller() throws RemoteException {
+    public Server() throws Exception {
+
+        Properties properties = new Properties();
+        try {
+            properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
+        } catch (IOException e) {
+            System.err.println("Error reading network_settings.properties");
+            throw new Exception();
+        }
+
+        this.remoteName = properties.getProperty("remoteName");
+        this.ip = properties.getProperty("serverIp");
+        this.rmiPort = Integer.parseInt(properties.getProperty("serverRmiPort"));
+        this.socketPort = Integer.parseInt(properties.getProperty("serverSocketPort"));
+        this.timerLength = Integer.parseInt(properties.getProperty("loginTimerLength"));
+        this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
 
         try {
-
-            usernameList = new ArrayList<>();
-
-            Properties properties = new Properties();
-            properties.load(new FileReader("src/main/resources/network_settings.properties"));
-
-            this.remoteName = properties.getProperty("controllerRemoteName");
-            this.ip = properties.getProperty("serverIp");
-            this.port = Integer.parseInt(properties.getProperty("serverRmiPort"));
-            this.timerLength = Integer.parseInt(properties.getProperty("loginTimerLength"));
-
-            new Thread(new ControllerSocketAcceptor(this)).start();
-            System.setProperty("java.rmi.server.hostname",ip);
-            UnicastRemoteObject.exportObject(this,port);
-
-            try {
-                LocateRegistry.createRegistry(port).bind(remoteName,this);
-            } catch (AlreadyBoundException e) {
-                e.printStackTrace();
-            }
-
-            System.out.println("Controller ready");
-
-        } catch (IOException e) {
-            System.err.println("Error while loading properties");
-            e.printStackTrace();
+            new Thread(new ServerSocketAcceptor(socketPort,this)).start();
+        } catch (Exception e) {
+            System.err.println("Failed to start ServerSocketAcceptor");
+            throw new Exception();
         }
+
+        System.setProperty("java.rmi.server.hostname",ip);
+        try {
+            UnicastRemoteObject.exportObject(this, rmiPort);
+        } catch (RemoteException e) {
+            System.err.println("Error exporting remote object");
+            throw new Exception();
+        }
+        try {
+            LocateRegistry.createRegistry(rmiPort).bind(remoteName,this);
+        } catch (RemoteException e) {
+            System.err.println("Error creating RMI registry");
+            throw new Exception();
+        } catch (AlreadyBoundException e) {
+            System.err.println("Error binding remote object in RMI registry");
+            throw new Exception();
+        }
+
+        new Thread(() -> {
+            while (true) {
+                for (String s : clientMap.keySet()) {
+                    try {
+                        clientMap.get(s).ping();
+                    } catch (RemoteException e) {
+                        try {
+                            logout(clientMap.get(s));
+                        } catch (RemoteException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+                try {
+                    Thread.sleep(1000 * pingFrequency);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
     }
 
-    /**
-     * This method allows the controller accepting connections during the registration phase
-     */
     public synchronized void startLoginPhase() {
         loginPhase = true;
     }
 
-    /**
-     * This method stops the registration phase, and allows the controller accepting login only from users already registered
-     */
     public synchronized void stopLoginPhase() {
+
         if ((clientMap.keySet().size() >= 3) && (clientMap.keySet().size() <= 5)) {
             loginPhase = false;
-            usernameList = new ArrayList<>(clientMap.keySet());
+            nicknameList = new ArrayList<>(clientMap.keySet());
             System.out.println("Login closed");
-            startGame();
         } else if (clientMap.keySet().size() > 5) {
-            System.err.println("Something went wrong, more clients registered than allowed");
+            System.err.println("Something very bad went wrong, more clients registered than allowed");
+            clientMap = new ConcurrentHashMap<>();
         } else {
             System.out.println("Login not closed");
         }
     }
 
-    /**
-     * This method checks if the controller is in login phase
-     * @return boolean value true iff login phase is running
-     */
-    public synchronized Boolean loginPhase() {
+    public synchronized Boolean isLoginPhase() {
         return loginPhase;
     }
 
-    // TODO Change this method to return usernameList
-    /**
-     * This method returns an ArrayList containing the nicknames of the players registered when the game started
-     * @return ArrayList containing the nicknames of the players registered when the game started
-     */
     public synchronized Set<String> getNicknameSet() {
-        return clientMap.keySet();
+        return new HashSet<>(nicknameList);
     }
 
-    /**
-     * This method returns the nicknames of the currently connected users
-     * @return set of strings containing the nicknames of the currently connected players
-     */
     public synchronized Set<String> getActivePlayers() {
         return clientMap.keySet();
     }
 
-    /**
-     * This method checks if the user associated to a player is connected
-     * @param player is the player to be checked
-     * @return boolean value true iff the user associated to player is connected
-     */
     public synchronized Boolean isConnected(Player player) {
 
-        if (clientMap.containsKey(player.getUsername())) return true;
-        return false;
+        return clientMap.containsKey(player.getUsername());
     }
 
-    /**
-     * This method is used to force teh disconnection of a player
-     * @param player is the player to be disconnected
-     */
-    public synchronized void forceLogout(Player player) {
-
-        if (clientMap.containsKey(player.getUsername())) {
-            try {
-                clientMap.get(player.getUsername()).noChoice("systemMessage", "You have been disconnected");
-            } catch (RemoteException e) {
-            }
-            clientMap.remove(player.getUsername());
-        }
-    }
-
-    /**
-     * This method creates a new empty clientMap
-     */
     public synchronized void resetClientMap() {
         clientMap = new ConcurrentHashMap<>();
+    }
+
+    public synchronized void forceLogout(Player player) {
+
+        clientMap.remove(player.getUsername());
+        System.out.println(clientMap.toString());
+        //TODO Notify all of the disconnection
+    }
+
+    @Override
+    public int ping() throws RemoteException {
+        return 0;
     }
 
     @Override
@@ -170,6 +157,7 @@ public class Controller implements ControllerRemote {
 
             if (!clientMap.containsKey(s)) {
                 clientMap.put(s,c);
+                //TODO Notify all of the connection
                 System.out.println(clientMap.toString());
 
                 if (clientMap.keySet().size() >= 5)
@@ -190,10 +178,6 @@ public class Controller implements ControllerRemote {
                         stopLoginPhase();
                     }).start();
 
-                for (String n : clientMap.keySet()) {
-                    if (n != s)
-                        clientMap.get(n).notifyEvent(s + " connected");
-                }
                 return 0; // Successful registration
             } else {
                 return 1; // Nickname already chosen
@@ -201,23 +185,19 @@ public class Controller implements ControllerRemote {
 
         } else { // Behavior if the login phase is not running
 
-            if (usernameList.contains(s)) {
-                clientMap.put(s, c);
-                System.out.println(clientMap.toString());
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }startGame();
-                }).start();
-                for (String n : clientMap.keySet()) {
-                    if (n != s)
-                        clientMap.get(n).notifyEvent(s + " connected");
+            if (nicknameList.contains(s)) {
+
+                if (!clientMap.containsKey(s)) {
+                    clientMap.put(s, c);
+                    System.out.println(clientMap.toString());
+                    //TODO Notify all of the connection
+                    return 2; // Successful login
+                } else {
+                    return 3; // Already logged in
                 }
-                return 2; // Successful login
+
             } else {
-                return 3; // Nickname not registered
+                return 4; // Nickname not registered
             }
         }
     }
@@ -225,24 +205,14 @@ public class Controller implements ControllerRemote {
     @Override
     public synchronized void logout(ClientRemote c) throws RemoteException {
 
-        String nick = "Player";
-        for (String n : clientMap.keySet())
-            if (clientMap.get(n).equals(c))
-                nick = n;
         if (clientMap.containsValue(c)) {
             while (clientMap.values().remove(c));
             System.out.println(clientMap.toString());
-            c.noChoice("systemMessage", "Logout successful");
-            for (String s : clientMap.keySet()) {
-                clientMap.get(s).notifyEvent(nick + " disconnected");
-            }
-        } else {
-            c.noChoice("systemMessage", "You are not logged in");
+            //TODO Notify all of the disconnection
         }
     }
 
-    // 1
-
+    // The following methods invoke the remote methods of the client. Every method must have a timer to throw an exception if the client is too slow with the response
     /**
      * This methods asks the user to make a choice in a set of players
      * @param player Player who must choose
@@ -271,8 +241,6 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    // 2
-
     /**
      * This method asks the user to make a choice in a set o squares
      * @param player Player who must choose
@@ -284,8 +252,6 @@ public class Controller implements ControllerRemote {
         // TODO
         return null;
     }
-
-    // 3
 
     /**
      * This methods asks the user to make a choice in a set of powerups
@@ -307,8 +273,6 @@ public class Controller implements ControllerRemote {
             throw new UnavailableUserException();
         }
     }
-
-    // 4
 
     /**
      * This methods asks the user to make a choice in a set of weapons
@@ -338,8 +302,6 @@ public class Controller implements ControllerRemote {
             throw new UnavailableUserException();
         }
     }
-
-    // 5
 
     /**
      * This methods asks the user to choose a direction
@@ -371,8 +333,6 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    // 6
-
     /**
      * This methods asks the user to make a choice in a set of strings
      * @param player Player who must choose
@@ -394,8 +354,6 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    // 7
-
     /**
      * This methods asks the user to answer yes or not to a question
      * @param player Player who must answer
@@ -413,8 +371,6 @@ public class Controller implements ControllerRemote {
             throw new UnavailableUserException();
         }
     }
-
-    // 8
 
     /**
      * This methods asks the user to make a multiple choice in a set of weapons
@@ -447,8 +403,6 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    // 9
-
     /**
      * This methods asks the user to choose a color
      * @param player Player who must choose
@@ -477,8 +431,6 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    // 10
-
     /**
      * This methods sends a message to a user
      * @param player Player to send the message to
@@ -488,15 +440,13 @@ public class Controller implements ControllerRemote {
     public void sendMessage(Player player, String message) throws UnavailableUserException {
 
         try {
-            clientMap.get(player.getUsername()).noChoice("systemMessage", message);
+            clientMap.get(player.getUsername()).genericWithoutResponse("systemMessage", message);
         } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
             forceLogout(player);
             throw new UnavailableUserException();
         }
     }
-
-    // 11
 
     /**
      * This methods asks the user to make a multiple choice in a set of powerups
@@ -518,8 +468,6 @@ public class Controller implements ControllerRemote {
             throw new UnavailableUserException();
         }
     }
-
-    // 12
 
     /**
      * This method asks the user to choose an ID representing a map
@@ -544,8 +492,6 @@ public class Controller implements ControllerRemote {
             throw new UnavailableUserException();
         }
     }
-
-    // 13
 
     /**
      * This method asks the user to choose a game mode
@@ -575,8 +521,6 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    // 14
-
     /**
      * This method asks the user to choose a save game
      * @param player Player who must choose
@@ -598,13 +542,4 @@ public class Controller implements ControllerRemote {
         }
     }
 
-    public void startGame() {
-        for (String nick : clientMap.keySet()) {
-            try {
-                clientMap.get(nick).noChoice("startGame","");
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

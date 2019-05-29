@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.turn;
 
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
@@ -20,14 +20,14 @@ import java.util.Random;
  */
 public class DeathsFinder {
 
-    public void runDeathsFinder(Controller controller, GameTable table, Player playerOfTurn) throws FrenzyModeException {
+    public void runDeathsFinder(Server server, GameTable table, Player playerOfTurn) throws FrenzyModeException {
         int kills = 0;
 
         for (Player player : table.getPlayers()) {
             if(player.getDamageTrack().getDamage().size()>10){
-                givePoints(controller, table, player);
+                givePoints(server, table, player);
                 player.getDamageTrack().resetDamage();
-                new SpawnAction(player).run(controller, table);
+                new SpawnAction(player).run(server, table);
                 if(player != playerOfTurn) {
                     kills++;
                 }
@@ -38,7 +38,7 @@ public class DeathsFinder {
         }
     }
 
-    private void givePoints(Controller controller, GameTable table, Player deadPlayer) throws FrenzyModeException {
+    private void givePoints(Server server, GameTable table, Player deadPlayer) throws FrenzyModeException {
         ArrayList<Player> damageTrack = deadPlayer.getDamageTrack().getDamage();
         damageTrack.get(0).addPoints(1); //First blood
         table.getKillshotTrack().kill(damageTrack.get(11)); //Kill
@@ -48,7 +48,7 @@ public class DeathsFinder {
             if(table.getIsDomination()) {
                 Square square;
                 try {
-                    square = controller.chooseSquare(damageTrack.get(12), new ArrayList<>(table.getGameMap().getSpawnSquares()));
+                    square = server.chooseSquare(damageTrack.get(12), new ArrayList<>(table.getGameMap().getSpawnSquares()));
                 } catch (UnavailableUserException e) {
                     Random random = new Random();
                     int n = random.nextInt(table.getGameMap().getSpawnSquares().size());

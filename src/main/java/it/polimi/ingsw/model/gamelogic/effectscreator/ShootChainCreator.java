@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.gamelogic.effectscreator;
 
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
@@ -56,7 +56,7 @@ public class ShootChainCreator implements EffectsCreator{
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects;
         ShootCreator shootCreator;
         ShootCreator shootCreator1;
@@ -64,16 +64,16 @@ public class ShootChainCreator implements EffectsCreator{
 
 
         shootCreator = new ShootCreator(player, player, true, 2, 0, false);
-        effects = new ArrayList<> (shootCreator.run(controller, table, targets));
+        effects = new ArrayList<> (shootCreator.run(server, table, targets));
 
         if(numberOfReflections == 1) {
             Boolean playerOrSquare = true;
             if(table.getIsDomination()){
-                playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+                playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
             }
             if(playerOrSquare) {
                 shootCreator1 = new ShootCreator(shootCreator.getTarget(), player, true, 1, 0, false);
-                effects.addAll(shootCreator1.run(controller, table, targets));
+                effects.addAll(shootCreator1.run(server, table, targets));
                 if(shootCreator1.getTarget() != player) {
                     return effects;
                 }else{
@@ -86,23 +86,23 @@ public class ShootChainCreator implements EffectsCreator{
                 if(squaresTarget.isEmpty()){
                     throw new IllegalActionException();
                 }
-                Square squareTarget = controller.chooseSquare(player, squaresTarget);
+                Square squareTarget = server.chooseSquare(player, squaresTarget);
                 effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squareTarget));
                 targets.getSquaresDamaged().add((DominationSpawnSquare) squareTarget);
                 return effects;
             }
         }else{
             shootCreator1 = new ShootCreator(shootCreator.getTarget(), player, true, 1, 0, false);
-            effects.addAll(shootCreator1.run(controller, table, targets));
+            effects.addAll(shootCreator1.run(server, table, targets));
         }
 
         Boolean playerOrSquare = true;
         if(table.getIsDomination()){
-            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+            playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
         }
         if(playerOrSquare) {
             shootCreator2 = new ShootCreator(shootCreator1.getTarget(), player, true, 2, 0, false);
-            effects.addAll(shootCreator2.run(controller, table, targets));
+            effects.addAll(shootCreator2.run(server, table, targets));
             if (shootCreator2.getTarget() != player && shootCreator.getTarget() != shootCreator2.getTarget()) {
                 return effects;
             } else {
@@ -115,7 +115,7 @@ public class ShootChainCreator implements EffectsCreator{
             if(squaresTarget.isEmpty()){
                 throw new IllegalActionException();
             }
-            Square squareTarget = controller.chooseSquare(player, squaresTarget);
+            Square squareTarget = server.chooseSquare(player, squaresTarget);
             effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squareTarget));
             targets.getSquaresDamaged().add((DominationSpawnSquare) squareTarget);
             return effects;

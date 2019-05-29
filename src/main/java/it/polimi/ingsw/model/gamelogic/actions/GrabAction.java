@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.actions;
 
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
@@ -21,7 +21,7 @@ import java.util.List;
  * The class that builds the action of grabbing.
  */
 public class GrabAction implements Action{
-    public List<FunctionalEffect> run(Controller controller, GameTable table, Player player, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public List<FunctionalEffect> run(Server server, GameTable table, Player player, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
         if (table.getGameMap().getTileSquares().contains(player.getPosition())) {
@@ -35,17 +35,17 @@ public class GrabAction implements Action{
             ArrayList<Weapon> weaponsAvailable = ((SpawnSquare) player.getPosition()).getWeapons();
             Weapon choice;
 
-            choice = controller.chooseWeapon(player, weaponsAvailable);
+            choice = server.chooseWeapon(player, weaponsAvailable);
 
             if(player.getWeaponPocket().getWeapons().size() == 3){
-                Weapon weaponToDiscard = controller.chooseWeapon(player, player.getWeaponPocket().getWeapons());
+                Weapon weaponToDiscard = server.chooseWeapon(player, player.getWeaponPocket().getWeapons());
                 effects.add(new FunctionalFactory().createSwitchWeapon(player, choice, weaponToDiscard));
             }else{
                 effects.add(new FunctionalFactory().createGrabWeapon(player, choice));
             }
             ArrayList<Color> price = new ArrayList<>(choice.getPrice());
             price.remove(0);
-            effects.addAll(new PayCreator(player, price).run(controller, table, targets));
+            effects.addAll(new PayCreator(player, price).run(server, table, targets));
         }
         return effects;
     }

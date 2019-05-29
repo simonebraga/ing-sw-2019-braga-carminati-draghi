@@ -5,31 +5,20 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.network.ClientRemote;
-import it.polimi.ingsw.network.ControllerRemote;
+import it.polimi.ingsw.network.ServerRemote;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Objects;
 import java.util.Properties;
 
-/**
- * This class contains all the necessary methods of the client-side application to communicate with the server-side applications, and implements the remote methods that can be called by the controller
- * @author simonebraga
- */
 public class Client implements ClientRemote {
 
-    /**
-     * This attribute points the remote interface of the controller, used to communicate with the controller-side application
-     */
-    private ControllerRemote controller;
-
-    /**
-     * This attribute points to the view of the client. It is an interface to allow both GUI and CLI implementations
-     */
+    private ServerRemote server;
     private ViewInterface view;
 
     private String remoteName;
@@ -38,62 +27,188 @@ public class Client implements ClientRemote {
     private int serverPortRMI;
     private int clientPortRMI;
     private int serverPortSocket;
+    private int pingFrequency;
 
     private Gson gson = new Gson();
 
-    /**
-     *
-     * @param i = 0 to use RMI technology
-     *          = 1 to use Socket technology
-     * @param view is the view implementation on the client (it must be instantiated previously, CLI or GUI)
-     * @throws RemoteException if there is any problem with the connection
-     */
-    public Client(int i, ViewInterface view) throws RemoteException {
-
-        this.view = view;
+    public Client(int i, ViewInterface view) throws Exception {
 
         Properties properties = new Properties();
         try {
-            properties.load(Client.class.getClassLoader().getResourceAsStream("network_settings.properties"));
+            properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
         } catch (IOException e) {
-            System.err.println("Error reading the configuration file");
-            throw new RemoteException();
+            System.err.println("Error reading network_settings.properties");
+            throw new Exception();
         }
 
-        this.remoteName = properties.getProperty("controllerRemoteName");
+        this.remoteName = properties.getProperty("remoteName");
         this.serverIp = properties.getProperty("serverIp");
         this.clientIp = properties.getProperty("clientIp");
         this.serverPortRMI = Integer.parseInt(properties.getProperty("serverRmiPort"));
         this.clientPortRMI = Integer.parseInt(properties.getProperty("clientRmiPort"));
         this.serverPortSocket = Integer.parseInt(properties.getProperty("serverSocketPort"));
+        this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
+        this.view = view;
 
         if (i == 0) {
             // RMI setup
+            // System.setProperty("java.rmi.server.hostname",clientIp);
             try {
-                System.setProperty("java.rmi.server.hostname",clientIp);
                 UnicastRemoteObject.exportObject(this,clientPortRMI);
-                controller = (ControllerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
-                System.out.println("RMI ready");
-            } catch (NotBoundException | IOException e) {
-                System.err.println("Something went wrong with RMI setup");
-                throw new RemoteException();
+            } catch (RemoteException e) {
+                System.err.println("Error exporting remote object");
+                throw new Exception();
+            }
+            try {
+                server = (ServerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
+            } catch (RemoteException e) {
+                System.err.println("Error getting RMI registry");
+                throw new Exception();
+            } catch (NotBoundException e) {
+                System.err.println("Error with RMI registry remote object lookup");
+                throw new Exception();
             }
         } else if (i == 1) {
             // Socket setup
             try {
-                controller = new ControllerSocket(new Socket(serverIp,serverPortSocket),this);
-                System.out.println("Socket ready");
-            } catch (IOException e) {
-                System.err.println("Something went wrong with socket setup");
-                throw new RemoteException();
+                server = new ClientSocketSpeaker(new Socket(serverIp,serverPortSocket),this);
+            } catch (Exception e) {
+                System.err.println("Error with socket connection initialization");
+                throw new Exception();
             }
         } else {
-            System.err.println("Incorrect parameter in constructor of Client");
+            System.err.println("Incorrect parameters in Client constructor");
+            throw new Exception();
+        }
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    server.ping();
+                } catch (RemoteException e) {
+                    try {
+                        notifyLogout();
+                        break;
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                try {
+                    Thread.sleep(1000 * pingFrequency);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public int ping() throws RemoteException {
+        return 0;
+    }
+
+    @Override
+    public void notifyLogout() throws RemoteException {
+        System.out.println("Lost connection with the server");
+        //TODO Call a specific method to start a new login routine on the view. It must create a new client to login again
+    }
+
+    @Override
+    public void genericWithoutResponse(String id, String parameters) throws RemoteException {
+
+        switch (id) {
+            case "systemMessage": {
+                System.out.println(parameters);
+                break;
+            }
+            case "startGame": {
+                view.startGame();
+                break;
+            }
+            default: {
+                System.err.println("Unsupported genericWithoutResponse id");
+                throw new RemoteException();
+            }
         }
     }
 
+    @Override
+    public String genericWithResponse(String id, String parameters) throws RemoteException {
+
+        switch (id) {
+            default: {
+                System.err.println("Unsupported genericWithResponse id");
+                throw new RemoteException();
+            }
+        }
+    }
+
+    @Override
+    public String singleChoice(String id, String parameters) throws RemoteException {
+
+        switch (id) {
+            case "player": {
+                Figure[] figures = gson.fromJson(parameters,Figure[].class);
+                return gson.toJson(view.choosePlayer(figures));
+            }
+            case "weapon": {
+                WeaponName[] weapons = gson.fromJson(parameters,WeaponName[].class);
+                return gson.toJson(view.chooseWeapon(weapons));
+            }
+            case "string": {
+                String[] strings = gson.fromJson(parameters,String[].class);
+                return gson.toJson(view.chooseString(strings));
+            }
+            case "powerup": {
+                Powerup[] powerups = gson.fromJson(parameters,Powerup[].class);
+                return gson.toJson(view.choosePowerup(powerups));
+            }
+            case "map": {
+                String[] maps = gson.fromJson(parameters,String[].class);
+                return gson.toJson(view.chooseMap(maps));
+            }
+            case "mode": {
+                String[] modes = gson.fromJson(parameters,String[].class);
+                return gson.toJson(view.chooseMode(modes));
+            }
+            case "save": {
+                String[] saves = gson.fromJson(parameters,String[].class);
+                return gson.toJson(view.chooseSave(saves));
+            }
+            default: {
+                System.err.println("Unsupported singleChoice id");
+                throw new RemoteException();
+            }
+        }
+    }
+
+    @Override
+    public String multipleChoice(String id, String parameters) throws RemoteException {
+
+        switch (id) {
+            case "powerup": {
+                Powerup[] powerups = gson.fromJson(parameters,Powerup[].class);
+                return gson.toJson(view.chooseMultiplePowerups(powerups));
+            }
+            case "weapon": {
+                WeaponName[] weapons = gson.fromJson(parameters,WeaponName[].class);
+                return gson.toJson(view.chooseMultipleWeapons(weapons));
+            }
+            default: {
+                System.err.println("Unsupported multipleChoice id");
+                throw new RemoteException();
+            }
+        }
+    }
+
+    @Override
+    public Boolean booleanQuestion(String parameters) throws RemoteException {
+
+        return view.booleanQuestion(parameters);
+    }
+
     /**
-     * This method is used to register the client on the controller. It does not handle the outcome of the login procedure; it just request to the controller to login
+     * This method is used to register the client on the server. It does not handle the outcome of the login procedure; it just request to the server to login
      * @param s is the nickname used for the login/registration
      * @return  0 - Registration successful
      *          1 - Nickname already chosen
@@ -101,12 +216,12 @@ public class Client implements ClientRemote {
      *          3 - Nickname not registered
      * @throws NetworkException if something goes wrong with the network
      */
-    public int login(String s) throws NetworkException {
+    public int login(String s) throws Exception {
 
         try {
-            return controller.login(s,this);
+            return server.login(s,this);
         } catch (RemoteException e) {
-            throw new NetworkException();
+            throw new Exception();
         }
     }
 
@@ -116,98 +231,9 @@ public class Client implements ClientRemote {
     public void logout() {
 
         try {
-            controller.logout(this);
+            server.logout(this);
         } catch (RemoteException e) {
             System.err.println("Something went wrong with the logout");
         }
-    }
-
-    @Override
-    public void noChoice(String obj, String s) throws RemoteException {
-
-        switch (obj) {
-            case "systemMessage": {
-                System.out.println(s);
-                break;
-            }
-            case "startGame": {
-                view.startGame();
-                break;
-            }
-            default: {
-                System.err.println("Unsupported type");
-                throw new RemoteException();
-            }
-        }
-    }
-
-    @Override
-    public String singleChoice(String obj, String s) throws RemoteException {
-
-        switch (obj) {
-            case "player": {
-                Figure[] figures = gson.fromJson(s,Figure[].class);
-                return gson.toJson(view.choosePlayer(figures));
-            }
-            case "weapon": {
-                WeaponName[] weapons = gson.fromJson(s,WeaponName[].class);
-                return gson.toJson(view.chooseWeapon(weapons));
-            }
-            case "string": {
-                String[] strings = gson.fromJson(s,String[].class);
-                return gson.toJson(view.chooseString(strings));
-            }
-            case "powerup": {
-                Powerup[] powerups = gson.fromJson(s,Powerup[].class);
-                return gson.toJson(view.choosePowerup(powerups));
-            }
-            case "map": {
-                String[] maps = gson.fromJson(s,String[].class);
-                return gson.toJson(view.chooseMap(maps));
-            }
-            case "mode": {
-                String[] modes = gson.fromJson(s,String[].class);
-                return gson.toJson(view.chooseMode(modes));
-            }
-            case "save": {
-                String[] saves = gson.fromJson(s,String[].class);
-                return gson.toJson(view.chooseSave(saves));
-            }
-            default: {
-                System.err.println("Unsupported type");
-                throw new RemoteException();
-            }
-        }
-    }
-
-    @Override
-    public String multipleChoice(String obj, String s) throws RemoteException {
-
-        switch (obj) {
-            case "powerup": {
-                Powerup[] powerups = gson.fromJson(s,Powerup[].class);
-                return gson.toJson(view.chooseMultiplePowerups(powerups));
-            }
-            case "weapon": {
-                WeaponName[] weapons = gson.fromJson(s,WeaponName[].class);
-                return gson.toJson(view.chooseMultipleWeapons(weapons));
-            }
-            default: {
-                System.err.println("Unsupported type");
-                throw new RemoteException();
-            }
-        }
-    }
-
-    @Override
-    public Boolean booleanQuestion(String s) throws RemoteException {
-
-        return view.booleanQuestion(s);
-    }
-
-    @Override
-    public void notifyEvent(String s) throws RemoteException {
-        if (view != null)
-            view.notifyEvent(s);
     }
 }

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
@@ -50,14 +50,14 @@ public class MoveCreator implements EffectsCreator{
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         ArrayList<Square> squares;
         Square destination;
 
         squares = findSquares(table);
 
-        destination = controller.chooseSquare(player, squares);
+        destination = server.chooseSquare(player, squares);
 
         new FunctionalFactory().createMove(player, destination).doAction();
         return effects;

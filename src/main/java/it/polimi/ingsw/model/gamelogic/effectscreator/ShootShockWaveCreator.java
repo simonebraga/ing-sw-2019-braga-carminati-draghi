@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
@@ -59,7 +59,7 @@ public class ShootShockWaveCreator implements EffectsCreator{
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects =new ArrayList<>();
         ArrayList<Square> squaresTarget = new ArrayList<>(table.getGameMap().getDistance(player.getPosition(), 1));
         ArrayList<Player> playersTarget = new ArrayList<>();
@@ -93,39 +93,39 @@ public class ShootShockWaveCreator implements EffectsCreator{
                 });
             }
         }else{
-            effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
+            effects.addAll(shootSomething(server, table, playersTarget, squaresTarget, targets));
 
-            if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+            if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
                 return effects;
             }
 
             if(!playersTarget.isEmpty() || (table.getIsDomination() && !squaresTarget.isEmpty())){
-                effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
+                effects.addAll(shootSomething(server, table, playersTarget, squaresTarget, targets));
 
-                if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
                     return effects;
                 }
 
                 if(!playersTarget.isEmpty() || (table.getIsDomination() && !squaresTarget.isEmpty())) {
-                    effects.addAll(shootSomething(controller, table, playersTarget, squaresTarget, targets));
+                    effects.addAll(shootSomething(server, table, playersTarget, squaresTarget, targets));
                 }
             }
         }
         return effects;
     }
 
-    private ArrayList<FunctionalEffect> shootSomething(Controller controller, GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets) throws  UnavailableUserException, IllegalActionException{
+    private ArrayList<FunctionalEffect> shootSomething(Server server, GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets) throws  UnavailableUserException, IllegalActionException{
         Boolean playerOrSquare = true;
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
         if(table.getIsDomination()){
-            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+            playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
         }
         if(playerOrSquare) {
             if(playersTarget.isEmpty()) {
                 throw new IllegalActionException();
             }
-            Player target1 = controller.choosePlayer(player, playersTarget);
+            Player target1 = server.choosePlayer(player, playersTarget);
             effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 1, 0));
             targets.getPlayersTargeted().add(target1);
             targets.getPlayersDamaged().add(target1);
@@ -135,7 +135,7 @@ public class ShootShockWaveCreator implements EffectsCreator{
             if(squaresTarget.isEmpty()){
                 throw new IllegalActionException();
             }
-            DominationSpawnSquare target1 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+            DominationSpawnSquare target1 = (DominationSpawnSquare) server.chooseSquare(player, squaresTarget);
             if (targets.getSquaresDamaged().contains(target1)){
                 throw new IllegalActionException();
             }

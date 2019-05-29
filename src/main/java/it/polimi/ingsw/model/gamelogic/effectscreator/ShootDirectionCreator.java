@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.GameTable;
@@ -86,7 +86,7 @@ public class ShootDirectionCreator implements EffectsCreator{
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<Square> squaresTarget;
         ArrayList<Player> playersTarget = new ArrayList<>();
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
@@ -96,7 +96,7 @@ public class ShootDirectionCreator implements EffectsCreator{
             ArrayList<Square> map = new ArrayList<>(table.getGameMap().getSpawnSquares());
             map.addAll(table.getGameMap().getTileSquares());
 
-            direction = controller.chooseDirection(player);
+            direction = server.chooseDirection(player);
 
             switch(direction){
                 case 'N':
@@ -131,7 +131,7 @@ public class ShootDirectionCreator implements EffectsCreator{
 
             Boolean playerOrSquare = true;
             if(table.getIsDomination()){
-                playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+                playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
             }
 
             if(playerOrSquare) {
@@ -139,7 +139,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                     throw new IllegalActionException();
                 }
 
-                Player target1 = controller.choosePlayer(player, playersTarget);
+                Player target1 = server.choosePlayer(player, playersTarget);
                 if(twoTargets){
                     effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 2, 0));
                 }else{
@@ -154,14 +154,14 @@ public class ShootDirectionCreator implements EffectsCreator{
                     throw new IllegalActionException();
                 }
 
-                DominationSpawnSquare target1 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+                DominationSpawnSquare target1 = (DominationSpawnSquare) server.chooseSquare(player, squaresTarget);
                 effects.add(new FunctionalFactory().createDamageSpawn(player, target1));
                 targets.getSquaresDamaged().add(target1);
                 squaresTarget.remove(target1);
             }
 
             if(twoTargets){
-                if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
                     return effects;
                 }
 
@@ -171,14 +171,14 @@ public class ShootDirectionCreator implements EffectsCreator{
 
                 playerOrSquare = true;
                 if(table.getIsDomination()){
-                    playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+                    playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
                 }
 
                 if(playerOrSquare) {
                     if(playersTarget.isEmpty()){
                         throw new IllegalActionException();
                     }
-                    Player target2 = controller.choosePlayer(player, playersTarget);
+                    Player target2 = server.choosePlayer(player, playersTarget);
                     effects.add(new FunctionalFactory().createDamagePlayer(player, target2, 2, 0));
                     targets.getPlayersTargeted().add(target2);
                     targets.getPlayersDamaged().add(target2);
@@ -189,7 +189,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                         throw new IllegalActionException();
                     }
 
-                    DominationSpawnSquare target2 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+                    DominationSpawnSquare target2 = (DominationSpawnSquare) server.chooseSquare(player, squaresTarget);
                     effects.add(new FunctionalFactory().createDamageSpawn(player, target2));
                     targets.getSquaresDamaged().add(target2);
                     squaresTarget.remove(target2);
@@ -198,7 +198,7 @@ public class ShootDirectionCreator implements EffectsCreator{
         }else{ //FlameThrower
             boolean noTargets = false;
 
-            direction = controller.chooseDirection(player);
+            direction = server.chooseDirection(player);
 
             squaresTarget = new SquaresVisibleInADirection(direction, 1, player).run(table);
 
@@ -209,7 +209,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                 noTargets = true;
             }else{
                 if(directShoot){
-                    effects.addAll(directShoot(controller, table, playersTarget, squaresTarget, targets));
+                    effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
                 }else{
                     playersTarget.forEach(playerTarget -> {
                         effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, 2, 0));
@@ -230,7 +230,7 @@ public class ShootDirectionCreator implements EffectsCreator{
             }
 
             if(!noTargets && directShoot){
-                if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
+                if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
                     return effects;
                 }
             }
@@ -247,7 +247,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                 }
             }else{
                 if(directShoot){
-                    effects.addAll(directShoot(controller, table, playersTarget, squaresTarget, targets));
+                    effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
                 }else{
                     playersTarget.forEach(playerTarget -> {
                         effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, 1, 0));
@@ -270,17 +270,17 @@ public class ShootDirectionCreator implements EffectsCreator{
         return effects;
     }
 
-    private ArrayList<FunctionalEffect> directShoot(Controller controller,GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets) throws IllegalActionException, UnavailableUserException {
+    private ArrayList<FunctionalEffect> directShoot(Server server, GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         Boolean playerOrSquare = true;
         if(table.getIsDomination()){
-            playerOrSquare = controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+            playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
         }
         if(playerOrSquare) {
             if (playersTarget.isEmpty()) {
                 throw new IllegalActionException();
             }
-            Player target = controller.choosePlayer(player, playersTarget);
+            Player target = server.choosePlayer(player, playersTarget);
             effects.add(new FunctionalFactory().createDamagePlayer(player, target, 1, 0));
             targets.getPlayersTargeted().add(target);
             targets.getPlayersDamaged().add(target);
@@ -290,7 +290,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                 throw new IllegalActionException();
             }
 
-            DominationSpawnSquare target2 = (DominationSpawnSquare) controller.chooseSquare(player, squaresTarget);
+            DominationSpawnSquare target2 = (DominationSpawnSquare) server.chooseSquare(player, squaresTarget);
             effects.add(new FunctionalFactory().createDamageSpawn(player, target2));
             targets.getSquaresDamaged().add(target2);
             squaresTarget.remove(target2);

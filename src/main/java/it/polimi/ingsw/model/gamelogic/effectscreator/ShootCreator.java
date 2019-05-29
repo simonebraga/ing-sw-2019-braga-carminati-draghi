@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.gamelogic.effectscreator;
 
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
@@ -115,13 +115,13 @@ public class ShootCreator extends ShootCreatorAbstract implements EffectsCreator
     }
 
     @Override
-    public ArrayList<FunctionalEffect> run(Controller controller, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<Square> squaresTarget = new ArrayList<>();
         ArrayList<Player> playersAvailable = new ArrayList<>();
         ArrayList<FunctionalEffect> effects= new ArrayList<>();
 
         if(optional){
-            if(!controller.booleanQuestion(player, new MessageRetriever().retrieveMessage("WantToShoot"))){
+            if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("WantToShoot"))){
                 return effects;
             }
         }
@@ -144,7 +144,7 @@ public class ShootCreator extends ShootCreatorAbstract implements EffectsCreator
             }
         }
 
-        target = controller.choosePlayer(player, playersAvailable);
+        target = server.choosePlayer(player, playersAvailable);
         targets.getPlayersTargeted().add(target);
         if(damages>0){
             targets.getPlayersDamaged().add(target);

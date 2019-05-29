@@ -2,21 +2,18 @@ package it.polimi.ingsw.model.gamelogic.actions;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
 import it.polimi.ingsw.model.gamelogic.effectscreator.EffectsCreator;
-import it.polimi.ingsw.model.gamelogic.effectscreator.ShootSpawnSquareCreator;
 import it.polimi.ingsw.model.gamelogic.effectscreator.Targets;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +24,7 @@ import java.util.stream.Collectors;
 public class ShootAction implements Action{
 
     @Override
-    public List<FunctionalEffect> run(Controller controller, GameTable table, Player player, Targets targets) throws IllegalActionException, UnavailableUserException {
+    public List<FunctionalEffect> run(Server server, GameTable table, Player player, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
         ArrayList<Weapon> weapons = (ArrayList<Weapon>) player.getWeaponPocket().getWeapons().stream().filter(Weapon::getLoaded).collect(Collectors.toList());
@@ -35,7 +32,7 @@ public class ShootAction implements Action{
             throw new IllegalActionException();
         }
 
-        Weapon weaponToUse = controller.chooseWeapon(player, weapons);
+        Weapon weaponToUse = server.chooseWeapon(player, weapons);
 
         //Import from Json
         ObjectMapper objectMapper = new ObjectMapper();
@@ -58,11 +55,11 @@ public class ShootAction implements Action{
         }
 
         ArrayList<String> useCases = new ArrayList<>(map.keySet());
-        String choice = controller.chooseString(player, useCases);
+        String choice = server.chooseString(player, useCases);
 
         for (EffectsCreator effectsCreator : map.get(choice)) {
             effectsCreator.setPlayer(player);
-            effects.addAll(effectsCreator.run(controller, table, targets));
+            effects.addAll(effectsCreator.run(server, table, targets));
         }
         weaponToUse.setIsLoaded(false);
 

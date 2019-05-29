@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.actions;
 
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
@@ -25,13 +25,13 @@ public class SpawnAction {
         this.player = player;
     }
 
-    public void run(Controller controller, GameTable table) {
+    public void run(Server server, GameTable table) {
         FunctionalEffect draw = () -> player.getPowerupPocket().addPowerup(table.getPowerupDeck().draw());
         draw.doAction();
         Powerup powerup;
 
         try {
-            powerup = controller.choosePowerup(player, player.getPowerupPocket().getPowerups());
+            powerup = server.choosePowerup(player, player.getPowerupPocket().getPowerups());
         } catch (UnavailableUserException e) {
             Random random = new Random();
             int n = random.nextInt(player.getPowerupPocket().getPowerups().size());
