@@ -72,18 +72,14 @@ public class ControllerMain {
                 i++;
             }
 
-            //elect a first player and choose game mode
-            int startingPlayerIndex;
-            StartingPlayerMarker chosenStartingPlayerMarker = null;
-            do {
-                startingPlayerIndex = ThreadLocalRandom.current().nextInt(0, players.size());
-                chosenStartingPlayerMarker = new StartingPlayerMarker(players.get(startingPlayerIndex));
-            } while (!controller.isConnected(chosenStartingPlayerMarker.getTarget()));
+            //randomly elect a first player
+            int startingPlayerIndex = ThreadLocalRandom.current().nextInt(0, players.size());
+            StartingPlayerMarker chosenStartingPlayerMarker = new StartingPlayerMarker(players.get(startingPlayerIndex));
 
             //ask gameMode to first player
             Character gameMode = controller.chooseMode(chosenStartingPlayerMarker.getTarget());
 
-            //ask more...
+            //ask map or save file depending on gameMode
             Integer index;
             if(gameMode == 'n' || gameMode == 'd'){
 
@@ -94,9 +90,8 @@ public class ControllerMain {
 
                 //read save files list
                 ObjectMapper objectMapper = new ObjectMapper();
-
-                InputStream saveList = ControllerMain.class.getClassLoader().getResourceAsStream("save_list.json");
-                String[] fileNamesArray = objectMapper.readValue(saveList,String[].class);
+                InputStream saveListInput = ControllerMain.class.getClassLoader().getResourceAsStream("save_list.json");
+                String[] fileNamesArray = objectMapper.readValue(saveListInput,String[].class);
                 ArrayList<String> fileNames = new ArrayList<>(Arrays.asList(fileNamesArray));
 
                 //ask first player which save file to load
@@ -121,6 +116,7 @@ public class ControllerMain {
             //game has ended because too many people disconnected
             System.out.println("Not enough players to continue the game.");
             save(gameTable);
+
             //restart program
             main(null);
 
@@ -131,7 +127,7 @@ public class ControllerMain {
         } catch (FrenzyModeException e) {   //match is now in final frenzy
 
             //change bounty value to each undamaged player
-            Integer[] points = {2,1,1,1};
+            Integer[] points = {2,1,1,1,1,1};
             for (Player player : gameTable.getPlayers()) {
                 if (player.getDamageTrack().getDamage().isEmpty()) {
                     player.getPointTrack().setValue(new ArrayList<>(Arrays.asList(points)));
@@ -153,33 +149,27 @@ public class ControllerMain {
 
             //create frenzy turns considering players position relative to first player in the turn sequence
             int i;
-            //from current player to starting player -1, all before
+            //from current player to starting player -1, all before starting player
             for (i = currentPlayerIndex; !gameTable.getPlayers().get(i).equals(gameTable.getStartingPlayerMarker().getTarget()); i++) {
                 if (controller.isConnected(gameTable.getPlayers().get(i))) {
                     frenzyTurns.add(new TurnManager(gameTable.getPlayers().get(i),true,true));
                 }
 
-                //cycling array and updating current player
-                if (i==gameTable.getPlayers().size()) {
-                    gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(0));
+                //cycling array
+                if (i == gameTable.getPlayers().size()) {
                     i=-1;
-                } else {
-                    gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(i+1));
                 }
             }
 
-            //from starting player to current player -1, all not before
+            //from starting player to current player -1, all after starting player
             while (!gameTable.getPlayers().get(i).equals(gameTable.getCurrentTurnPlayer())) {
                 if (controller.isConnected(gameTable.getPlayers().get(i))) {
                     frenzyTurns.add(new TurnManager(gameTable.getPlayers().get(i),true,false));
                 }
 
-                //cycling array and updating current player
+                //cycling array
                 if (i==gameTable.getPlayers().size()) {
-                    gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(0));
                     i=-1;
-                } else {
-                    gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(i+1));
                 }
                 i++;
             }
@@ -188,6 +178,13 @@ public class ControllerMain {
             for (TurnManager turn : frenzyTurns) {
                 try {
                     turn.runTurn(controller,gameTable);
+                    currentPlayerIndex++;
+
+                    //cycle array
+                    if (currentPlayerIndex == gameTable.getPlayers().size()) {
+                        currentPlayerIndex=0;
+                    }
+                    gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
                 } catch (FrenzyModeException ex) {
                     //should never end up here
                     ex.printStackTrace();
@@ -221,23 +218,26 @@ public class ControllerMain {
             LocalDateTime time = LocalDateTime.now();
 
             //create a new save file in /resources/savefiles
-            FileOutputStream file = new FileOutputStream("src/main/resources/savefiles/save_"+formatter.format(time)+".json");
+            FileOutputStream fileOutput = new FileOutputStream("src/main/resources/savefiles/save_"+formatter.format(time)+".json");
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(file,gameTable);
-            file.close();
+            mapper.writeValue(fileOutput,gameTable);
+            fileOutput.close();
 
-            //update save_list.json to show new save in list
-            //retrieve save_list.json
-            InputStream file1 = ControllerMain.class.getClassLoader().getResourceAsStream("save_list.json");
-            String[] fileNames = mapper.readValue(file1,String[].class);
-            //add the new save name to the list
+            //update save_list.json to show new save in the list
+
+            //retrieve save_list.json and parse it into a list
+            InputStream fileInput = ControllerMain.class.getClassLoader().getResourceAsStream("save_list.json");
+            String[] fileNames = mapper.readValue(fileInput,String[].class);
             ArrayList<String> fileNameList = new ArrayList<>(Arrays.asList(fileNames));
+
+            //add the new save name to the list
             fileNameList.add("save_"+formatter.format(time));
-            String[] newFileNames = (String[]) fileNameList.toArray();
+
             //rewrite list in save_list.json as an array of strings
-            file = new FileOutputStream("src/main/resources/save_list.json");
-            mapper.writeValue(file,newFileNames);
-            file.close();
+            String[] newFileNames = (String[]) fileNameList.toArray();
+            fileOutput = new FileOutputStream("src/main/resources/save_list.json");
+            mapper.writeValue(fileOutput,newFileNames);
+            fileOutput.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -259,6 +259,8 @@ public class ControllerMain {
      */
     private void firstTurnEach(Controller controller, Integer startingPlayerIndex) throws FrenzyModeException {
 
+        int currentPlayerIndex=startingPlayerIndex;
+
         //execute first player turn, if he is still connected
         if (!controller.isConnected(gameTable.getStartingPlayerMarker().getTarget())) {
 
@@ -271,12 +273,14 @@ public class ControllerMain {
         //cycling array
         if(startingPlayerIndex==gameTable.getPlayers().size()){
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(0));
+            currentPlayerIndex=0;
         } else {
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(startingPlayerIndex + 1));
+            currentPlayerIndex=currentPlayerIndex++;
         }
 
-        //execute other first turns, from starting player +1 to starting player -1, if they are connected
-        for (int i = startingPlayerIndex + 1;
+        //execute other first turns, from current player to starting player -1, if they are connected
+        for (int i = currentPlayerIndex;
              !gameTable.getPlayers().get(i).equals(gameTable.getStartingPlayerMarker().getTarget()); i++) {
 
             if (controller.isConnected(gameTable.getPlayers().get(i))) {
@@ -304,7 +308,8 @@ public class ControllerMain {
      * @throws FrenzyModeException when a turn execution sets all conditions for the final frenzy.
      */
     private void rollMatch(Controller controller, Integer startingPlayerIndex) throws FrenzyModeException {
-        //this while at some point will break because of FrenzyModeException throw
+
+        //this while will break at some point because of FrenzyModeException throw
         int i=startingPlayerIndex;
         while(gameTable.getPlayers().size()>=3) {   //there are at least 3 players still connected
 
