@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 
 public class ClientSocketSpeaker implements ServerRemote {
 
-    private Boolean kill = false;
     private Socket socket;
     private PrintWriter out;
     private CustomStream customStream = new CustomStream();
@@ -25,17 +24,9 @@ public class ClientSocketSpeaker implements ServerRemote {
         out = new PrintWriter(socket.getOutputStream());
     }
 
-    public synchronized void kill() {
-        kill = true;
-    }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
     @Override
     public synchronized int ping() throws RemoteException {
-        if (kill) throw new RemoteException();
+        if (socket.isClosed()) throw new RemoteException();
         return 0;
     }
 

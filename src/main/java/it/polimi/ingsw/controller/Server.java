@@ -107,6 +107,7 @@ public class Server implements ServerRemote {
 
         if ((clientMap.keySet().size() >= 3) && (clientMap.keySet().size() <= 5)) {
             loginPhase = false;
+            //TODO Edit the creation of nicknameList so that the player in the first position is the first player connected
             nicknameList = new ArrayList<>(clientMap.keySet());
             System.out.println("Login closed");
         } else if (clientMap.keySet().size() > 5) {
@@ -121,8 +122,8 @@ public class Server implements ServerRemote {
         return loginPhase;
     }
 
-    public synchronized Set<String> getNicknameSet() {
-        return new HashSet<>(nicknameList);
+    public synchronized List<String> getNicknameSet() {
+        return nicknameList;
     }
 
     public synchronized Set<String> getActivePlayers() {

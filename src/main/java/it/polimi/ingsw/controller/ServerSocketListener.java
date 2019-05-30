@@ -67,7 +67,6 @@ public class ServerSocketListener implements Runnable {
         } catch (IOException ignored) {
             // It is useless to handle this exception, because if thrown the socket is already closed
         }
-        serverSocketSpeaker.kill();
     }
 
     private String getHeading(String s) {

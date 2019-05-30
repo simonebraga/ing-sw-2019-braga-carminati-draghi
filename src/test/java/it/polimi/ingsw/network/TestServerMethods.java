@@ -9,13 +9,11 @@ import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.view.Client;
-import it.polimi.ingsw.view.NetworkException;
 import it.polimi.ingsw.view.ViewInterface;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;

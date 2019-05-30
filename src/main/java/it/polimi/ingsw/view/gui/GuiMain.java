@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.view.Client;
-import it.polimi.ingsw.view.NetworkException;
 import it.polimi.ingsw.view.ViewInterface;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -23,11 +22,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class contains the JavaFX application of the client
@@ -51,7 +46,7 @@ public class GuiMain extends Application implements ViewInterface {
     private void setGamemapScenario() {
 
         ImageView map = null;
-        map = new ImageView(new Image(GuiMain.class.getClassLoader().getResourceAsStream("graphics/maps/test.png"),700,500,false,false));
+        map = new ImageView(new Image(GuiMain.class.getClassLoader().getResourceAsStream("graphics/maps/map_01.png"),700,500,false,false));
         //map.fitWidthProperty().bind(stage.widthProperty());
         //map.fitHeightProperty().bind(stage.heightProperty());
         root.setCenter(map);

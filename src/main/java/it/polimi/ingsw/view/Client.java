@@ -52,7 +52,8 @@ public class Client implements ClientRemote {
 
         if (i == 0) {
             // RMI setup
-            // System.setProperty("java.rmi.server.hostname",clientIp);
+            //TODO Check if is it possible to remove this explicit setProperty, because client-side is very boring to set
+            System.setProperty("java.rmi.server.hostname",clientIp);
             try {
                 UnicastRemoteObject.exportObject(this,clientPortRMI);
             } catch (RemoteException e) {
@@ -207,15 +208,6 @@ public class Client implements ClientRemote {
         return view.booleanQuestion(parameters);
     }
 
-    /**
-     * This method is used to register the client on the server. It does not handle the outcome of the login procedure; it just request to the server to login
-     * @param s is the nickname used for the login/registration
-     * @return  0 - Registration successful
-     *          1 - Nickname already chosen
-     *          2 - Login successful
-     *          3 - Nickname not registered
-     * @throws NetworkException if something goes wrong with the network
-     */
     public int login(String s) throws Exception {
 
         try {
@@ -225,9 +217,6 @@ public class Client implements ClientRemote {
         }
     }
 
-    /**
-     * This  methods is used to logout from the server, and should be used for the correct disconnection procedure. It does not handle the outcome of the procedure.
-     */
     public void logout() {
 
         try {
