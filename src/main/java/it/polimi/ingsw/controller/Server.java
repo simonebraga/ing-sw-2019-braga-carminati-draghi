@@ -36,6 +36,8 @@ public class Server implements ServerRemote {
 
     private Gson gson = new Gson();
 
+    // Utility methods
+
     public Server() throws Exception {
 
         Properties properties = new Properties();
@@ -136,15 +138,29 @@ public class Server implements ServerRemote {
     }
 
     public synchronized void resetClientMap() {
+        for (String s : clientMap.keySet()) {
+            try {
+                clientMap.get(s).notifyLogout();
+            } catch (RemoteException ignored) {
+                // No matter if notifyLogout fails, client will notice that the connection is lost and logout automatically
+            }
+        }
         clientMap = new ConcurrentHashMap<>();
+        System.out.println(clientMap);
     }
 
     public synchronized void forceLogout(Player player) {
 
-        clientMap.remove(player.getUsername());
+        try {
+            clientMap.remove(player.getUsername()).notifyLogout();
+        } catch (RemoteException ignored) {
+            // No matter if notifyLogout fails, client will notice that the connection is lost and logout automatically
+        }
         System.out.println(clientMap.toString());
-        //TODO Notify all of the disconnection
+        notifyEvent(player.getUsername() + " disconnected");
     }
+
+    // Remote methods
 
     @Override
     public int ping() throws RemoteException {
@@ -157,8 +173,8 @@ public class Server implements ServerRemote {
         if (loginPhase) { // Behavior if the login phase is running
 
             if (!clientMap.containsKey(s)) {
+                notifyEvent(s + " connected ");
                 clientMap.put(s,c);
-                //TODO Notify all of the connection
                 System.out.println(clientMap.toString());
 
                 if (clientMap.keySet().size() >= 5)
@@ -191,7 +207,7 @@ public class Server implements ServerRemote {
                 if (!clientMap.containsKey(s)) {
                     clientMap.put(s, c);
                     System.out.println(clientMap.toString());
-                    //TODO Notify all of the connection
+                    notifyEvent(s + " connected");
                     return 2; // Successful login
                 } else {
                     return 3; // Already logged in
@@ -206,21 +222,42 @@ public class Server implements ServerRemote {
     @Override
     public synchronized void logout(ClientRemote c) throws RemoteException {
 
-        if (clientMap.containsValue(c)) {
-            while (clientMap.values().remove(c));
-            System.out.println(clientMap.toString());
-            //TODO Notify all of the disconnection
+        try {
+            c.notifyLogout();
+        } catch (RemoteException ignored) {
+            // No matter if notifyLogout fails, client will notice that the connection is lost and logout automatically
+        }
+        for (Map.Entry<String,ClientRemote> entry : clientMap.entrySet())
+            if (entry.getValue().equals(c))
+                notifyEvent(entry.getKey() + " disconnected");
+        while (clientMap.values().remove(c));
+        System.out.println(clientMap.toString());
+    }
+
+    // Network methods
+    //TODO Clean the network traffic
+
+    public void sendMessage(Player player, String message) throws UnavailableUserException {
+
+        try {
+            clientMap.get(player.getUsername()).genericWithoutResponse("sendMessage", message);
+        } catch (RemoteException | NullPointerException e) {
+            forceLogout(player);
+            throw new UnavailableUserException();
         }
     }
 
-    // The following methods invoke the remote methods of the client. Every method must have a timer to throw an exception if the client is too slow with the response
-    /**
-     * This methods asks the user to make a choice in a set of players
-     * @param player Player who must choose
-     * @param arrayList Set of players to choose from
-     * @return Player chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
+    public void notifyEvent(String s) {
+
+        for (ClientRemote c : clientMap.values()) {
+            try {
+                c.genericWithoutResponse("notifyEvent",s);
+            } catch (RemoteException ignored) {
+                // Disconnection of the user is up to the ping thread
+            }
+        }
+    }
+
     public Player choosePlayer(Player player, ArrayList<Player> arrayList) throws UnavailableUserException {
 
         Figure[] figures = new Figure[arrayList.size()];
@@ -242,46 +279,6 @@ public class Server implements ServerRemote {
         }
     }
 
-    /**
-     * This method asks the user to make a choice in a set o squares
-     * @param player Player who must choose
-     * @param arrayList Set of squares to choose from
-     * @return Square chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
-        // TODO
-        return null;
-    }
-
-    /**
-     * This methods asks the user to make a choice in a set of powerups
-     * @param player Player who must choose
-     * @param arrayList Set of powerups to choose from
-     * @return Powerup chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public ArrayList<Powerup> chooseMultiplePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
-
-        Powerup[] powerups = new Powerup[arrayList.size()];
-        powerups = arrayList.toArray(powerups);
-
-        try {
-            return new ArrayList<>(Arrays.asList(gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("powerup",gson.toJson(powerups)),Powerup[].class)));
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
-            forceLogout(player);
-            throw new UnavailableUserException();
-        }
-    }
-
-    /**
-     * This methods asks the user to make a choice in a set of weapons
-     * @param player Player who must choose
-     * @param arrayList Set of weapons to choose from
-     * @return Weapon chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
     public Weapon chooseWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
@@ -304,12 +301,20 @@ public class Server implements ServerRemote {
         }
     }
 
-    /**
-     * This methods asks the user to choose a direction
-     * @param player Player who must choose
-     * @return Direction chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
+    public String chooseString(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
+
+        String[] strings = new String[arrayList.size()];
+        strings = arrayList.toArray(strings);
+
+        try {
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(strings)),String.class);
+        } catch (RemoteException | NullPointerException e) {
+            e.printStackTrace();
+            forceLogout(player);
+            throw new UnavailableUserException();
+        }
+    }
+
     public Character chooseDirection(Player player) throws UnavailableUserException {
 
         String[] directions = new String[4];
@@ -334,20 +339,21 @@ public class Server implements ServerRemote {
         }
     }
 
-    /**
-     * This methods asks the user to make a choice in a set of strings
-     * @param player Player who must choose
-     * @param arrayList Set of strings to choose from
-     * @return String chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public String chooseString(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
+    public Color chooseColor(Player player) throws UnavailableUserException {
 
-        String[] strings = new String[arrayList.size()];
-        strings = arrayList.toArray(strings);
+        String[] colors = new String[3];
+        colors[0] = "Red";
+        colors[1] = "Blue";
+        colors[2] = "Yellow";
 
         try {
-            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(strings)),String.class);
+            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(colors)),String.class);
+            switch (choice) {
+                case "Red": return Color.RED;
+                case "Blue": return Color.BLUE;
+                case "Yellow": return Color.YELLOW;
+                default: throw new UnavailableUserException();
+            }
         } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
             forceLogout(player);
@@ -355,17 +361,13 @@ public class Server implements ServerRemote {
         }
     }
 
-    /**
-     * This methods asks the user to answer yes or not to a question
-     * @param player Player who must answer
-     * @param string Boolean question
-     * @return Boolean answer of the user
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public Boolean booleanQuestion(Player player, String string) throws UnavailableUserException {
+    public Powerup choosePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
+
+        Powerup[] powerups = new Powerup[arrayList.size()];
+        powerups = arrayList.toArray(powerups);
 
         try {
-            return clientMap.get(player.getUsername()).booleanQuestion(string);
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)),Powerup.class);
         } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
             forceLogout(player);
@@ -373,13 +375,77 @@ public class Server implements ServerRemote {
         }
     }
 
-    /**
-     * This methods asks the user to make a multiple choice in a set of weapons
-     * @param player Player who must choose
-     * @param arrayList Set of weapons to choose from
-     * @return Set of weapons selected by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
+    public int chooseMap(Player player, int min, int max) throws UnavailableUserException {
+
+        String[] maps = new String[max-min+1];
+        for (int i = 0 ; i <= max-min ; i++) {
+            maps[i] = "" + (max-min+i);
+        }
+
+        try {
+            return Integer.parseInt(gson.fromJson(clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps)),String.class));
+        } catch (RemoteException | NullPointerException e) {
+            e.printStackTrace();
+            forceLogout(player);
+            throw new UnavailableUserException();
+        }
+    }
+
+    public Character chooseMode(Player player) throws UnavailableUserException {
+
+        String[] modes = new String[3];
+        modes[0] = "Normal";
+        modes[1] = "Domination";
+        modes[2] = "Load existing match";
+
+        try {
+            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("mode",gson.toJson(modes)),String.class);
+            switch (choice) {
+                case "Normal": return 'N';
+                case "Domination": return 'D';
+                case "Load existing match": return 'S';
+                default: throw new UnavailableUserException();
+            }
+        } catch (RemoteException | NullPointerException e) {
+            e.printStackTrace();
+            forceLogout(player);
+            throw new UnavailableUserException();
+        }
+    }
+
+    public String chooseSave(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
+
+        String[] saves = new String[arrayList.size()];
+        saves = arrayList.toArray(saves);
+
+        try {
+            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("save", gson.toJson(saves)),String.class);
+        } catch (RemoteException | NullPointerException e) {
+            e.printStackTrace();
+            forceLogout(player);
+            throw new UnavailableUserException();
+        }
+    }
+
+    public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
+        // TODO
+        return null;
+    }
+
+    public ArrayList<Powerup> chooseMultiplePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
+
+        Powerup[] powerups = new Powerup[arrayList.size()];
+        powerups = arrayList.toArray(powerups);
+
+        try {
+            return new ArrayList<>(Arrays.asList(gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("powerup",gson.toJson(powerups)),Powerup[].class)));
+        } catch (RemoteException | NullPointerException e) {
+            e.printStackTrace();
+            forceLogout(player);
+            throw new UnavailableUserException();
+        }
+    }
+
     public ArrayList<Weapon> chooseMultipleWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
@@ -404,138 +470,10 @@ public class Server implements ServerRemote {
         }
     }
 
-    /**
-     * This methods asks the user to choose a color
-     * @param player Player who must choose
-     * @return Color chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public Color chooseColor(Player player) throws UnavailableUserException {
-
-        String[] colors = new String[3];
-        colors[0] = "Red";
-        colors[1] = "Blue";
-        colors[2] = "Yellow";
+    public Boolean booleanQuestion(Player player, String string) throws UnavailableUserException {
 
         try {
-            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(colors)),String.class);
-            switch (choice) {
-                case "Red": return Color.RED;
-                case "Blue": return Color.BLUE;
-                case "Yellow": return Color.YELLOW;
-                default: throw new UnavailableUserException();
-            }
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
-            forceLogout(player);
-            throw new UnavailableUserException();
-        }
-    }
-
-    /**
-     * This methods sends a message to a user
-     * @param player Player to send the message to
-     * @param message Message to be sent
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public void sendMessage(Player player, String message) throws UnavailableUserException {
-
-        try {
-            clientMap.get(player.getUsername()).genericWithoutResponse("systemMessage", message);
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
-            forceLogout(player);
-            throw new UnavailableUserException();
-        }
-    }
-
-    /**
-     * This methods asks the user to make a multiple choice in a set of powerups
-     * @param player Player who must choose
-     * @param arrayList Set of powerups to choose from
-     * @return Set of powerups selected by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public Powerup choosePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
-
-        Powerup[] powerups = new Powerup[arrayList.size()];
-        powerups = arrayList.toArray(powerups);
-
-        try {
-            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)),Powerup.class);
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
-            forceLogout(player);
-            throw new UnavailableUserException();
-        }
-    }
-
-    /**
-     * This method asks the user to choose an ID representing a map
-     * @param player Player who must choose
-     * @param min Minimum ID
-     * @param max Maximum ID
-     * @return ID chosen by the user
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public int chooseMap(Player player, int min, int max) throws UnavailableUserException {
-
-        String[] maps = new String[max-min+1];
-        for (int i = 0 ; i <= max-min ; i++) {
-            maps[i] = "" + (max-min+i);
-        }
-
-        try {
-            return Integer.parseInt(gson.fromJson(clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps)),String.class));
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
-            forceLogout(player);
-            throw new UnavailableUserException();
-        }
-    }
-
-    /**
-     * This method asks the user to choose a game mode
-     * @param player Player who must choose
-     * @return Character representing the chosen game mode
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public Character chooseMode(Player player) throws UnavailableUserException {
-
-        String[] modes = new String[3];
-        modes[0] = "Normal";
-        modes[1] = "Domination";
-        modes[2] = "Load existing match";
-
-        try {
-            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("mode",gson.toJson(modes)),String.class);
-            switch (choice) {
-                case "Normal": return 'N';
-                case "Domination": return 'D';
-                case "Load existing match": return 'S';
-                default: throw new UnavailableUserException();
-            }
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
-            forceLogout(player);
-            throw new UnavailableUserException();
-        }
-    }
-
-    /**
-     * This method asks the user to choose a save game
-     * @param player Player who must choose
-     * @param arrayList List of the unique names of the save games
-     * @return Name of the chosen save game
-     * @throws UnavailableUserException if the user is not connected
-     */
-    public String chooseSave(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
-
-        String[] saves = new String[arrayList.size()];
-        saves = arrayList.toArray(saves);
-
-        try {
-            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("save", gson.toJson(saves)),String.class);
+            return clientMap.get(player.getUsername()).booleanQuestion(string);
         } catch (RemoteException | NullPointerException e) {
             e.printStackTrace();
             forceLogout(player);

@@ -31,6 +31,8 @@ public class Client implements ClientRemote {
 
     private Gson gson = new Gson();
 
+    // Utility methods
+
     public Client(int i, ViewInterface view) throws Exception {
 
         Properties properties = new Properties();
@@ -103,6 +105,8 @@ public class Client implements ClientRemote {
         }).start();
     }
 
+    // Remote methods
+
     @Override
     public int ping() throws RemoteException {
         return 0;
@@ -118,12 +122,12 @@ public class Client implements ClientRemote {
     public void genericWithoutResponse(String id, String parameters) throws RemoteException {
 
         switch (id) {
-            case "systemMessage": {
-                System.out.println(parameters);
+            case "sendMessage": {
+                //TODO Call the view to show the message in the correct way
                 break;
             }
-            case "startGame": {
-                view.startGame();
+            case "notifyEvent": {
+                //TODO Call the view to show the event in the correct way
                 break;
             }
             default: {
@@ -207,6 +211,8 @@ public class Client implements ClientRemote {
 
         return view.booleanQuestion(parameters);
     }
+
+    // Network methods
 
     public int login(String s) throws Exception {
 

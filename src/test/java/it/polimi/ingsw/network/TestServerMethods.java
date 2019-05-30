@@ -95,13 +95,10 @@ class TestServerMethods {
 
         @Override
         public void startGame() {
-
         }
 
         @Override
-        public void notifyEvent(String s) {
-
-        }
+        public void notifyEvent(String s) {}
 
     }
 
