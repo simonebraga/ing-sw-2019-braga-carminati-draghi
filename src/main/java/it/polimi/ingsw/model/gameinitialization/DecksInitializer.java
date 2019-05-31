@@ -31,31 +31,38 @@ public class DecksInitializer {
     public Deck initDeck(String type) {
 
         try {
-            File file = new File("src/main/resources/"+type+".json");
+            InputStream file = DecksInitializer.class.getClassLoader().getResourceAsStream("decks/"+type+".json");
             ObjectMapper mapper = new ObjectMapper();
             Deck deck;
-            if (type.equals("weapons")) {
-                Weapon[] array = mapper.readValue(file,Weapon[].class);
-                ArrayList<Weapon> activeList = new ArrayList<>(Arrays.asList(array));
-                deck = new Deck<>(activeList, new ArrayList<Weapon>());
-            } else if (type.equals("ammotiles")) {
-                AmmoTile[] array = mapper.readValue(file,AmmoTile[].class);
-                ArrayList<AmmoTile> activeList = new ArrayList<>(Arrays.asList(array));
-                deck = new Deck<>(activeList, new ArrayList<AmmoTile>());
-            } else {        //powerups
-                Powerup[] array = mapper.readValue(file,Powerup[].class);
-                ArrayList<Powerup> activeList = new ArrayList<>(Arrays.asList(array));
-                deck = new Deck<>(activeList, new ArrayList<Powerup>());
+            switch (type) {
+                case "weapons": {
+                    Weapon[] array = mapper.readValue(file, Weapon[].class);
+                    ArrayList<Weapon> activeList = new ArrayList<>(Arrays.asList(array));
+                    deck = new Deck<>(activeList, new ArrayList<Weapon>());
+                    break;
+                }
+                case "ammotiles": {
+                    AmmoTile[] array = mapper.readValue(file, AmmoTile[].class);
+                    ArrayList<AmmoTile> activeList = new ArrayList<>(Arrays.asList(array));
+                    deck = new Deck<>(activeList, new ArrayList<AmmoTile>());
+                    break;
+                }
+                case "powerups": {        //powerups
+                    Powerup[] array = mapper.readValue(file, Powerup[].class);
+                    ArrayList<Powerup> activeList = new ArrayList<>(Arrays.asList(array));
+                    deck = new Deck<>(activeList, new ArrayList<Powerup>());
+                    break;
+                }
+                default:
+                    deck = null;
+                    break;
             }
-            deck.shuffle();
+            if (deck!=null) deck.shuffle();
+            if (file!=null) file.close();
             return deck;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
-
     }
 }
