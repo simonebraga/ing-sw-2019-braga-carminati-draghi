@@ -5,13 +5,17 @@ import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.playerclasses.Player;
-import it.polimi.ingsw.model.playerclasses.StartingPlayerMarker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,11 +37,6 @@ class TestGameInitializer {
     private ArrayList<Player> players;
 
     /**
-     * This attribute represent the first player that get to play. It's used to create a GameInitializer object.
-     */
-    private StartingPlayerMarker startingPlayerMarker;
-
-    /**
      * This method initializes all objects that will be used for the test.
      */
     @BeforeEach
@@ -48,8 +47,7 @@ class TestGameInitializer {
         players.add(new Player(Figure.DESTRUCTOR,"User3"));
         players.add(new Player(Figure.VIOLET,"User4"));
         players.add(new Player(Figure.SPROG,"User5"));
-        startingPlayerMarker=new StartingPlayerMarker(players.get(4));
-        gameInitializer = new GameInitializer('n',2,players,startingPlayerMarker);
+        gameInitializer = new GameInitializer('n',2,players);
     }
 
     /**
@@ -102,14 +100,14 @@ class TestGameInitializer {
 
             gameInitializer.setGameMode('n');
             for (int i = 0; i < actualGameMaps.size()/2; i++) {
-                gameInitializer.setIndex(i);
+                gameInitializer.setMapIndex(i);
                 returnedGameTable =  gameInitializer.run();
                 assertEquals(actualGameMaps.get(i), returnedGameTable.getGameMap());
             }
 
             gameInitializer.setGameMode('d');
             for (int i = 0;i < actualGameMaps.size()/2; i++) {
-                gameInitializer.setIndex(i);
+                gameInitializer.setMapIndex(i);
                 returnedGameTable = gameInitializer.run();
                 assertEquals(actualGameMaps.get(i),returnedGameTable.getGameMap());
             }
@@ -118,10 +116,19 @@ class TestGameInitializer {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * This test verifies that run() returns a GameTable objects in every case if the player list is not empty.
+     */
     @Test
-    void runFetchesOldGameSavesCorrectly() {
-        //TODO (save files non existing yet)
+    void runDoesntReturnNullIfPlayersListIsNotEmpty() {
+
+        for (int i = 0; i < 3; i++) {
+            gameInitializer = new GameInitializer('n',i,players);
+            assertNotNull(gameInitializer.run());
+            gameInitializer = new GameInitializer('d',i,players);
+            assertNotNull(gameInitializer.run());
+        }
     }
 
     /**
@@ -131,6 +138,5 @@ class TestGameInitializer {
     void teardown() {
         gameInitializer = null;
         players=null;
-        startingPlayerMarker=null;
     }
 }
