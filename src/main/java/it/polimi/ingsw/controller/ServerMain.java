@@ -104,7 +104,7 @@ public class ServerMain {
             }
 
             //initiate a new match
-            GameInitializer gameInitializer = new GameInitializer(gameMode,index,players,chosenStartingPlayerMarker);
+            GameInitializer gameInitializer = new GameInitializer(gameMode,index,players);
             gameTable = gameInitializer.run();
 
             //make each player spawn and first turn
