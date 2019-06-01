@@ -12,12 +12,12 @@ import it.polimi.ingsw.model.playerclasses.KillshotTrack;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.playerclasses.StartingPlayerMarker;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class creates an object that has the duty to generate a ready-to-play game table
@@ -55,17 +55,14 @@ public class GameInitializer {
     /**
      * This attribute is a character that indicates which game mode users choose.
      * <p>'n' means users asked to load a new match in normal mode.<br>
-     * 'd' means users asked to load a new match in domination mode.<br>
-     * 's' means users asked to resume an old match from JSON file.</p>
+     * 'd' means users asked to load a new match in domination mode.</p>
      */
-    private Character gameMode;     //'n': normal mode, 'd' : domination mode, 's' : resume old save
+    private Character gameMode;     //'n': normal mode, 'd' : domination mode
 
     /**
-     * In case of a new match this attribute indicates the maps list index from which fetch the map to will be used.<br>
-     *     In case of an old match loading this attribute indicates the file index in a save file list.
-     *     <p>This attribute is chosen by users.</p>
+     * This attribute indicates the maps list index to fetch the map that will be used from the maps.json file.
      */
-    private Integer index;
+    private Integer mapIndex;
 
     /**
      * This attribute contains all connected players as Player objects.
@@ -73,32 +70,24 @@ public class GameInitializer {
     private ArrayList<Player> connectedPlayers;
 
     /**
-     * This attribute represent the chosen StartingPlayerMarker object.
-     */
-    private StartingPlayerMarker chosenStartingPlayerMarker;
-
-    /**
      * This method is the class constructor.
      *
      * @param gameMode is a Character that indicates the game mode chosen by users.
-     * @param index is an integer chosen by users that indicates the maps list index or the save file index to be loaded.
+     * @param mapIndex is an integer chosen by users that indicates the maps list index.
      * @param connectedPlayers is an ArrayList of strings that represents all connected players nicknames.
-     * @param chosenStartingPlayerMarker is a StartingPlayerMarker object that represents the starting player.
      */
-    public GameInitializer(Character gameMode, Integer index, ArrayList<Player> connectedPlayers,
-                           StartingPlayerMarker chosenStartingPlayerMarker) {
+    public GameInitializer(Character gameMode, Integer mapIndex, ArrayList<Player> connectedPlayers) {
         this.gameMode = gameMode;
-        this.index = index;
-        this.connectedPlayers= new ArrayList<>(connectedPlayers);
-        this.chosenStartingPlayerMarker = chosenStartingPlayerMarker;
+        this.mapIndex = mapIndex;
+        this.connectedPlayers = connectedPlayers;
     }
 
     public void setGameMode(Character gameMode) {
         this.gameMode = gameMode;
     }
 
-    public void setIndex(Integer index) {
-        this.index = index;
+    public void setMapIndex(Integer index) {
+        this.mapIndex = index;
     }
 
     public Integer getMaxKills() {
@@ -114,16 +103,16 @@ public class GameInitializer {
     }
 
     /**
-     * This method initializes a game match that will be ready to play.
+     * This method initializes a new game match that will be ready to play.
      *
-     * @return a GameTable that contains all information to start a match.
+     * @return a GameTable that contains all information to start a new match.
      */
     public GameTable run() {
 
         //load game properties from "game_settings.properties" file
         try {
             Properties properties = new Properties();
-            FileReader fileReader = new FileReader("src/main/resources/game_settings.properties");
+            InputStream fileReader = GameInitializer.class.getClassLoader().getResourceAsStream("game_settings.properties");
             properties.load(fileReader);
             this.maxKills=Integer.valueOf(properties.getProperty("maxKills"));
             this.doubleKillValue=Integer.valueOf(properties.getProperty("doubleKillValue"));
@@ -139,50 +128,45 @@ public class GameInitializer {
             e.printStackTrace();
         }
 
-        if (this.gameMode == 's') {         //users choose to load an old match
-            try {
-                return fetchSavedGame(this.index);    //fetching old match from "save.json" file
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //else (new match)
         try {
 
-            //fetching GameMaps from JSON
-            GameMap chosenGameMap = fetchGameMap(this.index,this.gameMode);
+            if (!connectedPlayers.isEmpty()) {
 
-            //initializing killShotTrack
-            KillshotTrack chosenKillshotTrack = new KillshotTrack(this.maxKills,this.bountyValues);
+                //randomly elect starting player
+                int startingPlayerIndex = ThreadLocalRandom.current().nextInt(0, connectedPlayers.size());
+                StartingPlayerMarker chosenStartingPlayerMarker = new StartingPlayerMarker(connectedPlayers.get(startingPlayerIndex));
 
-            //initializing doubleKillCounter
-            DoubleKillCounter chosenDoubleKillCounter = new DoubleKillCounter(this.doubleKillValue);
+                //fetching GameMaps from JSON
+                GameMap chosenGameMap = fetchGameMap(this.mapIndex,this.gameMode);
 
-            //initializing decks
-            DecksInitializer decksInitializer = new DecksInitializer();
-            Deck<AmmoTile> loadedAmmoTileDeck = decksInitializer.initDeck("ammotiles");
-            Deck<Weapon> loadedWeaponDeck = decksInitializer.initDeck("weapons");
-            Deck<Powerup> loadedPowerupDeck = decksInitializer.initDeck("powerups");
+                //initializing killShotTrack
+                KillshotTrack chosenKillshotTrack = new KillshotTrack(this.maxKills,this.bountyValues);
 
-            //draw 1 powerup card each player before starting the game
-            for (Player player: connectedPlayers) {
-                player.getPowerupPocket().addPowerup(loadedPowerupDeck.draw());
-            }
+                //initializing doubleKillCounter
+                DoubleKillCounter chosenDoubleKillCounter = new DoubleKillCounter(this.doubleKillValue);
 
-            if (gameMode=='d') {
-                return new GameTable(this.chosenStartingPlayerMarker,chosenKillshotTrack,
+                //initializing decks
+                DecksInitializer decksInitializer = new DecksInitializer();
+                Deck<AmmoTile> loadedAmmoTileDeck = decksInitializer.initDeck("ammotiles");
+                Deck<Weapon> loadedWeaponDeck = decksInitializer.initDeck("weapons");
+                Deck<Powerup> loadedPowerupDeck = decksInitializer.initDeck("powerups");
+
+                //draw 1 powerup card each player before starting the game
+                for (Player player: connectedPlayers) {
+                    player.getPowerupPocket().addPowerup(loadedPowerupDeck.draw());
+                }
+
+                if (gameMode=='d') {
+                    return new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
-                            loadedPowerupDeck,loadedAmmoTileDeck,this.chosenStartingPlayerMarker.getTarget(),true);
-            } else {    //gameMode == 'n' true
-                return new GameTable(this.chosenStartingPlayerMarker,chosenKillshotTrack,
-                        chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
-                        loadedPowerupDeck,loadedAmmoTileDeck,this.chosenStartingPlayerMarker.getTarget(),false);
+                            loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget(),true);
+                } else {    //gameMode = 'n'
+                    return new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
+                            chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
+                            loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget(),false);
 
+                }
             }
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -202,31 +186,15 @@ public class GameInitializer {
      */
     private GameMap fetchGameMap(Integer mapIndex, Character gameMode) throws IOException {
 
-        File file = new File("src/main/resources/maps.json");
+        InputStream file = GameInitializer.class.getClassLoader().getResourceAsStream("maps.json");
         ObjectMapper objectMapper = new ObjectMapper();
         GameMap[] gameMaps = objectMapper.readValue(file,GameMap[].class);
+        file.close();
 
         if (gameMode == 'n'){
             return gameMaps[mapIndex];
         } else {    //gameMode == 'd'
             return gameMaps[mapIndex + (gameMaps.length / 2)];    //normal mode maps will be formatted before domination mode maps in JSON
         }
-    }
-
-    /**
-     * This method fetches a GameTable from a JSON file and returns it to be used for the current match.
-     *
-     * @param fileIndex an Integer that represents the index of the selected save file.
-     * @return a GameTable loaded from "save.json" file.
-     * @throws IOException if "save.json" is not found or can't be opened.
-     */
-    private GameTable fetchSavedGame(Integer fileIndex) throws IOException {
-        File file = new File("src/main/resources/save_list.json");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String[] saveFileNameList = objectMapper.readValue(file,String[].class);
-        String chosenFileName = saveFileNameList[fileIndex];
-
-        file = new File("src/main/resources/"+chosenFileName+".json");
-        return objectMapper.readValue(file,GameTable.class);
     }
 }
