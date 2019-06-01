@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 public class Server implements ServerRemote {
 
@@ -29,12 +29,15 @@ public class Server implements ServerRemote {
     private int socketPort;
     private int timerLength;
     private int pingFrequency;
+    private int pingLatency;
+    private int inactivityTime;
 
     private Boolean loginPhase = false;
     private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
     private ArrayList<String> nicknameList = new ArrayList<>();
 
     private Gson gson = new Gson();
+    ExecutorService executorService = Executors.newCachedThreadPool();
 
     // Utility methods
 
@@ -54,6 +57,8 @@ public class Server implements ServerRemote {
         this.socketPort = Integer.parseInt(properties.getProperty("serverSocketPort"));
         this.timerLength = Integer.parseInt(properties.getProperty("loginTimerLength"));
         this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
+        this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
+        this.inactivityTime = Integer.parseInt(properties.getProperty("inactivityTime"));
 
         try {
             new Thread(new ServerSocketAcceptor(socketPort,this)).start();
@@ -79,12 +84,25 @@ public class Server implements ServerRemote {
             throw new Exception();
         }
 
+        System.out.println("Server created");
+
         new Thread(() -> {
+            System.out.println("Ping thread started");
             while (true) {
                 for (String s : clientMap.keySet()) {
                     try {
-                        clientMap.get(s).ping();
-                    } catch (RemoteException e) {
+                        executorService.submit(() -> {
+                            try {
+                                clientMap.get(s).ping();
+                            } catch (RemoteException e) {
+                                try {
+                                    logout(clientMap.get(s));
+                                } catch (RemoteException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }).get(pingLatency,TimeUnit.SECONDS);
+                    } catch (InterruptedException | TimeoutException | ExecutionException e) {
                         try {
                             logout(clientMap.get(s));
                         } catch (RemoteException ex) {
@@ -95,14 +113,16 @@ public class Server implements ServerRemote {
                 try {
                     Thread.sleep(1000 * pingFrequency);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
                 }
             }
         }).start();
     }
 
     public synchronized void startLoginPhase() {
+        clientMap = new ConcurrentHashMap<>();
         loginPhase = true;
+        System.out.println("Login opened");
     }
 
     public synchronized void stopLoginPhase() {
@@ -138,24 +158,14 @@ public class Server implements ServerRemote {
     }
 
     public synchronized void resetClientMap() {
-        for (String s : clientMap.keySet()) {
-            try {
-                clientMap.get(s).notifyLogout();
-            } catch (RemoteException ignored) {
-                // No matter if notifyLogout fails, client will notice that the connection is lost and logout automatically
-            }
-        }
+
         clientMap = new ConcurrentHashMap<>();
         System.out.println(clientMap);
     }
 
     public synchronized void forceLogout(Player player) {
 
-        try {
-            clientMap.remove(player.getUsername()).notifyLogout();
-        } catch (RemoteException ignored) {
-            // No matter if notifyLogout fails, client will notice that the connection is lost and logout automatically
-        }
+        clientMap.remove(player.getUsername());
         System.out.println(clientMap.toString());
         notifyEvent(player.getUsername() + " disconnected");
     }
@@ -163,8 +173,9 @@ public class Server implements ServerRemote {
     // Remote methods
 
     @Override
-    public int ping() throws RemoteException {
-        return 0;
+    public int ping(ClientRemote c) throws RemoteException {
+        if (clientMap.containsValue(c)) return 0;
+        throw new RemoteException();
     }
 
     @Override
@@ -222,28 +233,31 @@ public class Server implements ServerRemote {
     @Override
     public synchronized void logout(ClientRemote c) throws RemoteException {
 
-        try {
-            c.notifyLogout();
-        } catch (RemoteException ignored) {
-            // No matter if notifyLogout fails, client will notice that the connection is lost and logout automatically
-        }
+        String disconnectedNickname = "Player";
         for (Map.Entry<String,ClientRemote> entry : clientMap.entrySet())
             if (entry.getValue().equals(c))
-                notifyEvent(entry.getKey() + " disconnected");
+                disconnectedNickname = entry.getKey();
         while (clientMap.values().remove(c));
         System.out.println(clientMap.toString());
+        notifyEvent(disconnectedNickname + " disconnected");
     }
 
     // Network methods
     //TODO Clean the network traffic
+    //TODO Add timer to network requests
 
     public void sendMessage(Player player, String message) throws UnavailableUserException {
 
         try {
-            clientMap.get(player.getUsername()).genericWithoutResponse("sendMessage", message);
-        } catch (RemoteException | NullPointerException e) {
-            forceLogout(player);
-            throw new UnavailableUserException();
+            executorService.submit(() -> {
+                try {
+                    clientMap.get(player.getUsername()).genericWithoutResponse("sendMessage", message);
+                } catch (RemoteException ignored) {
+                    // It is useless to disconnect the client
+                }
+            }).get(pingLatency,TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            // It is useless to disconnect the client
         }
     }
 
@@ -251,9 +265,15 @@ public class Server implements ServerRemote {
 
         for (ClientRemote c : clientMap.values()) {
             try {
-                c.genericWithoutResponse("notifyEvent",s);
-            } catch (RemoteException ignored) {
-                // Disconnection of the user is up to the ping thread
+                executorService.submit(() -> {
+                    try {
+                        c.genericWithoutResponse("notifyEvent",s);
+                    } catch (RemoteException e) {
+                        // It is useless to disconnect the client
+                    }
+                }).get(pingLatency,TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                // It is useless to disconnect the client
             }
         }
     }

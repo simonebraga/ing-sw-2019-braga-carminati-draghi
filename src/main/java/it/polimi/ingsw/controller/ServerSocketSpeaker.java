@@ -29,12 +29,6 @@ public class ServerSocketSpeaker implements ClientRemote {
     }
 
     @Override
-    public void notifyLogout() throws RemoteException {
-        out.println("notifyLogout;");
-        out.flush();
-    }
-
-    @Override
     public void genericWithoutResponse(String id, String parameters) throws RemoteException {
         out.println("genericWithoutResponse;" + id + ";" + parameters);
         out.flush();

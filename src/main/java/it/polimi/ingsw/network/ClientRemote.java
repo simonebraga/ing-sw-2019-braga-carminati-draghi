@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 public interface ClientRemote extends Remote {
 
     int ping() throws RemoteException;
-    void notifyLogout() throws RemoteException;
     void genericWithoutResponse(String id, String parameters) throws RemoteException;
     String genericWithResponse(String id, String parameters) throws RemoteException;
     String singleChoice(String id, String parameters) throws RemoteException;

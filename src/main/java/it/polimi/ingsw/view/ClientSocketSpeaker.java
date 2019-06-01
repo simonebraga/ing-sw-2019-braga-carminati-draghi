@@ -25,7 +25,7 @@ public class ClientSocketSpeaker implements ServerRemote {
     }
 
     @Override
-    public synchronized int ping() throws RemoteException {
+    public synchronized int ping(ClientRemote c) throws RemoteException {
         if (socket.isClosed()) throw new RemoteException();
         return 0;
     }

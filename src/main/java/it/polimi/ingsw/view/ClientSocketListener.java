@@ -41,10 +41,6 @@ public class ClientSocketListener implements Runnable {
                 try {
                     // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
                     switch (method) {
-                        case "notifyLogout": {
-                            client.notifyLogout();
-                            break;
-                        }
                         case "genericWithoutResponse": {
                             client.genericWithoutResponse(getHeading(parameters),getBody(parameters));
                             break;

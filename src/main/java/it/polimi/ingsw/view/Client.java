@@ -15,6 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.*;
 
 public class Client implements ClientRemote {
 
@@ -28,8 +29,10 @@ public class Client implements ClientRemote {
     private int clientPortRMI;
     private int serverPortSocket;
     private int pingFrequency;
+    private int pingLatency;
 
     private Gson gson = new Gson();
+    ExecutorService executorService = Executors.newCachedThreadPool();
 
     // Utility methods
 
@@ -50,6 +53,7 @@ public class Client implements ClientRemote {
         this.clientPortRMI = Integer.parseInt(properties.getProperty("clientRmiPort"));
         this.serverPortSocket = Integer.parseInt(properties.getProperty("serverSocketPort"));
         this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
+        this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
         this.view = view;
 
         if (i == 0) {
@@ -83,26 +87,42 @@ public class Client implements ClientRemote {
             System.err.println("Incorrect parameters in Client constructor");
             throw new Exception();
         }
+    }
+
+    private void startPingThread() {
 
         new Thread(() -> {
+            System.out.println("Ping thread started");
             while (true) {
                 try {
-                    server.ping();
-                } catch (RemoteException e) {
-                    try {
-                        notifyLogout();
-                        break;
-                    } catch (RemoteException ex) {
-                        ex.printStackTrace();
-                    }
+                    executorService.submit(() -> {
+                        try {
+                            server.ping(this);
+                        } catch (RemoteException e) {
+                            try {
+                                Thread.sleep((pingLatency + 1) * 1000);
+                            } catch (InterruptedException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }).get(pingLatency,TimeUnit.SECONDS);
+                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                    notifyLogout();
+                    break;
                 }
                 try {
                     Thread.sleep(1000 * pingFrequency);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
                 }
             }
+            System.out.println("Ping thread stopped");
         }).start();
+    }
+
+    private void notifyLogout() {
+        System.out.println("Lost connection with the server");
+        //TODO Call a specific method to start a new login routine on the view. It must create a new client to login again
     }
 
     // Remote methods
@@ -113,20 +133,16 @@ public class Client implements ClientRemote {
     }
 
     @Override
-    public void notifyLogout() throws RemoteException {
-        System.out.println("Lost connection with the server");
-        //TODO Call a specific method to start a new login routine on the view. It must create a new client to login again
-    }
-
-    @Override
     public void genericWithoutResponse(String id, String parameters) throws RemoteException {
 
         switch (id) {
             case "sendMessage": {
+                System.out.println(parameters);
                 //TODO Call the view to show the message in the correct way
                 break;
             }
             case "notifyEvent": {
+                System.out.println(parameters);
                 //TODO Call the view to show the event in the correct way
                 break;
             }
@@ -214,12 +230,15 @@ public class Client implements ClientRemote {
 
     // Network methods
 
-    public int login(String s) throws Exception {
+    public int login(String s) {
 
         try {
-            return server.login(s,this);
-        } catch (RemoteException e) {
-            throw new Exception();
+            int retVal = executorService.submit(() -> server.login(s,this)).get(pingLatency, TimeUnit.SECONDS);
+            if ((retVal == 0) || (retVal == 2))
+                startPingThread();
+            return retVal;
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            return -1;
         }
     }
 
