@@ -43,6 +43,23 @@ public class GameTable {
     private Boolean isDomination;
 
     /**
+     * This attribute indicates in which phase the game currently is.
+     * <p>"ff" means that the game is in final frenzy.<br>
+     *     "ft" means that the game is in its first turns.<br>
+     *     "rll" means that the game is in the normal turn stage.</p>
+     *
+     * @author Draghi96
+     */
+    private String gamePhase;
+
+    /**
+     * This attribute contains the name of the save file associated with this match.
+     *
+     * @author Draghi96
+     */
+    private String saveFileName;
+
+    /**
      * This constructor initializes all attributes to null.
      *
      * @author Draghi96
@@ -58,6 +75,8 @@ public class GameTable {
         this.ammoTileDeck=null;
         this.currentTurnPlayer=null;
         this.isDomination=false;
+        this.gamePhase=null;
+        this.saveFileName=null;
     }
 
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck, Player currentTurnPlayer,Boolean isDomination) {
@@ -71,6 +90,8 @@ public class GameTable {
         this.ammoTileDeck = ammoTileDeck;
         this.currentTurnPlayer = currentTurnPlayer;
         this.isDomination=isDomination;
+        this.gamePhase="ff";
+        this.saveFileName=null;
     }
 
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck) {
@@ -84,6 +105,8 @@ public class GameTable {
         this.ammoTileDeck = ammoTileDeck;
         this.currentTurnPlayer = startingPlayerMarker.getTarget();
         this.isDomination=false;
+        this.gamePhase="ff";
+        this.saveFileName=null;
     }
 
     public void setStartingPlayerMarker(StartingPlayerMarker startingPlayerMarker) {
@@ -136,6 +159,22 @@ public class GameTable {
         this.isDomination=isDomination;
     }
 
+    /**
+     * This method sets a new string for gamePhase.
+     *
+     * @param gamePhase a String that indicates in which phase the game was left.
+     * @author Draghi96
+     */
+    public void setGamePhase(String gamePhase) { this.gamePhase=gamePhase; }
+
+    /**
+     * This method sets a new file name to be associated with this match save file.
+     *
+     * @param saveFileName a String that contains the save file name to be associated with this match save.
+     * @author Draghi96
+     */
+    public void setSaveFileName(String saveFileName) { this.saveFileName=saveFileName; }
+
     public StartingPlayerMarker getStartingPlayerMarker() {
         return startingPlayerMarker;
     }
@@ -184,6 +223,24 @@ public class GameTable {
      */
     public Boolean getIsDomination() {
         return isDomination;
+    }
+
+    /**
+     * This method returns the gamePhase attribute value.
+     *
+     * @return a String that indicates in which phase the game currently is.
+     * @author Draghi96
+     */
+    public String getGamePhase() { return this.gamePhase; }
+
+    /**
+     * This method returns the name of the save file associated with this match.
+     *
+     * @return a String that contains the name of the save file associated with this match.
+     * @author Draghi96
+     */
+    public String getSaveFileName() {
+        return this.saveFileName;
     }
 
 }
