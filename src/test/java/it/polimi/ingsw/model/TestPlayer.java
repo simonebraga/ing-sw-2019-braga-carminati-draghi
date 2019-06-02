@@ -44,7 +44,7 @@ class TestPlayer {
     void testMove() {
 
         assertEquals(null , player.getPosition());
-        Square position = new Square(Border.WALL,Border.WALL,Border.WALL,Border.WALL);
+        Square position = new Square(Border.WALL,Border.WALL,Border.WALL,Border.WALL,0,0);
         player.move(position);
         assertEquals(position , player.getPosition());
 

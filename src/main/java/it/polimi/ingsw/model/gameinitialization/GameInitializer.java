@@ -105,7 +105,8 @@ public class GameInitializer {
     /**
      * This method initializes a new game match that will be ready to play.
      *
-     * @return a GameTable that contains all information to start a new match.
+     * @return a GameTable that contains all information to start a new match.<br>
+     *     Returns null if an error occurred.
      */
     public GameTable run() {
 
@@ -156,16 +157,28 @@ public class GameInitializer {
                     player.getPowerupPocket().addPowerup(loadedPowerupDeck.draw());
                 }
 
+                GameTable gameTable;
                 if (gameMode=='d') {
-                    return new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
+                    gameTable = new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
                             loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget(),true);
                 } else {    //gameMode = 'n'
-                    return new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
+                    gameTable = new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
                             loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget(),false);
 
                 }
+
+                //set current player
+                gameTable.setCurrentTurnPlayer(gameTable.getStartingPlayerMarker().getTarget());
+
+                //set game phase
+                gameTable.setGamePhase("ft");
+
+                //set save file name
+                gameTable.setSaveFileName("new");
+
+                return gameTable;
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

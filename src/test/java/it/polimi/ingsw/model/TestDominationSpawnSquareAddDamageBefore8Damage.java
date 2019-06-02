@@ -25,7 +25,7 @@ class TestDominationSpawnSquareAddDamageBefore8Damage {
 
     @BeforeEach
     void setUp() {
-        square = new DominationSpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, Color.BLUE);
+        square = new DominationSpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, 0, 0, Color.BLUE);
         shooter = new Player(Figure.DESTRUCTOR, "nick1");
         anotherShooter = new Player(Figure.DOZER, "nick2");
         anotherShooter2 = new Player(Figure.VIOLET, "nick3");

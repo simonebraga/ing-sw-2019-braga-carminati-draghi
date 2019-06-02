@@ -23,7 +23,7 @@ class TestSquareRemovePlayer {
 
     @BeforeEach
     void setUp() {
-        square = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
+        square = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,0);
         players = new ArrayList<Player>();
         playerToRemove= new Player(Figure.DESTRUCTOR, "nick1");
         players.add(playerToRemove);

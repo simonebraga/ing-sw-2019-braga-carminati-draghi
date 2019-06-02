@@ -60,8 +60,7 @@ public abstract class ShootCreatorAbstract {
     }
 
     protected void findSquares(ArrayList<Square> squares, GameTable table){
-        ArrayList<Square> map = new ArrayList<>(table.getGameMap().getSpawnSquares());
-        map.addAll(table.getGameMap().getTileSquares());
+        ArrayList<Square> map = new ArrayList<>(table.getGameMap().getGridAsList());
         Player visibilityStarter;
 
         if(from != null){

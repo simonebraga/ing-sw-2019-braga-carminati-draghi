@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.gamelogic.turn;
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.playerclasses.Player;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -23,6 +24,7 @@ public class TimerTurn extends Thread{
         this.server = server;
         this.time = time;
         this.playerOfTurn = playerOfTurn;
+        this.stop = new AtomicBoolean(false);
     }
 
     public void setStop(boolean stop) {
@@ -34,7 +36,7 @@ public class TimerTurn extends Thread{
         stop.set(false);
         while (!stop.get() && time>0){
             try {
-                this.wait(500);
+                TimeUnit.SECONDS.sleep(500);
                 time-=500;
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -66,8 +66,7 @@ public class MoveCreator implements EffectsCreator{
     private ArrayList<Square> findSquares(GameTable table) throws IllegalActionException {
         ArrayList<Square> squares;
         if(distance<0){
-            squares = new ArrayList<>(table.getGameMap().getSpawnSquares());
-            squares.addAll(table.getGameMap().getTileSquares());
+            squares = new ArrayList<>(table.getGameMap().getGridAsList());
         }else {
             if (distance == 1) {
                 squares = new ArrayList<>(table.getGameMap().getDistance(player.getPosition(), distance));

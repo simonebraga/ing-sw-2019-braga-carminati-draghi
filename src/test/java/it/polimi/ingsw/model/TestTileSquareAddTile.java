@@ -20,7 +20,7 @@ class TestTileSquareAddTile {
 
     @BeforeEach
     void setUp() {
-        square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
+        square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,0);
         tile = new AmmoTile(new ArrayList<>(), 0);
     }
 

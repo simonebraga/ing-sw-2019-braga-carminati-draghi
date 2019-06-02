@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -97,24 +98,27 @@ public class GameMap {
     public void setTileSquares(ArrayList<TileSquare> tileSquares) {this.tileSquares=tileSquares;}
 
     /**
+     * This method return the GameMap's grid as a List.
+     * @return The GameMap's grid as a List.
+     */
+    public List<Square> getGridAsList(){
+        List<Square> list = new ArrayList<>();
+        for (Square[] array : grid){
+            list.addAll(Arrays.asList(array));
+        }
+        return list;
+    }
+
+    /**
      * Return the coordinates of the Square passed by parameter.
      * @param square The Square of which the method will find the coordinates.
      * @return A two-Integer Array, the first value is the x coordinate, the second value is
      * the y coordinate.
      */
     public ArrayList<Integer> getCoord(Square square){
-        int i;
-        int j;
-        ArrayList<Integer> coordinates = new ArrayList<>(2);
-        for(i = 0; i<getGrid()[0].length; i++){
-            for(j = 0; j<getGrid().length; j++){
-                if(square == getGrid()[i][j]){
-                    coordinates.add(i);
-                    coordinates.add(j);
-                    return coordinates;
-                }
-            }
-        }
+        ArrayList<Integer> coordinates = new ArrayList<>();
+        coordinates.add(square.getX());
+        coordinates.add(square.getY());
         return coordinates;
     }
 

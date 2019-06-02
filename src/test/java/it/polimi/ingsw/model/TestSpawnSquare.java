@@ -28,8 +28,8 @@ public class TestSpawnSquare {
      */
     @BeforeEach
     void setUp() {
-        spawnSquare1 = new SpawnSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL, Color.RED);
-        spawnSquare2 = new SpawnSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL, Color.RED);
+        spawnSquare1 = new SpawnSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL,0,0, Color.RED);
+        spawnSquare2 = new SpawnSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL,0,0, Color.RED);
     }
 
     /**

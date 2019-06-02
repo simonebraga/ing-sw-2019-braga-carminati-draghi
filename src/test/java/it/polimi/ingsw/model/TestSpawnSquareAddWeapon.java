@@ -24,7 +24,7 @@ class TestSpawnSquareAddWeapon {
 
     @BeforeEach
     void setUp() {
-        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, Color.BLUE);
+        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, 0,0,Color.BLUE);
         weaponToAdd = new Weapon(new ArrayList<Color>(), WeaponName.ELECTROSCYTHE, Boolean.TRUE);
         weapons = new ArrayList<>();
         weapons.add(new Weapon(new ArrayList<Color>(), WeaponName.TRACTORBEAM, Boolean.TRUE));

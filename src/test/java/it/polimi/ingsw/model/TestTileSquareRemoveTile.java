@@ -22,7 +22,7 @@ class TestTileSquareRemoveTile {
     @BeforeEach
     void setUp() {
         tile = new AmmoTile(new ArrayList<Color>(), 0);
-        square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
+        square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,0);
         square.addTile(tile);
     }
 

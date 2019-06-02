@@ -25,11 +25,11 @@ public class TestSquare {
      */
     @BeforeEach
     void setUp() {
-        square1 = new Square(Border.WALL,Border.WALL,Border.WALL,Border.WALL);
+        square1 = new Square(Border.WALL,Border.WALL,Border.WALL,Border.WALL,0,0);
         square1.addPlayer(new Player(Figure.DOZER,"Player1"));
         square1.addPlayer(new Player(Figure.BANSHEE,"Player2"));
 
-        square2 = new Square(Border.WALL,Border.WALL,Border.WALL,Border.WALL);
+        square2 = new Square(Border.WALL,Border.WALL,Border.WALL,Border.WALL,0,0);
         square2.addPlayer(new Player(Figure.DOZER,"Player1"));
         square2.addPlayer(new Player(Figure.BANSHEE,"Player2"));
     }

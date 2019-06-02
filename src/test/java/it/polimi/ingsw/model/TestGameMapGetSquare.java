@@ -30,13 +30,13 @@ class TestGameMapGetSquare {
     @BeforeEach
     void setUp() {
         grid = new Square[3][3];
-        grid[0][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[0][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[0][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[1][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[1][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[1][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[2][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
+        grid[0][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,0);
+        grid[0][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,1);
+        grid[0][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,2);
+        grid[1][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,1,0);
+        grid[1][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,1,1);
+        grid[1][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,1,2);
+        grid[2][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,2,2);
         gamemap = new GameMap(grid, new ArrayList<SpawnSquare>(), new ArrayList<TileSquare>());
         squareToGet = grid[XCOORD][YCOORD];
     }

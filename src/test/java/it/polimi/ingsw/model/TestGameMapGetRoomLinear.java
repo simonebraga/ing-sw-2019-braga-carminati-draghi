@@ -27,19 +27,19 @@ class TestGameMapGetRoomLinear {
         Square[][] grid;
         grid = new Square[3][3];
         expectedRoom = new ArrayList<>();
-        grid[0][0] = new Square(Border.WALL, Border.WALL, Border.WALL, Border.NOTHING);
+        grid[0][0] = new Square(Border.WALL, Border.WALL, Border.WALL, Border.NOTHING,0,0);
         expectedRoom.add(grid[0][0]);
-        grid[0][1] = new Square(Border.WALL, Border.WALL, Border.NOTHING, Border.NOTHING);
+        grid[0][1] = new Square(Border.WALL, Border.WALL, Border.NOTHING, Border.NOTHING,0,1);
         expectedRoom.add(grid[0][1]);
-        grid[0][2] = new Square(Border.WALL, Border.WALL, Border.NOTHING, Border.WALL);
+        grid[0][2] = new Square(Border.WALL, Border.WALL, Border.NOTHING, Border.WALL,0,2);
         expectedRoom.add(grid[0][2]);
-        grid[1][0] = new Square(Border.WALL, Border.NOTHING, Border.WALL, Border.NOTHING);
-        grid[1][1] = new Square(Border.WALL, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[1][2] = new Square(Border.WALL, Border.NOTHING, Border.NOTHING, Border.WALL);
-        grid[2][0] = new Square(Border.NOTHING, Border.WALL, Border.WALL, Border.NOTHING);
-        grid[2][1] = new Square(Border.NOTHING, Border.WALL, Border.NOTHING, Border.NOTHING);
-        grid[2][2] = new Square(Border.NOTHING, Border.WALL, Border.NOTHING, Border.WALL);
-        gamemap = new GameMap(grid, new ArrayList<SpawnSquare>(), new ArrayList<TileSquare>());
+        grid[1][0] = new Square(Border.WALL, Border.NOTHING, Border.WALL, Border.NOTHING,1,0);
+        grid[1][1] = new Square(Border.WALL, Border.NOTHING, Border.NOTHING, Border.NOTHING,1,1);
+        grid[1][2] = new Square(Border.WALL, Border.NOTHING, Border.NOTHING, Border.WALL,1,2);
+        grid[2][0] = new Square(Border.NOTHING, Border.WALL, Border.WALL, Border.NOTHING,2,0);
+        grid[2][1] = new Square(Border.NOTHING, Border.WALL, Border.NOTHING, Border.NOTHING,2,1);
+        grid[2][2] = new Square(Border.NOTHING, Border.WALL, Border.NOTHING, Border.WALL,2,2);
+        gamemap = new GameMap(grid, new ArrayList<>(), new ArrayList<>());
         room = gamemap.getRoom(grid[0][1]);
     }
 

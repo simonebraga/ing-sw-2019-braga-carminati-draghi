@@ -25,7 +25,7 @@ class TestSpawnSquareSwitchWeapon {
     @BeforeEach
     void setUp() {
         weapons = new ArrayList<>();
-        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, Color.BLUE);
+        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, 0,0,Color.BLUE);
         weaponToAdd = new Weapon(new ArrayList<>(), WeaponName.CYBERBLADE, Boolean.TRUE);
         weaponToRemove = new Weapon(new ArrayList<>(), WeaponName.TRACTORBEAM, Boolean.TRUE);
         weapons.add(weaponToRemove);

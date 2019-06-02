@@ -37,21 +37,22 @@ public class SpawnSquare extends Square {
      * This constructor initializes all attributes to null.
      */
     public SpawnSquare() {
-        super(null,null,null,null);
+        super(null,null,null,null, null, null);
         this.color=null;
         this.weapons=null;
     }
 
-    public SpawnSquare(Border up, Border down, Border left, Border right, Color color) {
-        super(up, down, left, right);
+    public SpawnSquare(Border up, Border down, Border left, Border right, Integer x, Integer y, Color color) {
+        super(up, down, left, right, x, y);
         this.color = color;
         this.weapons = new ArrayList<>();
     }
 
     @JsonCreator
     public SpawnSquare(@JsonProperty("up") Border up, @JsonProperty("down") Border down, @JsonProperty("left") Border left, @JsonProperty("right") Border right,
+                       @JsonProperty("x") Integer x, @JsonProperty("y") Integer y,
                        @JsonProperty("color") Color color, @JsonProperty("weapons") ArrayList<Weapon> weapons) {
-        super(up, down, left, right);
+        super(up, down, left, right, x, y);
         this.color=color;
         this.weapons=weapons;
     }
@@ -118,7 +119,6 @@ public class SpawnSquare extends Square {
      */
     @Override
     public boolean equals(Object obj) {
-        SpawnSquare spawnSquare = (SpawnSquare) obj;
-        return super.equals(obj) && spawnSquare.getColor()==this.color && spawnSquare.getWeapons().equals(this.weapons);
+        return super.equals(obj);
     }
 }
