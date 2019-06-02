@@ -86,37 +86,7 @@ public class Server implements ServerRemote {
 
         System.out.println("Server created");
 
-        new Thread(() -> {
-            System.out.println("Ping thread started");
-            while (true) {
-                for (String s : clientMap.keySet()) {
-                    try {
-                        executorService.submit(() -> {
-                            try {
-                                clientMap.get(s).ping();
-                            } catch (RemoteException e) {
-                                try {
-                                    logout(clientMap.get(s));
-                                } catch (RemoteException ex) {
-                                    ex.printStackTrace();
-                                }
-                            }
-                        }).get(pingLatency,TimeUnit.SECONDS);
-                    } catch (InterruptedException | TimeoutException | ExecutionException e) {
-                        try {
-                            logout(clientMap.get(s));
-                        } catch (RemoteException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-                try {
-                    Thread.sleep(1000 * pingFrequency);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        startPingThread();
     }
 
     public synchronized void startLoginPhase() {
@@ -168,6 +138,41 @@ public class Server implements ServerRemote {
         clientMap.remove(player.getUsername());
         System.out.println(clientMap.toString());
         notifyEvent(player.getUsername() + " disconnected");
+    }
+
+    private void startPingThread() {
+
+        new Thread(() -> {
+            System.out.println("Ping thread started");
+            while (true) {
+                for (String s : clientMap.keySet()) {
+                    try {
+                        executorService.submit(() -> {
+                            try {
+                                clientMap.get(s).ping();
+                            } catch (RemoteException e) {
+                                try {
+                                    Thread.sleep((pingLatency + 1) * 1000);
+                                } catch (InterruptedException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }).get(pingLatency,TimeUnit.SECONDS);
+                    } catch (InterruptedException | TimeoutException | ExecutionException e) {
+                        try {
+                            logout(clientMap.get(s));
+                        } catch (RemoteException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+                try {
+                    Thread.sleep(1000 * pingFrequency);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     // Remote methods

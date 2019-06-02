@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import com.google.gson.Gson;
 import it.polimi.ingsw.network.ClientRemote;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.rmi.RemoteException;
@@ -24,8 +25,13 @@ public class ServerSocketSpeaker implements ClientRemote {
 
     @Override
     public synchronized int ping() throws RemoteException {
-        if (socket.isClosed()) throw new RemoteException();
-        return 0;
+        try {
+            if (!socket.isClosed())
+                return 0;
+            throw new RemoteException();
+        } catch (IOException e) {
+            throw new RemoteException();
+        }
     }
 
     @Override

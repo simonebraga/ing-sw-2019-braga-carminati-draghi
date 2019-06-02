@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.CustomStream;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ServerRemote;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.rmi.RemoteException;
@@ -26,8 +27,13 @@ public class ClientSocketSpeaker implements ServerRemote {
 
     @Override
     public synchronized int ping(ClientRemote c) throws RemoteException {
-        if (socket.isClosed()) throw new RemoteException();
-        return 0;
+        try {
+            if (!socket.isClosed())
+                return 0;
+            throw new RemoteException();
+        } catch (IOException e) {
+            throw new RemoteException();
+        }
     }
 
     @Override
@@ -41,6 +47,7 @@ public class ClientSocketSpeaker implements ServerRemote {
     @Override
     public void logout(ClientRemote c) throws RemoteException {
         out.println("logout;");
+        out.println("quit;");
         out.flush();
     }
 
