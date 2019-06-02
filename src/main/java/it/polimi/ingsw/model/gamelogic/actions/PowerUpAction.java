@@ -80,8 +80,7 @@ public class PowerUpAction {
                     table.getPowerupDeck().discard(
                             player.getPowerupPocket().removePowerup(
                                     player.getPowerupPocket().getPowerups().indexOf(powerup))));
-            ArrayList<Square> squares = new ArrayList<>(table.getGameMap().getSpawnSquares());
-            squares.addAll(table.getGameMap().getTileSquares());
+            ArrayList<Square> squares = new ArrayList<>(table.getGameMap().getGridAsList());
             Square square = server.chooseSquare(player, squares);
             effects.add(new FunctionalFactory().createMove(player, square));
         }

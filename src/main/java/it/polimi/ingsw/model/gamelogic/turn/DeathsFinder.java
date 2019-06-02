@@ -13,6 +13,7 @@ import it.polimi.ingsw.network.UnavailableUserException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * At the end of the turn, controls if some players are dead.
@@ -48,11 +49,11 @@ public class DeathsFinder {
             if(table.getIsDomination()) {
                 Square square;
                 try {
-                    square = server.chooseSquare(damageTrack.get(12), new ArrayList<>(table.getGameMap().getSpawnSquares()));
+                    square = server.chooseSquare(damageTrack.get(12), table.getGameMap().getGridAsList().stream().filter(square1 -> table.getGameMap().getSpawnSquares().contains(square1)).collect(Collectors.toCollection(ArrayList::new)));
                 } catch (UnavailableUserException e) {
                     Random random = new Random();
                     int n = random.nextInt(table.getGameMap().getSpawnSquares().size());
-                    square = table.getGameMap().getSpawnSquares().get(n);
+                    square = table.getGameMap().getGridAsList().stream().filter(square1 -> table.getGameMap().getSpawnSquares().contains(square1)).collect(Collectors.toCollection(ArrayList::new)).get(n);
                 }
                 new FunctionalFactory().createDamageSpawn(damageTrack.get(12), (DominationSpawnSquare) square);
             }else{

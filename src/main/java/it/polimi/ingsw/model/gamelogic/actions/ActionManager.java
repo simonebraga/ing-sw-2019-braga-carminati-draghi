@@ -129,7 +129,7 @@ public class ActionManager {
                 effects.addAll(action.run(server, table, player, targets));
             } catch (IllegalActionException | UnavailableUserException e) {
                 initialSituation.keySet().forEach(player1 -> {
-                    if(player1.getPosition()!=null) {
+                    if(player1.getPosition()!=null) { //See if the player has spawned (first turns)
                         new FunctionalFactory().createMove(player1, initialSituation.get(player1)).doAction();
                     }
                 });

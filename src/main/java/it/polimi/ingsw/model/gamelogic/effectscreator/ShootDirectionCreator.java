@@ -93,8 +93,7 @@ public class ShootDirectionCreator implements EffectsCreator{
         Character direction;
 
         if(throughWalls){ //RailGun
-            ArrayList<Square> map = new ArrayList<>(table.getGameMap().getSpawnSquares());
-            map.addAll(table.getGameMap().getTileSquares());
+            ArrayList<Square> map = new ArrayList<>(table.getGameMap().getGridAsList());
 
             direction = server.chooseDirection(player);
 

@@ -11,10 +11,14 @@ import it.polimi.ingsw.model.gamelogic.actions.PowerUpAction;
 import it.polimi.ingsw.model.gamelogic.actions.ReloadAction;
 import it.polimi.ingsw.model.gamelogic.effectscreator.Targets;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Represents the turn of a player.
@@ -130,21 +134,24 @@ public class TurnManager {
         new DeathsFinder().runDeathsFinder(server, table, player);
 
         //Replace all the AmmoTiles in the TileSquares.
-        table.getGameMap().getTileSquares().stream().filter(tileSquare -> tileSquare.getTile()==null).
-                forEach(tileSquare -> {
-                    if(!table.getAmmoTileDeck().getActiveCards().isEmpty()){
-                        tileSquare.addTile(table.getAmmoTileDeck().draw());
-                    }
-                });
+        ArrayList<Square> tileSquares = table.getGameMap().getGridAsList().stream().filter(square1 -> table.getGameMap().getTileSquares().contains(square1)).collect(Collectors.toCollection(ArrayList::new));
+        for (Square tileSquare : tileSquares) {
+            TileSquare tileSquare1 = (TileSquare) tileSquare;
+            if(!table.getAmmoTileDeck().getActiveCards().isEmpty()){
+                tileSquare1.addTile(table.getAmmoTileDeck().draw());
+            }
+        }
 
         //Replace all the Weapons in the SpawnSquares.
-        table.getGameMap().getSpawnSquares().stream().filter(spawnSquare -> spawnSquare.getWeapons().size()<3).
-                forEach(spawnSquare ->
-                {
-                    while(spawnSquare.getWeapons().size()<3) {
-                        spawnSquare.addWeapon(table.getWeaponDeck().draw());
-                    }
-                });
+        ArrayList<Square> spawnSquares = table.getGameMap().getGridAsList().stream().filter(square1 -> table.getGameMap().getSpawnSquares().contains(square1)).collect(Collectors.toCollection(ArrayList::new));
+        for (Square spawnSquare : spawnSquares) {
+            SpawnSquare spawnSquare1 = (SpawnSquare) spawnSquare;
+            if(spawnSquare1.getWeapons().size()<3){
+                while(spawnSquare1.getWeapons().size()<3) {
+                    spawnSquare1.addWeapon(table.getWeaponDeck().draw());
+                }
+            }
+        }
     }
 
     private void doAction (Server server, GameTable table, Targets targets){

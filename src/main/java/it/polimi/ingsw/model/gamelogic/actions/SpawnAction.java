@@ -5,9 +5,13 @@ import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -37,7 +41,7 @@ public class SpawnAction {
             int n = random.nextInt(player.getPowerupPocket().getPowerups().size());
             powerup = player.getPowerupPocket().getPowerups().get(n);
         }
-        Powerup finalPowerup = powerup;
+        Powerup finalPowerup = powerup; //Assignment to have a final variable to use in lambda.
 
         FunctionalEffect discard = () ->
                 table.getPowerupDeck().discard(
@@ -45,16 +49,19 @@ public class SpawnAction {
                                 player.getPowerupPocket().getPowerups().indexOf(finalPowerup)));
         discard.doAction();
 
+        ArrayList<Square> spawnSquares = table.getGameMap().getGridAsList().stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+        SpawnSquare destination = new SpawnSquare();
+        for (Square spawnSquare : spawnSquares) {
+            SpawnSquare spawnSquare1 = (SpawnSquare) spawnSquare;
+            if(spawnSquare1.getColor()==finalPowerup.getColor()){
+                destination = spawnSquare1;
+            }
+        }
         if(player.getPosition()!=null){ //First spawn
-            new FunctionalFactory().createMove(player, table.getGameMap().getSpawnSquares().stream().
-                    filter(square -> square.getColor()== finalPowerup.getColor()).
-                    collect(Collectors.toList()).get(0)).doAction();
+            new FunctionalFactory().createMove(player, destination).doAction();
         }else{
-            FunctionalEffect spawn = () ->
-                    player.move(table.getGameMap().getSpawnSquares().stream().
-                            filter(square -> square.getColor()==finalPowerup.getColor()).
-                            collect(Collectors.toList()).get(0));
-            spawn.doAction();
+            player.move(destination);
+            destination.addPlayer(player);
         }
     }
 }

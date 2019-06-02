@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -95,6 +96,18 @@ public class GameMap {
      * @param tileSquares a new ArrayList of Square o which this attribute will be set.
      */
     public void setTileSquares(ArrayList<TileSquare> tileSquares) {this.tileSquares=tileSquares;}
+
+    /**
+     * This method return the GameMap's grid as a List.
+     * @return The GameMap's grid as a List.
+     */
+    public List<Square> getGridAsList(){
+        List<Square> list = new ArrayList<>();
+        for (Square[] array : grid){
+            list.addAll(Arrays.asList(array));
+        }
+        return list;
+    }
 
     /**
      * Return the coordinates of the Square passed by parameter.
