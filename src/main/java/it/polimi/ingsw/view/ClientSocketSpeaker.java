@@ -14,13 +14,15 @@ public class ClientSocketSpeaker implements ServerRemote {
 
     private Socket socket;
     private PrintWriter out;
+    private int pingLatency;
     private CustomStream customStream = new CustomStream();
 
     private Gson gson = new Gson();
 
-    public ClientSocketSpeaker(Socket socket, Client client) throws Exception {
+    public ClientSocketSpeaker(Socket socket, Client client, int pingLatency) throws Exception {
 
         this.socket = socket;
+        this.pingLatency = pingLatency;
         new Thread(new ClientSocketListener(socket,client,this,customStream)).start();
         out = new PrintWriter(socket.getOutputStream());
     }
@@ -28,7 +30,7 @@ public class ClientSocketSpeaker implements ServerRemote {
     @Override
     public synchronized int ping(ClientRemote c) throws RemoteException {
         try {
-            if (!socket.isClosed())
+            if (socket.getInetAddress().isReachable(pingLatency))
                 return 0;
             throw new RemoteException();
         } catch (IOException e) {

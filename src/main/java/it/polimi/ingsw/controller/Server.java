@@ -61,7 +61,7 @@ public class Server implements ServerRemote {
         this.inactivityTime = Integer.parseInt(properties.getProperty("inactivityTime"));
 
         try {
-            new Thread(new ServerSocketAcceptor(socketPort,this)).start();
+            new Thread(new ServerSocketAcceptor(socketPort,this,pingLatency)).start();
         } catch (Exception e) {
             System.err.println("Failed to start ServerSocketAcceptor");
             throw new Exception();

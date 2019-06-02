@@ -78,7 +78,7 @@ public class Client implements ClientRemote {
         } else if (i == 1) {
             // Socket setup
             try {
-                server = new ClientSocketSpeaker(new Socket(serverIp,serverPortSocket),this);
+                server = new ClientSocketSpeaker(new Socket(serverIp,serverPortSocket),this, pingLatency);
             } catch (Exception e) {
                 System.err.println("Error with socket connection initialization");
                 throw new Exception();
