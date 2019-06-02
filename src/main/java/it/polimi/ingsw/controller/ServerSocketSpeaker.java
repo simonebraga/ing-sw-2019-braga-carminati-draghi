@@ -28,7 +28,7 @@ public class ServerSocketSpeaker implements ClientRemote {
     @Override
     public synchronized int ping() throws RemoteException {
         try {
-            if (socket.getInetAddress().isReachable(pingLatency))
+            if ((!socket.isClosed()) && (socket.getInetAddress().isReachable(pingLatency)))
                 return 0;
             throw new RemoteException();
         } catch (IOException e) {

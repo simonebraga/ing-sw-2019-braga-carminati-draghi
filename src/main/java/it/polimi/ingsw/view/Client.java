@@ -245,9 +245,13 @@ public class Client implements ClientRemote {
     public void logout() {
 
         try {
-            server.logout(this);
-        } catch (RemoteException e) {
-            System.err.println("Something went wrong with the logout");
+            executorService.submit(() -> {
+                try {
+                    server.logout(this);
+                } catch (RemoteException ignored) {
+                }
+            }).get(pingLatency, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
         }
     }
 }

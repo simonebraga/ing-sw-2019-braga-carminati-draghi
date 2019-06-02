@@ -17,6 +17,27 @@ public class ServerSocketListener implements Runnable {
 
     private Gson gson = new Gson();
 
+    private void startPingThread() {
+
+        new Thread(() -> {
+            while (true) {
+                try {
+                    server.ping(serverSocketSpeaker);
+                } catch (RemoteException e) {
+                    break;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignored) {
+                }
+            }
+            try {
+                socket.close();
+            } catch (IOException ignored) {
+            }
+        }).start();
+    }
+
     public ServerSocketListener(Socket socket, Server server, ServerSocketSpeaker serverSocketSpeaker, CustomStream customStream) throws Exception {
 
         this.server = server;
@@ -42,6 +63,7 @@ public class ServerSocketListener implements Runnable {
                     switch (method) {
                         case "login": {
                             serverSocketSpeaker.returnMessage(gson.toJson(server.login(parameters,serverSocketSpeaker)));
+                            startPingThread();
                             break;
                         }
                         case "logout": {
