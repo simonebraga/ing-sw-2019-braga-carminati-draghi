@@ -123,8 +123,7 @@ public class ServerMain {
 
                 //game has ended before final frenzy because too many people disconnected
                 System.out.println("Not enough players to continue the game.");
-                proclaimWinner(gameTable);
-                deleteSave(gameTable.getSaveFileName());
+                gameOver(gameTable);
 
                 //restart program
                 main(args);
@@ -137,6 +136,7 @@ public class ServerMain {
 
         } catch (FrenzyModeException e) {
             finalFrenzy(server,gameTable);
+            main(args);
         }
     }
 
@@ -360,87 +360,122 @@ public class ServerMain {
 
     }
 
+    /**
+     * This method evolves all last final frenzy turns and ends the match.
+     *
+     * @param server a Server object to get access to network interaction.
+     * @param gameTable a GameTable object with all match information inside.
+     */
     private static void finalFrenzy(Server server, GameTable gameTable) {
 
-        //TODO(to fully review)
-        //TODO(update to continue old final frenzy from save file)
+        //if this match was never in final frenzy before...
+        if (!gameTable.getGamePhase().equals("ff")) {
 
-        //match is now in final frenzy
-
-        //change bounty value to each undamaged player
-        Integer[] points = {2, 1, 1, 1, 1, 1};
-        for (Player player : gameTable.getPlayers()) {
-            if (player.getDamageTrack().getDamage().isEmpty()) {
-                player.getPointTrack().setValue(new ArrayList<>(Arrays.asList(points)));
-            }
-        }
-
-        //this will contain all frenzy turns already in the correct order
-        ArrayList<TurnManager> frenzyTurns = new ArrayList<>();
-
-        //find current player inside players list
-        int currentPlayerIndex;
-        for (currentPlayerIndex = 0; !gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getCurrentTurnPlayer()); currentPlayerIndex++)
-            ;
-        //currentPlayerIndex is the current player index
-
-        //find starting player inside players list
-        int startingPlayerIndex;
-        for (startingPlayerIndex = 0; !gameTable.getPlayers().get(startingPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget()); startingPlayerIndex++)
-            ;
-        //startingPlayerIndex is the starting player index
-
-        //create frenzy turns considering players position relative to first player in the turn sequence
-        int i;
-        //from current player to starting player -1, all before starting player
-        for (i = currentPlayerIndex; !gameTable.getPlayers().get(i).equals(gameTable.getStartingPlayerMarker().getTarget()); i++) {
-            if (server.isConnected(gameTable.getPlayers().get(i))) {
-                frenzyTurns.add(new TurnManager(gameTable.getPlayers().get(i), true, true));
-            }
-
-            //cycling array
-            if (i == gameTable.getPlayers().size()) {
-                i = -1;
-            }
-        }
-
-        //from starting player to current player -1, all after starting player
-        while (!gameTable.getPlayers().get(i).equals(gameTable.getCurrentTurnPlayer())) {
-            if (server.isConnected(gameTable.getPlayers().get(i))) {
-                frenzyTurns.add(new TurnManager(gameTable.getPlayers().get(i), true, false));
-            }
-
-            //cycling array
-            if (i == gameTable.getPlayers().size()) {
-                i = -1;
-            }
-            i++;
-        }
-
-        //execute final turns
-        for (TurnManager turn : frenzyTurns) {
-            try {
-                turn.runTurn(server, gameTable);
-                currentPlayerIndex++;
-
-                //cycle array
-                if (currentPlayerIndex == gameTable.getPlayers().size()) {
-                    currentPlayerIndex = 0;
+            //change bounty value to each undamaged player
+            Integer[] points = {2, 1, 1, 1, 1, 1};
+            for (Player player : gameTable.getPlayers()) {
+                if (player.getDamageTrack().getDamage().isEmpty()) {
+                    player.getPointTrack().setValue(new ArrayList<>(Arrays.asList(points)));
                 }
-                gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
-            } catch (FrenzyModeException ex) {
-                //should never end up here
-                ex.printStackTrace();
             }
+
+            gameTable.setFrenzyBeginner(gameTable.getCurrentTurnPlayer());
+
+            //match is now in final frenzy
+            gameTable.setGamePhase("ff");
         }
 
-        //calculate winner
-        Player winner = proclaimWinner(gameTable);
+        try {
 
-        System.out.println(winner.getUsername() + "won the game.\n");
+            //find frenzy beginner, current player and starting player indexes inside players list
+            int frenzyBeginnerIndex = 0;
+            int currentPlayerIndex = 0;
+            int startingPlayerIndex = 0;
+            while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getCurrentTurnPlayer())) currentPlayerIndex++;
+            while (!gameTable.getPlayers().get(startingPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) startingPlayerIndex++;
+            while (!gameTable.getPlayers().get(frenzyBeginnerIndex).equals(gameTable.getFrenzyBeginner())) frenzyBeginnerIndex++;
 
-        //program ends
+            int tempPlayerIndex;
+            for (tempPlayerIndex = currentPlayerIndex;
+                 !gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getFrenzyBeginner()) &&
+                 !gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget());
+                 tempPlayerIndex++) {
 
+                if (tempPlayerIndex == gameTable.getPlayers().size() - 1) tempPlayerIndex = -1; //cycling array
+            }
+
+            if (gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget()) &&
+                !gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getFrenzyBeginner())) {
+
+                //from current player to starting player -1, all before
+                cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex,gameTable.getStartingPlayerMarker().getTarget(),true);
+
+                //from current player to frenzy beginner -1, all after
+                cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex,gameTable.getFrenzyBeginner(),false);
+
+            } else if (!gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget()) &&
+                        gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getFrenzyBeginner())) {
+
+                //from current player to frenzy beginner -1, all after
+                cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex,gameTable.getFrenzyBeginner(),false);
+
+                //from frenzy beginner to starting player -1, all before
+                cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex,gameTable.getStartingPlayerMarker().getTarget(),true);
+
+            } else {    //frenzy beginner is starting player
+
+                //from starting player to starting player -1, all after
+                cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex, gameTable.getStartingPlayerMarker().getTarget(),false);
+
+            }
+
+            //end game
+            gameOver(gameTable);
+
+        } catch (FrenzyModeException e) {
+            //should never go here
+            System.out.println("Something went terribly wrong inside turn management.\n");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method runs final frenzy turns from a player to another excluding the last one, considering if player are before or after the starting player.
+     *
+     * @param gameTable a GameTable object with all match information.
+     * @param server a Server object to get access to network.
+     * @param currentPlayerIndex a player index representing the player that holds the current turn.
+     * @param stopPlayer the Player reference to get to by running final frenzy turns for players, in the players array order.
+     * @param isBefore a boolean flag that indicates if this half of final frenzy turns are to be run as before or after starting player.
+     * @throws FrenzyModeException if running a turn throws this exception.
+     */
+    private static void cycleHalfFrenzyTurn(GameTable gameTable, Server server, int currentPlayerIndex, Player stopPlayer, boolean isBefore) throws FrenzyModeException {
+
+        while (!gameTable.getPlayers().get(currentPlayerIndex).equals(stopPlayer)) {
+
+            if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
+                TurnManager turn = new TurnManager(gameTable.getPlayers().get(currentPlayerIndex), true, isBefore);
+                turn.runTurn(server, gameTable);
+            }
+
+            //cycling array
+            currentPlayerIndex++;
+            if (currentPlayerIndex == gameTable.getPlayers().size()) currentPlayerIndex = 0;
+            gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
+
+            save(gameTable);
+        }
+    }
+
+    /**
+     * This method runs all last operations before considering a match over.
+     *
+     * @param gameTable a GameTable object that holds all match information.
+     */
+    private static void gameOver(GameTable gameTable) {
+
+        proclaimWinner(gameTable);
+        deleteSave(gameTable.getSaveFileName());
     }
 
     /**
