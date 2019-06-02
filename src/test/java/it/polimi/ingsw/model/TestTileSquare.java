@@ -25,7 +25,7 @@ public class TestTileSquare {
      */
     @BeforeEach
     void setUp() {
-        tileSquare = new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL);
+        tileSquare = new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL, 0, 0);
     }
 
     /**
@@ -33,10 +33,10 @@ public class TestTileSquare {
      */
     @Test
     void testEquals() {
-        TileSquare tileSquare1 = new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL);
+        TileSquare tileSquare1 = new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL,0,0);
         assertTrue(tileSquare.equals(tileSquare));
         assertTrue(tileSquare1.equals(tileSquare));
-        TileSquare tileSquare2 = new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.NOTHING);
+        TileSquare tileSquare2 = new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.NOTHING,0,1);
         assertFalse(tileSquare.equals(tileSquare2));
     }
 

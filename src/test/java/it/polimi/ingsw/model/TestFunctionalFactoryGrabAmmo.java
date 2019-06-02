@@ -52,7 +52,7 @@ class TestFunctionalFactoryGrabAmmo {
         tile = new AmmoTile(colors,1);
 
         squares = new Square[1][1];
-        square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
+        square = new TileSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,0);
         square.addTile(tile);
         squares[0][0] = square;
 

@@ -24,7 +24,7 @@ class TestSpawnSquareTakeWeapon {
 
     @BeforeEach
     void setUp() {
-        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, Color.BLUE);
+        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,0, Color.BLUE);
         weapons = new ArrayList<>();
         weaponToRemove = new Weapon(new ArrayList<Color>(), WeaponName.ELECTROSCYTHE, Boolean.TRUE);
         weapons.add(new Weapon(new ArrayList<Color>(), WeaponName.FURNACE, Boolean.TRUE));

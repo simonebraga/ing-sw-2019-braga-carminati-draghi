@@ -128,8 +128,11 @@ public class ActionManager {
             try {
                 effects.addAll(action.run(server, table, player, targets));
             } catch (IllegalActionException | UnavailableUserException e) {
-                initialSituation.keySet().forEach(player1 ->
-                        new FunctionalFactory().createMove(player1, initialSituation.get(player1)).doAction());
+                initialSituation.keySet().forEach(player1 -> {
+                    if(player1.getPosition()!=null) {
+                        new FunctionalFactory().createMove(player1, initialSituation.get(player1)).doAction();
+                    }
+                });
                 return false;
             }
         }

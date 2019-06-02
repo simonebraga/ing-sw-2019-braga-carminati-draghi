@@ -109,7 +109,7 @@ public class TestFunctionalFactory {
         spawnSquares.clear();
         tileSquares = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            tileSquares.add(new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL));
+            tileSquares.add(new TileSquare(Border.WALL,Border.WALL,Border.WALL,Border.WALL,0,0));
         }
         int k=0;
         for (int i = 0; i < 4; i++) {

@@ -23,15 +23,15 @@ class TestGameMapGetCoord {
     @BeforeEach
     void setUp() {
         Square[][] grid;
-        grid = new Square[3][3];
-        grid[0][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[0][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[0][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[1][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[1][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[1][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        grid[2][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
-        squareToFindCoords = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
+        grid = new Square[4][3];
+        grid[0][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, 0,0);
+        grid[0][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,1);
+        grid[0][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,2);
+        grid[1][0] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, 1,0);
+        grid[1][1] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,1,1);
+        grid[1][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,1,2);
+        grid[2][2] = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,2,2);
+        squareToFindCoords = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,2,0);
         grid[2][0] = squareToFindCoords;
         gamemap = new GameMap(grid, new ArrayList<>(), new ArrayList<>());
     }

@@ -25,7 +25,7 @@ class TestFunctionalFactoryCreateDamageSpawn {
     @BeforeEach
     void setUp() {
 
-        square = new DominationSpawnSquare(null,null,null,null, Color.YELLOW);
+        square = new DominationSpawnSquare(null,null,null,null,0,0, Color.YELLOW);
         for (int i = 0; i < 6; i++) {
             square.addDamage(player);
         }

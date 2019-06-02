@@ -32,7 +32,7 @@ class TestFunctionalFactoryGrabWeapon {
     @BeforeEach
     void setUp() {
         player = new Player(Figure.BANSHEE, "Player1");
-        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, Color.BLUE);
+        square = new SpawnSquare(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING, 0, 0, Color.BLUE);
         player.move(square);
         weapon = new Weapon(new ArrayList<>(), WeaponName.ELECTROSCYTHE, Boolean.TRUE);
         square.addWeapon(weapon);

@@ -22,7 +22,7 @@ class TestSquareAddPlayer {
 
     @BeforeEach
     void setUp() {
-        square = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING);
+        square = new Square(Border.NOTHING, Border.NOTHING, Border.NOTHING, Border.NOTHING,0,0);
         players = new ArrayList<>();
         players.add(new Player(Figure.DESTRUCTOR, "nick1"));
         players.add(new Player(Figure.DOZER, "nick2"));

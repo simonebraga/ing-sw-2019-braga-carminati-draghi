@@ -1,265 +1,265 @@
 [
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x": 0, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x": 0, "y": 1},
+      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 0, "y": 2},
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[],"x": 0, "y": 3}
     ],
     [
-      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]}],
+      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[],"x": 1, "y": 1},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 1, "y": 2},
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x": 1, "y": 3}],
     [
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[], "x": 2, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2, "y": 1},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2, "y": 2},
+      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[],"x": 2, "y": 3}
     ]
   ],"spawnSquares":[
-    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[]}
+    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 0},
+    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 0, "y": 2},
+    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[],"x": 2, "y": 3}
   ],
     "tileSquares":[
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x": 0, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x": 0, "y": 1},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[],"x": 1, "y": 1},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 1, "y": 2},
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x": 1, "y": 3},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2, "y": 1},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2, "y": 2}
     ]},
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[], "x": 0, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[], "x": 0, "y": 1},
+      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0, "y": 2},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3}
     ],
     [
-      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 1},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3}
     ],
     [
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[],"x": 2, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[],"x": 2, "y": 1},
+      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2, "y": 2},
+      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2, "y": 3}
     ]
   ],"spawnSquares":[
-    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0, "y": 2},
+    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 0},
+    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2, "y": 3}
   ],"tileSquares":[
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[], "x": 0, "y": 0},
+    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[], "x": 0, "y": 1},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 1},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[],"x": 2, "y": 1},
+    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2, "y": 2}
   ]},
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x": 0, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x": 0, "y": 1},
+      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0, "y": 2},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3}
     ],
     [
-      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 1},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3}
     ],
     [
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2,"y":0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2,"y":1},
+      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2,"y":2},
+      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2,"y":3}
     ]
   ],"spawnSquares":[
-    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0,"y":2},
+    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1,"y":0},
+    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2,"y":3}
   ],"tileSquares":[
-    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x": 0, "y": 0},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x": 0, "y": 1},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3},
+    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 1},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2,"y":0},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2,"y":1},
+    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2,"y":2}
   ]},
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x":0,"y":0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x":0,"y":1},
+      {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x":0,"y":2},
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[],"x":0,"y":3}
     ],
     [
-      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x":1,"y":0},
+      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x":1,"y":1},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":1,"y":2},
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x":1,"y":3}
     ],
     [
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x":2,"y":0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x":2,"y":1},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":2,"y":2},
+      {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x":2,"y":3}
     ]
   ],"spawnSquares":[
-    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+    {"type" : "SpawnSquare","color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x":1,"y":0},
+    {"type" : "SpawnSquare","color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x":0,"y":2},
+    {"type" : "SpawnSquare","color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x":2,"y":3}
   ],"tileSquares":[
-    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]}
+    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x":0,"y":0},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x":0,"y":1},
+    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x":1,"y":1},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":1,"y":2},
+    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x":1,"y":3},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x":2,"y":0},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x":2,"y":1},
+    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":2,"y":2}
   ]},
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x":0,"y":0},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x":0,"y":1},
+      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x":0,"y":2},
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[],"x":0,"y":3}
     ],
     [
-      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x":1,"y":0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[],"x":1,"y":1},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":1,"y":2},
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x":1,"y":3}
     ],
     [
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[],"x":2,"y":0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x":2,"y":1},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":2,"y":2},
+      {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[],"x":2,"y":3}
     ]
   ],"spawnSquares":[
-    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[]}
+    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x":0,"y":2},
+    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x":1,"y":0},
+    {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"WALL","players":[],"x":2,"y":3}
   ],"tileSquares":[
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]}
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x": 0, "y": 0},
+    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x": 0, "y": 1},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"NOTHING","players":[],"x": 1, "y": 1},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 1, "y": 2},
+    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x": 1, "y": 3},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2, "y": 1},
+    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2, "y": 2}
   ]},
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x": 0, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x": 0, "y": 1},
+      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0, "y": 2},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3}
     ],
     [
-      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 1},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3}
     ],
     [
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[],"x": 2, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[],"x": 2, "y": 1},
+      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2, "y": 2},
+      {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2, "y": 3}
     ]
   ],"spawnSquares":[
-    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0, "y": 2},
+    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 0},
+    {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2, "y": 3}
   ],"tileSquares":[
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"WALL","right":"NOTHING","players":[], "x": 0, "y": 0},
+    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"NOTHING","players":[], "x": 0, "y": 1},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 1},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"DOOR","players":[],"x": 2, "y": 1},
+    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2, "y": 2}
   ]},
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x": 0, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x": 0, "y": 1},
+      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0, "y": 2},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3}
     ],
     [
-      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 1},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+      {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3}
     ],
     [
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2, "y": 1},
+      {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2, "y": 2},
+      {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2, "y": 3}
     ]
   ],"spawnSquares":[
-    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[]}
+    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"DOOR","players":[],"x": 0, "y": 2},
+    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 0},
+    {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"NOTHING","right":"WALL","players":[],"x": 2, "y": 3}
   ],"tileSquares":[
-    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x": 0, "y": 0},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x": 0, "y": 1},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"WALL","players":[],"x": 0, "y": 3},
+    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 1},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 2},
+    {"type" : "TileSquare","up":"DOOR","down":"NOTHING","left":"NOTHING","right":"WALL","players":[],"x": 1, "y": 3},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2,"y":0},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2,"y":1},
+    {"type" : "TileSquare","up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2,"y":2}
   ]},
   {"grid":[
     [
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[]}
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x": 0, "y": 0},
+      {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x": 0, "y": 1},
+      {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 0, "y": 2},
+      {"type" : "TileSquare","up": null,"down": null,"left": null,"right": null,"players":[],"x": 0, "y": 3}
     ],[
-      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]}
+      {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x": 1, "y": 1},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 1, "y": 2},
+      {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x": 1, "y": 3}
     ],
     [
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-      {"type" : "DominationSpawnSquare", "damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x": 2, "y": 0},
+      {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x": 2, "y": 1},
+      {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x": 2, "y": 2},
+      {"type" : "DominationSpawnSquare", "damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2, "y": 3}
     ]
   ],"spawnSquares":[
-    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[]},
-    {"type" : "DominationSpawnSquare","damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[]}
+    {"type" : "DominationSpawnSquare","damage":[],"color":"BLUE","weapons":[],"up":"WALL","down":"DOOR","left":"NOTHING","right":"WALL","players":[],"x": 0, "y": 2},
+    {"type" : "DominationSpawnSquare","damage":[],"color":"RED","weapons":[],"up":"NOTHING","down":"DOOR","left":"WALL","right":"WALL","players":[],"x": 1, "y": 0},
+    {"type" : "DominationSpawnSquare", "damage":[],"color":"YELLOW","weapons":[],"up":"NOTHING","down":"WALL","left":"DOOR","right":"NOTHING","players":[],"x": 2, "y": 3}
   ],"tileSquares":[
-    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[]},
-    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[]}
+    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"WALL","right":"DOOR","players":[],"x":0,"y":0},
+    {"type" : "TileSquare","up":"WALL","down":"DOOR","left":"DOOR","right":"NOTHING","players":[],"x":0,"y":1},
+    {"type" : "TileSquare","up":"DOOR","down":"DOOR","left":"WALL","right":"NOTHING","players":[],"x":1,"y":1},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":1,"y":2},
+    {"type" : "TileSquare","up":"WALL","down":"NOTHING","left":"DOOR","right":"WALL","players":[],"x":1,"y":3},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"WALL","right":"NOTHING","players":[],"x":2,"y":0},
+    {"type" : "TileSquare","up":"DOOR","down":"WALL","left":"NOTHING","right":"NOTHING","players":[],"x":2,"y":1},
+    {"type" : "TileSquare","up":"WALL","down":"WALL","left":"NOTHING","right":"DOOR","players":[],"x":2,"y":2}
   ]}
 ]

@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
 import it.polimi.ingsw.model.gamelogic.effectscreator.PayCreator;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -37,15 +38,18 @@ public class PowerUpAction {
                         stream().filter(powerUp -> powerUp.getName() == PowerupName.NEWTON).
                         collect(Collectors.toList());
 
-        if(powerUps.isEmpty()){
+        ArrayList<Player> players = new ArrayList<>(table.getPlayers());
+        players.remove(player);
+
+        //This line is useful only when the player decides to use a Newton during his first turn.
+        players = players.stream().filter(player1 -> player1.getPosition() != null).collect(Collectors.toCollection(ArrayList::new));
+        if(!powerUps.isEmpty() && !players.isEmpty()){
             powerUps = server.chooseMultiplePowerup(player, powerUps);
             for (Powerup powerUp : powerUps){
                 effects.add(() ->
                         table.getPowerupDeck().discard(
                                 player.getPowerupPocket().removePowerup(
                                         player.getPowerupPocket().getPowerups().indexOf(powerUp))));
-                ArrayList<Player> players = new ArrayList<>(table.getPlayers());
-                players.remove(player);
                 Player target = server.choosePlayer(player, players);
                 Square square = server.chooseSquare(player, table.getGameMap().getDistance(target.getPosition(), 2));
                 effects.add(new FunctionalFactory().createMove(player, square));
@@ -70,7 +74,7 @@ public class PowerUpAction {
                         stream().filter(powerUp -> powerUp.getName() == PowerupName.TELEPORTER).
                         collect(Collectors.toList());
 
-        if(!powerUps.isEmpty()){
+        if(!powerUps.isEmpty() && server.booleanQuestion(player, new MessageRetriever().retrieveMessage("teleporter"))){
             Powerup powerup = server.choosePowerup(player, powerUps);
             effects.add(() ->
                     table.getPowerupDeck().discard(

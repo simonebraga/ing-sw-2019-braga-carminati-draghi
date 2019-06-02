@@ -46,6 +46,16 @@ public class Square{
     private ArrayList<Player> players;
 
     /**
+     * Represents the x coordinate of the square.
+     */
+    private Integer x;
+
+    /**
+     * Represents the y coordinate of the square.
+     */
+    private Integer y;
+
+    /**
      * This constructor initializes all attributes to null.
      */
     public Square() {
@@ -54,14 +64,18 @@ public class Square{
         this.up=null;
         this.down=null;
         this.players=new ArrayList<>();
+        this.x = null;
+        this.y = null;
     }
 
-    public Square(Border up, Border down, Border left, Border right) {
+    public Square(Border up, Border down, Border left, Border right, Integer x, Integer y) {
         this.up = up;
         this.down = down;
         this.left = left;
         this.right = right;
         this.players = new ArrayList<>();
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -141,8 +155,22 @@ public class Square{
     @Override
     public boolean equals(Object obj) {
         Square square = (Square) obj;
-        return square.getDown()==this.down && square.getUp()==this.up &&
-                square.getLeft()==this.left && square.getRight()==this.right &&
-                ((square.getPlayers()==null && this.getPlayers() == null)||square.getPlayers().equals(this.players));
+        return this.x.equals(square.getX()) && this.y.equals(square.getY()) && this.players.equals(square.getPlayers());
+    }
+
+    public Integer getX() {
+        return x;
+    }
+
+    public void setX(Integer x) {
+        this.x = x;
+    }
+
+    public Integer getY() {
+        return y;
+    }
+
+    public void setY(Integer y) {
+        this.y = y;
     }
 }

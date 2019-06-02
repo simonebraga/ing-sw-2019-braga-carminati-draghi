@@ -19,19 +19,20 @@ public class TileSquare extends Square {
      * This constructor sets all attributes to null.
      */
     public TileSquare() {
-        super(null,null,null,null);
+        super(null,null,null,null, null, null);
         this.tile=null;
     }
 
-    public TileSquare(Border up, Border down, Border left, Border right) {
-        super(up, down, left, right);
+    public TileSquare(Border up, Border down, Border left, Border right, Integer x, Integer y) {
+        super(up, down, left, right, x ,y);
         tile = null;
     }
 
     @JsonCreator
     public TileSquare(@JsonProperty("up") Border up, @JsonProperty("down") Border down, @JsonProperty("left") Border left, @JsonProperty("right") Border right,
+                      @JsonProperty("x") Integer x, @JsonProperty("y") Integer y,
                       @JsonProperty("tile") AmmoTile tile) {
-        super(up,down,left,right);
+        super(up,down,left,right, x, y);
         this.tile=tile;
     }
 

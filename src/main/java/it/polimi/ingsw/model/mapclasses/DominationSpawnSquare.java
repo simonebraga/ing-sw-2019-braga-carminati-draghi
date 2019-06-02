@@ -28,19 +28,20 @@ public class DominationSpawnSquare extends SpawnSquare{
      * This constructor initializes all attributes to null.
      */
     public DominationSpawnSquare() {
-        super(null,null,null,null,null);
+        super(null,null,null,null,null, null, null);
         this.damage=new ArrayList<>();
     }
 
-    public DominationSpawnSquare(Border up, Border down, Border left, Border right, Color color) {
-        super(up, down, left, right, color);
+    public DominationSpawnSquare(Border up, Border down, Border left, Border right, Integer x, Integer y, Color color) {
+        super(up, down, left, right, x, y, color);
         damage = new ArrayList<>();
     }
 
     @JsonCreator
     public DominationSpawnSquare(@JsonProperty("up") Border up, @JsonProperty("down") Border down, @JsonProperty("left") Border left, @JsonProperty("right") Border right,
+                                 @JsonProperty("x") Integer x, @JsonProperty("y") Integer y,
                                  @JsonProperty("color") Color color, @JsonProperty("damage") ArrayList<Player> damage) {
-        super(up,down,left,right,color);
+        super(up,down,left,right,x,y,color);
         this.damage=damage;
     }
 

@@ -103,18 +103,9 @@ public class GameMap {
      * the y coordinate.
      */
     public ArrayList<Integer> getCoord(Square square){
-        int i;
-        int j;
-        ArrayList<Integer> coordinates = new ArrayList<>(2);
-        for(i = 0; i<getGrid()[0].length; i++){
-            for(j = 0; j<getGrid().length; j++){
-                if(square == getGrid()[i][j]){
-                    coordinates.add(i);
-                    coordinates.add(j);
-                    return coordinates;
-                }
-            }
-        }
+        ArrayList<Integer> coordinates = new ArrayList<>();
+        coordinates.add(square.getX());
+        coordinates.add(square.getY());
         return coordinates;
     }
 
