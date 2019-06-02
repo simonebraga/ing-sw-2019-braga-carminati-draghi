@@ -64,6 +64,13 @@ public class GameTable {
     private String saveFileName;
 
     /**
+     * This attribute marks the player that started the final frenzy.
+     *
+     * @author Draghi96
+     */
+    private Player frenzyBeginner;
+
+    /**
      * This constructor initializes all attributes to null.
      *
      * @author Draghi96
@@ -81,6 +88,7 @@ public class GameTable {
         this.isDomination=false;
         this.gamePhase=null;
         this.saveFileName=null;
+        this.frenzyBeginner=null;
     }
 
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck, Player currentTurnPlayer,Boolean isDomination) {
@@ -96,6 +104,7 @@ public class GameTable {
         this.isDomination=isDomination;
         this.gamePhase = "ff";
         this.saveFileName = "new";
+        this.frenzyBeginner = null;
     }
 
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck) {
@@ -111,6 +120,7 @@ public class GameTable {
         this.isDomination=false;
         this.gamePhase = "ff";
         this.saveFileName = "new";
+        this.frenzyBeginner = null;
     }
 
     public void setStartingPlayerMarker(StartingPlayerMarker startingPlayerMarker) {
@@ -179,6 +189,12 @@ public class GameTable {
      */
     public void setSaveFileName(String saveFileName) { this.saveFileName=saveFileName; }
 
+    /**
+     * This method sets a new player to be the frenzy beginner.
+     * @param frenzyBeginner a Player that will be the frenzy beginner.
+     */
+    public void setFrenzyBeginner(Player frenzyBeginner) { this.frenzyBeginner=frenzyBeginner; }
+
     public StartingPlayerMarker getStartingPlayerMarker() {
         return startingPlayerMarker;
     }
@@ -246,5 +262,13 @@ public class GameTable {
     public String getSaveFileName() {
         return this.saveFileName;
     }
+
+    /**
+     * This method returns the player who began the final frenzy.
+     *
+     * @return a Player reference of the player that started final frenzy.
+     * @author Draghi96
+     */
+    public Player getFrenzyBeginner() { return this.frenzyBeginner; }
 
 }
