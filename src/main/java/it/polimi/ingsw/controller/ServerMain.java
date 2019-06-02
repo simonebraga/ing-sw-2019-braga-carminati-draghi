@@ -102,9 +102,7 @@ public class ServerMain {
                     main(args);
                 }
 
-                //set game phase
-                gameTable.setGamePhase("ft");
-                save(gameTable, "new");
+                save(gameTable);
             }
 
             //calculate starting player and current player indexes
@@ -153,7 +151,7 @@ public class ServerMain {
     private static void firstTurns(Server server, GameTable gameTable, Integer currentPlayerIndex) throws FrenzyModeException {
 
         //execute first player turn, if he is still connected
-        if (!server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
+        if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
 
             SpawnAction spawnAction0 = new SpawnAction(gameTable.getStartingPlayerMarker().getTarget());
             spawnAction0.run(server,gameTable);
@@ -162,42 +160,36 @@ public class ServerMain {
         }
 
         //cycling array
-        if(currentPlayerIndex==gameTable.getPlayers().size()){
-            gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(0));
-            currentPlayerIndex=0;
-        } else {
-            gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex + 1));
-            currentPlayerIndex++;
-        }
+        currentPlayerIndex++;
+        if(currentPlayerIndex==gameTable.getPlayers().size()) currentPlayerIndex = 0;
+        gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
         //auto save
-        save(gameTable,gameTable.getSaveFileName());
+        save(gameTable);
 
         //execute other first turns, from current player to starting player -1, if they are connected
-        for (int i = currentPlayerIndex; !gameTable.getPlayers().get(i).equals(gameTable.getStartingPlayerMarker().getTarget()); i++) {
+        while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) {
 
-            if (server.isConnected(gameTable.getPlayers().get(i))) {
+            if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
 
-                SpawnAction spawnAction = new SpawnAction(gameTable.getPlayers().get(i));
+                SpawnAction spawnAction = new SpawnAction(gameTable.getPlayers().get(currentPlayerIndex));
                 spawnAction.run(server,gameTable);
-                TurnManager turn = new TurnManager(gameTable.getPlayers().get(i),false,false);
+                TurnManager turn = new TurnManager(gameTable.getPlayers().get(currentPlayerIndex),false,false);
                 turn.runTurn(server,gameTable);
             }
 
-            if (i==gameTable.getPlayers().size() - 1) {  //cycling array
-                i = -1;
-                gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(0));
-            } else {
-                gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(i));
-            }
+            //cycling array
+            currentPlayerIndex++;
+            if (currentPlayerIndex == gameTable.getPlayers().size()) currentPlayerIndex = 0;
+            gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
             //auto save
-            save(gameTable,gameTable.getSaveFileName());
+            save(gameTable);
         }
 
-        //match phase transitioning
+        //transitioning match phase
         gameTable.setGamePhase("rll");
-        save(gameTable,gameTable.getSaveFileName());
+        save(gameTable);
     }
 
     /**
@@ -227,7 +219,7 @@ public class ServerMain {
             //pass turn to next player
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(i));
 
-            save(gameTable,gameTable.getSaveFileName());
+            save(gameTable);
         }
         //if this while stops without FinalFrenzy exception throw it's because there are less than 3 players connected
     }
@@ -237,11 +229,10 @@ public class ServerMain {
      *     It also updates the save_list.json file to show the latest save.
      *
      * @param gameTable a GameTable object that captures all match information.
-     * @param mySaveName a String that is the save file name to be used to store the game table.<p>
-     *                   Use "new" as parameter to create a new file.<br>
-     *                   Only names formatted as "saveX" where 'X' is an integer are accepted as well as "new".</p>
      */
-    private static void save(GameTable gameTable, String mySaveName) {
+    private static void save(GameTable gameTable) {
+
+        String mySaveName = gameTable.getSaveFileName();
         try {
 
             //retrieve save_list.json and parse it into a list
@@ -256,6 +247,7 @@ public class ServerMain {
                 int fileCounter = 0;
                 while (fileNamesList.contains("save" + fileCounter)) fileCounter++;
 
+                //update game table attribute
                 gameTable.setSaveFileName("save" + fileCounter);
 
                 //create a new save file in /savefiles directory

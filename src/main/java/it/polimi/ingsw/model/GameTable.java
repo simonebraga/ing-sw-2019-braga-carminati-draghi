@@ -55,6 +55,10 @@ public class GameTable {
     /**
      * This attribute contains the name of the save file associated with this match.
      *
+     * <p>This is a String that is the save file name to be used to store the game table.<br>
+     * Use "new" as parameter to create a new file when saving.<br>
+     * Only names formatted as "saveX" where 'X' is an integer are accepted as well as "new".</p>
+     *
      * @author Draghi96
      */
     private String saveFileName;
@@ -90,8 +94,8 @@ public class GameTable {
         this.ammoTileDeck = ammoTileDeck;
         this.currentTurnPlayer = currentTurnPlayer;
         this.isDomination=isDomination;
-        this.gamePhase="ff";
-        this.saveFileName=null;
+        this.gamePhase = "ff";
+        this.saveFileName = "new";
     }
 
     public GameTable(StartingPlayerMarker startingPlayerMarker, KillshotTrack killshotTrack, DoubleKillCounter doubleKillCounter, GameMap gameMap, ArrayList<Player> players, Deck weaponDeck, Deck powerupDeck, Deck ammoTileDeck) {
@@ -105,8 +109,8 @@ public class GameTable {
         this.ammoTileDeck = ammoTileDeck;
         this.currentTurnPlayer = startingPlayerMarker.getTarget();
         this.isDomination=false;
-        this.gamePhase="ff";
-        this.saveFileName=null;
+        this.gamePhase = "ff";
+        this.saveFileName = "new";
     }
 
     public void setStartingPlayerMarker(StartingPlayerMarker startingPlayerMarker) {
