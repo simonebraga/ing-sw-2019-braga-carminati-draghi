@@ -17,6 +17,11 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.*;
 
+/**
+ * This class contains all the necessary methods to communicate with the server.
+ * It represents the client-side access to the network
+ * @author simonebraga
+ */
 public class Client implements ClientRemote {
 
     private ServerRemote server;
@@ -36,6 +41,14 @@ public class Client implements ClientRemote {
 
     // Utility methods
 
+    /**
+     * This method is the constructor of the class. It checks the parameters in input to determine if setup a connection using Sockets or RMI
+     * @param i This parameter determines which type of connection must be used
+     *          0 - RMI
+     *          1 - Socket
+     * @param view is the interface used to communicate with the user
+     * @throws Exception if any step of the setup goes wrong
+     */
     public Client(int i, ViewInterface view) throws Exception {
 
         Properties properties = new Properties();
@@ -89,6 +102,10 @@ public class Client implements ClientRemote {
         }
     }
 
+    /**
+     * This method starts a thread that checks the connection with the server with a specified frequency
+     * Note that the ping fails even if the server is connected but the client is not logged in
+     */
     private void startPingThread() {
 
         new Thread(() -> {
@@ -120,6 +137,9 @@ public class Client implements ClientRemote {
         }).start();
     }
 
+    /**
+     * This method is used to notify the view that the client is not logged in the server
+     */
     private void notifyLogout() {
         System.out.println("Lost connection with the server");
         //TODO Call a specific method to start a new login routine on the view. It must create a new client to login again
@@ -230,6 +250,11 @@ public class Client implements ClientRemote {
 
     // Network methods
 
+    /**
+     * This method is used to login on the server using a specified nickname. If the login is successful, a ping-thread is started using the express method
+     * @param s is the nickname used to login
+     * @return an integer positive value that represents the outcome of the login (see the login remote method for the meanings), or -1 if the connection timeout expires
+     */
     public int login(String s) {
 
         try {
@@ -242,6 +267,11 @@ public class Client implements ClientRemote {
         }
     }
 
+    /**
+     * This method is used to logout from the server.
+     * Note that if the logout is successful, the notification to the view of the logout is not performed by this method, but it is responsibility of the ping thread
+     * Also note that the case of logout not successful (which means that the network timeout expires before the logout is completed) is not handled, because it is responsibility of the ping thread to notice that
+     */
     public void logout() {
 
         try {

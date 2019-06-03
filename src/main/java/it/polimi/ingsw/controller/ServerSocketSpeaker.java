@@ -8,6 +8,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
+/**
+ * This class contains the socket implementation of the remote methods available on the client to the server
+ * It implements the ClientRemote interface to make the invocation of the remote methods transparent to the server
+ * @author simonebraga
+ */
 public class ServerSocketSpeaker implements ClientRemote {
 
     private Socket socket;
@@ -17,6 +22,13 @@ public class ServerSocketSpeaker implements ClientRemote {
 
     private Gson gson = new Gson();
 
+    /**
+     * This method is the constructor of the class. It initializes all the necessary parameters and gets the output stream of the socket
+     * @param socket is the socket associated to this class
+     * @param server is the reference to the server class
+     * @param pingLatency is the maximum time allowed to get an answer before considering the interlocutor as disconnected
+     * @throws Exception if any step of the setup goes wrong
+     */
     public ServerSocketSpeaker(Socket socket, Server server, int pingLatency) throws Exception {
 
         this.socket = socket;
@@ -74,6 +86,11 @@ public class ServerSocketSpeaker implements ClientRemote {
         return gson.fromJson(customStream.getLine(),Boolean.class);
     }
 
+    /**
+     * This method is used from the methods that return something to the caller.
+     * It prints a return string on the output socket stream, to be parsed from the client
+     * @param s is the string to be returned as return value
+     */
     public void returnMessage(String s) {
         out.println("return;" + s);
         out.flush();

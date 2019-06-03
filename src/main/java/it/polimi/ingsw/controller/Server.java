@@ -21,6 +21,11 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * This class contains all the necessary methods to communicate with the clients.
+ * It represents the server-side access to the network
+ * @author simonebraga
+ */
 public class Server implements ServerRemote {
 
     private String remoteName;
@@ -41,6 +46,10 @@ public class Server implements ServerRemote {
 
     // Utility methods
 
+    /**
+     * This method is the constructor of the class. It sets up RMI and Socket connection, and also runs a ping thread that checks if clients disconnect
+     * @throws Exception if any step of the setup goes wrong
+     */
     public Server() throws Exception {
 
         Properties properties = new Properties();
@@ -89,12 +98,19 @@ public class Server implements ServerRemote {
         startPingThread();
     }
 
+    /**
+     * This method resets the client map attribute and allows new registrations until the login is closed
+     */
     public synchronized void startLoginPhase() {
         clientMap = new ConcurrentHashMap<>();
         loginPhase = true;
         System.out.println("Login opened");
     }
 
+    /**
+     * This method checks if there are enough clients connected to start the game.
+     * If so, it sets loginPhase attribute to false, and saves the nickname list when the login closes
+     */
     public synchronized void stopLoginPhase() {
 
         if ((clientMap.keySet().size() >= 3) && (clientMap.keySet().size() <= 5)) {
@@ -110,29 +126,51 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * @return  true if the login phase is opened (which means that new clients are allowed to register in client map)
+     *          false if the login phase is closed
+     */
     public synchronized Boolean isLoginPhase() {
         return loginPhase;
     }
 
+    /**
+     * @return a list containing the nicknames registered when the login closed
+     */
     public synchronized List<String> getNicknameSet() {
         return nicknameList;
     }
 
+    /**
+     * @return a set containing the nicknames of the currently connected players
+     */
     public synchronized Set<String> getActivePlayers() {
         return clientMap.keySet();
     }
 
+    /**
+     * @param player is the player which connection is checked
+     * @return  true if the user associated to players is connected
+     *          false if the user associated to player is not connected
+     */
     public synchronized Boolean isConnected(Player player) {
 
         return clientMap.containsKey(player.getUsername());
     }
 
+    /**
+     * This methods forces the reset of the client map. It removes all the players connected
+     */
     public synchronized void resetClientMap() {
 
         clientMap = new ConcurrentHashMap<>();
         System.out.println(clientMap);
     }
 
+    /**
+     * This method forces the logout of a player, directly removing it from the client map
+     * @param player is the player to be removed
+     */
     public synchronized void forceLogout(Player player) {
 
         clientMap.remove(player.getUsername());
@@ -140,6 +178,10 @@ public class Server implements ServerRemote {
         notifyEvent(player.getUsername() + " disconnected");
     }
 
+    /**
+     * This method starts a thread that checks the connection with the clients with a specified frequency
+     * If a client is checked as disconnected, it is removed from the client map attribute
+     */
     private void startPingThread() {
 
         new Thread(() -> {

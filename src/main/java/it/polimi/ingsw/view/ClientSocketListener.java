@@ -8,6 +8,10 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Scanner;
 
+/**
+ * This class keeps running reading the socket stream and parsing the obtained strings
+ * @author simonebraga
+ */
 public class ClientSocketListener implements Runnable {
 
     private Client client;
@@ -18,6 +22,14 @@ public class ClientSocketListener implements Runnable {
 
     private Gson gson = new Gson();
 
+    /**
+     * This method is the constructor of the class. It initializes all the necessary parameters and gets the input stream of the socket
+     * @param socket is the socket associated to this class
+     * @param client is the reference to the client class
+     * @param clientSocketSpeaker is the reference to the clientSocketSpeaker class, which is needed to write on the socket output stream
+     * @param customStream is the stream used between this class and the associated clientSocketSpeaker class
+     * @throws Exception if any step of the setup goes wrong
+     */
     public ClientSocketListener(Socket socket, Client client, ClientSocketSpeaker clientSocketSpeaker, CustomStream customStream) throws Exception {
 
         this.client = client;
@@ -82,6 +94,11 @@ public class ClientSocketListener implements Runnable {
         }
     }
 
+    /**
+     * This method is used to parse the strings in input according to a custom protocol
+     * @param s is the string to be parsed (I.E. print;HelloWorld)
+     * @return the string before ; (I.E. print)
+     */
     private String getHeading(String s) {
         int pos = 0;
         while ((pos < s.length()) && (s.charAt(pos) != ';'))
@@ -90,6 +107,11 @@ public class ClientSocketListener implements Runnable {
         return s.substring(0,pos);
     }
 
+    /**
+     * This method is used to parse the strings in input according to a custom protocol
+     * @param s is the string to be parsed (I.E. print;HelloWorld)
+     * @return the string after ; (I.E. HelloWorld)
+     */
     private String getBody(String s) {
         int pos = 0;
         while ((pos < s.length()) && (s.charAt(pos) != ';'))
