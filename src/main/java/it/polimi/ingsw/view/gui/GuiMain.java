@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.gui;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
 import javafx.application.Application;
@@ -127,7 +128,6 @@ public class GuiMain extends Application implements ViewInterface {
                     case 2: {
                         root.setTop(null);
                         root.setCenter(null);
-                        // TODO Game started scenario
                         break;
                     }
                     case 3: {
@@ -246,78 +246,77 @@ public class GuiMain extends Application implements ViewInterface {
     }
 
     @Override
-    public Figure choosePlayer(Figure[] f) {
-        // TODO
-        return null;
+    public void logout() {
+
     }
 
     @Override
-    public WeaponName chooseWeapon(WeaponName[] w) {
-        // TODO
-        return null;
-    }
+    public void sendMessage(String s) {
 
-    @Override
-    public String chooseString(String[] s) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public Powerup choosePowerup(Powerup[] p) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public Boolean booleanQuestion(String s) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public Powerup[] chooseMultiplePowerups(Powerup[] p) {
-        // TODO
-        return new Powerup[0];
-    }
-
-    @Override
-    public WeaponName[] chooseMultipleWeapons(WeaponName[] w) {
-        // TODO
-        return new WeaponName[0];
-    }
-
-    @Override
-    public String chooseMap(String[] s) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public String chooseMode(String[] s) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public String chooseSave(String[] s) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public void startGame() {
-        Platform.runLater(this::setGamemapScenario);
     }
 
     @Override
     public void notifyEvent(String s) {
-        Platform.runLater(() -> {
-            Text event = new Text(s);
-            HBox hbEvent = new HBox();
-            hbEvent.setAlignment(Pos.CENTER);
-            hbEvent.getChildren().add(event);
-            root.setBottom(hbEvent);
-        });
+
+    }
+
+    @Override
+    public int choosePlayer(Figure[] f) {
+        return 0;
+    }
+
+    @Override
+    public int chooseWeapon(WeaponName[] w) {
+        return 0;
+    }
+
+    @Override
+    public int chooseString(String[] s) {
+        return 0;
+    }
+
+    @Override
+    public int chooseDirection(Character[] c) {
+        return 0;
+    }
+
+    @Override
+    public int chooseColor(it.polimi.ingsw.model.enumeratedclasses.Color[] c) {
+        return 0;
+    }
+
+    @Override
+    public int choosePowerup(Powerup[] p) {
+        return 0;
+    }
+
+    @Override
+    public int chooseMap(int[] m) {
+        return 0;
+    }
+
+    @Override
+    public int chooseMode(Character[] c) {
+        return 0;
+    }
+
+    @Override
+    public int chooseSquare(Square[] s) {
+        return 0;
+    }
+
+    @Override
+    public Boolean booleanQuestion(String s) {
+        return null;
+    }
+
+    @Override
+    public int[] chooseMultiplePowerup(Powerup[] p) {
+        return new int[0];
+    }
+
+    @Override
+    public int[] chooseMultipleWeapon(WeaponName[] p) {
+        return new int[0];
     }
 }

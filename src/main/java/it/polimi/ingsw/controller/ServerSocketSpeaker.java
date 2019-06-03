@@ -63,19 +63,19 @@ public class ServerSocketSpeaker implements ClientRemote {
     }
 
     @Override
-    public String singleChoice(String id, String parameters) throws RemoteException {
+    public int singleChoice(String id, String parameters) throws RemoteException {
         customStream.resetBuffer();
         out.println("singleChoice;" + id + ";" + parameters);
         out.flush();
-        return customStream.getLine();
+        return gson.fromJson(customStream.getLine(),int.class);
     }
 
     @Override
-    public String multipleChoice(String id, String parameters) throws RemoteException {
+    public int[] multipleChoice(String id, String parameters) throws RemoteException {
         customStream.resetBuffer();
         out.println("multipleChoice;" + id + ";" + parameters);
         out.flush();
-        return customStream.getLine();
+        return gson.fromJson(customStream.getLine(),int[].class);
     }
 
     @Override

@@ -62,11 +62,11 @@ public class ClientSocketListener implements Runnable {
                             break;
                         }
                         case "singleChoice": {
-                            clientSocketSpeaker.returnMessage(client.singleChoice(getHeading(parameters),getBody(parameters)));
+                            clientSocketSpeaker.returnMessage(gson.toJson(client.singleChoice(getHeading(parameters),getBody(parameters))));
                             break;
                         }
                         case "multipleChoice": {
-                            clientSocketSpeaker.returnMessage(client.multipleChoice(getHeading(parameters),getBody(parameters)));
+                            clientSocketSpeaker.returnMessage(gson.toJson(client.multipleChoice(getHeading(parameters),getBody(parameters))));
                             break;
                         }
                         case "booleanQuestion": {

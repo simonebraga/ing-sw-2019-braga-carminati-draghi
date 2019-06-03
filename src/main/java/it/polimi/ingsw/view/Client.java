@@ -2,8 +2,11 @@ package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.cardclasses.Powerup;
+import it.polimi.ingsw.model.cardclasses.Weapon;
+import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ServerRemote;
 
@@ -142,7 +145,7 @@ public class Client implements ClientRemote {
      */
     private void notifyLogout() {
         System.out.println("Lost connection with the server");
-        //TODO Call a specific method to start a new login routine on the view. It must create a new client to login again
+        view.logout();
     }
 
     // Remote methods
@@ -157,13 +160,11 @@ public class Client implements ClientRemote {
 
         switch (id) {
             case "sendMessage": {
-                System.out.println(parameters);
-                //TODO Call the view to show the message in the correct way
+                view.sendMessage(parameters);
                 break;
             }
             case "notifyEvent": {
-                System.out.println(parameters);
-                //TODO Call the view to show the event in the correct way
+                view.notifyEvent(parameters);
                 break;
             }
             default: {
@@ -185,36 +186,35 @@ public class Client implements ClientRemote {
     }
 
     @Override
-    public String singleChoice(String id, String parameters) throws RemoteException {
+    public int singleChoice(String id, String parameters) throws RemoteException {
 
         switch (id) {
             case "player": {
-                Figure[] figures = gson.fromJson(parameters,Figure[].class);
-                return gson.toJson(view.choosePlayer(figures));
+                return view.choosePlayer(gson.fromJson(parameters,Figure[].class));
             }
             case "weapon": {
-                WeaponName[] weapons = gson.fromJson(parameters,WeaponName[].class);
-                return gson.toJson(view.chooseWeapon(weapons));
+                return view.chooseWeapon(gson.fromJson(parameters,WeaponName[].class));
             }
             case "string": {
-                String[] strings = gson.fromJson(parameters,String[].class);
-                return gson.toJson(view.chooseString(strings));
+                return view.chooseString(gson.fromJson(parameters,String[].class));
+            }
+            case "direction": {
+                return view.chooseDirection(gson.fromJson(parameters,Character[].class));
+            }
+            case "color": {
+                return view.chooseColor(gson.fromJson(parameters, Color[].class));
             }
             case "powerup": {
-                Powerup[] powerups = gson.fromJson(parameters,Powerup[].class);
-                return gson.toJson(view.choosePowerup(powerups));
+                return view.choosePowerup(gson.fromJson(parameters, Powerup[].class));
             }
             case "map": {
-                String[] maps = gson.fromJson(parameters,String[].class);
-                return gson.toJson(view.chooseMap(maps));
+                return view.chooseMap(gson.fromJson(parameters,int[].class));
             }
             case "mode": {
-                String[] modes = gson.fromJson(parameters,String[].class);
-                return gson.toJson(view.chooseMode(modes));
+                return view.chooseMode(gson.fromJson(parameters,Character[].class));
             }
-            case "save": {
-                String[] saves = gson.fromJson(parameters,String[].class);
-                return gson.toJson(view.chooseSave(saves));
+            case "square": {
+                return view.chooseSquare(gson.fromJson(parameters, Square[].class));
             }
             default: {
                 System.err.println("Unsupported singleChoice id");
@@ -224,16 +224,14 @@ public class Client implements ClientRemote {
     }
 
     @Override
-    public String multipleChoice(String id, String parameters) throws RemoteException {
+    public int[] multipleChoice(String id, String parameters) throws RemoteException {
 
         switch (id) {
             case "powerup": {
-                Powerup[] powerups = gson.fromJson(parameters,Powerup[].class);
-                return gson.toJson(view.chooseMultiplePowerups(powerups));
+                return view.chooseMultiplePowerup(gson.fromJson(parameters,Powerup[].class));
             }
             case "weapon": {
-                WeaponName[] weapons = gson.fromJson(parameters,WeaponName[].class);
-                return gson.toJson(view.chooseMultipleWeapons(weapons));
+                return view.chooseMultipleWeapon(gson.fromJson(parameters,WeaponName[].class));
             }
             default: {
                 System.err.println("Unsupported multipleChoice id");

@@ -2,6 +2,7 @@ package it.polimi.ingsw.network;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 /**
  * This class contains all the remote methods of the client that can be invoked from the server.
@@ -14,7 +15,7 @@ public interface ClientRemote extends Remote {
     int ping() throws RemoteException;
     void genericWithoutResponse(String id, String parameters) throws RemoteException;
     String genericWithResponse(String id, String parameters) throws RemoteException;
-    String singleChoice(String id, String parameters) throws RemoteException;
-    String multipleChoice(String id, String parameters) throws RemoteException;
+    int singleChoice(String id, String parameters) throws RemoteException;
+    int[] multipleChoice(String id, String parameters) throws RemoteException;
     Boolean booleanQuestion(String parameters) throws RemoteException;
 }

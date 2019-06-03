@@ -290,8 +290,6 @@ public class Server implements ServerRemote {
     }
 
     // Network methods
-    //TODO Clean the network traffic
-    //TODO Add timer to network requests
 
     public void sendMessage(Player player, String message) throws UnavailableUserException {
 
@@ -303,7 +301,7 @@ public class Server implements ServerRemote {
                     // It is useless to disconnect the client
                 }
             }).get(pingLatency,TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             // It is useless to disconnect the client
         }
     }
@@ -319,7 +317,7 @@ public class Server implements ServerRemote {
                         // It is useless to disconnect the client
                     }
                 }).get(pingLatency,TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
                 // It is useless to disconnect the client
             }
         }
@@ -328,19 +326,12 @@ public class Server implements ServerRemote {
     public Player choosePlayer(Player player, ArrayList<Player> arrayList) throws UnavailableUserException {
 
         Figure[] figures = new Figure[arrayList.size()];
-
-        for (int i = 0 ;  i < arrayList.size() ; i++) {
+        for (int i = 0 ;  i < arrayList.size() ; i++)
             figures[i] = arrayList.get(i).getFigure();
-        }
 
         try {
-            Figure choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("player",gson.toJson(figures)),Figure.class);
-            for (Player player1 : arrayList) {
-                if (player1.getFigure() == choice)
-                    return player1;
-            } throw new UnavailableUserException();
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("player",gson.toJson(figures)))).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -349,20 +340,12 @@ public class Server implements ServerRemote {
     public Weapon chooseWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
-
-        for (int i = 0 ; i < arrayList.size() ; i++) {
+        for (int i = 0 ; i < arrayList.size() ; i++)
             weapons[i] = arrayList.get(i).getName();
-        }
 
         try {
-            WeaponName choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("weapon",gson.toJson(weapons)),WeaponName.class);
-            for (Weapon weapon : arrayList) {
-                if (weapon.getName() == choice) {
-                    return weapon;
-                }
-            } throw new UnavailableUserException();
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("weapon",gson.toJson(weapons)))).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -371,12 +354,12 @@ public class Server implements ServerRemote {
     public String chooseString(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
 
         String[] strings = new String[arrayList.size()];
-        strings = arrayList.toArray(strings);
+        for (int i = 0 ; i < arrayList.size() ; i++)
+            strings[i] = arrayList.get(i);
 
         try {
-            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(strings)),String.class);
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(strings)))).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -384,23 +367,15 @@ public class Server implements ServerRemote {
 
     public Character chooseDirection(Player player) throws UnavailableUserException {
 
-        String[] directions = new String[4];
-        directions[0] = "North";
-        directions[1] = "South";
-        directions[2] = "East";
-        directions[3] = "West";
+        Character[] directions = new Character[4];
+        directions[0] = 'N';
+        directions[1] = 'S';
+        directions[2] = 'E';
+        directions[3] = 'W';
 
         try {
-            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(directions)),String.class);
-            switch (choice) {
-                case "North": return 'N';
-                case "South": return 'S';
-                case "East": return 'E';
-                case "West": return 'W';
-                default: throw new UnavailableUserException();
-            }
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> directions[clientMap.get(player.getUsername()).singleChoice("direction",gson.toJson(directions))]).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -408,21 +383,14 @@ public class Server implements ServerRemote {
 
     public Color chooseColor(Player player) throws UnavailableUserException {
 
-        String[] colors = new String[3];
-        colors[0] = "Red";
-        colors[1] = "Blue";
-        colors[2] = "Yellow";
+        Color[] colors = new Color[3];
+        colors[0] = Color.RED;
+        colors[1] = Color.YELLOW;
+        colors[2] = Color.BLUE;
 
         try {
-            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(colors)),String.class);
-            switch (choice) {
-                case "Red": return Color.RED;
-                case "Blue": return Color.BLUE;
-                case "Yellow": return Color.YELLOW;
-                default: throw new UnavailableUserException();
-            }
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> colors[clientMap.get(player.getUsername()).singleChoice("color",gson.toJson(colors))]).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -431,12 +399,12 @@ public class Server implements ServerRemote {
     public Powerup choosePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
 
         Powerup[] powerups = new Powerup[arrayList.size()];
-        powerups = arrayList.toArray(powerups);
+        for (int i = 0 ; i < arrayList.size() ; i++)
+            powerups[i] = arrayList.get(i);
 
         try {
-            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)),Powerup.class);
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)))).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -444,15 +412,13 @@ public class Server implements ServerRemote {
 
     public int chooseMap(Player player, int min, int max) throws UnavailableUserException {
 
-        String[] maps = new String[max-min+1];
-        for (int i = 0 ; i <= max-min ; i++) {
-            maps[i] = "" + (max-min+i);
-        }
+        int[] maps = new int[max-min+1];
+        for (int i = 0 ; i <= max-min ; i++)
+            maps[i] = max-min+i;
 
         try {
-            return Integer.parseInt(gson.fromJson(clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps)),String.class));
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> maps[clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps))]).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -460,54 +426,47 @@ public class Server implements ServerRemote {
 
     public Character chooseMode(Player player) throws UnavailableUserException {
 
-        String[] modes = new String[3];
-        modes[0] = "Normal";
-        modes[1] = "Domination";
-        modes[2] = "Load existing match";
+        Character[] modes = new Character[3];
+        modes[0] = 'N';
+        modes[1] = 'D';
+        modes[2] = 'S';
 
         try {
-            String choice = gson.fromJson(clientMap.get(player.getUsername()).singleChoice("mode",gson.toJson(modes)),String.class);
-            switch (choice) {
-                case "Normal": return 'N';
-                case "Domination": return 'D';
-                case "Load existing match": return 'S';
-                default: throw new UnavailableUserException();
-            }
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
-            forceLogout(player);
-            throw new UnavailableUserException();
-        }
-    }
-
-    public String chooseSave(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
-
-        String[] saves = new String[arrayList.size()];
-        saves = arrayList.toArray(saves);
-
-        try {
-            return gson.fromJson(clientMap.get(player.getUsername()).singleChoice("save", gson.toJson(saves)),String.class);
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> modes[clientMap.get(player.getUsername()).singleChoice("mode",gson.toJson(modes))]).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
     }
 
     public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
-        // TODO
-        return null;
+
+        Square[] squares = new Square[arrayList.size()];
+        for (int i = 0 ; i < arrayList.size() ; i++)
+            squares[i] = arrayList.get(i);
+
+        try {
+            return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("square",gson.toJson(squares)))).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
+            forceLogout(player);
+            throw new UnavailableUserException();
+        }
     }
 
     public ArrayList<Powerup> chooseMultiplePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
 
         Powerup[] powerups = new Powerup[arrayList.size()];
-        powerups = arrayList.toArray(powerups);
+        for (int i = 0 ; i < arrayList.size() ; i++)
+            powerups[i] = arrayList.get(i);
 
         try {
-            return new ArrayList<>(Arrays.asList(gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("powerup",gson.toJson(powerups)),Powerup[].class)));
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> {
+                ArrayList<Powerup> retList = new ArrayList<>();
+                for (int i : clientMap.get(player.getUsername()).multipleChoice("powerup",gson.toJson(powerups)))
+                    retList.add(arrayList.get(i));
+                return retList;
+            }).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -516,22 +475,17 @@ public class Server implements ServerRemote {
     public ArrayList<Weapon> chooseMultipleWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
-
-        for (int i = 0 ; i < arrayList.size() ; i++) {
+        for (int i = 0 ; i < arrayList.size() ; i++)
             weapons[i] = arrayList.get(i).getName();
-        }
 
         try {
-            WeaponName[] choice = gson.fromJson(clientMap.get(player.getUsername()).multipleChoice("weapon",gson.toJson(weapons)),WeaponName[].class);
-            ArrayList<Weapon> retVal = new ArrayList<>();
-            for (int i = 0 ; i < choice.length ; i++) {
-                for (Weapon weapon : arrayList) {
-                    if (weapon.getName() == choice[i])
-                        retVal.add(weapon);
-                }
-            } return retVal;
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> {
+                ArrayList<Weapon> retList = new ArrayList<>();
+                for (int i : clientMap.get(player.getUsername()).multipleChoice("weapon",gson.toJson(weapons)))
+                    retList.add(arrayList.get(i));
+                return retList;
+            }).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -540,9 +494,8 @@ public class Server implements ServerRemote {
     public Boolean booleanQuestion(Player player, String string) throws UnavailableUserException {
 
         try {
-            return clientMap.get(player.getUsername()).booleanQuestion(string);
-        } catch (RemoteException | NullPointerException e) {
-            e.printStackTrace();
+            return executorService.submit(() -> clientMap.get(player.getUsername()).booleanQuestion(string)).get(inactivityTime,TimeUnit.SECONDS);
+        } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();
         }

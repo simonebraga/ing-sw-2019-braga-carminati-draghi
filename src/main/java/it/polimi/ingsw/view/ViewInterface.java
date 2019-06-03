@@ -1,21 +1,26 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.cardclasses.Powerup;
+import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.mapclasses.Square;
 
 public interface ViewInterface {
 
-    Figure choosePlayer(Figure[] f);
-    WeaponName chooseWeapon(WeaponName[] w);
-    String chooseString(String[] s);
-    Powerup choosePowerup(Powerup[] p);
-    Boolean booleanQuestion(String s);
-    Powerup[] chooseMultiplePowerups(Powerup[] p);
-    WeaponName[] chooseMultipleWeapons(WeaponName[] w);
-    String chooseMap(String[] s);
-    String chooseMode(String[] s);
-    String chooseSave(String[] s);
-    void startGame();
+    void logout();
+    void sendMessage(String s);
     void notifyEvent(String s);
+    int choosePlayer(Figure[] f);
+    int chooseWeapon(WeaponName[] w);
+    int chooseString(String[] s);
+    int chooseDirection(Character[] c);
+    int chooseColor(Color[] c);
+    int choosePowerup(Powerup[] p);
+    int chooseMap(int[] m);
+    int chooseMode(Character[] c);
+    int chooseSquare(Square[] s);
+    Boolean booleanQuestion(String s);
+    int[] chooseMultiplePowerup(Powerup[] p);
+    int[] chooseMultipleWeapon(WeaponName[] w);
 }

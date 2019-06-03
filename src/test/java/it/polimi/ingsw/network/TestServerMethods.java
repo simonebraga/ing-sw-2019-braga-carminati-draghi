@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
@@ -38,23 +39,60 @@ class TestServerMethods {
     static class TestView implements ViewInterface {
 
         @Override
-        public Figure choosePlayer(Figure[] f) {
-            return f[0];
+        public void logout() {
         }
 
         @Override
-        public WeaponName chooseWeapon(WeaponName[] w) {
-            return w[0];
+        public void sendMessage(String s) {
         }
 
         @Override
-        public String chooseString(String[] s) {
-            return s[0];
+        public void notifyEvent(String s) {
         }
 
         @Override
-        public Powerup choosePowerup(Powerup[] p) {
-            return p[0];
+        public int choosePlayer(Figure[] f) {
+            return 0;
+        }
+
+        @Override
+        public int chooseWeapon(WeaponName[] w) {
+            return 0;
+        }
+
+        @Override
+        public int chooseString(String[] s) {
+            return 0;
+        }
+
+        @Override
+        public int chooseDirection(Character[] c) {
+            return 0;
+        }
+
+        @Override
+        public int chooseColor(Color[] c) {
+            return 0;
+        }
+
+        @Override
+        public int choosePowerup(Powerup[] p) {
+            return 0;
+        }
+
+        @Override
+        public int chooseMap(int[] m) {
+            return 0;
+        }
+
+        @Override
+        public int chooseMode(Character[] c) {
+            return 0;
+        }
+
+        @Override
+        public int chooseSquare(Square[] s) {
+            return 0;
         }
 
         @Override
@@ -63,43 +101,20 @@ class TestServerMethods {
         }
 
         @Override
-        public Powerup[] chooseMultiplePowerups(Powerup[] p) {
-            Powerup[] retVal = new Powerup[2];
-            retVal[0] = p[1];
-            retVal[1] = p[2];
-            return retVal;
+        public int[] chooseMultiplePowerup(Powerup[] p) {
+            int[] retArray = new int[2];
+            retArray[0] = 1;
+            retArray[1] = 2;
+            return retArray;
         }
 
         @Override
-        public WeaponName[] chooseMultipleWeapons(WeaponName[] w) {
-            WeaponName[] retVal = new WeaponName[2];
-            retVal[0] = w[1];
-            retVal[1] = w[2];
-            return retVal;
+        public int[] chooseMultipleWeapon(WeaponName[] w) {
+            int[] retArray = new int[2];
+            retArray[0] = 1;
+            retArray[1] = 2;
+            return retArray;
         }
-
-        @Override
-        public String chooseMap(String[] s) {
-            return s[0];
-        }
-
-        @Override
-        public String chooseMode(String[] s) {
-            return s[0];
-        }
-
-        @Override
-        public String chooseSave(String[] s) {
-            return s[0];
-        }
-
-        @Override
-        public void startGame() {
-        }
-
-        @Override
-        public void notifyEvent(String s) {}
-
     }
 
     @BeforeAll
