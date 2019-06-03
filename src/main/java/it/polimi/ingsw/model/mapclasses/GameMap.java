@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -106,6 +107,7 @@ public class GameMap {
         for (Square[] array : grid){
             list.addAll(Arrays.asList(array));
         }
+        list = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
         return list;
     }
 

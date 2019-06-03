@@ -39,10 +39,6 @@ public class TestSpawnSquare {
     void testEquals() {
         assertTrue(spawnSquare1.equals(spawnSquare2));
         assertTrue(spawnSquare1.equals(spawnSquare1));
-        spawnSquare1.addPlayer(new Player(Figure.DOZER,"User1"));
-        assertFalse(spawnSquare1.equals(spawnSquare2));
-        spawnSquare2.addPlayer(new Player(Figure.DOZER,"User1"));
-        assertTrue(spawnSquare1.equals(spawnSquare2));
         tearDown();
     }
 
