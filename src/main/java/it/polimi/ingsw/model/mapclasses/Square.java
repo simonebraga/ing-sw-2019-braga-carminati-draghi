@@ -155,7 +155,7 @@ public class Square{
     @Override
     public boolean equals(Object obj) {
         Square square = (Square) obj;
-        return this.x.equals(square.getX()) && this.y.equals(square.getY()) && this.players.equals(square.getPlayers());
+        return this.x.equals(square.getX()) && this.y.equals(square.getY());
     }
 
     public Integer getX() {
