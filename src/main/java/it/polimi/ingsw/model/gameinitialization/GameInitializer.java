@@ -6,7 +6,7 @@ import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Deck;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
-import it.polimi.ingsw.model.mapclasses.GameMap;
+import it.polimi.ingsw.model.mapclasses.*;
 import it.polimi.ingsw.model.playerclasses.DoubleKillCounter;
 import it.polimi.ingsw.model.playerclasses.KillshotTrack;
 import it.polimi.ingsw.model.playerclasses.Player;
@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * This class creates an object that has the duty to generate a ready-to-play game table
@@ -27,11 +28,21 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class GameInitializer {
 
+    private static final int WEAPONS_BY_SPAWN = 3;
+
+    private static final char DOMINATION_MODE_ID = 'd';
+
+    private static final char NORMAL_MODE_ID = 'n';
+
+    private static final String GAME_SETTINGS_PATH = "game_settings.properties";
+
+    private static final String MAPS_PATH = "maps.json";
+
     /**
      * This attribute indicates the maximum amount of players this game can be played with.<br>
      *     It's value in this game is constant.
      */
-    private static int maxPlayers = 5;
+    private static final int MAX_PLAYERS = 5;
 
     /**
      * This attribute indicates how many kills a match will require to end.<br>
@@ -113,7 +124,7 @@ public class GameInitializer {
         //load game properties from "game_settings.properties" file
         try {
             Properties properties = new Properties();
-            InputStream fileReader = GameInitializer.class.getClassLoader().getResourceAsStream("game_settings.properties");
+            InputStream fileReader = GameInitializer.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
             properties.load(fileReader);
             this.maxKills=Integer.valueOf(properties.getProperty("maxKills"));
             this.doubleKillValue=Integer.valueOf(properties.getProperty("doubleKillValue"));
@@ -158,15 +169,42 @@ public class GameInitializer {
                 }
 
                 GameTable gameTable;
-                if (gameMode=='d') {
+                if (gameMode == DOMINATION_MODE_ID) {
                     gameTable = new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
                             loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget(),true);
-                } else {    //gameMode = 'n'
+                } else {    //gameMode = NORMAL_MODE_ID
                     gameTable = new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
                             loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget(),false);
 
+                }
+
+                //initialize tiles for each square
+                ArrayList<Square> tileSquares = new ArrayList<>(gameTable.getGameMap().getGridAsList());
+
+                tileSquares = new ArrayList<>(tileSquares.stream().filter(square->gameTable.getGameMap().getTileSquares().contains(square)).collect(Collectors.toList()));
+                for (Square square: tileSquares){
+                    TileSquare tilesquare = (TileSquare) square;
+                    tilesquare.addTile(gameTable.getAmmoTileDeck().draw());
+                }
+
+                //initialize weapons
+                ArrayList<Square> spawnSquares = new ArrayList<>(gameTable.getGameMap().getGridAsList());
+
+                spawnSquares = new ArrayList<>(spawnSquares.stream().filter(square->gameTable.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toList()));
+                for (Square square: spawnSquares){
+                    if (gameMode == NORMAL_MODE_ID) {
+                        SpawnSquare spawnSquare = (SpawnSquare) square;
+                        for (int i = 0; i < WEAPONS_BY_SPAWN; i++) {
+                            spawnSquare.addWeapon(gameTable.getWeaponDeck().draw());
+                        }
+                    } else {    //gameMode = DOMINATION_MODE_ID
+                        DominationSpawnSquare dominationSpawnSquare = (DominationSpawnSquare) square;
+                        for (int i = 0; i < WEAPONS_BY_SPAWN; i++) {
+                            dominationSpawnSquare.addWeapon(gameTable.getWeaponDeck().draw());
+                        }
+                    }
                 }
 
                 //set current player
@@ -199,14 +237,14 @@ public class GameInitializer {
      */
     private GameMap fetchGameMap(Integer mapIndex, Character gameMode) throws IOException {
 
-        InputStream file = GameInitializer.class.getClassLoader().getResourceAsStream("maps.json");
+        InputStream file = GameInitializer.class.getClassLoader().getResourceAsStream(MAPS_PATH);
         ObjectMapper objectMapper = new ObjectMapper();
         GameMap[] gameMaps = objectMapper.readValue(file,GameMap[].class);
         file.close();
 
-        if (gameMode == 'n'){
+        if (gameMode == NORMAL_MODE_ID){
             return gameMaps[mapIndex];
-        } else {    //gameMode == 'd'
+        } else {    //gameMode == DOMINATION_MODE_ID
             return gameMaps[mapIndex + (gameMaps.length / 2)];    //normal mode maps will be formatted before domination mode maps in JSON
         }
     }
