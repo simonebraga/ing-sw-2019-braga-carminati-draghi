@@ -38,6 +38,8 @@ public class Targets {
     }
 
     public Targets(ArrayList<DominationSpawnSquare> squaresDamaged) {
+        playersDamaged = new ArrayList<>();
+        playersTargeted = new ArrayList<>();
         this.squaresDamaged = squaresDamaged;
     }
 

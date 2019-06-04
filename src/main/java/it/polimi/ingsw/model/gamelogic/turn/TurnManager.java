@@ -57,36 +57,15 @@ public class TurnManager {
         TimerTurn timerTurn = new TimerTurn(server, TIME, player);
         timerTurn.start();
 
-        try {
-            new PowerUpAction().newtonUse(server, table, player);
-        } catch (UnavailableUserException e) {
-        }
-        try {
-            new PowerUpAction().teleporterUse(server, table, player);
-        } catch (UnavailableUserException e) {
-        }
+        doPowerUps(server, table);
 
         //Do the actions
         Targets targets = new Targets();
         doAction(server, table, targets);
-        try {
-            new PowerUpAction().newtonUse(server, table, player);
-        } catch (UnavailableUserException e) {
-        }
-        try {
-            new PowerUpAction().teleporterUse(server, table, player);
-        } catch (UnavailableUserException e) {
-        }
+        doPowerUps(server, table);
         if(!(finalFrenzy && !beforeFirstPlayer) && server.isConnected(player)){
             doAction(server,table, targets);
-            try {
-                new PowerUpAction().newtonUse(server, table, player);
-            } catch (UnavailableUserException e) {
-            }
-            try {
-                new PowerUpAction().teleporterUse(server, table, player);
-            } catch (UnavailableUserException e) {
-            }
+            doPowerUps(server, table);
         }
 
         //Reload
@@ -110,15 +89,6 @@ public class TurnManager {
             }
         }
         reload.forEach(FunctionalEffect::doAction);
-
-        try {
-            new PowerUpAction().newtonUse(server, table, player);
-        } catch (UnavailableUserException e) {
-        }
-        try {
-            new PowerUpAction().teleporterUse(server, table, player);
-        } catch (UnavailableUserException e) {
-        }
 
         timerTurn.setStop(true);
 
@@ -167,5 +137,18 @@ public class TurnManager {
             }
             resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(server, table, targets);
         }
+    }
+
+    private void doPowerUps(Server server, GameTable table){
+        ArrayList<FunctionalEffect> powerUpEffects = new ArrayList<>();
+        try {
+            powerUpEffects.addAll(new PowerUpAction().newtonUse(server, table, player));
+        } catch (UnavailableUserException e) {
+        }
+        try {
+            powerUpEffects.addAll(new PowerUpAction().teleporterUse(server, table, player));
+        } catch (UnavailableUserException e) {
+        }
+        powerUpEffects.forEach(FunctionalEffect::doAction);
     }
 }

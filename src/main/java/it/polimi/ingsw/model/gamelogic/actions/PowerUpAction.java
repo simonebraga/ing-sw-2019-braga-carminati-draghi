@@ -43,7 +43,7 @@ public class PowerUpAction {
 
         //This line is useful only when the player decides to use a Newton during his first turn.
         players = players.stream().filter(player1 -> player1.getPosition() != null).collect(Collectors.toCollection(ArrayList::new));
-        if(!powerUps.isEmpty() && !players.isEmpty()){
+        if(!powerUps.isEmpty() && !players.isEmpty() && server.booleanQuestion(player, new MessageRetriever().retrieveMessage("newton"))){
             powerUps = server.chooseMultiplePowerup(player, powerUps);
             for (Powerup powerUp : powerUps){
                 effects.add(() ->
