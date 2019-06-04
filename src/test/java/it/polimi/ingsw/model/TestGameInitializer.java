@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.mapclasses.GameMap;
@@ -163,6 +164,19 @@ class TestGameInitializer {
             SpawnSquare spawnSquare = (SpawnSquare) square;
             assertNotNull(spawnSquare.getWeapons());
             assertEquals(3,spawnSquare.getWeapons().size());
+        }
+    }
+
+    /**
+     * This test verifies that players get one ammo for every color each.
+     */
+    @Test
+    void runGivesOneAmmoOfEachColorToEachPlayer() {
+        GameTable gameTable = gameInitializer.run();
+        for (Player player : gameTable.getPlayers()) {
+            assertNotEquals(0, player.getAmmoPocket().getAmmo(Color.RED));
+            assertNotEquals(0, player.getAmmoPocket().getAmmo(Color.BLUE));
+            assertNotEquals(0, player.getAmmoPocket().getAmmo(Color.YELLOW));
         }
     }
 
