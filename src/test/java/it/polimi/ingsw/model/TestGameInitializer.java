@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.mapclasses.GameMap;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -128,6 +132,37 @@ class TestGameInitializer {
             assertNotNull(gameInitializer.run());
             gameInitializer = new GameInitializer('d',i,players);
             assertNotNull(gameInitializer.run());
+        }
+    }
+
+    /**
+     * This test verifies that run() gives every tile square a tile.
+     */
+    @Test
+    void runGivesEveryTileSquareATile() {
+        GameTable gameTable = gameInitializer.run();
+        ArrayList<Square> tileSquares = new ArrayList<>(gameTable.getGameMap().getGridAsList());
+
+        tileSquares = new ArrayList<>(tileSquares.stream().filter(square->gameTable.getGameMap().getTileSquares().contains(square)).collect(Collectors.toList()));
+        for (Square square: tileSquares){
+            TileSquare tilesquare = (TileSquare) square;
+            assertNotNull(tilesquare.getTile());
+        }
+    }
+
+    /**
+     * This test verifies that run() gives every spawn square three weapons.
+     */
+    @Test
+    void runGivesEverySpawnSquareThreeWeapons() {
+        GameTable gameTable = gameInitializer.run();
+        ArrayList<Square> spawnSquares = new ArrayList<>(gameTable.getGameMap().getGridAsList());
+
+        spawnSquares = new ArrayList<>(spawnSquares.stream().filter(square->gameTable.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toList()));
+        for (Square square: spawnSquares){
+            SpawnSquare spawnSquare = (SpawnSquare) square;
+            assertNotNull(spawnSquare.getWeapons());
+            assertEquals(3,spawnSquare.getWeapons().size());
         }
     }
 

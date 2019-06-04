@@ -143,28 +143,32 @@ public class ActionManager {
         //Use targeting scope
         effects = new ArrayList<>();
         boolean nextTarget;
-        for (Player target : targets.getPlayersDamaged()) {
-            if (server.isConnected(player)) {
-                do {
-                    try {
-                        effects.addAll(new PowerUpAction().targetingScopeUse(server, table, player, target));
-                        nextTarget = true;
-                    } catch (IllegalActionException e) {
-                        nextTarget = false;
-                    } catch (UnavailableUserException e) {
-                        nextTarget = true;
-                    }
-                } while (nextTarget);
+        if(!targets.getPlayersDamaged().isEmpty()) {
+            for (Player target : targets.getPlayersDamaged()) {
+                if (server.isConnected(player)) {
+                    do {
+                        try {
+                            effects.addAll(new PowerUpAction().targetingScopeUse(server, table, player, target));
+                            nextTarget = true;
+                        } catch (IllegalActionException e) {
+                            nextTarget = false;
+                        } catch (UnavailableUserException e) {
+                            nextTarget = true;
+                        }
+                    } while (nextTarget);
+                }
             }
         }
         effects.forEach(FunctionalEffect::doAction);
 
         //Use tagBack Grenade
-        for (Player target : targets.getPlayersDamaged()) {
-            if(target.getDamageTrack().getDamage().size()<11 && server.isConnected(target)){ //Makes sure that the player is alive and connected
-                try {
-                    effects.addAll(new PowerUpAction().tagBackGrenadeUse(server, table, target, player));
-                } catch (UnavailableUserException e) {
+        if(!targets.getPlayersDamaged().isEmpty()) {
+            for (Player target : targets.getPlayersDamaged()) {
+                if (target.getDamageTrack().getDamage().size() < 11 && server.isConnected(target)) { //Makes sure that the player is alive and connected
+                    try {
+                        effects.addAll(new PowerUpAction().tagBackGrenadeUse(server, table, target, player));
+                    } catch (UnavailableUserException e) {
+                    }
                 }
             }
         }
