@@ -117,6 +117,7 @@ public class Server implements ServerRemote {
             loginPhase = false;
             //TODO Edit the creation of nicknameList so that the player in the first position is the first player connected
             nicknameList = new ArrayList<>(clientMap.keySet());
+            Collections.shuffle(nicknameList);
             System.out.println("Login closed");
         } else if (clientMap.keySet().size() > 5) {
             System.err.println("Something very bad went wrong, more clients registered than allowed");
@@ -241,7 +242,7 @@ public class Server implements ServerRemote {
                 if (clientMap.keySet().size() == 3)
                     new Thread(() -> {
                         int i = timerLength;
-                        while ((i > 0) && (clientMap.keySet().size() >= 3)) {
+                        while ((i > 0) && (clientMap.keySet().size() >= 3) && (clientMap.keySet().size() < 5)) {
                             System.out.println("Closing login in "+ i +" seconds");
                             i--;
                             try {
@@ -250,7 +251,8 @@ public class Server implements ServerRemote {
                                 e.printStackTrace();
                             }
                         }
-                        stopLoginPhase();
+                        if (isLoginPhase())
+                            stopLoginPhase();
                     }).start();
 
                 return 0; // Successful registration
