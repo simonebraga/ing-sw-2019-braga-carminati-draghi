@@ -137,7 +137,7 @@ public class TurnManager {
         ArrayList<Square> tileSquares = table.getGameMap().getGridAsList().stream().filter(square1 -> table.getGameMap().getTileSquares().contains(square1)).collect(Collectors.toCollection(ArrayList::new));
         for (Square tileSquare : tileSquares) {
             TileSquare tileSquare1 = (TileSquare) tileSquare;
-            if(!table.getAmmoTileDeck().getActiveCards().isEmpty()){
+            if(tileSquare1.getTile()==null){
                 tileSquare1.addTile(table.getAmmoTileDeck().draw());
             }
         }
