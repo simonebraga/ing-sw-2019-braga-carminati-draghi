@@ -54,6 +54,10 @@ public class GameInitializer {
      */
     private static final String MAPS_PATH = "maps.json";
 
+    private static final String FIRST_TURNS_PHASE = "ft";
+
+    private static final String CREATE_NEW_SAVE_FILE = "new";
+
     /**
      * This final attribute indicates the maximum amount of players this game can be played with.<br>
      *     It's value in this game is constant.
@@ -236,10 +240,10 @@ public class GameInitializer {
                 gameTable.setCurrentTurnPlayer(gameTable.getStartingPlayerMarker().getTarget());
 
                 //set game phase
-                gameTable.setGamePhase("ft");
+                gameTable.setGamePhase(FIRST_TURNS_PHASE);
 
                 //set save file name
-                gameTable.setSaveFileName("new");
+                gameTable.setSaveFileName(CREATE_NEW_SAVE_FILE);
 
                 return gameTable;
             }
