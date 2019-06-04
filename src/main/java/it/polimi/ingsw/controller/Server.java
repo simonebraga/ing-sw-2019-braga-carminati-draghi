@@ -117,6 +117,7 @@ public class Server implements ServerRemote {
             loginPhase = false;
             //TODO Edit the creation of nicknameList so that the player in the first position is the first player connected
             nicknameList = new ArrayList<>(clientMap.keySet());
+            Collections.shuffle(nicknameList);
             System.out.println("Login closed");
         } else if (clientMap.keySet().size() > 5) {
             System.err.println("Something very bad went wrong, more clients registered than allowed");
@@ -241,7 +242,7 @@ public class Server implements ServerRemote {
                 if (clientMap.keySet().size() == 3)
                     new Thread(() -> {
                         int i = timerLength;
-                        while ((i > 0) && (clientMap.keySet().size() >= 3)) {
+                        while ((i > 0) && (clientMap.keySet().size() >= 3) && (clientMap.keySet().size() < 5)) {
                             System.out.println("Closing login in "+ i +" seconds");
                             i--;
                             try {
@@ -250,7 +251,8 @@ public class Server implements ServerRemote {
                                 e.printStackTrace();
                             }
                         }
-                        stopLoginPhase();
+                        if (isLoginPhase())
+                            stopLoginPhase();
                     }).start();
 
                 return 0; // Successful registration
@@ -291,6 +293,12 @@ public class Server implements ServerRemote {
 
     // Network methods
 
+    /**
+     * This method sends a message to a specific player. It should be used to send messages inherent in the game (I.E. "It is your turn")
+     * @param player is the player to send the message to
+     * @param message is the message to be sent
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public void sendMessage(Player player, String message) throws UnavailableUserException {
 
         try {
@@ -306,6 +314,10 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method notifies all the players about an event. It should be used to notify about events not inherent in the game (I.E. "Player disconnected")
+     * @param s is the event to be notified
+     */
     public void notifyEvent(String s) {
 
         for (ClientRemote c : clientMap.values()) {
@@ -323,6 +335,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to make a single choice in a set of players
+     * @param player is the player who makes the choice
+     * @param arrayList is the set of players to choose from
+     * @return the player chosen by the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Player choosePlayer(Player player, ArrayList<Player> arrayList) throws UnavailableUserException {
 
         Figure[] figures = new Figure[arrayList.size()];
@@ -337,6 +356,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to make a single choice in a set of weapons
+     * @param player is the player who makes the choice
+     * @param arrayList is the set of weapons to choose from
+     * @return the weapon chosen by the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Weapon chooseWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
@@ -351,6 +377,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to make a single choice in a set of strings
+     * @param player is the player who makes the choice
+     * @param arrayList is the set of strings to choose from
+     * @return the string chosen by the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public String chooseString(Player player, ArrayList<String> arrayList) throws UnavailableUserException {
 
         String[] strings = new String[arrayList.size()];
@@ -365,6 +398,16 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to choose a direction between north, south, west and east
+     * @param player is the player who makes the choice
+     * @return a character representing the chosen direction
+     *          N - North
+     *          S - South
+     *          W - West
+     *          E - East
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Character chooseDirection(Player player) throws UnavailableUserException {
 
         Character[] directions = new Character[4];
@@ -381,6 +424,12 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to choose a color between red, yellow and blue
+     * @param player is the player who makes the choice
+     * @return the enumerated color chosen
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Color chooseColor(Player player) throws UnavailableUserException {
 
         Color[] colors = new Color[3];
@@ -396,6 +445,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to make a single choice in a set of powerups
+     * @param player is the player who makes the choice
+     * @param arrayList is the set of powerups to choose from
+     * @return the powerup chosen by the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Powerup choosePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
 
         Powerup[] powerups = new Powerup[arrayList.size()];
@@ -410,6 +466,15 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to choose a map.
+     * More specifically, it asks to choose in a range of indexes, which meaning is defined by the users of this class
+     * @param player is the player who makes the choice
+     * @param min is the minimum index to choose
+     * @param max is the maximum index to choose
+     * @return an int value that represents the chosen map
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public int chooseMap(Player player, int min, int max) throws UnavailableUserException {
 
         int[] maps = new int[max-min+1];
@@ -424,8 +489,17 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to choose a game mode between normal and domination
+     * @param player is the player who makes the choice
+     * @return a character representing the chosen game mode
+     *          N - Normal
+     *          D - Domination
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Character chooseMode(Player player) throws UnavailableUserException {
 
+        //TODO Remove S option
         Character[] modes = new Character[3];
         modes[0] = 'N';
         modes[1] = 'D';
@@ -439,6 +513,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to make a choice in a set of squares
+     * @param player is the player who makes the choice
+     * @param arrayList is the set of squares to choose from
+     * @return the square chosen by the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
 
         Square[] squares = new Square[arrayList.size()];
@@ -453,6 +534,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to make a multiple choice in a set of powerups
+     * @param player is the player who makes the choice
+     * @param arrayList is the set of powerups to choose from
+     * @return an ArrayList containing the powerups chosen by the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public ArrayList<Powerup> chooseMultiplePowerup(Player player, ArrayList<Powerup> arrayList) throws UnavailableUserException {
 
         Powerup[] powerups = new Powerup[arrayList.size()];
@@ -472,6 +560,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to make a multiple choice in a set of weapons
+     * @param player is the player who makes the choice
+     * @param arrayList is the set of weapons to choose from
+     * @return an ArrayList containing the weapons chosen by the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public ArrayList<Weapon> chooseMultipleWeapon(Player player, ArrayList<Weapon> arrayList) throws UnavailableUserException {
 
         WeaponName[] weapons = new WeaponName[arrayList.size()];
@@ -491,6 +586,13 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method asks a player to answer a boolean question
+     * @param player is the player who must answer
+     * @param string is the boolean question
+     * @return the boolean answer of the player
+     * @throws UnavailableUserException if the player is not connected or the network timeout expires
+     */
     public Boolean booleanQuestion(Player player, String string) throws UnavailableUserException {
 
         try {
