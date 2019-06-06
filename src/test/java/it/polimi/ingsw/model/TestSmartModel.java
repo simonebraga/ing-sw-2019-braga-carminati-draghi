@@ -38,6 +38,7 @@ class TestSmartModel {
         for (Player player : gameTable.getPlayers()) {
             player.getDamageTrack().setDamage(new ArrayList<>(Arrays.asList(player3,player2,player2)));
             player.getMarkTrack().addMarks(player1,2);
+            player.getAmmoPocket().reduceAmmo(new ArrayList<>(Arrays.asList(Color.RED,Color.YELLOW,Color.BLUE)));
             player.getAmmoPocket().addAmmo(new ArrayList<>(Arrays.asList(Color.RED,Color.RED,Color.BLUE)));
             player.getWeaponPocket().addWeapon(new Weapon(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE,Color.YELLOW)),WeaponName.FURNACE,true));
             player.getPowerupPocket().setPowerups(new ArrayList<>(Arrays.asList(new Powerup(Color.BLUE,PowerupName.NEWTON))));
