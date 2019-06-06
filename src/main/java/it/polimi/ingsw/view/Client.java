@@ -2,7 +2,6 @@ package it.polimi.ingsw.view;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.cardclasses.Powerup;
-import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
@@ -74,7 +73,6 @@ public class Client implements ClientRemote {
 
         if (i == 0) {
             // RMI setup
-            //TODO Check if is it possible to remove this explicit setProperty, because client-side is very boring to set
             System.setProperty("java.rmi.server.hostname",clientIp);
             try {
                 UnicastRemoteObject.exportObject(this,clientPortRMI);

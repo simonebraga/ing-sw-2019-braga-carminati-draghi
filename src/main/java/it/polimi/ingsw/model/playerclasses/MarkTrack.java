@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.playerclasses;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents the marks of the player
@@ -27,6 +28,14 @@ public class MarkTrack {
         if (marks.containsKey(player))
             return marks.get(player);
         return 0;
+    }
+
+    /**
+     * This method returns the map containing all the marks of the player
+     * @return the map containing all the marks of the player
+     */
+    public Map<Player,Integer> getMarks() {
+        return marks;
     }
 
     /**
