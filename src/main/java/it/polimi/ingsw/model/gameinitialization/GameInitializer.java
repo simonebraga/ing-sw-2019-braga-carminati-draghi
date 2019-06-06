@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Deck;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
+import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.mapclasses.*;
 import it.polimi.ingsw.model.playerclasses.DoubleKillCounter;
 import it.polimi.ingsw.model.playerclasses.KillshotTrack;
@@ -28,18 +29,37 @@ import java.util.stream.Collectors;
  */
 public class GameInitializer {
 
+    /**
+     * This final attribute indicates how many weapons are assigned to a spawn square.
+     */
     private static final int WEAPONS_BY_SPAWN = 3;
 
+    /**
+     * This final attribute indicates the character associated to domination mode.
+     */
     private static final char DOMINATION_MODE_ID = 'd';
 
+    /**
+     * This final attribute indicates the character associated to normal mode.
+     */
     private static final char NORMAL_MODE_ID = 'n';
 
+    /**
+     * This final attribute indicates the game settings file path.
+     */
     private static final String GAME_SETTINGS_PATH = "game_settings.properties";
 
+    /**
+     * This final attribute indicates the maps file path.
+     */
     private static final String MAPS_PATH = "maps.json";
 
+    private static final String FIRST_TURNS_PHASE = "ft";
+
+    private static final String CREATE_NEW_SAVE_FILE = "new";
+
     /**
-     * This attribute indicates the maximum amount of players this game can be played with.<br>
+     * This final attribute indicates the maximum amount of players this game can be played with.<br>
      *     It's value in this game is constant.
      */
     private static final int MAX_PLAYERS = 5;
@@ -207,14 +227,23 @@ public class GameInitializer {
                     }
                 }
 
+                //initialize all players ammo pocket
+                for (Player player : gameTable.getPlayers()) {
+                    ArrayList<Color> firstAmmos = new ArrayList<>();
+                    firstAmmos.add(Color.RED);
+                    firstAmmos.add(Color.BLUE);
+                    firstAmmos.add(Color.YELLOW);
+                    player.getAmmoPocket().addAmmo(firstAmmos);
+                }
+
                 //set current player
                 gameTable.setCurrentTurnPlayer(gameTable.getStartingPlayerMarker().getTarget());
 
                 //set game phase
-                gameTable.setGamePhase("ft");
+                gameTable.setGamePhase(FIRST_TURNS_PHASE);
 
                 //set save file name
-                gameTable.setSaveFileName("new");
+                gameTable.setSaveFileName(CREATE_NEW_SAVE_FILE);
 
                 return gameTable;
             }

@@ -26,6 +26,51 @@ import java.util.Arrays;
 public class ServerMain {
 
     /**
+     * This final attribute indicates the milliseconds to wait to check if the login phase has ended.
+     */
+    private static final int LOGIN_PHASE_TIMER = 1000;
+
+    /**
+     * This final attribute indicates the name of the file containing all save files names.
+     */
+    private static final String SAVE_LIST_PATH = "save_list.json";
+
+    /**
+     * This final attribute indicates the number of maps available.
+     */
+    private static final int MAPS_NUMBER = 4;
+
+    /**
+     * This final attribute indicates the minimum number of players to let the match continue.
+     */
+    private static final int MINIMUM_CONNECTED_USERS_THRESHOLD = 3;
+
+    /**
+     * This final attribute indicates the prefix of every save file name.
+     */
+    private static final String SAVE_FILE_PREFIX = "save";
+
+    /**
+     * This final attribute indicates the name of the directory in which will be stored all save files.
+     */
+    private static final String SAVE_FILES_DIRECTORY = "savefiles";
+
+    /**
+     * This final attribute indicates the first turns game phase.
+     */
+    private static final String FIRST_TURNS_PHASE = "ft";
+
+    /**
+     * This final attribute indicates the central turns game phase.
+     */
+    private static final String ROLLING_TURNS_PHASE = "rll";
+
+    /**
+     * This final attribute indicates the final frenzy phase.
+     */
+    private static final String FINAL_FRENZY_PHASE = "ff";
+
+    /**
      * This method is the server main method.
      * <p>It quickly instantiates a Server object and runs its network setup,
      * then it waits until the login phase is done and proceeds to the next steps.</p>
@@ -40,7 +85,7 @@ public class ServerMain {
             server.startLoginPhase();
 
             while (server.isLoginPhase()) {
-                Thread.sleep(1000);
+                Thread.sleep(LOGIN_PHASE_TIMER);
             }
             //server has now connected users
 
@@ -65,7 +110,7 @@ public class ServerMain {
         Integer startingPlayerIndex = 0;
 
         //create a new save_list.json file in working directory
-        File file = new File("save_list.json");
+        File file = new File(SAVE_LIST_PATH);
         try {
             if (!file.exists()) file.createNewFile();
         } catch (IOException e) {
@@ -90,14 +135,14 @@ public class ServerMain {
 
                 //ask game mode and map index to administrator
                 Character gameMode = server.chooseMode(players.get(adminIndex));
-                Integer mapIndex = server.chooseMap(players.get(adminIndex), 0, 3);
+                Integer mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
 
                 //initiate a new match
                 GameInitializer gameInitializer = new GameInitializer(gameMode, mapIndex, players);
                 gameTable = gameInitializer.run();
 
                 //if too many users dropped during this phase
-                if (players.size() < 3) {
+                if (players.size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
                     server.resetClientMap();
                     main(args);
                 }
@@ -110,13 +155,13 @@ public class ServerMain {
             while (!gameTable.getPlayers().get(startingPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) startingPlayerIndex++;
 
             //start or continue match
-            if (gameTable.getGamePhase().equals("ft")) {   //game is in first turns phase
+            if (gameTable.getGamePhase().equals(FIRST_TURNS_PHASE)) {   //game is in first turns phase
 
                 //make each player spawn and first turn
                 firstTurns(server, gameTable, currentPlayerIndex);  //would never throw FrenzyModeException
             }
 
-            if (gameTable.getGamePhase().equals("rll")) {  //game is in rolling turns phase
+            if (gameTable.getGamePhase().equals(ROLLING_TURNS_PHASE)) {  //game is in rolling turns phase
 
                 //match rolling...
                 rollMatch(server, gameTable, currentPlayerIndex);      //would throw FrenzyModeException at some point or game will stop for loss of players
@@ -188,7 +233,7 @@ public class ServerMain {
         }
 
         //transitioning match phase
-        gameTable.setGamePhase("rll");
+        gameTable.setGamePhase(ROLLING_TURNS_PHASE);
         save(gameTable);
     }
 
@@ -203,7 +248,7 @@ public class ServerMain {
 
         //this while will break at some point because of FrenzyModeException throw
         int i=currentPlayerIndex;
-        while(gameTable.getPlayers().size()>=3) {   //there are at least 3 players still connected
+        while(gameTable.getPlayers().size() >= MINIMUM_CONNECTED_USERS_THRESHOLD) {   //there are at least 3 players still connected
 
             //execute turn if player is still connected
             if (server.isConnected(gameTable.getPlayers().get(i))) {
@@ -237,7 +282,7 @@ public class ServerMain {
 
             //retrieve save_list.json and parse it into a list
             ObjectMapper mapper = new ObjectMapper();
-            FileInputStream fileInput = new FileInputStream("save_list.json");
+            FileInputStream fileInput = new FileInputStream(SAVE_LIST_PATH);
             ArrayList<String> fileNamesList = new ArrayList<>(Arrays.asList(mapper.readValue(fileInput,String[].class)));
             fileInput.close();
 
@@ -245,29 +290,29 @@ public class ServerMain {
 
                 //find first available file name counter
                 int fileCounter = 0;
-                while (fileNamesList.contains("save" + fileCounter)) fileCounter++;
+                while (fileNamesList.contains(SAVE_FILE_PREFIX + fileCounter)) fileCounter++;
 
                 //update game table attribute
-                gameTable.setSaveFileName("save" + fileCounter);
+                gameTable.setSaveFileName(SAVE_FILE_PREFIX + fileCounter);
 
-                //create a new save file in /savefiles directory
-                File file = new File("savefiles/save" + fileCounter + ".json");
+                //create a new save file in SAVE_FILES_DIRECTORY
+                File file = new File(SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
                 file.createNewFile();
-                FileOutputStream fileOutput = new FileOutputStream("savefiles/save" + fileCounter + ".json");
+                FileOutputStream fileOutput = new FileOutputStream( SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
                 mapper.writeValue(fileOutput, gameTable);
                 fileOutput.close();
 
                 //update save_list.json to show new save file in the list
-                fileNamesList.add("save_" + fileCounter);
+                fileNamesList.add(SAVE_FILE_PREFIX + "_" + fileCounter);
 
                 //rewrite list in save_list.json as an array of strings
-                fileOutput = new FileOutputStream("save_list.json");
+                fileOutput = new FileOutputStream(SAVE_LIST_PATH);
                 mapper.writeValue(fileOutput, (String[]) fileNamesList.toArray());
                 fileOutput.close();
 
             } else {    //overwrite on old save file
 
-                FileOutputStream fileOutputStream = new FileOutputStream("savefiles/" + mySaveName + ".json");
+                FileOutputStream fileOutputStream = new FileOutputStream( SAVE_FILES_DIRECTORY + "/" + mySaveName + ".json");
                 mapper.writeValue(fileOutputStream,gameTable);
                 fileOutputStream.close();
             }
@@ -290,7 +335,7 @@ public class ServerMain {
 
             //get save files name list
             ObjectMapper mapper = new ObjectMapper();
-            FileInputStream namesIn = new FileInputStream("save_list.json");
+            FileInputStream namesIn = new FileInputStream(SAVE_LIST_PATH);
             String[] fileNamesList = mapper.readValue(namesIn,String[].class);
             namesIn.close();
 
@@ -298,7 +343,7 @@ public class ServerMain {
             for (String fileName : fileNamesList) {
 
                 //get save files 1 by 1
-                FileInputStream tableIn = new FileInputStream("savefiles/" + fileName);
+                FileInputStream tableIn = new FileInputStream(SAVE_FILES_DIRECTORY + "/" + fileName);
                 GameTable oldTable = mapper.readValue(tableIn, GameTable.class);
                 tableIn.close();
 
@@ -338,18 +383,18 @@ public class ServerMain {
 
             //retrieve save names list
             ObjectMapper mapper = new ObjectMapper();
-            FileInputStream input = new FileInputStream("save_list.json");
+            FileInputStream input = new FileInputStream(SAVE_LIST_PATH);
             ArrayList<String> nameList = new ArrayList<>(Arrays.asList(mapper.readValue(input,String[].class)));
             input.close();
 
             //delete save file if listed
             if (nameList.contains(fileName)) {
-                File save = new File("savefiles/" + fileName);
+                File save = new File(SAVE_FILES_DIRECTORY + "/" + fileName);
                 save.delete();
 
                 //update save names list
                 nameList.remove(fileName);
-                FileOutputStream output = new FileOutputStream("save_list.json");
+                FileOutputStream output = new FileOutputStream(SAVE_LIST_PATH);
                 mapper.writeValue(output, (String[]) nameList.toArray());
                 output.close();
             }
@@ -369,7 +414,7 @@ public class ServerMain {
     private static void finalFrenzy(Server server, GameTable gameTable) {
 
         //if this match was never in final frenzy before...
-        if (!gameTable.getGamePhase().equals("ff")) {
+        if (!gameTable.getGamePhase().equals(FINAL_FRENZY_PHASE)) {
 
             //change bounty value to each undamaged player
             Integer[] points = {2, 1, 1, 1, 1, 1};
@@ -382,7 +427,7 @@ public class ServerMain {
             gameTable.setFrenzyBeginner(gameTable.getCurrentTurnPlayer());
 
             //match is now in final frenzy
-            gameTable.setGamePhase("ff");
+            gameTable.setGamePhase(FINAL_FRENZY_PHASE);
         }
 
         try {
@@ -484,7 +529,7 @@ public class ServerMain {
      * @param gameTable a GameTable object which contains all match information.
      * @return the player which has the highest score.
      */
-    static private Player proclaimWinner(GameTable gameTable) {
+    private static Player proclaimWinner(GameTable gameTable) {
 
         //TODO
 
