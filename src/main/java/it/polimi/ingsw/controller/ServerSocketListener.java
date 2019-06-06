@@ -87,6 +87,10 @@ public class ServerSocketListener implements Runnable {
                             server.logout(serverSocketSpeaker);
                             break;
                         }
+                        case "getModelUpdate": {
+                            serverSocketSpeaker.returnMessage(gson.toJson(server.getModelUpdate()));
+                            break;
+                        }
                         case "return": {
                             customStream.putLine(parameters);
                             break;

@@ -65,6 +65,14 @@ public class ClientSocketSpeaker implements ServerRemote {
         out.flush();
     }
 
+    @Override
+    public String getModelUpdate() throws RemoteException {
+        customStream.resetBuffer();
+        out.println("getModelUpdate");
+        out.flush();
+        return gson.fromJson(customStream.getLine(),String.class);
+    }
+
     /**
      * This method is used from the methods that return something to the caller.
      * It prints a return string on the output socket stream, to be parsed from the client

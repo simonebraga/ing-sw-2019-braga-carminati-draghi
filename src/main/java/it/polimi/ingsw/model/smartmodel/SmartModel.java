@@ -30,7 +30,7 @@ public class SmartModel {
         defaultPointtrackSize = 7;
     }
 
-    public void update(GameTable gameTable) {
+    public synchronized void update(GameTable gameTable) {
         smartPlayerMap = new HashMap<>();
         for (Player player : gameTable.getPlayers()) {
             SmartPlayer smartPlayer = new SmartPlayer();
@@ -95,7 +95,7 @@ public class SmartModel {
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return new Gson().toJson(this);
     }
 }

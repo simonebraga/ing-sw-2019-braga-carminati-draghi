@@ -115,13 +115,18 @@ class TestServerMethods {
             retArray[1] = 2;
             return retArray;
         }
+
+        @Override
+        public void notifyModelUpdate() {
+
+        }
     }
 
     @BeforeAll
     static void initController() {
 
         try {
-            server = new Server();
+            server = new Server(null);
         } catch (Exception e) {
             fail();
         }

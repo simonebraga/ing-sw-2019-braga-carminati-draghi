@@ -81,7 +81,8 @@ public class ServerMain {
         try {
 
             //sets up network
-            Server server = new Server();
+            //TODO Setup the SmartModel before initializing the server. Or make sure to set a correct reference before starting the game
+            Server server = new Server(null);
             server.startLoginPhase();
 
             while (server.isLoginPhase()) {

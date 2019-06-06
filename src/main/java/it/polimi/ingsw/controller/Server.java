@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.playerclasses.Player;
+import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ServerRemote;
 import it.polimi.ingsw.network.UnavailableUserException;
@@ -36,6 +37,7 @@ public class Server implements ServerRemote {
     private int pingFrequency;
     private int pingLatency;
     private int inactivityTime;
+    private SmartModel smartModel;
 
     private Boolean loginPhase = false;
     private Map<String,ClientRemote> clientMap = new ConcurrentHashMap<>();
@@ -50,7 +52,7 @@ public class Server implements ServerRemote {
      * This method is the constructor of the class. It sets up RMI and Socket connection, and also runs a ping thread that checks if clients disconnect
      * @throws Exception if any step of the setup goes wrong
      */
-    public Server() throws Exception {
+    public Server(SmartModel smartModel) throws Exception {
 
         Properties properties = new Properties();
         try {
@@ -68,6 +70,7 @@ public class Server implements ServerRemote {
         this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
         this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
         this.inactivityTime = Integer.parseInt(properties.getProperty("inactivityTime"));
+        this.smartModel = smartModel;
 
         try {
             new Thread(new ServerSocketAcceptor(socketPort,this,pingLatency)).start();
@@ -289,6 +292,11 @@ public class Server implements ServerRemote {
         while (clientMap.values().remove(c));
         System.out.println(clientMap.toString());
         notifyEvent(disconnectedNickname + " disconnected");
+    }
+
+    @Override
+    public String getModelUpdate() throws RemoteException {
+        return smartModel.toString();
     }
 
     // Network methods
@@ -603,4 +611,23 @@ public class Server implements ServerRemote {
         }
     }
 
+    /**
+     * This method notifies all the client that the model has been updated
+     */
+    public void notifyModelUpdate() {
+
+        for (ClientRemote c : clientMap.values()) {
+            try {
+                executorService.submit(() -> {
+                    try {
+                        c.genericWithoutResponse("notifyModelUpdate","");
+                    } catch (RemoteException e) {
+                        // It is useless to disconnect the client
+                    }
+                }).get(pingLatency,TimeUnit.SECONDS);
+            } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
+                // It is useless to disconnect the client
+            }
+        }
+    }
 }

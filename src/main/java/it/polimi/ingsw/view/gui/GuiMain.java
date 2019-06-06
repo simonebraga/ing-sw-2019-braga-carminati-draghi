@@ -319,4 +319,9 @@ public class GuiMain extends Application implements ViewInterface {
     public int[] chooseMultipleWeapon(WeaponName[] p) {
         return new int[0];
     }
+
+    @Override
+    public void notifyModelUpdate() {
+
+    }
 }

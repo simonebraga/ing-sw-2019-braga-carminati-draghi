@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ServerRemote;
 
@@ -165,6 +166,10 @@ public class Client implements ClientRemote {
                 view.notifyEvent(parameters);
                 break;
             }
+            case "notifyModelUpdate": {
+                view.notifyModelUpdate();
+                break;
+            }
             default: {
                 System.err.println("Unsupported genericWithoutResponse id");
                 throw new RemoteException();
@@ -278,6 +283,20 @@ public class Client implements ClientRemote {
                 }
             }).get(pingLatency, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
+        }
+    }
+
+    /**
+     * This method is used to ask to the server an updated version of the game information
+     * @return serialized SmartModel
+     * @throws Exception if something with the network goes wrong or the network timeout expires
+     */
+    public SmartModel getModelUpdate() throws Exception {
+        try {
+            String retVal = executorService.submit(() -> server.getModelUpdate()).get(pingLatency,TimeUnit.SECONDS);
+            return SmartModel.fromString(retVal);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new Exception();
         }
     }
 }

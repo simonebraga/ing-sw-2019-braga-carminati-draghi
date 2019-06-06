@@ -23,4 +23,5 @@ public interface ViewInterface {
     Boolean booleanQuestion(String s);
     int[] chooseMultiplePowerup(Powerup[] p);
     int[] chooseMultipleWeapon(WeaponName[] w);
+    void notifyModelUpdate();
 }
