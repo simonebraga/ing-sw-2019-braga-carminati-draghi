@@ -16,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This class contains the server main method.<br>
@@ -369,7 +371,7 @@ public class ServerMain {
             e.printStackTrace();
         }
 
-        //if this for stops no compatible save files where found
+        //no compatible save files where found
         return null;
     }
 
@@ -520,20 +522,67 @@ public class ServerMain {
      */
     private static void gameOver(GameTable gameTable) {
 
-        proclaimWinner(gameTable);
+        calculateFinalPoints(gameTable);
         deleteSave(gameTable.getSaveFileName());
+
+        //announce scoreboard
+        Player winner = gameTable.getPlayers().get(0);
+        for (Player player : gameTable.getPlayers()) {
+            if (player.getPoints() > winner.getPoints())
+                winner = player;
+            System.out.println("\n" + player.getUsername() + ": " + player.getPoints());
+        }
+        System.out.println("\nThe winner is " + winner.getUsername() + "!");
     }
 
     /**
-     * This private method calculates final points for each player and returns the player with the highest score.
+     * This private method calculates final points for each player and adds them to the total points of each player.
      *
      * @param gameTable a GameTable object which contains all match information.
-     * @return the player which has the highest score.
      */
-    private static Player proclaimWinner(GameTable gameTable) {
+    private static void calculateFinalPoints(GameTable gameTable) {
 
-        //TODO
+        ArrayList<Player> players = gameTable.getPlayers();
+        ArrayList<Player> killTrack = gameTable.getKillshotTrack().getKillTrack();
+        ArrayList<Player> doubleKillers = gameTable.getDoubleKillCounter().getList();
+        ArrayList<Integer> pointsByKillNumber = gameTable.getKillshotTrack().getValue();
+        Integer doubleKillValue = gameTable.getDoubleKillCounter().getDoubleKillValue();
 
-        return null;
+        //count players presence on killshot track
+        Map<Long, ArrayList<Player>> killsByPlayer = new LinkedHashMap<>();
+        for (Player player : killTrack) {
+
+            Long count = killTrack.stream().filter(player1 -> player.equals(player)).count();
+
+            if (killsByPlayer.get(count) == null) {
+
+                ArrayList<Player> arrayList = new ArrayList<>();
+                arrayList.add(player);
+                killsByPlayer.put(count, arrayList);
+
+            } else if (!killsByPlayer.get(count).contains(player)) {
+                killsByPlayer.get(count).add(player);
+            }
+        }
+
+        //sort keys in descending order
+        ArrayList<Long> sortedKeys = (ArrayList<Long>) Arrays.asList(killsByPlayer.keySet().toArray()).stream().sorted();
+
+        //give points away to each player
+        int bountyCounter = 0;
+        int sortedKeysCounter = 0;
+        while (!killsByPlayer.isEmpty()) {
+            for (int sameKillsCounter = 0; sameKillsCounter < killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).size(); sameKillsCounter++) {
+                killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(sameKillsCounter).addPoints(pointsByKillNumber.get(bountyCounter));
+                bountyCounter++;
+            }
+            killsByPlayer.remove(sortedKeys.get(sortedKeysCounter));
+            sortedKeysCounter++;
+        }
+
+        //assign double kills points
+        for (Player killer : doubleKillers) {
+            killer.addPoints(doubleKillValue);
+        }
     }
 }
