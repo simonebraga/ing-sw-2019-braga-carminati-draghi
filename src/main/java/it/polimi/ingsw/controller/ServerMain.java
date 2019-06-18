@@ -569,12 +569,17 @@ public class ServerMain {
         ArrayList<Long> sortedKeys = (ArrayList<Long>) Arrays.asList(killsByPlayer.keySet().toArray()).stream().sorted();
 
         //give points away to each player
-        int bountyCounter = 0;
+        int scoreValuesCounter = 0;
         int sortedKeysCounter = 0;
         while (!killsByPlayer.isEmpty()) {
-            for (int sameKillsCounter = 0; sameKillsCounter < killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).size(); sameKillsCounter++) {
-                killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(sameKillsCounter).addPoints(pointsByKillNumber.get(bountyCounter));
-                bountyCounter++;
+            for (int tiesCounter = 0; tiesCounter < killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).size(); tiesCounter++) {
+
+                if (pointsByKillNumber.get(scoreValuesCounter) != 1) {
+                    killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(tiesCounter).addPoints(pointsByKillNumber.get(scoreValuesCounter));
+                    scoreValuesCounter++;
+                } else {    // if scores are already gone down to 1 point per killer
+                    killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(tiesCounter).addPoints(1);
+                }
             }
             killsByPlayer.remove(sortedKeys.get(sortedKeysCounter));
             sortedKeysCounter++;
