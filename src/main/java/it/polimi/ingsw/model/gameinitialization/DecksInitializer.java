@@ -18,6 +18,11 @@ import java.util.Arrays;
 public class DecksInitializer {
 
     /**
+     * This final attribute represents the file name prefix from which the decks will be fetched.
+     */
+    private static final String DECK_FILE_PREFIX = "decks/";
+
+    /**
      * This method is the object constructor.
      */
     public DecksInitializer() {}
@@ -31,7 +36,7 @@ public class DecksInitializer {
     public Deck initDeck(String type) {
 
         try {
-            InputStream file = DecksInitializer.class.getClassLoader().getResourceAsStream("decks/"+type+".json");
+            InputStream file = DecksInitializer.class.getClassLoader().getResourceAsStream(DECK_FILE_PREFIX + type + ".json");
             ObjectMapper mapper = new ObjectMapper();
             Deck deck;
             switch (type) {
