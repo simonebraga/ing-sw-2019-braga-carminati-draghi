@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
+import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
@@ -13,13 +14,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,37 +53,32 @@ class TestGameInitializer {
     }
 
     /**
-     * This test verifies that run() loads it's properties file correctly.
+     * This test verifies that run() loads it's settings file correctly.
      */
     @Test
-    void runLoadsPropertiesCorrectly() {
+    void runLoadsSettingsCorrectly() {
         gameInitializer.run();
+        FileInputStream file = null;
         try {
-            Properties properties = new Properties();
-            FileReader fileReader = new FileReader("src/main/resources/game_settings.properties");
-            properties.load(fileReader);
-            Integer actualMaxKills = Integer.valueOf(properties.getProperty("maxKills"));
-            Integer actualDoubleKillValue = Integer.valueOf(properties.getProperty("doubleKillValue"));
-            ArrayList<Integer> actualBountyValues = new ArrayList<>();
-            actualBountyValues.add(Integer.valueOf(properties.getProperty("bountyFirst")));
-            actualBountyValues.add(Integer.valueOf(properties.getProperty("bountySecond")));
-            actualBountyValues.add(Integer.valueOf(properties.getProperty("bountyThird")));
-            actualBountyValues.add(Integer.valueOf(properties.getProperty("bountyFourth")));
-            actualBountyValues.add(Integer.valueOf(properties.getProperty("bountyFifth")));
-            actualBountyValues.add(Integer.valueOf(properties.getProperty("bountySixth")));
-            fileReader.close();
+            file = new FileInputStream("src/main/resources/game_settings.json");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            SettingsJSONParser settings = objectMapper.readValue(file, SettingsJSONParser.class);
+            Integer actualMaxKills = settings.getMaxKills();
+            ArrayList<Integer> actualBountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
+            Integer actualDoubleKillValue = settings.getDoubleKillValue();
+            file.close();
 
             assertEquals(gameInitializer.getBountyValues(),actualBountyValues);
             assertEquals(gameInitializer.getDoubleKillValue(),actualDoubleKillValue);
             assertEquals(gameInitializer.getMaxKills(),actualMaxKills);
-            teardown();
-        } catch (FileNotFoundException e) {
-            fail("game_settings.properties file is unreachable.");
-            e.printStackTrace();
         } catch (IOException e) {
-            fail("cannot close game_settings.properties file.");
             e.printStackTrace();
         }
+        teardown();
     }
 
     /**

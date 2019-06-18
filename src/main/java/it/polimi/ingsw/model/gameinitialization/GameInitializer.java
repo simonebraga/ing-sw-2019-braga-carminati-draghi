@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.cardclasses.Deck;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
+import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
 import it.polimi.ingsw.model.mapclasses.*;
 import it.polimi.ingsw.model.playerclasses.DoubleKillCounter;
 import it.polimi.ingsw.model.playerclasses.KillshotTrack;
@@ -17,7 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Properties;
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,7 @@ public class GameInitializer {
     /**
      * This final attribute indicates the game settings file path.
      */
-    private static final String GAME_SETTINGS_PATH = "game_settings.properties";
+    private static final String GAME_SETTINGS_PATH = "game_settings.json";
 
     /**
      * This final attribute indicates the maps file path.
@@ -81,7 +82,7 @@ public class GameInitializer {
      * for a kill accordingly to the times each player damaged the killed one.<br>
      *     This value is loaded from properties files.
      */
-    private ArrayList<Integer> bountyValues = new ArrayList<>();
+    private ArrayList<Integer> bountyValues;
 
     /**
      * This attribute is a character that indicates which game mode users choose.
@@ -142,19 +143,15 @@ public class GameInitializer {
     public GameTable run() {
 
         //load game properties from "game_settings.properties" file
+
+        InputStream settingsFile = GameInitializer.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            Properties properties = new Properties();
-            InputStream fileReader = GameInitializer.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
-            properties.load(fileReader);
-            this.maxKills=Integer.valueOf(properties.getProperty("maxKills"));
-            this.doubleKillValue=Integer.valueOf(properties.getProperty("doubleKillValue"));
-            this.bountyValues.add(Integer.valueOf(properties.getProperty("bountyFirst")));
-            this.bountyValues.add(Integer.valueOf(properties.getProperty("bountySecond")));
-            this.bountyValues.add(Integer.valueOf(properties.getProperty("bountyThird")));
-            this.bountyValues.add(Integer.valueOf(properties.getProperty("bountyFourth")));
-            this.bountyValues.add(Integer.valueOf(properties.getProperty("bountyFifth")));
-            this.bountyValues.add(Integer.valueOf(properties.getProperty("bountySixth")));
-            fileReader.close();
+            SettingsJSONParser settings = objectMapper.readValue(settingsFile, SettingsJSONParser.class);
+            maxKills = settings.getMaxKills();
+            bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
+            doubleKillValue = settings.getDoubleKillValue();
+            settingsFile.close();
 
         } catch (IOException e) {
             e.printStackTrace();
