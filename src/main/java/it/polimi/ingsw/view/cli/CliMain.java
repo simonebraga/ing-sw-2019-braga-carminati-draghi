@@ -95,6 +95,10 @@ public class CliMain implements ViewInterface {
         System.out.flush();
     }
 
+    /**
+     * This method is temporarily used to quickly run this class methods.
+     * @param args
+     */
     public static void main(String[] args) {
         CliMain temp = new CliMain();
         temp.launch(args);
