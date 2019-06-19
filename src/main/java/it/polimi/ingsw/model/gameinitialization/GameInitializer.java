@@ -14,7 +14,6 @@ import it.polimi.ingsw.model.playerclasses.KillshotTrack;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.playerclasses.StartingPlayerMarker;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -55,15 +54,17 @@ public class GameInitializer {
      */
     private static final String MAPS_PATH = "maps.json";
 
+    /**
+     * This final attribute determines the value of the first turns phase indicator.
+     */
     private static final String FIRST_TURNS_PHASE = "ft";
 
+    /**
+     * This final attribute determines the value of the new file generation indicator.
+     */
     private static final String CREATE_NEW_SAVE_FILE = "new";
 
-    /**
-     * This final attribute indicates the maximum amount of players this game can be played with.<br>
-     *     It's value in this game is constant.
-     */
-    private static final int MAX_PLAYERS = 5;
+
 
     /**
      * This attribute indicates how many kills a match will require to end.<br>
@@ -101,6 +102,8 @@ public class GameInitializer {
      */
     private ArrayList<Player> connectedPlayers;
 
+
+
     /**
      * This method is the class constructor.
      *
@@ -114,22 +117,47 @@ public class GameInitializer {
         this.connectedPlayers = connectedPlayers;
     }
 
+    /**
+     * This method sets a new value for gameMode attribute.
+     *
+     * @param gameMode the new Character value to assign to gameMode.
+     */
     public void setGameMode(Character gameMode) {
         this.gameMode = gameMode;
     }
 
+    /**
+     * This method sets a new value for index attribute.
+     *
+     * @param index the new Integer value to assign to index.
+     */
     public void setMapIndex(Integer index) {
         this.mapIndex = index;
     }
 
+    /**
+     * This method returns the value of maxKills attribute.
+     *
+     * @return an Integer representing the number of kill for each match.
+     */
     public Integer getMaxKills() {
         return maxKills;
     }
 
+    /**
+     * This method returns the value of doubleKillValue attribute.
+     *
+     * @return an Integer representing the scoring value for a double kill.
+     */
     public Integer getDoubleKillValue() {
         return doubleKillValue;
     }
 
+    /**
+     * This method returns the value of bountyValues attribute.
+     *
+     * @return an Integer representing the scoring value for each number of damage done.
+     */
     public ArrayList<Integer> getBountyValues() {
         return bountyValues;
     }
@@ -142,8 +170,7 @@ public class GameInitializer {
      */
     public GameTable run() {
 
-        //load game properties from "game_settings.properties" file
-
+        //load game settings from "game_settings.json" file
         InputStream settingsFile = GameInitializer.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -157,16 +184,21 @@ public class GameInitializer {
             e.printStackTrace();
         }
 
-        try {
+        if (!connectedPlayers.isEmpty()) {
 
-            if (!connectedPlayers.isEmpty()) {
+            //randomly elect starting player
+            int startingPlayerIndex = ThreadLocalRandom.current().nextInt(0, connectedPlayers.size());
+            StartingPlayerMarker chosenStartingPlayerMarker = new StartingPlayerMarker(connectedPlayers.get(startingPlayerIndex));
 
-                //randomly elect starting player
-                int startingPlayerIndex = ThreadLocalRandom.current().nextInt(0, connectedPlayers.size());
-                StartingPlayerMarker chosenStartingPlayerMarker = new StartingPlayerMarker(connectedPlayers.get(startingPlayerIndex));
+            //fetching GameMaps from JSON
+            GameMap chosenGameMap = null;
+            try {
+                chosenGameMap = fetchGameMap(this.mapIndex,this.gameMode);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-                //fetching GameMaps from JSON
-                GameMap chosenGameMap = fetchGameMap(this.mapIndex,this.gameMode);
+            if (chosenGameMap != null) {
 
                 //initializing killShotTrack
                 KillshotTrack chosenKillshotTrack = new KillshotTrack(this.maxKills,this.bountyValues);
@@ -226,11 +258,11 @@ public class GameInitializer {
 
                 //initialize all players ammo pocket
                 for (Player player : gameTable.getPlayers()) {
-                    ArrayList<Color> firstAmmos = new ArrayList<>();
-                    firstAmmos.add(Color.RED);
-                    firstAmmos.add(Color.BLUE);
-                    firstAmmos.add(Color.YELLOW);
-                    player.getAmmoPocket().addAmmo(firstAmmos);
+                    ArrayList<Color> firstAmmo = new ArrayList<>();
+                    firstAmmo.add(Color.RED);
+                    firstAmmo.add(Color.BLUE);
+                    firstAmmo.add(Color.YELLOW);
+                    player.getAmmoPocket().addAmmo(firstAmmo);
                 }
 
                 //set current player
@@ -244,10 +276,6 @@ public class GameInitializer {
 
                 return gameTable;
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return null;
     }
