@@ -86,7 +86,7 @@ public class ServerMain {
         try {
 
             //sets up network
-            Server server = new Server(null);
+            Server server = new Server();
             server.startLoginPhase();
 
             while (server.isLoginPhase()) {
@@ -161,6 +161,7 @@ public class ServerMain {
 
             //sync smart model with model
             SmartModel smartModel = new SmartModel();
+            server.setSmartModel(smartModel);
             smartModel.update(gameTable);
             server.notifyModelUpdate();
 

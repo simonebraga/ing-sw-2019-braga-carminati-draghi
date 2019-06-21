@@ -52,7 +52,7 @@ public class Server implements ServerRemote {
      * This method is the constructor of the class. It sets up RMI and Socket connection, and also runs a ping thread that checks if clients disconnect
      * @throws Exception if any step of the setup goes wrong
      */
-    public Server(SmartModel smartModel) throws Exception {
+    public Server() throws Exception {
 
         Properties properties = new Properties();
         try {
@@ -70,7 +70,7 @@ public class Server implements ServerRemote {
         this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
         this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
         this.inactivityTime = Integer.parseInt(properties.getProperty("inactivityTime"));
-        this.smartModel = smartModel;
+        this.smartModel = null;
 
         try {
             new Thread(new ServerSocketAcceptor(socketPort,this,pingLatency)).start();
@@ -99,6 +99,14 @@ public class Server implements ServerRemote {
         System.out.println("Server created");
 
         startPingThread();
+    }
+
+    /**
+     * This method sets the correct reference to the smart model sent to the client when an update on the model is performed
+     * @param smartModel is the smartModel to be sent to the players
+     */
+    public void setSmartModel(SmartModel smartModel) {
+        this.smartModel = smartModel;
     }
 
     /**
@@ -296,6 +304,8 @@ public class Server implements ServerRemote {
 
     @Override
     public String getModelUpdate() throws RemoteException {
+        if (smartModel == null)
+            return "";
         return smartModel.toString();
     }
 

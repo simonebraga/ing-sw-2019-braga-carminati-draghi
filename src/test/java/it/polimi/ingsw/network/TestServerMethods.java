@@ -126,7 +126,7 @@ class TestServerMethods {
     static void initController() {
 
         try {
-            server = new Server(null);
+            server = new Server();
         } catch (Exception e) {
             fail();
         }
