@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.gamelogic.turn.TurnManager;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
+import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.network.UnavailableUserException;
 
 import java.io.File;
@@ -85,7 +86,6 @@ public class ServerMain {
         try {
 
             //sets up network
-            //TODO Setup the SmartModel before initializing the server. Or make sure to set a correct reference before starting the game
             Server server = new Server(null);
             server.startLoginPhase();
 
@@ -158,6 +158,11 @@ public class ServerMain {
             //calculate starting player and current player indexes
             while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getCurrentTurnPlayer())) currentPlayerIndex++;
             while (!gameTable.getPlayers().get(startingPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) startingPlayerIndex++;
+
+            //sync smart model with model
+            SmartModel smartModel = new SmartModel();
+            smartModel.update(gameTable);
+            server.notifyModelUpdate();
 
             //start or continue match
             if (gameTable.getGamePhase().equals(FIRST_TURNS_PHASE)) {   //game is in first turns phase
