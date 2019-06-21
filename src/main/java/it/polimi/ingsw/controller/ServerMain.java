@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.gamelogic.actions.SpawnAction;
 import it.polimi.ingsw.model.gamelogic.turn.TurnManager;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
@@ -538,51 +540,75 @@ public class ServerMain {
     /**
      * This private method calculates final points for each player and adds them to the total points of each player.
      *
-     * @param gameTable a GameTable object which contains all match information.
+     * @param gameTable a GameTable object containing all match information.
      */
     private static void calculateFinalPoints(GameTable gameTable) {
 
         ArrayList<Player> players = gameTable.getPlayers();
-        ArrayList<Player> killTrack = gameTable.getKillshotTrack().getKillTrack();
         ArrayList<Player> doubleKillers = gameTable.getDoubleKillCounter().getList();
         ArrayList<Integer> pointsByKillNumber = gameTable.getKillshotTrack().getValue();
         Integer doubleKillValue = gameTable.getDoubleKillCounter().getDoubleKillValue();
+        ArrayList<ArrayList<Player>> killTracks = new ArrayList<>();
 
-        //count players presence on killshot track
-        Map<Long, ArrayList<Player>> killsByPlayer = new LinkedHashMap<>();
-        for (Player player : killTrack) {
+        //link killTracks with all killTracks in match
+        if (gameTable.getIsDomination()) {
 
-            Long count = killTrack.stream().filter(player1 -> player.equals(player)).count();
-
-            if (killsByPlayer.get(count) == null) {
-
-                ArrayList<Player> arrayList = new ArrayList<>();
-                arrayList.add(player);
-                killsByPlayer.put(count, arrayList);
-
-            } else if (!killsByPlayer.get(count).contains(player)) {
-                killsByPlayer.get(count).add(player);
+            //cast SpawnSquares to get DominationSpawnSquares attributes
+            ArrayList<DominationSpawnSquare> dominationSpawnSquaresList = new ArrayList<>();
+            for (SpawnSquare spawnSquare : gameTable.getGameMap().getSpawnSquares()) {
+                dominationSpawnSquaresList.add((DominationSpawnSquare) spawnSquare);
             }
+
+            for (DominationSpawnSquare square : dominationSpawnSquaresList) {
+                killTracks.add(square.getDamage());
+            }
+
+        } else {
+            killTracks.add(gameTable.getKillshotTrack().getKillTrack());
         }
 
-        //sort keys in descending order
-        ArrayList<Long> sortedKeys = (ArrayList<Long>) Arrays.asList(killsByPlayer.keySet().toArray()).stream().sorted();
+        for (ArrayList<Player> killTrack : killTracks) {
 
-        //give points away to each player
-        int scoreValuesCounter = 0;
-        int sortedKeysCounter = 0;
-        while (!killsByPlayer.isEmpty()) {
-            for (int tiesCounter = 0; tiesCounter < killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).size(); tiesCounter++) {
+            //count players presence on killshot track
+            Map<Long, ArrayList<Player>> killsByPlayer = new LinkedHashMap<>();
+            for (Player player : killTrack) {
 
-                if (pointsByKillNumber.get(scoreValuesCounter) != 1) {
-                    killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(tiesCounter).addPoints(pointsByKillNumber.get(scoreValuesCounter));
-                    scoreValuesCounter++;
-                } else {    // if scores are already gone down to 1 point per killer
-                    killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(tiesCounter).addPoints(1);
+                Long count = killTrack.stream().filter(player1 -> player.equals(player)).count();
+
+                if (killsByPlayer.get(count) == null) {
+
+                    ArrayList<Player> arrayList = new ArrayList<>();
+                    arrayList.add(player);
+                    killsByPlayer.put(count, arrayList);
+
+                } else if (!killsByPlayer.get(count).contains(player)) {
+                    killsByPlayer.get(count).add(player);
                 }
             }
-            killsByPlayer.remove(sortedKeys.get(sortedKeysCounter));
-            sortedKeysCounter++;
+
+            //sort keys in descending order
+            ArrayList<Long> sortedKeys = (ArrayList<Long>) Arrays.asList(killsByPlayer.keySet().toArray()).stream().sorted();
+
+            //give points away to each player
+            int scoreValuesCounter = 0;
+            int sortedKeysCounter = 0;
+            while (!killsByPlayer.isEmpty()) {
+                int tiesCounter = 0;
+                while (tiesCounter < killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).size()) {
+                    if (pointsByKillNumber.get(scoreValuesCounter) != 1) {
+                        killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(tiesCounter).addPoints(pointsByKillNumber.get(scoreValuesCounter));
+                        if (!gameTable.getIsDomination())
+                            scoreValuesCounter++;
+                    } else {    // if scores are already gone down to 1 point per killer
+                        killsByPlayer.get(sortedKeys.get(sortedKeysCounter)).get(tiesCounter).addPoints(1);
+                    }
+                    tiesCounter++;
+                }
+                killsByPlayer.remove(sortedKeys.get(sortedKeysCounter));
+                sortedKeysCounter++;
+                if (gameTable.getIsDomination())
+                    scoreValuesCounter+=tiesCounter;
+            }
         }
 
         //assign double kills points
