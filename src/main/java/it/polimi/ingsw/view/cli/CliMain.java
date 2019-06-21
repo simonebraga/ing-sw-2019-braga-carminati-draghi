@@ -192,6 +192,9 @@ public class CliMain implements ViewInterface {
         return rmiOrCli;
     }
 
+    private void printModel() {
+    }
+
     @Override
     public void logout() {
 
@@ -269,6 +272,13 @@ public class CliMain implements ViewInterface {
 
     @Override
     public void notifyModelUpdate() {
+
+        try {
+            model = client.getModelUpdate();
+            printModel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }
