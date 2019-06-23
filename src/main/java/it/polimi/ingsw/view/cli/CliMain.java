@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.view.Client;
@@ -17,6 +18,8 @@ import java.util.Scanner;
  * @author Draghi96
  */
 public class CliMain implements ViewInterface {
+
+    ////////////////////////////////////////////////////////////// cli characters color constants ///////////////
 
     /**
      * This final attribute represents the ANSI code for font reset.
@@ -63,7 +66,41 @@ public class CliMain implements ViewInterface {
      */
     public static final String ANSI_WHITE = "\u001B[37m";
 
+    ////////////////////////////////////////////////////////////// match related constants ///////////////
 
+    /**
+     * This constant represents the number of maps available in the game.
+     */
+    private static final int GAME_MAPS_NUMBER = 4;
+
+    ////////////////////////////////////////////////////////////// network related constants ///////////////
+
+    /**
+     * This final attribute defines the value returned from client.login() method when the registration was successful.
+     */
+    private static final int SUCCESSFUL_REGISTRATION_SIGNAL = 0;
+
+    /**
+     * This final attribute defines the value returned from client.login() method when the nickname was already in use.
+     */
+    private static final int NICK_NOT_AVAILABLE_SIGNAL = 1;
+
+    /**
+     * This final attribute defines the value returned from client.login() method when the login was successful.
+     */
+    private static final int SUCCESSFUL_LOGIN_SIGNAL = 2;
+
+    /**
+     * This final attribute defines the value returned from client.login() method when another player is already logged in with that nickname.
+     */
+    private static final int NICK_ALREADY_LOGGED_IN_SIGNAL = 3;
+
+    /**
+     * This final attribute defines the value returned from client.login() method when it fails to create a new client.
+     */
+    private static final int LOGIN_FAILURE_SIGNAL = 4;
+
+    ////////////////////////////////////////////////////////////// class attributes ///////////////
 
     /**
      * This attribute is the input scanner.
@@ -85,7 +122,7 @@ public class CliMain implements ViewInterface {
      */
     private SmartModel model;
 
-
+//////////////////////////////////////////////////////////////class  methods ///////////////////////
 
     /**
      * This method clears the console's content.
@@ -95,6 +132,7 @@ public class CliMain implements ViewInterface {
         System.out.flush();
     }
 
+    //TODO(erase this method after finishing class)
     /**
      * This method is temporarily used to quickly run this class methods.
      * @param args
@@ -137,35 +175,35 @@ public class CliMain implements ViewInterface {
      */
     private String chooseNickName() {
 
-        String nickname;
+        String nickname = null;
         int loginOutput;
         boolean success = false;
         do {
-            scannerIn.next();
-            System.out.print("Choose a nickname: ");
-            nickname = scannerIn.nextLine();
+            System.out.println("Choose a nickname: ");
+            if (scannerIn.hasNextLine())
+                nickname = scannerIn.nextLine();
             loginOutput = client.login(nickname);
 
             switch (loginOutput) {
-                case 0 : {
+                case SUCCESSFUL_REGISTRATION_SIGNAL : {
                     System.out.println(ANSI_GREEN + "Successful registration" + ANSI_RESET);
                     success = true;
                     break;
                 }
-                case 1 : {
+                case NICK_NOT_AVAILABLE_SIGNAL : {
                     System.out.println(ANSI_RED + "Nickname already chosen" + ANSI_RESET);
                     break;
                 }
-                case 2 : {
+                case SUCCESSFUL_LOGIN_SIGNAL : {
                     System.out.println("Logged in");
                     success = true;
                     break;
                 }
-                case 3 : {
+                case NICK_ALREADY_LOGGED_IN_SIGNAL : {
                     System.out.println(ANSI_RED + "Already logged in" + ANSI_RESET);
                     break;
                 }
-                case 4 : {
+                case LOGIN_FAILURE_SIGNAL : {
                     System.out.println(ANSI_RED + "Something went wrong" + ANSI_RESET);
                     break;
                 }
@@ -179,21 +217,37 @@ public class CliMain implements ViewInterface {
      */
     private int chooseNetworkTechnology() {
 
-        Integer rmiOrCli;
+        Integer rmiOrCli = -1;
         do {
             System.out.print("Choose network technology (0 - RMI | 1 - Socket): ");
-            if (scannerIn.hasNextInt())
+            if (scannerIn.hasNextInt()){
                 rmiOrCli = scannerIn.nextInt();
-            else{
-                rmiOrCli = -1;
-                scannerIn.next();
             }
+            scannerIn.nextLine();
         } while (rmiOrCli != 0 && rmiOrCli != 1);
         return rmiOrCli;
     }
 
     private void printModel() {
+        printMap();
+        printBoards();
+        printKillShotTrack();
     }
+
+    private void printMap() {
+        //TODO print grid with current player positions, ammotiles positions and
+        GameMap[] gameMaps = new GameMap[GAME_MAPS_NUMBER];
+    }
+
+    private void printBoards() {
+        //TODO print player boards with damage, points, marks, weapons, ammos, first player marker and
+    }
+
+    private void printKillShotTrack() {
+        //TODO print killShotTrack
+    }
+
+    /////////////////////////////////////////// ViewInterface implementations //////////////////////////////////////////////
 
     @Override
     public void logout() {
