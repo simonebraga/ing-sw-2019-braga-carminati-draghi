@@ -51,7 +51,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         assertEquals(smartModel.toString(),smartModelAfterSerialization.toString());
     }
@@ -61,7 +60,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         for (String nickname : smartModelAfterSerialization.getSmartPlayerMap().keySet())
             assertEquals(new ArrayList<>(Arrays.asList(player3.getFigure(),player2.getFigure(),player2.getFigure())),smartModelAfterSerialization.getSmartPlayerMap().get(nickname).getDamage());
@@ -72,7 +70,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         Map<Figure,Integer> expectedMarks = new HashMap<>();
         expectedMarks.put(player1.getFigure(),2);
@@ -85,7 +82,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         Map<Color,Integer> expectedAmmo = new HashMap<>();
         expectedAmmo.put(Color.RED,2);
@@ -100,7 +96,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         ArrayList<SmartWeapon> expectedWeapon = new ArrayList<>();
         SmartWeapon smartWeapon1 = new SmartWeapon();
@@ -116,7 +111,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         ArrayList<SmartPowerup> expectedPowerup = new ArrayList<>();
         SmartPowerup smartPowerup1 = new SmartPowerup();
@@ -132,7 +126,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         for (String nickname : smartModelAfterSerialization.getSmartPlayerMap().keySet()) {
             assertEquals(1,smartModelAfterSerialization.getSmartPlayerMap().get(nickname).getPosX());
@@ -145,7 +138,6 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         assertEquals(2,smartModelAfterSerialization.getMapIndex());
     }
@@ -155,8 +147,7 @@ class TestSmartModel {
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
-        smartModel.setGameMode('D');
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
-        assertEquals('D',smartModelAfterSerialization.getGameMode());
+        assertEquals(false,smartModelAfterSerialization.getDomination());
     }
 }

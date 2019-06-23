@@ -20,7 +20,7 @@ import java.util.Map;
 public class SmartModel {
     private Map<String,SmartPlayer> smartPlayerMap;
     private int mapIndex;
-    private char gameMode;
+    private Boolean isDomination;
     private final int defaultPointtrackSize;
 
     public Map<String, SmartPlayer> getSmartPlayerMap() {
@@ -31,16 +31,12 @@ public class SmartModel {
         return mapIndex;
     }
 
-    public char getGameMode() {
-        return gameMode;
+    public Boolean getDomination() {
+        return isDomination;
     }
 
     public void setMapIndex(int mapIndex) {
         this.mapIndex = mapIndex;
-    }
-
-    public void setGameMode(char gameMode) {
-        this.gameMode = gameMode;
     }
 
     public SmartModel() {
@@ -106,6 +102,7 @@ public class SmartModel {
 
             smartPlayerMap.put(player.getUsername(),smartPlayer);
         }
+        isDomination = gameTable.getIsDomination();
     }
 
     public static SmartModel fromString(String s) {
