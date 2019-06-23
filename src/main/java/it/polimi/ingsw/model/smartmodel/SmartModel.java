@@ -19,10 +19,28 @@ import java.util.Map;
  */
 public class SmartModel {
     private Map<String,SmartPlayer> smartPlayerMap;
+    private int mapIndex;
+    private char gameMode;
     private final int defaultPointtrackSize;
 
     public Map<String, SmartPlayer> getSmartPlayerMap() {
         return smartPlayerMap;
+    }
+
+    public int getMapIndex() {
+        return mapIndex;
+    }
+
+    public char getGameMode() {
+        return gameMode;
+    }
+
+    public void setMapIndex(int mapIndex) {
+        this.mapIndex = mapIndex;
+    }
+
+    public void setGameMode(char gameMode) {
+        this.gameMode = gameMode;
     }
 
     public SmartModel() {
