@@ -91,8 +91,13 @@ public class SmartModel {
             smartPlayer.setPowerups(smartPowerups);
 
             // Setup position
-            smartPlayer.setPosX(player.getPosition().getX());
-            smartPlayer.setPosY(player.getPosition().getY());
+            if (player.getPosition() != null) {
+                smartPlayer.setPosX(player.getPosition().getX());
+                smartPlayer.setPosY(player.getPosition().getY());
+            } else {
+                smartPlayer.setPosX(-1);
+                smartPlayer.setPosY(-1);
+            }
 
             // Setup deaths
             smartPlayer.setDeaths(defaultPointtrackSize - player.getPointTrack().getValue().size());
