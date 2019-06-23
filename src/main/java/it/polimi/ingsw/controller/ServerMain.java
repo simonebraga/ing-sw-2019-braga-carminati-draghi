@@ -125,6 +125,7 @@ public class ServerMain {
         //checks for compatible save files
         GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
 
+        Integer mapIndex = null;
         try {
 
             if (gameTable == null) {    //create new match
@@ -140,7 +141,7 @@ public class ServerMain {
 
                 //ask game mode and map index to administrator
                 Character gameMode = server.chooseMode(players.get(adminIndex));
-                Integer mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
+                mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
 
                 //initiate a new match
                 GameInitializer gameInitializer = new GameInitializer(gameMode, mapIndex, players);
@@ -161,6 +162,7 @@ public class ServerMain {
 
             //sync smart model with model
             SmartModel smartModel = new SmartModel();
+            smartModel.setMapIndex(mapIndex);
             server.setSmartModel(smartModel);
             smartModel.update(gameTable);
             server.notifyModelUpdate();
