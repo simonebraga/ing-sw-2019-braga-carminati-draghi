@@ -333,7 +333,7 @@ public class ServerMain {
 
                 //rewrite list in save_list.json as an array of strings
                 fileOutput = new FileOutputStream(SAVE_LIST_PATH);
-                mapper.writeValue(fileOutput, (String[]) fileNamesList.toArray());
+                mapper.writeValue(fileOutput, fileNamesList.toArray());
                 fileOutput.close();
 
             } else {    //overwrite on old save file
