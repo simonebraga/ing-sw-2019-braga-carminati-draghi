@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.gamelogic.actions.SpawnAction;
 import it.polimi.ingsw.model.gamelogic.turn.TurnManager;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
+import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
@@ -123,7 +124,10 @@ public class ServerMain {
         }
 
         //checks for compatible save files
-        GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
+        GameTable gameTable = null;
+
+        //FIXME
+        //gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
 
         Integer mapIndex = null;
         try {
@@ -294,10 +298,19 @@ public class ServerMain {
         try {
 
             //retrieve save_list.json and parse it into a list
+            ArrayList<String> fileNamesList = new ArrayList<>();
+            FileInputStream fileNamesInputStream;
             ObjectMapper mapper = new ObjectMapper();
-            FileInputStream fileInput = new FileInputStream(SAVE_LIST_PATH);
-            ArrayList<String> fileNamesList = new ArrayList<>(Arrays.asList(mapper.readValue(fileInput,String[].class)));
-            fileInput.close();
+            File saveListFile = new File(SAVE_LIST_PATH);
+
+            //initialize file if it is empty
+            if (saveListFile.length() == 0) {
+                mapper.writeValue(saveListFile,fileNamesList.toArray());
+                System.out.println("New 'save_list.json' file created");
+            }
+            fileNamesInputStream = new FileInputStream(SAVE_LIST_PATH);
+            fileNamesList = new ArrayList<>(Arrays.asList(mapper.readValue(fileNamesInputStream,String[].class)));
+            fileNamesInputStream.close();
 
             if (mySaveName.equals("new")) {    //create new save file
 
@@ -308,10 +321,10 @@ public class ServerMain {
                 //update game table attribute
                 gameTable.setSaveFileName(SAVE_FILE_PREFIX + fileCounter);
 
-                //create a new save file in SAVE_FILES_DIRECTORY
-                File file = new File(SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
-                file.createNewFile();
-                FileOutputStream fileOutput = new FileOutputStream( SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
+                //create a new save file
+                File file = new File(SAVE_FILE_PREFIX + fileCounter + ".json");
+                System.out.println("New '" + SAVE_FILE_PREFIX + fileCounter + ".json' save file created");
+                FileOutputStream fileOutput = new FileOutputStream( SAVE_FILE_PREFIX + fileCounter + ".json");
                 mapper.writeValue(fileOutput, gameTable);
                 fileOutput.close();
 
@@ -325,7 +338,7 @@ public class ServerMain {
 
             } else {    //overwrite on old save file
 
-                FileOutputStream fileOutputStream = new FileOutputStream( SAVE_FILES_DIRECTORY + "/" + mySaveName + ".json");
+                FileOutputStream fileOutputStream = new FileOutputStream( mySaveName + ".json");
                 mapper.writeValue(fileOutputStream,gameTable);
                 fileOutputStream.close();
             }
@@ -343,6 +356,8 @@ public class ServerMain {
      *     It returns null if no file matches current users nicknames.
      */
     private static GameTable oldSaveSearch(ArrayList<String> nicks) {
+
+        //FIXME
 
         try {
 
@@ -402,7 +417,7 @@ public class ServerMain {
 
             //delete save file if listed
             if (nameList.contains(fileName)) {
-                File save = new File(SAVE_FILES_DIRECTORY + "/" + fileName);
+                File save = new File(fileName);
                 save.delete();
 
                 //update save names list
