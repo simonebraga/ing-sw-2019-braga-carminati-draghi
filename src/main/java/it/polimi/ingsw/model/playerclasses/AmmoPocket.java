@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.playerclasses;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
+import it.polimi.ingsw.model.enumeratedclasses.ColorSerializer;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -15,6 +17,7 @@ public class AmmoPocket {
     /**
      * This attribute contains the ammo of the player
      */
+    @JsonSerialize(keyUsing = ColorSerializer.class)
     private EnumMap<Color,Integer> ammo;
 
     public AmmoPocket() {
