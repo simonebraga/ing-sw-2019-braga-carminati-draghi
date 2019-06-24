@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
@@ -301,6 +302,7 @@ public class ServerMain {
             ArrayList<String> fileNamesList = new ArrayList<>();
             FileInputStream fileNamesInputStream;
             ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
             File saveListFile = new File(SAVE_LIST_PATH);
 
             //initialize file if it is empty
