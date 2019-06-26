@@ -9,7 +9,6 @@ import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.gamelogic.actions.SpawnAction;
 import it.polimi.ingsw.model.gamelogic.turn.TurnManager;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
-import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
@@ -86,6 +85,7 @@ public class ServerMain {
      */
     public static void main(String[] args) {
         try {
+            System.out.println("Adrenaline Server running...\n");
 
             //sets up network
             Server server = new Server();
@@ -113,28 +113,50 @@ public class ServerMain {
      */
     private static void goOn(Server server, String[] args, int adminIndex) {
 
+        System.out.println();
+
         Integer currentPlayerIndex = 0;
         Integer startingPlayerIndex = 0;
 
-        //create a new save_list.json file in working directory
-        File file = new File(SAVE_LIST_PATH);
-        try {
-            if (!file.exists()) file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        File savesDir = new File(SAVE_FILES_DIRECTORY);
+        if (!savesDir.exists()) {
+            boolean wasCreated = savesDir.mkdir();
+            if (wasCreated) {
+                System.out.println("New '" + SAVE_FILES_DIRECTORY + "' directory created");
+            }
         }
 
-        //checks for compatible save files
-        GameTable gameTable = null;
+        //create a new save_list.json file in working directory
+        File savesListFile = new File( SAVE_LIST_PATH);
+        if (!savesListFile.exists()) {
+            try {
+                boolean wasCreated = savesListFile.createNewFile();
+                if (wasCreated) {
+                    System.out.println("New '" + SAVE_LIST_PATH + "' file created");
+                    ArrayList<String> saveListInitialization = new ArrayList<>();
+                    ObjectMapper mapper = new ObjectMapper();
+                    FileOutputStream saveListOutput = new FileOutputStream(savesListFile);
+                    mapper.writeValue(saveListOutput,saveListInitialization);
+                    saveListOutput.close();
+                    System.out.println("'" + SAVE_LIST_PATH + "' file initialized");
+                }
+            } catch (IOException e) {
+                System.out.println(" 'save_list.json' file cannot be created correctly");
+                e.printStackTrace();
+            }
+        }
 
-        //FIXME
-        //gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
+        //search in old save files a compatible match
+        GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
 
         Integer mapIndex = null;
         try {
 
             if (gameTable == null) {    //create new match
 
+                System.out.println("Creating new match...");
+
+                System.out.println("Binding clients to figures...");
                 //binds each user to a unique player
                 ArrayList<Player> players = new ArrayList<>();
                 Figure[] allFigures = Figure.values();
@@ -143,17 +165,21 @@ public class ServerMain {
                     players.add(new Player(allFigures[i], nick));    //should not overflow because users are never more than figures
                     i++;
                 }
+                System.out.println("Done");
 
                 //ask game mode and map index to administrator
                 Character gameMode = server.chooseMode(players.get(adminIndex));
                 mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
 
                 //initiate a new match
+                System.out.println("Initializing new match...");
                 GameInitializer gameInitializer = new GameInitializer(gameMode, mapIndex, players);
                 gameTable = gameInitializer.run();
+                System.out.println("Done");
 
                 //if too many users dropped during this phase
                 if (players.size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
+                    System.out.println("Too many players have disconnected. Relaunching server...");
                     server.resetClientMap();
                     main(args);
                 }
@@ -171,7 +197,9 @@ public class ServerMain {
             server.setSmartModel(smartModel);
             smartModel.update(gameTable);
             server.notifyModelUpdate();
+            System.out.println("Smart model created");
 
+            System.out.println("Starting game...");
             //start or continue match
             if (gameTable.getGamePhase().equals(FIRST_TURNS_PHASE)) {   //game is in first turns phase
 
@@ -185,7 +213,7 @@ public class ServerMain {
                 rollMatch(server, gameTable, currentPlayerIndex);      //would throw FrenzyModeException at some point or game will stop for loss of players
 
                 //game has ended before final frenzy because too many people disconnected
-                System.out.println("Not enough players to continue the game.");
+                System.out.println("Not enough players to continue the game");
                 gameOver(gameTable);
 
                 //restart program
@@ -323,15 +351,17 @@ public class ServerMain {
                 //update game table attribute
                 gameTable.setSaveFileName(SAVE_FILE_PREFIX + fileCounter);
 
-                //create a new save file
-                File file = new File(SAVE_FILE_PREFIX + fileCounter + ".json");
+                //create a new save file in savefiles directory
+                File file = new File(SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
+                file.createNewFile();
                 System.out.println("New '" + SAVE_FILE_PREFIX + fileCounter + ".json' save file created");
-                FileOutputStream fileOutput = new FileOutputStream( SAVE_FILE_PREFIX + fileCounter + ".json");
+                FileOutputStream fileOutput = new FileOutputStream(  SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
                 mapper.writeValue(fileOutput, gameTable);
                 fileOutput.close();
+                System.out.println("New match saved");
 
                 //update save_list.json to show new save file in the list
-                fileNamesList.add(SAVE_FILE_PREFIX + "_" + fileCounter);
+                fileNamesList.add(SAVE_FILE_PREFIX + fileCounter);
 
                 //rewrite list in save_list.json as an array of strings
                 fileOutput = new FileOutputStream(SAVE_LIST_PATH);
@@ -340,9 +370,10 @@ public class ServerMain {
 
             } else {    //overwrite on old save file
 
-                FileOutputStream fileOutputStream = new FileOutputStream( mySaveName + ".json");
+                FileOutputStream fileOutputStream = new FileOutputStream(  SAVE_FILES_DIRECTORY + "/" + mySaveName + ".json");
                 mapper.writeValue(fileOutputStream,gameTable);
                 fileOutputStream.close();
+                System.out.println("Match save overwritten");
             }
 
         } catch (IOException e) {
@@ -359,7 +390,7 @@ public class ServerMain {
      */
     private static GameTable oldSaveSearch(ArrayList<String> nicks) {
 
-        //FIXME
+        System.out.println("Scanning old save files...");
 
         try {
 
@@ -373,7 +404,7 @@ public class ServerMain {
             for (String fileName : fileNamesList) {
 
                 //get save files 1 by 1
-                FileInputStream tableIn = new FileInputStream(SAVE_FILES_DIRECTORY + "/" + fileName);
+                FileInputStream tableIn = new FileInputStream(SAVE_FILES_DIRECTORY + "/" + fileName + ".json");
                 GameTable oldTable = mapper.readValue(tableIn, GameTable.class);
                 tableIn.close();
 
@@ -391,6 +422,7 @@ public class ServerMain {
                     }
                 }
                 if (everyNickMatches) {
+                    System.out.println("Compatible match found");
                     return oldTable;
                 }
             }
@@ -399,6 +431,7 @@ public class ServerMain {
         }
 
         //no compatible save files where found
+        System.out.println("No compatible previous matches were found");
         return null;
     }
 
@@ -419,7 +452,7 @@ public class ServerMain {
 
             //delete save file if listed
             if (nameList.contains(fileName)) {
-                File save = new File(fileName);
+                File save = new File(SAVE_FILES_DIRECTORY + "/" + fileName + ".json");
                 save.delete();
 
                 //update save names list
@@ -427,6 +460,8 @@ public class ServerMain {
                 FileOutputStream output = new FileOutputStream(SAVE_LIST_PATH);
                 mapper.writeValue(output, (String[]) nameList.toArray());
                 output.close();
+
+                System.out.println("Match save file deleted");
             }
 
         } catch (IOException e) {
