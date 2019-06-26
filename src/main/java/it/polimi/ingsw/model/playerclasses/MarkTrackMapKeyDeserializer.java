@@ -14,12 +14,12 @@ import java.io.IOException;
 public class MarkTrackMapKeyDeserializer extends KeyDeserializer {
 
     /**
-     * This attribute is the Jackson object that builds and reads JSON files.
+     * This attribute is the Jackson object used to read JSON files.
      */
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * This method implements how to serialize a MarkTrack object into a JSON file.
+     * This method implements how to deserialize a MarkTrack object from a JSON file.
      *
      * @param s a String object that is the serialized MarkTrack object.
      * @param deserializationContext a DeserializationContext object containing all info about this deserialization file.
