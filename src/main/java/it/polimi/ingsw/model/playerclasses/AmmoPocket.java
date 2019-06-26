@@ -21,9 +21,7 @@ public class AmmoPocket {
     private EnumMap<Color,Integer> ammo;
 
     public AmmoPocket() {
-        this.ammo = new EnumMap<Color,Integer>(Color.class);
-        for (Color color : Color.values())
-            ammo.put(color,0);
+        this.ammo = new EnumMap<>(Color.class);
     }
 
     /**
@@ -32,7 +30,9 @@ public class AmmoPocket {
      * @return amount of ammo of color
      */
     public Integer getAmmo(Color color) {
-        return ammo.get(color);
+        if (this.ammo.containsKey(color))
+            return ammo.get(color);
+        return 0;
     }
 
     /**
@@ -52,10 +52,12 @@ public class AmmoPocket {
      */
     public void addAmmo(ArrayList<Color> ammo) {
 
-        for (Color color : ammo)
-            if (this.ammo.get(color) < 3)
-                this.ammo.put(color , this.ammo.get(color) + 1);
-
+        for (Color color : ammo) {
+            if (this.ammo.containsKey(color)) {
+                if (this.ammo.get(color) < 3)
+                    this.ammo.put(color , this.ammo.get(color) + 1);
+            } else this.ammo.put(color,1);
+        }
     }
 
     /**
@@ -65,7 +67,8 @@ public class AmmoPocket {
     public void reduceAmmo(ArrayList<Color> cost) {
 
         for (Color color : cost)
-            ammo.put(color , ammo.get(color) - 1);
+            if (this.ammo.containsKey(color) && (this.ammo.get(color) > 0))
+                ammo.put(color , ammo.get(color) - 1);
     }
 
 }
