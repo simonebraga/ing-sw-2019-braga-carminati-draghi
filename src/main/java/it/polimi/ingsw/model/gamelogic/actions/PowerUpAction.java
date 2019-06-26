@@ -81,6 +81,7 @@ public class PowerUpAction {
                             player.getPowerupPocket().removePowerup(
                                     player.getPowerupPocket().getPowerups().indexOf(powerup))));
             ArrayList<Square> squares = new ArrayList<>(table.getGameMap().getGridAsList());
+            squares.remove(player.getPosition());
             Square square = server.chooseSquare(player, squares);
             effects.add(new FunctionalFactory().createMove(player, square));
         }
