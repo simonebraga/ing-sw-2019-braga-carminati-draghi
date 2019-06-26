@@ -1,25 +1,29 @@
 package it.polimi.ingsw.view.cli;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.mapclasses.GameMap;
-import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.mapclasses.*;
+import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * This class contains the command line interface implementation.
+ * This class contains the command line interface implementation of the client.
  *
  * @author Draghi96
  */
 public class CliMain implements ViewInterface {
 
-    ////////////////////////////////////////////////////////////// cli characters color constants ///////////////
+    ////////////////////////////////////////////////////////////// cli formatting constants ///////////////
 
     /**
      * This final attribute represents the ANSI code for font reset.
@@ -66,12 +70,27 @@ public class CliMain implements ViewInterface {
      */
     public static final String ANSI_WHITE = "\u001B[37m";
 
+    /**
+     * This final attribute defines squares width in cli printing.
+     */
+    private static final int SQUARES_WIDTH = 22;
+
+    /**
+     * This final attribute defines squares high in cli printing.
+     */
+    private static final int SQUARES_HIGH = 10;
+
     ////////////////////////////////////////////////////////////// match related constants ///////////////
 
     /**
      * This constant represents the number of maps available in the game.
      */
     private static final int GAME_MAPS_NUMBER = 4;
+
+    /**
+     * This constant represents the JSON file path containing all game maps.
+     */
+    private static final String MAPS_RESOURCES_PATH = "maps.json";
 
     ////////////////////////////////////////////////////////////// network related constants ///////////////
 
@@ -122,6 +141,11 @@ public class CliMain implements ViewInterface {
      */
     private SmartModel model;
 
+    /**
+     * This attribute represents the game map in use for this match.
+     */
+    private GameMap map;
+
 //////////////////////////////////////////////////////////////class  methods ///////////////////////
 
     /**
@@ -160,14 +184,6 @@ public class CliMain implements ViewInterface {
         }
 
         nickname = chooseNickName();
-
-        //retrieve match info
-        try {
-            model = client.getModelUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -207,6 +223,8 @@ public class CliMain implements ViewInterface {
                     System.out.println(ANSI_RED + "Something went wrong" + ANSI_RESET);
                     break;
                 }
+                default:
+                    throw new IllegalStateException("Unexpected value: " + loginOutput);
             }
         } while (!success);
         return nickname;
@@ -214,6 +232,8 @@ public class CliMain implements ViewInterface {
 
     /**
      * This method asks the user which network technology the user wish to use choosing between RMI and Socket technologies.
+     *
+     * @return 1 if user choose socket technology or 0 if user choose RMI technology.
      */
     private int chooseNetworkTechnology() {
 
@@ -229,14 +249,155 @@ public class CliMain implements ViewInterface {
     }
 
     private void printModel() {
+        printKillShotTrack();
         printMap();
         printBoards();
-        printKillShotTrack();
+    }
+
+    private void printSquare(TileSquare square, boolean isLast) {
+        ArrayList<Player> players = new ArrayList<>(square.getPlayers());
+        ArrayList<Color> ammos = new ArrayList<>(square.getTile().getAmmo());
+        int rowCounter = 0;
+        int columnCounter = 0;
+
+        //print first line
+        switch (square.getUp()) {
+            case NOTHING:{
+
+                System.out.print("+-");
+                columnCounter = 2;
+                while (columnCounter < SQUARES_WIDTH - 2) {
+                    System.out.print(" ");
+                    columnCounter++;
+                }
+                System.out.print("-");
+                columnCounter++;
+                break;
+            }
+            case DOOR:{
+
+                System.out.print("+--|");
+                columnCounter = 4;
+                while (columnCounter < SQUARES_WIDTH - 4) {
+                    System.out.print(" ");
+                    columnCounter++;
+                }
+                System.out.print("|--");
+                columnCounter++;
+                break;
+            }
+            case WALL:{
+
+                System.out.println("+");
+                columnCounter++;
+                while (columnCounter< SQUARES_WIDTH - 2) {
+                    System.out.print("-");
+                    columnCounter++;
+                }
+                break;
+            }
+        }
+        if (isLast)
+            System.out.print("+");
+        rowCounter++;
+
+        //print next lines
+        while (rowCounter < SQUARES_HIGH) {
+
+            System.out.print("| ");
+            columnCounter = 2;
+
+            //TODO finish and revision
+            if (rowCounter <= 3) {  //space reserved for tile info
+                if (square.getTile().getAmmo().size() + square.getTile().getPowerup() < rowCounter) {   //there are less then 3 entities to be printed
+                    while (columnCounter < SQUARES_WIDTH - 1) {
+                        System.out.print(" ");
+                        columnCounter++;
+                    }
+                } else {
+                    switch (ammos.get(0)) {
+                        case RED:{
+                            System.out.print(ANSI_RED + "RED   " + ANSI_RESET);
+                            break;
+                        }
+                        case BLUE:{
+                            System.out.print(ANSI_BLUE + "BLUE  " + ANSI_RESET);
+                            break;
+                        }
+                        case YELLOW:{
+                            System.out.print(ANSI_YELLOW + "YELLOW" + ANSI_RESET);
+                        }
+                    }
+                    ammos.remove(0);
+                    while (columnCounter < SQUARES_WIDTH - 1) {
+                        System.out.print(" ");
+                    }
+                }
+                if (isLast){
+                    System.out.println("|");
+                }
+            } else {    //space reserved for player names
+
+            }
+            rowCounter++;
+        }
+    }
+
+    private void printSquare(SpawnSquare square, boolean isLast) {
+        //TODO
+    }
+
+    private void printSquare(DominationSpawnSquare square, boolean isLast) {
+        //TODO
     }
 
     private void printMap() {
-        //TODO print grid with current player positions, ammotiles positions and
-        GameMap[] gameMaps = new GameMap[GAME_MAPS_NUMBER];
+
+        //TODO print grid with current player positions, ammo tiles positions and weapons
+
+        if (map == null) {
+            ObjectMapper mapper = new ObjectMapper();
+            InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
+            GameMap[] gameMaps = null;
+            try {
+                gameMaps = mapper.readValue(gameMapsInputStream, GameMap[].class);
+            } catch (IOException e) {
+                System.out.println("Cannot fetch maps from file.");
+                e.printStackTrace();
+            }
+            map = gameMaps[model.getMapIndex()];
+        }
+
+        for (Square[] squareRow : map.getGrid()) {
+            for (Square square : squareRow) {
+
+                //understand the square type
+                boolean isSpawn = false;
+                for (SpawnSquare spawn : map.getSpawnSquares())
+                    if (spawn.equals(square)) isSpawn = true;
+
+                if (square.equals(squareRow[squareRow.length])) {   //last square in row
+
+                    //print square casting it to the right type
+                    if (isSpawn && model.getDomination())
+                        printSquare((DominationSpawnSquare) square, true);
+                    else if (isSpawn && !model.getDomination())
+                        printSquare((SpawnSquare) square,true);
+                    else
+                        printSquare((TileSquare) square,true);
+
+                } else {    //square is not last in row
+
+                    //print square casting it to the right type
+                    if (isSpawn && model.getDomination())
+                        printSquare((DominationSpawnSquare) square, false);
+                    else if (isSpawn && !model.getDomination())
+                        printSquare((SpawnSquare) square,false);
+                    else
+                        printSquare((TileSquare) square,false);
+                }
+            }
+        }
     }
 
     private void printBoards() {
