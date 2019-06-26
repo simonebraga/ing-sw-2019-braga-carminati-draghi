@@ -152,10 +152,6 @@ public class ShootCreator extends ShootCreatorAbstract implements EffectsCreator
 
 
         effects.add(new FunctionalFactory().createDamagePlayer(player, target, damages, marks));
-        targets.getPlayersTargeted().add(target);
-        if(damages>0){
-            targets.getPlayersDamaged().add(target);
-        }
         return effects;
     }
 

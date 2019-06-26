@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
  */
 public class ShootAction implements Action{
 
-    private final String PATHWEAPON = "weapons/";
-    private final String PATHWEAPONDOMINATION = "weapons/dominationmode/";
+    private static final String PATH_WEAPON = "weapons/";
+    private static final String PATH_WEAPON_DOMINATION = "weapons/dominationmode/";
 
     @Override
     public List<FunctionalEffect> run(Server server, GameTable table, Player player, Targets targets) throws IllegalActionException, UnavailableUserException {
@@ -41,14 +41,14 @@ public class ShootAction implements Action{
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, ArrayList<EffectsCreator>> map = null;
         try {
-            map = objectMapper.readValue(ShootAction.class.getClassLoader().getResourceAsStream(PATHWEAPON+weaponToUse.getName()+".json"), new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
+            map = objectMapper.readValue(ShootAction.class.getClassLoader().getResourceAsStream(PATH_WEAPON +weaponToUse.getName()+".json"), new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         if(table.getIsDomination()){
             try {
-                Map<String, ArrayList<EffectsCreator>> maptemp = objectMapper.readValue(ShootAction.class.getClassLoader().getResourceAsStream(PATHWEAPONDOMINATION+weaponToUse.getName()+".json"), new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
+                Map<String, ArrayList<EffectsCreator>> maptemp = objectMapper.readValue(ShootAction.class.getClassLoader().getResourceAsStream(PATH_WEAPON_DOMINATION +weaponToUse.getName()+".json"), new TypeReference<Map<String,ArrayList<EffectsCreator>>>() {});
                 for (String s : maptemp.keySet()) {
                     map.put(s, maptemp.get(s));
                 }
@@ -64,7 +64,7 @@ public class ShootAction implements Action{
             effectsCreator.setPlayer(player);
             effects.addAll(effectsCreator.run(server, table, targets));
         }
-        weaponToUse.setIsLoaded(false);
+        effects.add(()->weaponToUse.setIsLoaded(false));
 
         if(targets.getPlayersTargeted().stream().distinct().count() != targets.getPlayersTargeted().size() || targets.getPlayersTargeted().contains(player)){
             throw new IllegalActionException();
