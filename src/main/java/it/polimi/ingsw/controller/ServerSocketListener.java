@@ -79,8 +79,10 @@ public class ServerSocketListener implements Runnable {
                     // This switch-case must be configured to invoke all the remote methods of Server with the correct parameters
                     switch (method) {
                         case "login": {
-                            serverSocketSpeaker.returnMessage(gson.toJson(server.login(parameters,serverSocketSpeaker)));
-                            startPingThread();
+                            int ret = server.login(parameters,serverSocketSpeaker);
+                            if ((ret == 0) || (ret == 2))
+                                startPingThread();
+                            serverSocketSpeaker.returnMessage(gson.toJson(ret));
                             break;
                         }
                         case "logout": {

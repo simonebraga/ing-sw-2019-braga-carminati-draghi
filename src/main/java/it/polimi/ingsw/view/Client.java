@@ -288,12 +288,13 @@ public class Client implements ClientRemote {
 
     /**
      * This method is used to ask to the server an updated version of the game information
-     * @return serialized SmartModel
+     * @return de-serialized SmartModel, or null pointer if the smart model does not exist
      * @throws Exception if something with the network goes wrong or the network timeout expires
      */
     public SmartModel getModelUpdate() throws Exception {
         try {
             String retVal = executorService.submit(() -> server.getModelUpdate()).get(pingLatency,TimeUnit.SECONDS);
+            if (retVal == "") return null;
             return SmartModel.fromString(retVal);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new Exception();
