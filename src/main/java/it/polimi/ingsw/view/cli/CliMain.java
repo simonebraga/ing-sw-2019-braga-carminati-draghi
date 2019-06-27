@@ -2,6 +2,8 @@ package it.polimi.ingsw.view.cli;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.cardclasses.Powerup;
+import it.polimi.ingsw.model.cardclasses.Weapon;
+import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
@@ -14,8 +16,8 @@ import it.polimi.ingsw.view.ViewInterface;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 /**
  * This class contains the command line interface implementation of the client.
@@ -86,6 +88,11 @@ public class CliMain implements ViewInterface {
      */
     private static final int NICK_PRINT_SIZE = 6;
 
+    /**
+     * This final attribute defines how many characters compose a full horizontal grid line.
+     */
+    private static final int TOTAL_GRID_WIDTH = (SQUARES_WIDTH * 4) - 4 + 1;
+
     ////////////////////////////////////////////////////////////// match related constants ///////////////
 
     /**
@@ -152,7 +159,7 @@ public class CliMain implements ViewInterface {
      */
     private GameMap map;
 
-//////////////////////////////////////////////////////////////class  methods ///////////////////////
+////////////////////////////////////////////////////////////// class  methods ////////////////////////////////////////////////
 
     /**
      * This method clears the console's content.
@@ -252,202 +259,301 @@ public class CliMain implements ViewInterface {
         return rmiOrCli;
     }
 
+    /**
+     * This method printf the match to the CLI.
+     */
     private void printModel() {
         printKillShotTrack();
         printMap();
         printBoards();
     }
 
+    /**
+     * This method resize each nickname to be 6 character or shorter.
+     *
+     * @param players an ArrayList of Players whom nickname will be trimmed.
+     * @param trimSize an integer defining the character index to which nicknames will be trimmed.
+     */
     private void trimNickSize(ArrayList<Player> players, int trimSize) {
         for (Player player : players) {
             player.setUsername(player.getUsername().substring(0, trimSize));
         }
     }
 
-    private void printSquare(TileSquare square, boolean isLastColumn, boolean isLastRow) {
-        ArrayList<Player> players = new ArrayList<>(square.getPlayers());
-        ArrayList<Color> ammo = new ArrayList<>(square.getTile().getAmmo());
-        int powerUp = Integer.valueOf(square.getTile().getPowerup());
-        int rowCounter = 0;
-        int columnCounter = 0;
-
-        trimNickSize(players,NICK_PRINT_SIZE);
-
-        //print first line
-        switch (square.getUp()) {
-            case NOTHING:{
-
-                System.out.print("+-");
-                columnCounter = 2;
-                while (columnCounter < SQUARES_WIDTH - 2) {
-                    System.out.print(" ");
-                    columnCounter++;
-                }
-                System.out.print("-");
-                break;
-            }
-            case DOOR:{
-
-                System.out.print("+--|");
-                columnCounter = 4;
-                while (columnCounter < SQUARES_WIDTH - 4) {
-                    System.out.print(" ");
-                    columnCounter++;
-                }
-                System.out.print("|--");
-                break;
-            }
-            case WALL:{
-
-                System.out.println("+");
-                columnCounter++;
-                while (columnCounter< SQUARES_WIDTH - 2) {
-                    System.out.print("-");
-                    columnCounter++;
-                }
-                break;
-            }
+    /**
+     * This method fetches maps from JSON and select the current match map.
+     */
+    private void fetchMaps(){
+        ObjectMapper mapper = new ObjectMapper();
+        InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
+        GameMap[] gameMaps = null;
+        try {
+            gameMaps = mapper.readValue(gameMapsInputStream, GameMap[].class);
+            gameMapsInputStream.close();
+        } catch (IOException e) {
+            System.out.println("Cannot fetch maps from file.");
+            e.printStackTrace();
         }
-        if (isLastColumn)
-            System.out.print("+");
-        rowCounter++;
-
-        //print next lines
-        while (rowCounter < SQUARES_HIGH - 1) {
-
-            //print left side and a blank space after it
-            switch (square.getLeft()) {
-                case WALL:{
-                    System.out.print("| ");
-                    break;
-                }
-                case NOTHING:{
-                    if (rowCounter == 1)
-                        System.out.print("' ");
-                    else if (rowCounter == SQUARES_HIGH - 2)
-                        System.out.print(". ");
-                    else
-                        System.out.print("  ");
-                    break;
-                }
-                case DOOR:{
-                    switch (rowCounter) {
-                        case 1:
-                        case SQUARES_HIGH - 2: {
-                            System.out.print("| ");
-                            break;
-                        }
-                        case 2:{
-                            System.out.print("\u27c2 ");
-                            break;
-                        }
-                        case SQUARES_HIGH - 3:{
-                            System.out.print("T ");
-                            break;
-                        }
-                        default:{
-                            System.out.print("  ");
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            columnCounter = 2;
-
-            if (rowCounter <= 3) {  //space reserved for ammo info
-
-                if (rowCounter <= square.getTile().getAmmo().size() + square.getTile().getPowerup()) {   //there are still tile info to be printed
-
-                    if (powerUp != 0) {    //print powerup remained
-                        System.out.print("1PU   ");
-                        powerUp = 0;
-
-                    } else if (!ammo.isEmpty()) {  //print colors remained
-
-                        switch (ammo.get(0)) {
-                            case RED:{
-                                System.out.print(ANSI_RED + "RED   " + ANSI_RESET);
-                                break;
-                            }
-                            case BLUE:{
-                                System.out.print(ANSI_BLUE + "BLUE  " + ANSI_RESET);
-                                break;
-                            }
-                            case YELLOW:{
-                                System.out.print(ANSI_YELLOW + "YELLOW" + ANSI_RESET);
-                            }
-                        }
-                        ammo.remove(0);
-                    }
-
-                    //fill line with spaces
-                    columnCounter += 6;
-                    while (columnCounter < SQUARES_WIDTH - 1) {
-                        System.out.print(" ");
-                    }
-                }
-            } else {    //space reserved for player names
-                if (rowCounter <= square.getPlayers().size()) {     //there are still players to be printed
-
-                    System.out.print(players.get(0).getUsername());
-                    columnCounter += players.get(0).getUsername().length();
-
-                }
-
-                //fill the rest of line with spaces
-                while (columnCounter < SQUARES_WIDTH - 1) {
-                    System.out.print(" ");
-                    columnCounter++;
-                }
-            }
-
-            if (isLastColumn)
-                System.out.println("|");
-            rowCounter++;
-        }
-
-        if (isLastRow) {
-            columnCounter = 0;
-            while (columnCounter < SQUARES_WIDTH) {
-                System.out.print("-");
-                columnCounter++;
-            }
-            if (isLastColumn)
-                System.out.println("+");
-        }
+        map = gameMaps[model.getMapIndex()];
     }
 
-    private void printSquare(SpawnSquare square, boolean isLast) {
-        //TODO
-    }
-
-    private void printSquare(DominationSpawnSquare square, boolean isLast) {
-        //TODO
-    }
-
+    /**
+     * This method prints the maps grid to the command line.
+     */
     private void printMap() {
 
         if (map == null) {  //fetch maps from file
-            ObjectMapper mapper = new ObjectMapper();
-            InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
-            GameMap[] gameMaps = null;
-            try {
-                gameMaps = mapper.readValue(gameMapsInputStream, GameMap[].class);
-            } catch (IOException e) {
-                System.out.println("Cannot fetch maps from file.");
-                e.printStackTrace();
-            }
-            map = gameMaps[model.getMapIndex()];
+            fetchMaps();
         }
 
-        for (Square[] squareRow : map.getGrid()) {
-            //TODO printRow();
+        for (int i = 0; i < map.getGrid().length; i++) {    //for each row
+            if (Arrays.equals(map.getGrid()[i], map.getGrid()[map.getGrid().length]))     //if the i row on the map is the last row
+                printRow(map.getGrid()[i],true, map.getSpawnSquares());
+            else
+                printRow(map.getGrid()[i], false, map.getSpawnSquares());
         }
     }
 
-    private void printRow(Square[] squares) {
+    /**
+     * This method memorizes the borders of all squares in a row, from left to right.
+     *
+     * @param squares an array of Square to be scanned left to right.
+     * @param leftOrUp a String flag representing which border to memorize (upper border or left border of the square).
+     * @return an ArrayList of Border that contains all squares border (up or left border) from left to right.
+     */
+    private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp) {
 
+        ArrayList<Border> borders = new ArrayList<>();
+
+        if (leftOrUp.equals("up")) {
+            for (Square square : squares) {
+
+                if (square.getUp() != null) {
+                    borders.add(square.getUp());
+
+                } else {    //void square
+                    if (square.getY() != 0)         //square is not part of the first row
+                        borders.add(Border.WALL);
+                    else
+                        borders.add(Border.NOTHING);
+                }
+            }
+        } else if (leftOrUp.equals("left")) {
+            for (Square square : squares) {
+
+                if (square.getUp() != null) {
+                    borders.add(square.getLeft());
+
+                } else {    //void square
+
+                    if (square.getX() != 0)         //not the first square in the row
+                        borders.add(Border.WALL);
+                    else
+                        borders.add(Border.NOTHING);
+                }
+            }
+        }
+        return borders;
+    }
+
+    /**
+     * This method checks what kind of square a row of the map grid finishes with and associates a closing border to the row.
+     *
+     * @param squares an array of Square to be scanned.
+     * @return a Border associated with the closing border of this map grid row.
+     */
+    private Border retrieveLastBorderInfo(Square[] squares) {
+
+        if (squares[squares.length - 1].getUp() == null)        //last square is void
+            return Border.NOTHING;
+        else
+            return Border.WALL;
+    }
+
+    /**
+     * This method collects all players user names inside a map grid row in a list.
+     *
+     * @param squares an array of Square to be scanned.
+     * @return an ArrayList of ArrayList of String that contains all user names by each square.
+     */
+    private ArrayList<ArrayList<String>> getUsernamesInsideRow(Square[] squares){
+
+        ArrayList<ArrayList<String>> playersBySquareInRow = new ArrayList<>();
+        for (Square square : squares) {
+            ArrayList<String> playersInSquare = new ArrayList<>();
+            for (Player player : square.getPlayers()) {
+                playersInSquare.add(player.getUsername());
+            }
+            playersBySquareInRow.add(playersInSquare);
+        }
+        return playersBySquareInRow;
+    }
+
+    /**
+     * This method parse info from a map grid row to strings and collects them into a list.
+     *
+     * @param squares an array of Square to be scanned.
+     * @param spawnSquares an ArrayList of SpawnSquare that represent all squares that are not TileSquare or void squares.
+     * @param squareContentInfo the list in which data will be collected.
+     * @param squareTypes a list of String representing the type of each square by its position in the row.
+     */
+    private void getContentOfEachSquare(Square[] squares, ArrayList<SpawnSquare> spawnSquares, ArrayList<ArrayList<String>> squareContentInfo, ArrayList<String> squareTypes) {
+
+        for (Square square : squares) {
+            if (spawnSquares.contains(square)) {    //square is a spawnSquare
+
+                SpawnSquare spawnSquare = (SpawnSquare) square;
+
+                ArrayList<String> infoArray = new ArrayList<>();
+                infoArray.add(spawnSquare.getColor().name());
+
+                for (Weapon weapon : spawnSquare.getWeapons()) {
+                    infoArray.add(weapon.getName().name());
+                    infoArray.add(weapon.getIsLoaded().toString());
+                }
+
+                squareContentInfo.add(infoArray);
+                squareTypes.add("spawn");
+            } else {
+
+                if (square.getUp() == null) {   //void square
+
+                    ArrayList<String> infoArray = new ArrayList<>();
+                    infoArray.add("null");
+                    squareContentInfo.add(infoArray);
+                    squareTypes.add("void");
+
+                } else {    //tile square
+
+                    TileSquare tileSquare = (TileSquare) square;
+
+                    ArrayList<String> infoArray = new ArrayList<>();
+                    infoArray.add(tileSquare.getTile().getPowerup().toString());
+
+                    for (Color color : tileSquare.getTile().getAmmo()) {
+                        infoArray.add(color.name());
+                    }
+
+                    squareContentInfo.add(infoArray);
+                    squareTypes.add("tile");
+                }
+            }
+        }
+    }
+
+    /**
+     * This method prints the first characters line of a map grid row to the command line.
+     *
+     * @param upperBorders a list of Border containing the upper border of each square by the position of such square in the row.
+     * @param squareTypes a list of String representing the type of each square by its position in the row.
+     * @param squareContentInfo a list in which strings about each square content are stored.
+     */
+    private void printFirstLine(ArrayList<Border> upperBorders, ArrayList<String> squareTypes, ArrayList<ArrayList<String>> squareContentInfo) {
+
+        for (int j = 0; j < upperBorders.size(); j++) {
+
+            if (squareTypes.get(j).equals("spawn")){
+                switch (squareContentInfo.get(j).get(0)){
+                    case "RED":{
+                        System.out.print(ANSI_RED);
+                        break;
+                    }
+                    case "BLUE":{
+                        System.out.print(ANSI_BLUE);
+                        break;
+                    }
+                    case "YELLOW":{
+                        System.out.print(ANSI_YELLOW);
+                        break;
+                    }
+                }
+            }
+
+            switch (upperBorders.get(j)) {
+                case DOOR:{
+                    System.out.print("+--|");
+                    for (int k = 0; k < SQUARES_WIDTH - 8 ; k++) {
+                        System.out.print(" ");
+                    }
+                    System.out.print("|--");
+                    break;
+                }
+                case NOTHING:{
+                    System.out.print("+-");
+                    for (int i = 0; i < SQUARES_WIDTH - 4; i++) {
+                        System.out.print(" ");
+                    }
+                    System.out.print("-");
+                    break;
+                }
+                case WALL:{
+                    System.out.print("+");
+                    for (int k = 0; k < SQUARES_WIDTH - 2; k++) {
+                        System.out.print("-");
+                    }
+                }
+            }
+            System.out.print(ANSI_RESET);
+        }
+        System.out.println("+");
+    }
+
+    /**
+     * This method prints a grid map row to the command line.
+     *
+     * @param squares an array of Square to be formatted and printed.
+     * @param isLastRow a boolean flag that says if the row to be printed is the last row in the map grid.
+     * @param spawnSquares a list of SpawnSquare that contains all squares that are not TileSquare nor void squares.
+     */
+    private void printRow(Square[] squares, boolean isLastRow, ArrayList<SpawnSquare> spawnSquares) {
+
+        ArrayList<Border> upperBorders = retrieveBordersInfo(squares,"up");
+        ArrayList<Border> leftBorders = retrieveBordersInfo(squares,"left");
+        Border rightMostBorder = retrieveLastBorderInfo(squares);
+        ArrayList<ArrayList<String>> nicknamesPlayersInsideSquares = getUsernamesInsideRow(squares);
+        ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
+        ArrayList<String> squareTypes = new ArrayList<>();
+
+        getContentOfEachSquare(squares,spawnSquares,squareContentInfo,squareTypes);
+
+        printFirstLine(upperBorders,squareTypes,squareContentInfo);
+
+        //all square content info lines
+        for (int i = 0; i < 4; i++) {
+
+            printContentLine(squares, spawnSquares);
+
+            //close last column
+            if (rightMostBorder.equals(Border.WALL)) {
+                System.out.println("|");
+            } else {    //rightMostBorder == Border.NOTHING
+                System.out.println(" ");
+            }
+        }
+
+        //all players in square nicknames
+        for (int i = 0; i < 6; i++) {
+
+            printPlayerLine(squares, spawnSquares);
+
+            //close last column
+            if (rightMostBorder.equals(Border.WALL)) {
+                System.out.println("|");
+            } else {    //rightMostBorder == Border.NOTHING
+                System.out.println(" ");
+            }
+        }
+
+        //all remaining lines
+    }
+
+    private void printPlayerLine(Square[] squares, ArrayList<SpawnSquare> spawnSquares) {
+        //TODO
+
+    }
+
+    private void printContentLine(Square[] squares, ArrayList<SpawnSquare> spawnSquares) {
+        //TODO
     }
 
     private void printBoards() {
