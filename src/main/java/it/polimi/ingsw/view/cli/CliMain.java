@@ -713,16 +713,18 @@ public class CliMain implements ViewInterface {
 
     @Override
     public int chooseMap(int[] m) {
-        int choice = -1;
 
-        while (choice < 1 || choice > m.length) {
+        int choice = -1;
+        List<int[]> maps = Arrays.asList(m);
+
+        while (!maps.contains(choice)) {
 
             for (int i = 0; i < m.length; i++) {
                 System.out.println(m[i]);
             }
             System.out.print("\nChoose map by its number: ");
             choice = scannerIn.nextInt();
-            if (choice < 1 || choice > m.length)
+            if (!maps.contains(choice))
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
         return choice - 1;
@@ -743,10 +745,9 @@ public class CliMain implements ViewInterface {
         }
 
         for (int i = 0; i < c.length; i++) {
-            if (c[i].equals(choice)) out = i;
+            if (c[i].equals(choice)) return i;
         }
-
-        return out;
+        return -1;
     }
 
     @Override
