@@ -68,7 +68,7 @@ public class ClientSocketSpeaker implements ServerRemote {
     @Override
     public String getModelUpdate() throws RemoteException {
         customStream.resetBuffer();
-        out.println("getModelUpdate");
+        out.println("getModelUpdate;");
         out.flush();
         return gson.fromJson(customStream.getLine(),String.class);
     }
