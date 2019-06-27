@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 /**
  * This class contains the command line interface implementation of the client.
@@ -79,6 +80,11 @@ public class CliMain implements ViewInterface {
      * This final attribute defines squares high in cli printing.
      */
     private static final int SQUARES_HIGH = 10;
+
+    /**
+     * This final attribute defines the maximum number of character of a player nickname that will be printed.
+     */
+    private static final int NICK_PRINT_SIZE = 6;
 
     ////////////////////////////////////////////////////////////// match related constants ///////////////
 
@@ -183,15 +189,14 @@ public class CliMain implements ViewInterface {
             launch(args);
         }
 
-        nickname = chooseNickName();
+        chooseNickName();
     }
 
     /**
      * This method asks the user which nickname the user wish to use.
      */
-    private String chooseNickName() {
+    private void chooseNickName() {
 
-        String nickname = null;
         int loginOutput;
         boolean success = false;
         do {
@@ -227,7 +232,6 @@ public class CliMain implements ViewInterface {
                     throw new IllegalStateException("Unexpected value: " + loginOutput);
             }
         } while (!success);
-        return nickname;
     }
 
     /**
@@ -254,11 +258,20 @@ public class CliMain implements ViewInterface {
         printBoards();
     }
 
-    private void printSquare(TileSquare square, boolean isLast) {
+    private void trimNickSize(ArrayList<Player> players, int trimSize) {
+        for (Player player : players) {
+            player.setUsername(player.getUsername().substring(0, trimSize));
+        }
+    }
+
+    private void printSquare(TileSquare square, boolean isLastColumn, boolean isLastRow) {
         ArrayList<Player> players = new ArrayList<>(square.getPlayers());
-        ArrayList<Color> ammos = new ArrayList<>(square.getTile().getAmmo());
+        ArrayList<Color> ammo = new ArrayList<>(square.getTile().getAmmo());
+        int powerUp = Integer.valueOf(square.getTile().getPowerup());
         int rowCounter = 0;
         int columnCounter = 0;
+
+        trimNickSize(players,NICK_PRINT_SIZE);
 
         //print first line
         switch (square.getUp()) {
@@ -271,7 +284,6 @@ public class CliMain implements ViewInterface {
                     columnCounter++;
                 }
                 System.out.print("-");
-                columnCounter++;
                 break;
             }
             case DOOR:{
@@ -283,7 +295,6 @@ public class CliMain implements ViewInterface {
                     columnCounter++;
                 }
                 System.out.print("|--");
-                columnCounter++;
                 break;
             }
             case WALL:{
@@ -297,49 +308,113 @@ public class CliMain implements ViewInterface {
                 break;
             }
         }
-        if (isLast)
+        if (isLastColumn)
             System.out.print("+");
         rowCounter++;
 
         //print next lines
-        while (rowCounter < SQUARES_HIGH) {
+        while (rowCounter < SQUARES_HIGH - 1) {
 
-            System.out.print("| ");
+            //print left side and a blank space after it
+            switch (square.getLeft()) {
+                case WALL:{
+                    System.out.print("| ");
+                    break;
+                }
+                case NOTHING:{
+                    if (rowCounter == 1)
+                        System.out.print("' ");
+                    else if (rowCounter == SQUARES_HIGH - 2)
+                        System.out.print(". ");
+                    else
+                        System.out.print("  ");
+                    break;
+                }
+                case DOOR:{
+                    switch (rowCounter) {
+                        case 1:
+                        case SQUARES_HIGH - 2: {
+                            System.out.print("| ");
+                            break;
+                        }
+                        case 2:{
+                            System.out.print("\u27c2 ");
+                            break;
+                        }
+                        case SQUARES_HIGH - 3:{
+                            System.out.print("T ");
+                            break;
+                        }
+                        default:{
+                            System.out.print("  ");
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
             columnCounter = 2;
 
-            //TODO finish and revision
-            if (rowCounter <= 3) {  //space reserved for tile info
-                if (square.getTile().getAmmo().size() + square.getTile().getPowerup() < rowCounter) {   //there are less then 3 entities to be printed
+            if (rowCounter <= 3) {  //space reserved for ammo info
+
+                if (rowCounter <= square.getTile().getAmmo().size() + square.getTile().getPowerup()) {   //there are still tile info to be printed
+
+                    if (powerUp != 0) {    //print powerup remained
+                        System.out.print("1PU   ");
+                        powerUp = 0;
+
+                    } else if (!ammo.isEmpty()) {  //print colors remained
+
+                        switch (ammo.get(0)) {
+                            case RED:{
+                                System.out.print(ANSI_RED + "RED   " + ANSI_RESET);
+                                break;
+                            }
+                            case BLUE:{
+                                System.out.print(ANSI_BLUE + "BLUE  " + ANSI_RESET);
+                                break;
+                            }
+                            case YELLOW:{
+                                System.out.print(ANSI_YELLOW + "YELLOW" + ANSI_RESET);
+                            }
+                        }
+                        ammo.remove(0);
+                    }
+
+                    //fill line with spaces
+                    columnCounter += 6;
                     while (columnCounter < SQUARES_WIDTH - 1) {
                         System.out.print(" ");
-                        columnCounter++;
                     }
-                } else {
-                    switch (ammos.get(0)) {
-                        case RED:{
-                            System.out.print(ANSI_RED + "RED   " + ANSI_RESET);
-                            break;
-                        }
-                        case BLUE:{
-                            System.out.print(ANSI_BLUE + "BLUE  " + ANSI_RESET);
-                            break;
-                        }
-                        case YELLOW:{
-                            System.out.print(ANSI_YELLOW + "YELLOW" + ANSI_RESET);
-                        }
-                    }
-                    ammos.remove(0);
-                    while (columnCounter < SQUARES_WIDTH - 1) {
-                        System.out.print(" ");
-                    }
-                }
-                if (isLast){
-                    System.out.println("|");
                 }
             } else {    //space reserved for player names
+                if (rowCounter <= square.getPlayers().size()) {     //there are still players to be printed
 
+                    System.out.print(players.get(0).getUsername());
+                    columnCounter += players.get(0).getUsername().length();
+
+                }
+
+                //fill the rest of line with spaces
+                while (columnCounter < SQUARES_WIDTH - 1) {
+                    System.out.print(" ");
+                    columnCounter++;
+                }
             }
+
+            if (isLastColumn)
+                System.out.println("|");
             rowCounter++;
+        }
+
+        if (isLastRow) {
+            columnCounter = 0;
+            while (columnCounter < SQUARES_WIDTH) {
+                System.out.print("-");
+                columnCounter++;
+            }
+            if (isLastColumn)
+                System.out.println("+");
         }
     }
 
@@ -353,9 +428,7 @@ public class CliMain implements ViewInterface {
 
     private void printMap() {
 
-        //TODO print grid with current player positions, ammo tiles positions and weapons
-
-        if (map == null) {
+        if (map == null) {  //fetch maps from file
             ObjectMapper mapper = new ObjectMapper();
             InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
             GameMap[] gameMaps = null;
@@ -369,35 +442,12 @@ public class CliMain implements ViewInterface {
         }
 
         for (Square[] squareRow : map.getGrid()) {
-            for (Square square : squareRow) {
-
-                //understand the square type
-                boolean isSpawn = false;
-                for (SpawnSquare spawn : map.getSpawnSquares())
-                    if (spawn.equals(square)) isSpawn = true;
-
-                if (square.equals(squareRow[squareRow.length])) {   //last square in row
-
-                    //print square casting it to the right type
-                    if (isSpawn && model.getDomination())
-                        printSquare((DominationSpawnSquare) square, true);
-                    else if (isSpawn && !model.getDomination())
-                        printSquare((SpawnSquare) square,true);
-                    else
-                        printSquare((TileSquare) square,true);
-
-                } else {    //square is not last in row
-
-                    //print square casting it to the right type
-                    if (isSpawn && model.getDomination())
-                        printSquare((DominationSpawnSquare) square, false);
-                    else if (isSpawn && !model.getDomination())
-                        printSquare((SpawnSquare) square,false);
-                    else
-                        printSquare((TileSquare) square,false);
-                }
-            }
+            //TODO printRow();
         }
+    }
+
+    private void printRow(Square[] squares) {
+
     }
 
     private void printBoards() {
