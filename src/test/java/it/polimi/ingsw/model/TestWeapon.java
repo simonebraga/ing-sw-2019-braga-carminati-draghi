@@ -48,7 +48,7 @@ class TestWeapon {
 
         shotgun.reload(); //method usage
 
-        assertTrue(shotgun.getLoaded());
+        assertTrue(shotgun.getIsLoaded());
         tearDown();
     }
 

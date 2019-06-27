@@ -80,7 +80,7 @@ public class Weapon implements Card{
      *
      * @return a boolean that indicates if the weapon is loaded or not.
      */
-    public Boolean getLoaded() {
+    public Boolean getIsLoaded() {
         return isLoaded;
     }
 

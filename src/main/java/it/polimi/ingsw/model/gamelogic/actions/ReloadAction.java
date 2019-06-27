@@ -21,7 +21,7 @@ public class ReloadAction implements Action{
 
     @Override
     public List<FunctionalEffect> run(Server server, GameTable table, Player player, Targets targets) throws IllegalActionException, UnavailableUserException {
-        ArrayList<Weapon> weapons = (ArrayList<Weapon>) player.getWeaponPocket().getWeapons().stream().filter(weapon -> !weapon.getLoaded()).collect(Collectors.toList());
+        ArrayList<Weapon> weapons = (ArrayList<Weapon>) player.getWeaponPocket().getWeapons().stream().filter(weapon -> !weapon.getIsLoaded()).collect(Collectors.toList());
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         if(!weapons.isEmpty()){
             Boolean choice = server.booleanQuestion(player, "Do you want to reload?");

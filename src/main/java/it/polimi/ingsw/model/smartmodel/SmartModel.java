@@ -75,7 +75,7 @@ public class SmartModel {
             for (Weapon weapon : player.getWeaponPocket().getWeapons()) {
                 SmartWeapon smartWeapon = new SmartWeapon();
                 smartWeapon.setWeaponName(weapon.getName());
-                smartWeapon.setLoaded(weapon.getLoaded());
+                smartWeapon.setLoaded(weapon.getIsLoaded());
                 smartWeapons.add(smartWeapon);
             }
             smartPlayer.setWeapons(smartWeapons);
