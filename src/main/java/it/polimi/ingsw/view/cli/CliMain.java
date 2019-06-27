@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -380,13 +381,13 @@ public class CliMain implements ViewInterface {
      * @param squares an array of Square to be scanned.
      * @return an ArrayList of ArrayList of String that contains all user names by each square.
      */
-    private ArrayList<ArrayList<String>> getUsernamesInsideRow(Square[] squares){
+    private ArrayList<ArrayList<String>> getFiguresInsideRow(Square[] squares){
 
         ArrayList<ArrayList<String>> playersBySquareInRow = new ArrayList<>();
         for (Square square : squares) {
             ArrayList<String> playersInSquare = new ArrayList<>();
             for (Player player : square.getPlayers()) {
-                playersInSquare.add(player.getUsername());
+                playersInSquare.add(player.getFigure().name());
             }
             playersBySquareInRow.add(playersInSquare);
         }
@@ -514,7 +515,7 @@ public class CliMain implements ViewInterface {
         ArrayList<Border> upperBorders = retrieveBordersInfo(squares,"up");
         ArrayList<Border> leftBorders = retrieveBordersInfo(squares,"left");
         Border rightMostBorder = retrieveLastBorderInfo(squares);
-        ArrayList<ArrayList<String>> nicknamesPlayersInsideSquares = getUsernamesInsideRow(squares);
+        ArrayList<ArrayList<String>> nicknamesPlayersInsideSquares = getFiguresInsideRow(squares);
         ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
         ArrayList<String> squareTypes = new ArrayList<>();
 
@@ -591,14 +592,14 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
-        while (choice < 0 || choice > f.length -1) {
+        while (choice < 1 || choice > f.length) {
 
             for (int i = 0; i < f.length; i++) {
-                System.out.println(i + " - " + f[i].name());
+                System.out.println(i + 1 + " - " + f[i].name());
             }
-            System.out.print("\nChoose a figure: ");
+            System.out.print("\nChoose a figure by its number: ");
             choice = scannerIn.nextInt();
-            if (choice < 0 || choice > f.length -1)
+            if (choice < 1 || choice > f.length)
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
         return choice;
@@ -606,37 +607,146 @@ public class CliMain implements ViewInterface {
 
     @Override
     public int chooseWeapon(WeaponName[] w) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 1 || choice > w.length) {
+
+            for (int i = 0; i < w.length; i++) {
+                System.out.println(i + 1 + " - " + w[i].name());
+            }
+            System.out.print("\nChoose a weapon by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > w.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice;
     }
 
     @Override
     public int chooseString(String[] s) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 1 || choice > s.length) {
+
+            for (int i = 0; i < s.length; i++) {
+                System.out.println(i + 1 + " - " + s[i]);
+            }
+            System.out.print("\nChoose effect usage by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > s.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice;
     }
 
     @Override
     public int chooseDirection(Character[] c) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 1 || choice > c.length) {
+
+            for (int i = 0; i < c.length; i++) {
+
+                switch (c[i]) {
+                    case 'N':{
+                        System.out.println(i + 1  + "North");
+                        break;
+                    }
+                    case 'S':{
+                        System.out.println(i + 1 + "South");
+                        break;
+                    }
+                    case 'E':{
+                        System.out.println(i + 1 + "East");
+                        break;
+                    }
+                    case 'W':{
+                        System.out.println(i + 1 + "West");
+                        break;
+                    }
+                }
+            }
+            System.out.print("\nChoose direction by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > c.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int chooseColor(Color[] c) {
-        return 0;
+        int choice = -1;
+
+        while (choice < 1 || choice > c.length) {
+
+            for (int i = 0; i < c.length; i++) {
+                System.out.println(i + 1 + " - " + c[i].name());
+            }
+            System.out.print("\nChoose color by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > c.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int choosePowerup(Powerup[] p) {
-        return 0;
+        int choice = -1;
+
+        while (choice < 1 || choice > p.length) {
+
+            for (int i = 0; i < p.length; i++) {
+                System.out.println(i + 1 + " - " + p[i].getColor().name() + p[i].getName().name());
+            }
+            System.out.print("\nChoose power up by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > p.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int chooseMap(int[] m) {
-        return 0;
+        int choice = -1;
+
+        while (choice < 1 || choice > m.length) {
+
+            for (int i = 0; i < m.length; i++) {
+                System.out.println(m[i]);
+            }
+            System.out.print("\nChoose map by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > m.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int chooseMode(Character[] c) {
-        return 0;
+        int out = -1;
+        char choice = '0';
+
+        while (choice != 'n' && choice != 'd') {
+
+            System.out.println("Normal Mode | Domination Mode");
+            System.out.print("\nChoose game mode (n/d): ");
+            choice = (char) scannerIn.nextInt();
+            if (choice != 'n' && choice != 'd')
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+
+        for (int i = 0; i < c.length; i++) {
+            if (c[i].equals(choice)) out = i;
+        }
+
+        return out;
     }
 
     @Override
@@ -646,7 +756,17 @@ public class CliMain implements ViewInterface {
 
     @Override
     public Boolean booleanQuestion(String s) {
-        return null;
+
+        System.out.println(s);
+        System.out.print("Yes or No: ");
+        String choice = scannerIn.nextLine();
+
+        if (choice.equals("Yes") || choice.equals("YES") || choice.equals("Y") || choice.equals("y") || choice.equals("Yeah"))
+            return true;
+        else if (choice.equals("No") || choice.equals("NO") || choice.equals("N") || choice.equals("n") || choice.equals("Nope"))
+            return false;
+        else
+            return booleanQuestion(s);
     }
 
     @Override
