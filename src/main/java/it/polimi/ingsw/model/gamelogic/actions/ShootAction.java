@@ -30,7 +30,7 @@ public class ShootAction implements Action{
     public List<FunctionalEffect> run(Server server, GameTable table, Player player, Targets targets) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
-        ArrayList<Weapon> weapons = (ArrayList<Weapon>) player.getWeaponPocket().getWeapons().stream().filter(Weapon::getLoaded).collect(Collectors.toList());
+        ArrayList<Weapon> weapons = (ArrayList<Weapon>) player.getWeaponPocket().getWeapons().stream().filter(Weapon::getIsLoaded).collect(Collectors.toList());
         if (weapons.isEmpty()){
             throw new IllegalActionException();
         }
