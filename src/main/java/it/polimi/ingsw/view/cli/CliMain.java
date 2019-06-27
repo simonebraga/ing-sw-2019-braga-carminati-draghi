@@ -164,27 +164,24 @@ public class CliMain implements ViewInterface {
     /**
      * This method clears the console's content.
      */
-    public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+    public static void clearScreen() throws IOException, InterruptedException{
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
 
     //TODO(erase this method after finishing class)
     /**
      * This method is temporarily used to quickly run this class methods.
-     * @param args
      */
     public static void main(String[] args) {
         CliMain temp = new CliMain();
-        temp.launch(args);
+        temp.launch();
     }
 
     /**
      * This method implements the application using CLI.
      */
-    public void launch(String[] args) {
+    public void launch() {
 
-        clearScreen();
         System.out.println("Welcome to Adrenaline!\n");
 
         //create client
@@ -193,7 +190,7 @@ public class CliMain implements ViewInterface {
             System.out.println("Client created");
         } catch (Exception e) {
             System.out.println("Server not responding.\n");
-            launch(args);
+            launch();
         }
 
         chooseNickName();
@@ -255,6 +252,13 @@ public class CliMain implements ViewInterface {
                 rmiOrCli = scannerIn.nextInt();
             }
             scannerIn.nextLine();
+            try {
+                clearScreen();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } while (rmiOrCli != 0 && rmiOrCli != 1);
         return rmiOrCli;
     }
@@ -568,22 +572,36 @@ public class CliMain implements ViewInterface {
 
     @Override
     public void logout() {
-
+        System.out.println(ANSI_RED + "You were forcefully disconnected" + ANSI_RESET);
+        launch();
     }
 
     @Override
     public void sendMessage(String s) {
-
+        System.out.println(s);
     }
 
     @Override
     public void notifyEvent(String s) {
-
+        sendMessage(s);
     }
 
     @Override
     public int choosePlayer(Figure[] f) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 0 || choice > f.length -1) {
+
+            for (int i = 0; i < f.length; i++) {
+                System.out.println(i + " - " + f[i].name());
+            }
+            System.out.print("\nChoose a figure: ");
+            choice = scannerIn.nextInt();
+            if (choice < 0 || choice > f.length -1)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice;
     }
 
     @Override
