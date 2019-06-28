@@ -114,7 +114,7 @@ public class PowerUpAction {
         if(!powerUps.isEmpty()){
             powerUps = server.chooseMultiplePowerup(player, powerUps);
         }
-        if (!powerUps.isEmpty()) {
+        if(!powerUps.isEmpty()) {
             for (Powerup powerUp : powerUps) {
                 effects.add(() ->
                         table.getPowerupDeck().discard(

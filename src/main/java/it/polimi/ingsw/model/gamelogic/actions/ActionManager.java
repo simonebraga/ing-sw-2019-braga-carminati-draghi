@@ -156,9 +156,10 @@ public class ActionManager {
                     }
                 } while (!nextTarget);
             }
-
+            effects.forEach(FunctionalEffect::doAction);
+            effects = new ArrayList<>();
         }
-        effects.forEach(FunctionalEffect::doAction);
+
 
         //Use tagBack Grenade
         effects = new ArrayList<>();
