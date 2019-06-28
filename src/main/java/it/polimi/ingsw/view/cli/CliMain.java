@@ -701,7 +701,7 @@ public class CliMain implements ViewInterface {
         while (choice < 1 || choice > p.length) {
 
             for (int i = 0; i < p.length; i++) {
-                System.out.println(i + 1 + " - " + p[i].getColor().name() + p[i].getName().name());
+                System.out.println(i + 1 + " - " + p[i].getColor().name() + " " + p[i].getName().name());
             }
             System.out.print("\nChoose power up by its number: ");
             choice = scannerIn.nextInt();
