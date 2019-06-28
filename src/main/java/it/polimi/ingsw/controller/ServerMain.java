@@ -118,6 +118,7 @@ public class ServerMain {
         Integer currentPlayerIndex = 0;
         Integer startingPlayerIndex = 0;
 
+        //create a new directory for save files if it doesn't exist yet
         File savesDir = new File(SAVE_FILES_DIRECTORY);
         if (!savesDir.exists()) {
             boolean wasCreated = savesDir.mkdir();
@@ -126,8 +127,8 @@ public class ServerMain {
             }
         }
 
-        //create a new save_list.json file in working directory
-        File savesListFile = new File( SAVE_LIST_PATH);
+        //create a new save_list.json file in working directory if it doesn't exist yet
+        File savesListFile = new File(SAVE_LIST_PATH);
         if (!savesListFile.exists()) {
             try {
                 boolean wasCreated = savesListFile.createNewFile();
@@ -150,6 +151,7 @@ public class ServerMain {
         GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
 
         Integer mapIndex = null;
+        Character gameMode = null;
         try {
 
             if (gameTable == null) {    //create new match
@@ -157,6 +159,7 @@ public class ServerMain {
                 System.out.println("Creating new match...");
 
                 System.out.println("Binding clients to figures...");
+
                 //binds each user to a unique player
                 ArrayList<Player> players = new ArrayList<>();
                 Figure[] allFigures = Figure.values();
@@ -167,9 +170,21 @@ public class ServerMain {
                 }
                 System.out.println("Done");
 
-                //ask game mode and map index to administrator
-                Character gameMode = server.chooseMode(players.get(adminIndex));
-                mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
+                //ask game mode to administrator if he's still connected
+                if (server.isConnected(players.get(adminIndex))) {
+                    gameMode = server.chooseMode(players.get(adminIndex));
+                } else {
+                    server.resetClientMap();
+                    goOn(server,args,0);
+                }
+
+                //ask map index to administrator if he's still connected
+                if (server.isConnected(players.get(adminIndex))) {
+                    mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
+                } else {
+                    server.resetClientMap();
+                    goOn(server,args,0);
+                }
 
                 //initiate a new match
                 System.out.println("Initializing new match...");
