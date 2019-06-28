@@ -205,7 +205,7 @@ public class CliMain implements ViewInterface {
         int loginOutput;
         boolean success = false;
         do {
-            System.out.println("Choose a nickname: ");
+            System.out.print("Choose a nickname: ");
             if (scannerIn.hasNextLine())
                 nickname = scannerIn.nextLine();
             loginOutput = client.login(nickname);
@@ -592,17 +592,18 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > f.length) {
 
             for (int i = 0; i < f.length; i++) {
-                System.out.println(i + 1 + " - " + f[i].name());
+                System.out.println((i + 1) + " - " + f[i].name());
             }
             System.out.print("\nChoose a figure by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > f.length)
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
-        return choice;
+        return choice - 1;
     }
 
     @Override
@@ -610,17 +611,18 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > w.length) {
 
             for (int i = 0; i < w.length; i++) {
-                System.out.println(i + 1 + " - " + w[i].name());
+                System.out.println((i + 1) + " - " + w[i].name());
             }
             System.out.print("\nChoose a weapon by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > w.length)
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
-        return choice;
+        return choice - 1;
     }
 
     @Override
@@ -628,6 +630,7 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > s.length) {
 
             for (int i = 0; i < s.length; i++) {
@@ -638,7 +641,7 @@ public class CliMain implements ViewInterface {
             if (choice < 1 || choice > s.length)
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
-        return choice;
+        return choice - 1;
     }
 
     @Override
@@ -646,6 +649,7 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > c.length) {
 
             for (int i = 0; i < c.length; i++) {
@@ -681,6 +685,7 @@ public class CliMain implements ViewInterface {
     public int chooseColor(Color[] c) {
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > c.length) {
 
             for (int i = 0; i < c.length; i++) {
@@ -725,7 +730,7 @@ public class CliMain implements ViewInterface {
         List<Integer> maps = Arrays.asList(boxedArray);
 
         System.out.println();
-        while (!maps.contains(choice)) {
+        while (!maps.contains(choice - 1)) {
 
             for (int i = 0; i < m.length; i++) {
                 System.out.println(m[i] + 1);
@@ -735,7 +740,7 @@ public class CliMain implements ViewInterface {
             if (scannerIn.hasNextInt())
                 choice = scannerIn.nextInt();
 
-            if (!maps.contains(choice))
+            if (!maps.contains(choice - 1))
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
         return choice - 1;
@@ -744,7 +749,6 @@ public class CliMain implements ViewInterface {
     @Override
     public int chooseMode(Character[] c) {
 
-        int out = -1;
         String fullChoice;
         Character choice = '0';
 
@@ -762,7 +766,7 @@ public class CliMain implements ViewInterface {
             }
         }
         for (int i = 0; i < c.length; i++) {
-            if ((c[i] + 32) == choice) return i;    //because input character are received in upper case
+            if ((c[i]) == choice || (c[i] == choice + 32)) return i;    //check upper and lower case
         }
         return -1;
     }
@@ -789,6 +793,7 @@ public class CliMain implements ViewInterface {
 
     @Override
     public int[] chooseMultiplePowerup(Powerup[] p) {
+
         return new int[0];
     }
 

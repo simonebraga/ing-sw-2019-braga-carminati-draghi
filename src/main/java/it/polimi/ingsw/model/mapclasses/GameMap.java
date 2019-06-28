@@ -55,7 +55,7 @@ public class GameMap {
     private void setValuesGrid(Square[][] grid) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                if (grid[i][j].getUp()==null) {
+                if (grid[i][j].getUp()==null) { //FIXME (if the square is void up attribute cannot be accessed)
                     grid[i][j] = null;
                 }
             }
