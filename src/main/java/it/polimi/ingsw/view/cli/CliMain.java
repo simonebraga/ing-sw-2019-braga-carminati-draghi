@@ -2,6 +2,8 @@ package it.polimi.ingsw.view.cli;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.cardclasses.Powerup;
+import it.polimi.ingsw.model.cardclasses.Weapon;
+import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
@@ -14,6 +16,8 @@ import it.polimi.ingsw.view.ViewInterface;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -79,6 +83,16 @@ public class CliMain implements ViewInterface {
      * This final attribute defines squares high in cli printing.
      */
     private static final int SQUARES_HIGH = 10;
+
+    /**
+     * This final attribute defines the maximum number of character of a player nickname that will be printed.
+     */
+    private static final int NICK_PRINT_SIZE = 6;
+
+    /**
+     * This final attribute defines how many characters compose a full horizontal grid line.
+     */
+    private static final int TOTAL_GRID_WIDTH = (SQUARES_WIDTH * 4) - 4 + 1;
 
     ////////////////////////////////////////////////////////////// match related constants ///////////////
 
@@ -146,32 +160,29 @@ public class CliMain implements ViewInterface {
      */
     private GameMap map;
 
-//////////////////////////////////////////////////////////////class  methods ///////////////////////
+////////////////////////////////////////////////////////////// class  methods ////////////////////////////////////////////////
 
     /**
      * This method clears the console's content.
      */
-    public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+    public static void clearScreen() throws IOException, InterruptedException{
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
 
     //TODO(erase this method after finishing class)
     /**
      * This method is temporarily used to quickly run this class methods.
-     * @param args
      */
     public static void main(String[] args) {
         CliMain temp = new CliMain();
-        temp.launch(args);
+        temp.launch();
     }
 
     /**
      * This method implements the application using CLI.
      */
-    public void launch(String[] args) {
+    public void launch() {
 
-        clearScreen();
         System.out.println("Welcome to Adrenaline!\n");
 
         //create client
@@ -180,18 +191,17 @@ public class CliMain implements ViewInterface {
             System.out.println("Client created");
         } catch (Exception e) {
             System.out.println("Server not responding.\n");
-            launch(args);
+            launch();
         }
 
-        nickname = chooseNickName();
+        chooseNickName();
     }
 
     /**
      * This method asks the user which nickname the user wish to use.
      */
-    private String chooseNickName() {
+    private void chooseNickName() {
 
-        String nickname = null;
         int loginOutput;
         boolean success = false;
         do {
@@ -227,7 +237,6 @@ public class CliMain implements ViewInterface {
                     throw new IllegalStateException("Unexpected value: " + loginOutput);
             }
         } while (!success);
-        return nickname;
     }
 
     /**
@@ -244,160 +253,312 @@ public class CliMain implements ViewInterface {
                 rmiOrCli = scannerIn.nextInt();
             }
             scannerIn.nextLine();
+            try {
+                clearScreen();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } while (rmiOrCli != 0 && rmiOrCli != 1);
         return rmiOrCli;
     }
 
+    /**
+     * This method printf the match to the CLI.
+     */
     private void printModel() {
         printKillShotTrack();
         printMap();
         printBoards();
     }
 
-    private void printSquare(TileSquare square, boolean isLast) {
-        ArrayList<Player> players = new ArrayList<>(square.getPlayers());
-        ArrayList<Color> ammos = new ArrayList<>(square.getTile().getAmmo());
-        int rowCounter = 0;
-        int columnCounter = 0;
-
-        //print first line
-        switch (square.getUp()) {
-            case NOTHING:{
-
-                System.out.print("+-");
-                columnCounter = 2;
-                while (columnCounter < SQUARES_WIDTH - 2) {
-                    System.out.print(" ");
-                    columnCounter++;
-                }
-                System.out.print("-");
-                columnCounter++;
-                break;
-            }
-            case DOOR:{
-
-                System.out.print("+--|");
-                columnCounter = 4;
-                while (columnCounter < SQUARES_WIDTH - 4) {
-                    System.out.print(" ");
-                    columnCounter++;
-                }
-                System.out.print("|--");
-                columnCounter++;
-                break;
-            }
-            case WALL:{
-
-                System.out.println("+");
-                columnCounter++;
-                while (columnCounter< SQUARES_WIDTH - 2) {
-                    System.out.print("-");
-                    columnCounter++;
-                }
-                break;
-            }
-        }
-        if (isLast)
-            System.out.print("+");
-        rowCounter++;
-
-        //print next lines
-        while (rowCounter < SQUARES_HIGH) {
-
-            System.out.print("| ");
-            columnCounter = 2;
-
-            //TODO finish and revision
-            if (rowCounter <= 3) {  //space reserved for tile info
-                if (square.getTile().getAmmo().size() + square.getTile().getPowerup() < rowCounter) {   //there are less then 3 entities to be printed
-                    while (columnCounter < SQUARES_WIDTH - 1) {
-                        System.out.print(" ");
-                        columnCounter++;
-                    }
-                } else {
-                    switch (ammos.get(0)) {
-                        case RED:{
-                            System.out.print(ANSI_RED + "RED   " + ANSI_RESET);
-                            break;
-                        }
-                        case BLUE:{
-                            System.out.print(ANSI_BLUE + "BLUE  " + ANSI_RESET);
-                            break;
-                        }
-                        case YELLOW:{
-                            System.out.print(ANSI_YELLOW + "YELLOW" + ANSI_RESET);
-                        }
-                    }
-                    ammos.remove(0);
-                    while (columnCounter < SQUARES_WIDTH - 1) {
-                        System.out.print(" ");
-                    }
-                }
-                if (isLast){
-                    System.out.println("|");
-                }
-            } else {    //space reserved for player names
-
-            }
-            rowCounter++;
+    /**
+     * This method resize each nickname to be 6 character or shorter.
+     *
+     * @param players an ArrayList of Players whom nickname will be trimmed.
+     * @param trimSize an integer defining the character index to which nicknames will be trimmed.
+     */
+    private void trimNickSize(ArrayList<Player> players, int trimSize) {
+        for (Player player : players) {
+            player.setUsername(player.getUsername().substring(0, trimSize));
         }
     }
 
-    private void printSquare(SpawnSquare square, boolean isLast) {
-        //TODO
+    /**
+     * This method fetches maps from JSON and select the current match map.
+     */
+    private void fetchMaps(){
+        ObjectMapper mapper = new ObjectMapper();
+        InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
+        GameMap[] gameMaps = null;
+        try {
+            gameMaps = mapper.readValue(gameMapsInputStream, GameMap[].class);
+            gameMapsInputStream.close();
+        } catch (IOException e) {
+            System.out.println("Cannot fetch maps from file.");
+            e.printStackTrace();
+        }
+        map = gameMaps[model.getMapIndex()];
     }
 
-    private void printSquare(DominationSpawnSquare square, boolean isLast) {
-        //TODO
-    }
-
+    /**
+     * This method prints the maps grid to the command line.
+     */
     private void printMap() {
 
-        //TODO print grid with current player positions, ammo tiles positions and weapons
-
-        if (map == null) {
-            ObjectMapper mapper = new ObjectMapper();
-            InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
-            GameMap[] gameMaps = null;
-            try {
-                gameMaps = mapper.readValue(gameMapsInputStream, GameMap[].class);
-            } catch (IOException e) {
-                System.out.println("Cannot fetch maps from file.");
-                e.printStackTrace();
-            }
-            map = gameMaps[model.getMapIndex()];
+        if (map == null) {  //fetch maps from file
+            fetchMaps();
         }
 
-        for (Square[] squareRow : map.getGrid()) {
-            for (Square square : squareRow) {
+        for (int i = 0; i < map.getGrid().length; i++) {    //for each row
+            if (Arrays.equals(map.getGrid()[i], map.getGrid()[map.getGrid().length]))     //if the i row on the map is the last row
+                printRow(map.getGrid()[i],true, map.getSpawnSquares());
+            else
+                printRow(map.getGrid()[i], false, map.getSpawnSquares());
+        }
+    }
 
-                //understand the square type
-                boolean isSpawn = false;
-                for (SpawnSquare spawn : map.getSpawnSquares())
-                    if (spawn.equals(square)) isSpawn = true;
+    /**
+     * This method memorizes the borders of all squares in a row, from left to right.
+     *
+     * @param squares an array of Square to be scanned left to right.
+     * @param leftOrUp a String flag representing which border to memorize (upper border or left border of the square).
+     * @return an ArrayList of Border that contains all squares border (up or left border) from left to right.
+     */
+    private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp) {
 
-                if (square.equals(squareRow[squareRow.length])) {   //last square in row
+        ArrayList<Border> borders = new ArrayList<>();
 
-                    //print square casting it to the right type
-                    if (isSpawn && model.getDomination())
-                        printSquare((DominationSpawnSquare) square, true);
-                    else if (isSpawn && !model.getDomination())
-                        printSquare((SpawnSquare) square,true);
+        if (leftOrUp.equals("up")) {
+            for (Square square : squares) {
+
+                if (square.getUp() != null) {
+                    borders.add(square.getUp());
+
+                } else {    //void square
+                    if (square.getY() != 0)         //square is not part of the first row
+                        borders.add(Border.WALL);
                     else
-                        printSquare((TileSquare) square,true);
+                        borders.add(Border.NOTHING);
+                }
+            }
+        } else if (leftOrUp.equals("left")) {
+            for (Square square : squares) {
 
-                } else {    //square is not last in row
+                if (square.getUp() != null) {
+                    borders.add(square.getLeft());
 
-                    //print square casting it to the right type
-                    if (isSpawn && model.getDomination())
-                        printSquare((DominationSpawnSquare) square, false);
-                    else if (isSpawn && !model.getDomination())
-                        printSquare((SpawnSquare) square,false);
+                } else {    //void square
+
+                    if (square.getX() != 0)         //not the first square in the row
+                        borders.add(Border.WALL);
                     else
-                        printSquare((TileSquare) square,false);
+                        borders.add(Border.NOTHING);
                 }
             }
         }
+        return borders;
+    }
+
+    /**
+     * This method checks what kind of square a row of the map grid finishes with and associates a closing border to the row.
+     *
+     * @param squares an array of Square to be scanned.
+     * @return a Border associated with the closing border of this map grid row.
+     */
+    private Border retrieveLastBorderInfo(Square[] squares) {
+
+        if (squares[squares.length - 1].getUp() == null)        //last square is void
+            return Border.NOTHING;
+        else
+            return Border.WALL;
+    }
+
+    /**
+     * This method collects all players user names inside a map grid row in a list.
+     *
+     * @param squares an array of Square to be scanned.
+     * @return an ArrayList of ArrayList of String that contains all user names by each square.
+     */
+    private ArrayList<ArrayList<String>> getFiguresInsideRow(Square[] squares){
+
+        ArrayList<ArrayList<String>> playersBySquareInRow = new ArrayList<>();
+        for (Square square : squares) {
+            ArrayList<String> playersInSquare = new ArrayList<>();
+            for (Player player : square.getPlayers()) {
+                playersInSquare.add(player.getFigure().name());
+            }
+            playersBySquareInRow.add(playersInSquare);
+        }
+        return playersBySquareInRow;
+    }
+
+    /**
+     * This method parse info from a map grid row to strings and collects them into a list.
+     *
+     * @param squares an array of Square to be scanned.
+     * @param spawnSquares an ArrayList of SpawnSquare that represent all squares that are not TileSquare or void squares.
+     * @param squareContentInfo the list in which data will be collected.
+     * @param squareTypes a list of String representing the type of each square by its position in the row.
+     */
+    private void getContentOfEachSquare(Square[] squares, ArrayList<SpawnSquare> spawnSquares, ArrayList<ArrayList<String>> squareContentInfo, ArrayList<String> squareTypes) {
+
+        for (Square square : squares) {
+            if (spawnSquares.contains(square)) {    //square is a spawnSquare
+
+                SpawnSquare spawnSquare = (SpawnSquare) square;
+
+                ArrayList<String> infoArray = new ArrayList<>();
+                infoArray.add(spawnSquare.getColor().name());
+
+                for (Weapon weapon : spawnSquare.getWeapons()) {
+                    infoArray.add(weapon.getName().name());
+                    infoArray.add(weapon.getIsLoaded().toString());
+                }
+
+                squareContentInfo.add(infoArray);
+                squareTypes.add("spawn");
+            } else {
+
+                if (square.getUp() == null) {   //void square
+
+                    ArrayList<String> infoArray = new ArrayList<>();
+                    infoArray.add("null");
+                    squareContentInfo.add(infoArray);
+                    squareTypes.add("void");
+
+                } else {    //tile square
+
+                    TileSquare tileSquare = (TileSquare) square;
+
+                    ArrayList<String> infoArray = new ArrayList<>();
+                    infoArray.add(tileSquare.getTile().getPowerup().toString());
+
+                    for (Color color : tileSquare.getTile().getAmmo()) {
+                        infoArray.add(color.name());
+                    }
+
+                    squareContentInfo.add(infoArray);
+                    squareTypes.add("tile");
+                }
+            }
+        }
+    }
+
+    /**
+     * This method prints the first characters line of a map grid row to the command line.
+     *
+     * @param upperBorders a list of Border containing the upper border of each square by the position of such square in the row.
+     * @param squareTypes a list of String representing the type of each square by its position in the row.
+     * @param squareContentInfo a list in which strings about each square content are stored.
+     */
+    private void printFirstLine(ArrayList<Border> upperBorders, ArrayList<String> squareTypes, ArrayList<ArrayList<String>> squareContentInfo) {
+
+        for (int j = 0; j < upperBorders.size(); j++) {
+
+            if (squareTypes.get(j).equals("spawn")){
+                switch (squareContentInfo.get(j).get(0)){
+                    case "RED":{
+                        System.out.print(ANSI_RED);
+                        break;
+                    }
+                    case "BLUE":{
+                        System.out.print(ANSI_BLUE);
+                        break;
+                    }
+                    case "YELLOW":{
+                        System.out.print(ANSI_YELLOW);
+                        break;
+                    }
+                }
+            }
+
+            switch (upperBorders.get(j)) {
+                case DOOR:{
+                    System.out.print("+--|");
+                    for (int k = 0; k < SQUARES_WIDTH - 8 ; k++) {
+                        System.out.print(" ");
+                    }
+                    System.out.print("|--");
+                    break;
+                }
+                case NOTHING:{
+                    System.out.print("+-");
+                    for (int i = 0; i < SQUARES_WIDTH - 4; i++) {
+                        System.out.print(" ");
+                    }
+                    System.out.print("-");
+                    break;
+                }
+                case WALL:{
+                    System.out.print("+");
+                    for (int k = 0; k < SQUARES_WIDTH - 2; k++) {
+                        System.out.print("-");
+                    }
+                }
+            }
+            System.out.print(ANSI_RESET);
+        }
+        System.out.println("+");
+    }
+
+    /**
+     * This method prints a grid map row to the command line.
+     *
+     * @param squares an array of Square to be formatted and printed.
+     * @param isLastRow a boolean flag that says if the row to be printed is the last row in the map grid.
+     * @param spawnSquares a list of SpawnSquare that contains all squares that are not TileSquare nor void squares.
+     */
+    private void printRow(Square[] squares, boolean isLastRow, ArrayList<SpawnSquare> spawnSquares) {
+
+        ArrayList<Border> upperBorders = retrieveBordersInfo(squares,"up");
+        ArrayList<Border> leftBorders = retrieveBordersInfo(squares,"left");
+        Border rightMostBorder = retrieveLastBorderInfo(squares);
+        ArrayList<ArrayList<String>> nicknamesPlayersInsideSquares = getFiguresInsideRow(squares);
+        ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
+        ArrayList<String> squareTypes = new ArrayList<>();
+
+        getContentOfEachSquare(squares,spawnSquares,squareContentInfo,squareTypes);
+
+        printFirstLine(upperBorders,squareTypes,squareContentInfo);
+
+        //all square content info lines
+        for (int i = 0; i < 4; i++) {
+
+            printContentLine(squares, spawnSquares);
+
+            //close last column
+            if (rightMostBorder.equals(Border.WALL)) {
+                System.out.println("|");
+            } else {    //rightMostBorder == Border.NOTHING
+                System.out.println(" ");
+            }
+        }
+
+        //all players in square nicknames
+        for (int i = 0; i < 6; i++) {
+
+            printPlayerLine(squares, spawnSquares);
+
+            //close last column
+            if (rightMostBorder.equals(Border.WALL)) {
+                System.out.println("|");
+            } else {    //rightMostBorder == Border.NOTHING
+                System.out.println(" ");
+            }
+        }
+
+        //all remaining lines
+    }
+
+    private void printPlayerLine(Square[] squares, ArrayList<SpawnSquare> spawnSquares) {
+        //TODO
+
+    }
+
+    private void printContentLine(Square[] squares, ArrayList<SpawnSquare> spawnSquares) {
+        //TODO
     }
 
     private void printBoards() {
@@ -412,57 +573,181 @@ public class CliMain implements ViewInterface {
 
     @Override
     public void logout() {
-
+        System.out.println(ANSI_RED + "You were forcefully disconnected" + ANSI_RESET);
+        launch();
     }
 
     @Override
     public void sendMessage(String s) {
-
+        System.out.println(s);
     }
 
     @Override
     public void notifyEvent(String s) {
-
+        sendMessage(s);
     }
 
     @Override
     public int choosePlayer(Figure[] f) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 1 || choice > f.length) {
+
+            for (int i = 0; i < f.length; i++) {
+                System.out.println(i + 1 + " - " + f[i].name());
+            }
+            System.out.print("\nChoose a figure by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > f.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice;
     }
 
     @Override
     public int chooseWeapon(WeaponName[] w) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 1 || choice > w.length) {
+
+            for (int i = 0; i < w.length; i++) {
+                System.out.println(i + 1 + " - " + w[i].name());
+            }
+            System.out.print("\nChoose a weapon by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > w.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice;
     }
 
     @Override
     public int chooseString(String[] s) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 1 || choice > s.length) {
+
+            for (int i = 0; i < s.length; i++) {
+                System.out.println(i + 1 + " - " + s[i]);
+            }
+            System.out.print("\nChoose effect usage by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > s.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice;
     }
 
     @Override
     public int chooseDirection(Character[] c) {
-        return 0;
+
+        int choice = -1;
+
+        while (choice < 1 || choice > c.length) {
+
+            for (int i = 0; i < c.length; i++) {
+
+                switch (c[i]) {
+                    case 'N':{
+                        System.out.println(i + 1  + "North");
+                        break;
+                    }
+                    case 'S':{
+                        System.out.println(i + 1 + "South");
+                        break;
+                    }
+                    case 'E':{
+                        System.out.println(i + 1 + "East");
+                        break;
+                    }
+                    case 'W':{
+                        System.out.println(i + 1 + "West");
+                        break;
+                    }
+                }
+            }
+            System.out.print("\nChoose direction by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > c.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int chooseColor(Color[] c) {
-        return 0;
+        int choice = -1;
+
+        while (choice < 1 || choice > c.length) {
+
+            for (int i = 0; i < c.length; i++) {
+                System.out.println(i + 1 + " - " + c[i].name());
+            }
+            System.out.print("\nChoose color by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > c.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int choosePowerup(Powerup[] p) {
-        return 0;
+        int choice = -1;
+
+        while (choice < 1 || choice > p.length) {
+
+            for (int i = 0; i < p.length; i++) {
+                System.out.println(i + 1 + " - " + p[i].getColor().name() + p[i].getName().name());
+            }
+            System.out.print("\nChoose power up by its number: ");
+            choice = scannerIn.nextInt();
+            if (choice < 1 || choice > p.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int chooseMap(int[] m) {
-        return 0;
+
+        int choice = -1;
+        List<int[]> maps = Arrays.asList(m);
+
+        while (!maps.contains(choice)) {
+
+            for (int i = 0; i < m.length; i++) {
+                System.out.println(m[i]);
+            }
+            System.out.print("\nChoose map by its number: ");
+            choice = scannerIn.nextInt();
+            if (!maps.contains(choice))
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+        return choice - 1;
     }
 
     @Override
     public int chooseMode(Character[] c) {
-        return 0;
+        int out = -1;
+        char choice = '0';
+
+        while (choice != 'n' && choice != 'd') {
+
+            System.out.println("Normal Mode | Domination Mode");
+            System.out.print("\nChoose game mode (n/d): ");
+            choice = (char) scannerIn.nextInt();
+            if (choice != 'n' && choice != 'd')
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+
+        for (int i = 0; i < c.length; i++) {
+            if (c[i].equals(choice)) return i;
+        }
+        return -1;
     }
 
     @Override
@@ -472,7 +757,17 @@ public class CliMain implements ViewInterface {
 
     @Override
     public Boolean booleanQuestion(String s) {
-        return null;
+
+        System.out.println(s);
+        System.out.print("Yes or No: ");
+        String choice = scannerIn.nextLine();
+
+        if (choice.equals("Yes") || choice.equals("YES") || choice.equals("Y") || choice.equals("y") || choice.equals("Yeah"))
+            return true;
+        else if (choice.equals("No") || choice.equals("NO") || choice.equals("N") || choice.equals("n") || choice.equals("Nope"))
+            return false;
+        else
+            return booleanQuestion(s);
     }
 
     @Override
