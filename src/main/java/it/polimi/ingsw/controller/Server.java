@@ -276,9 +276,9 @@ public class Server implements ServerRemote {
             if (nicknameList.contains(s)) {
 
                 if (!clientMap.containsKey(s)) {
+                    notifyEvent(s + " connected");
                     clientMap.put(s, c);
                     System.out.println(clientMap.toString());
-                    notifyEvent(s + " connected");
                     return 2; // Successful login
                 } else {
                     return 3; // Already logged in
