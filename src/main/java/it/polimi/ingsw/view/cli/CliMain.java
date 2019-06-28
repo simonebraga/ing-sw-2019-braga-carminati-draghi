@@ -715,15 +715,26 @@ public class CliMain implements ViewInterface {
     public int chooseMap(int[] m) {
 
         int choice = -1;
-        List<int[]> maps = Arrays.asList(m);
 
+        //boxing from primitive int[] to Integer[]
+        Integer[] boxedArray = new Integer[m.length];
+        for (int i = 0; i < m.length; i++) {
+            boxedArray[i] = m[i];
+        }
+
+        List<Integer> maps = Arrays.asList(boxedArray);
+
+        System.out.println();
         while (!maps.contains(choice)) {
 
             for (int i = 0; i < m.length; i++) {
-                System.out.println(m[i]);
+                System.out.println(m[i] + 1);
             }
             System.out.print("\nChoose map by its number: ");
-            choice = scannerIn.nextInt();
+
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+
             if (!maps.contains(choice))
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
@@ -732,20 +743,26 @@ public class CliMain implements ViewInterface {
 
     @Override
     public int chooseMode(Character[] c) {
+
         int out = -1;
-        char choice = '0';
+        String fullChoice;
+        Character choice = '0';
 
-        while (choice != 'n' && choice != 'd') {
+        while (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D') {
 
-            System.out.println("Normal Mode | Domination Mode");
+            System.out.println("\nNormal Mode | Domination Mode");
             System.out.print("\nChoose game mode (n/d): ");
-            choice = (char) scannerIn.nextInt();
-            if (choice != 'n' && choice != 'd')
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
-        }
 
+            fullChoice = scannerIn.nextLine();  //allow user to type in also the full case name
+            choice = fullChoice.toCharArray()[0];
+
+            if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D') {
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                scannerIn.nextLine();
+            }
+        }
         for (int i = 0; i < c.length; i++) {
-            if (c[i].equals(choice)) return i;
+            if ((c[i] + 32) == choice) return i;    //because input character are received in upper case
         }
         return -1;
     }
