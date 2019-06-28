@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Creates and sets the effect that makes the player pay.
@@ -57,6 +58,7 @@ public class PayCreator implements EffectsCreator{
         ArrayList<FunctionalEffect> effects =new ArrayList<>();
 
         powerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
+        powerUps = powerUps.stream().filter(powerUp -> price.contains(powerUp.getColor())).collect(Collectors.toCollection(ArrayList::new)); //Remove powerUps that cannot be used to pay
         if(!powerUps.isEmpty()){
             powerUps = server.chooseMultiplePowerup(player, powerUps);
 

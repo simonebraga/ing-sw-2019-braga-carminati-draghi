@@ -17,6 +17,9 @@ import java.util.ArrayList;
  * Creates and sets the effect that shoots a vortex.
  */
 public class ShootVortexCreator implements EffectsCreator{
+    private static final Integer DAMAGES_BASIC = 2;
+    private static final Integer DAMAGES_BLACK_HOLE = 1;
+
     /**
      * The player who does the damage.
      */
@@ -71,25 +74,26 @@ public class ShootVortexCreator implements EffectsCreator{
 
         squares = new ArrayList<>(table.getGameMap().getRange(vortex, 1));
         squares.forEach(square -> playersAvailable.addAll(square.getPlayers()));
+        playersAvailable.remove(player);
 
         if(playersAvailable.isEmpty() && !canShootVortex){
             throw new IllegalActionException();
         }
 
-        canShootVortex = shootSomething(server, canShootVortex, playersAvailable, vortex, targets, 2, effects);
+        canShootVortex = shootSomething(server, canShootVortex, playersAvailable, vortex, targets, DAMAGES_BASIC, effects);
 
         if (multipleTargets){
             if(playersAvailable.isEmpty() && !canShootVortex){
                 throw new IllegalActionException();
             }
-            canShootVortex = shootSomething(server, canShootVortex, playersAvailable, vortex, targets, 1, effects);
+            canShootVortex = shootSomething(server, canShootVortex, playersAvailable, vortex, targets, DAMAGES_BLACK_HOLE, effects);
 
             if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
                 return effects;
             }
 
             if(!playersAvailable.isEmpty() || canShootVortex){
-                shootSomething(server, canShootVortex, playersAvailable, vortex, targets, 1, effects);
+                shootSomething(server, canShootVortex, playersAvailable, vortex, targets, DAMAGES_BLACK_HOLE, effects);
             }
         }
         return effects;

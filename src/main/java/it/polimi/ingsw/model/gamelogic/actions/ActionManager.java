@@ -154,13 +154,14 @@ public class ActionManager {
                     } catch (UnavailableUserException e) {
                         nextTarget = true;
                     }
-                } while (nextTarget);
+                } while (!nextTarget);
             }
 
         }
         effects.forEach(FunctionalEffect::doAction);
 
         //Use tagBack Grenade
+        effects = new ArrayList<>();
         for (Player target : targets.getPlayersDamaged()) {
             if (target.getDamageTrack().getDamage().size() < 11 && server.isConnected(target)) { //Makes sure that the player is alive and connected
                 try {

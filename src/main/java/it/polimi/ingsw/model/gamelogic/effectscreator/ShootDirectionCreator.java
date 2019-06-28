@@ -18,6 +18,12 @@ import java.util.stream.Collectors;
  * Creates and sets the effects that shoots in a single direction.
  */
 public class ShootDirectionCreator implements EffectsCreator{
+
+    private static final Integer RAILGUN_BASIC_DAMAGES = 3;
+    private static final Integer RAILGUN_PIERCING_DAMAGES = 2;
+    private static final Integer FLAME_THROWER_BARBECUE_FIRST_SQUARE_DAMAGES = 2;
+    private static final Integer FLAME_THROWER_BARBECUE_SECOND_SQUARE_DAMAGES = 1;
+
     /**
      * The player that shoots.
      */
@@ -101,21 +107,21 @@ public class ShootDirectionCreator implements EffectsCreator{
                 case 'N':
                     squaresTarget = map.stream().filter(square ->
                             table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
-                                    table.getGameMap().getCoord(square).get(1) > table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
+                                    table.getGameMap().getCoord(square).get(1) >= table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
                     break;
                 case 'S':
                     squaresTarget = map.stream().filter(square ->
                             table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
-                                    table.getGameMap().getCoord(square).get(1) < table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
+                                    table.getGameMap().getCoord(square).get(1) <= table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
                     break;
                 case 'W':
                     squaresTarget = map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0) < table.getGameMap().getCoord(player.getPosition()).get(0) &&
+                            table.getGameMap().getCoord(square).get(0) <= table.getGameMap().getCoord(player.getPosition()).get(0) &&
                                     table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
                     break;
                 default:
                     squaresTarget = map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0) > table.getGameMap().getCoord(player.getPosition()).get(0) &&
+                            table.getGameMap().getCoord(square).get(0) >= table.getGameMap().getCoord(player.getPosition()).get(0) &&
                                     table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
                     break;
             }
@@ -140,9 +146,9 @@ public class ShootDirectionCreator implements EffectsCreator{
 
                 Player target1 = server.choosePlayer(player, playersTarget);
                 if(twoTargets){
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 2, 0));
+                    effects.add(new FunctionalFactory().createDamagePlayer(player, target1, RAILGUN_PIERCING_DAMAGES, 0));
                 }else{
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 3, 0));
+                    effects.add(new FunctionalFactory().createDamagePlayer(player, target1, RAILGUN_BASIC_DAMAGES, 0));
                 }
                 targets.getPlayersTargeted().add(target1);
                 targets.getPlayersDamaged().add(target1);
@@ -168,31 +174,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                     throw new IllegalActionException();
                 }
 
-                playerOrSquare = true;
-                if(table.getIsDomination()){
-                    playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
-                }
-
-                if(playerOrSquare) {
-                    if(playersTarget.isEmpty()){
-                        throw new IllegalActionException();
-                    }
-                    Player target2 = server.choosePlayer(player, playersTarget);
-                    effects.add(new FunctionalFactory().createDamagePlayer(player, target2, 2, 0));
-                    targets.getPlayersTargeted().add(target2);
-                    targets.getPlayersDamaged().add(target2);
-
-                    playersTarget.remove(target2);
-                }else{
-                    if(squaresTarget.isEmpty()){
-                        throw new IllegalActionException();
-                    }
-
-                    DominationSpawnSquare target2 = (DominationSpawnSquare) server.chooseSquare(player, squaresTarget);
-                    effects.add(new FunctionalFactory().createDamageSpawn(player, target2));
-                    targets.getSquaresDamaged().add(target2);
-                    squaresTarget.remove(target2);
-                }
+                effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
             }
         }else{ //FlameThrower
             boolean noTargets = false;
@@ -211,7 +193,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                     effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
                 }else{
                     playersTarget.forEach(playerTarget -> {
-                        effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, 2, 0));
+                        effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, FLAME_THROWER_BARBECUE_FIRST_SQUARE_DAMAGES, 0));
                         if(!targets.getPlayersTargeted().contains(playerTarget)){
                             targets.getPlayersTargeted().add(playerTarget);
                         }
@@ -249,7 +231,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                     effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
                 }else{
                     playersTarget.forEach(playerTarget -> {
-                        effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, 1, 0));
+                        effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, FLAME_THROWER_BARBECUE_SECOND_SQUARE_DAMAGES, 0));
                         if(!targets.getPlayersTargeted().contains(playerTarget)){
                             targets.getPlayersTargeted().add(playerTarget);
                         }

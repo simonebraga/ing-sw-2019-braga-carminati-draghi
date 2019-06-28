@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
  * weapon.
  */
 public class ShootChainCreator implements EffectsCreator{
+    private static final Integer DAMAGES_FIRST_PLAYER = 2;
+    private static final Integer DAMAGES_SECOND_PLAYER = 1;
+    private static final Integer DAMAGES_THIRD_PLAYER = 2;
 
     /**
      * The player that shoots.
@@ -63,7 +66,7 @@ public class ShootChainCreator implements EffectsCreator{
         ShootCreator shootCreator2;
 
 
-        shootCreator = new ShootCreator(player, player, true, 2, 0, false);
+        shootCreator = new ShootCreator(player, player, true, DAMAGES_FIRST_PLAYER, 0, false);
         effects = new ArrayList<> (shootCreator.run(server, table, targets));
 
         if(numberOfReflections == 1) {
@@ -72,7 +75,7 @@ public class ShootChainCreator implements EffectsCreator{
                 playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
             }
             if(playerOrSquare) {
-                shootCreator1 = new ShootCreator(shootCreator.getTarget(), player, true, 1, 0, false);
+                shootCreator1 = new ShootCreator(shootCreator.getTarget(), player, true, DAMAGES_SECOND_PLAYER, 0, false);
                 effects.addAll(shootCreator1.run(server, table, targets));
                 if(shootCreator1.getTarget() != player) {
                     return effects;
@@ -91,34 +94,34 @@ public class ShootChainCreator implements EffectsCreator{
                 targets.getSquaresDamaged().add((DominationSpawnSquare) squareTarget);
                 return effects;
             }
-        }else{
-            shootCreator1 = new ShootCreator(shootCreator.getTarget(), player, true, 1, 0, false);
+        }else {
+            shootCreator1 = new ShootCreator(shootCreator.getTarget(), player, true, DAMAGES_SECOND_PLAYER, 0, false);
             effects.addAll(shootCreator1.run(server, table, targets));
-        }
 
-        Boolean playerOrSquare = true;
-        if(table.getIsDomination()){
-            playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
-        }
-        if(playerOrSquare) {
-            shootCreator2 = new ShootCreator(shootCreator1.getTarget(), player, true, 2, 0, false);
-            effects.addAll(shootCreator2.run(server, table, targets));
-            if (shootCreator2.getTarget() != player && shootCreator.getTarget() != shootCreator2.getTarget()) {
-                return effects;
+            Boolean playerOrSquare = true;
+            if (table.getIsDomination()) {
+                playerOrSquare = server.booleanQuestion(player, new MessageRetriever().retrieveMessage("playerOrSquare"));
+            }
+            if (playerOrSquare) {
+                shootCreator2 = new ShootCreator(shootCreator1.getTarget(), player, true, DAMAGES_THIRD_PLAYER, 0, false);
+                effects.addAll(shootCreator2.run(server, table, targets));
+                if (shootCreator2.getTarget() != player && shootCreator.getTarget() != shootCreator2.getTarget()) {
+                    return effects;
+                } else {
+                    throw new IllegalActionException();
+                }
             } else {
-                throw new IllegalActionException();
+                ArrayList<Square> squaresTarget = table.getGameMap().getVisibility(shootCreator1.getTarget().getPosition());
+                squaresTarget = squaresTarget.stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square) && !targets.getSquaresDamaged().contains(square)).
+                        collect(Collectors.toCollection(ArrayList::new));
+                if (squaresTarget.isEmpty()) {
+                    throw new IllegalActionException();
+                }
+                Square squareTarget = server.chooseSquare(player, squaresTarget);
+                effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squareTarget));
+                targets.getSquaresDamaged().add((DominationSpawnSquare) squareTarget);
+                return effects;
             }
-        }else{
-            ArrayList<Square> squaresTarget = table.getGameMap().getVisibility(shootCreator1.getTarget().getPosition());
-            squaresTarget= squaresTarget.stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square) && !targets.getSquaresDamaged().contains(square)).
-                    collect(Collectors.toCollection(ArrayList::new));
-            if(squaresTarget.isEmpty()){
-                throw new IllegalActionException();
-            }
-            Square squareTarget = server.chooseSquare(player, squaresTarget);
-            effects.add(new FunctionalFactory().createDamageSpawn(player, (DominationSpawnSquare) squareTarget));
-            targets.getSquaresDamaged().add((DominationSpawnSquare) squareTarget);
-            return effects;
         }
     }
 }

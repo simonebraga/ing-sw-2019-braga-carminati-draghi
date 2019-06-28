@@ -135,6 +135,7 @@ public class ShootCreator extends ShootCreatorAbstract implements EffectsCreator
         squaresTarget.forEach(square ->
             playersAvailable.addAll(square.getPlayers()));
         playersAvailable.remove(player);
+        playersAvailable.remove(from);
 
         if(playersAvailable.isEmpty()){
             if(optional){

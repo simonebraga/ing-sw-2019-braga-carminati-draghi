@@ -51,8 +51,14 @@ public class PowerUpAction {
                                 player.getPowerupPocket().removePowerup(
                                         player.getPowerupPocket().getPowerups().indexOf(powerUp))));
                 Player target = server.choosePlayer(player, players);
-                Square square = server.chooseSquare(player, table.getGameMap().getDistance(target.getPosition(), 2));
-                effects.add(new FunctionalFactory().createMove(player, square));
+
+                //This lines are needed to find the squares that can be reached moving in a direction.
+                ArrayList<Square> squares = table.getGameMap().getRange(target.getPosition(), 2);
+                squares.remove(target.getPosition());
+                squares = squares.stream().filter(square -> square.getY().equals(target.getPosition().getY()) || square.getX().equals(target.getPosition().getX())).collect(Collectors.toCollection(ArrayList::new));
+
+                Square square = server.chooseSquare(player, squares);
+                effects.add(new FunctionalFactory().createMove(target, square));
             }
         }
         return effects;
@@ -136,7 +142,7 @@ public class PowerUpAction {
                 player.getPowerupPocket().getPowerups().
                         stream().filter(powerUp -> powerUp.getName() == PowerupName.TAGBACKGRENADE).
                         collect(Collectors.toList());
-        if(!powerUps.isEmpty() || table.getGameMap().getVisibility(player.getPosition()).contains(target.getPosition())) {
+        if(!powerUps.isEmpty() && table.getGameMap().getVisibility(player.getPosition()).contains(target.getPosition())) {
             powerUps = server.chooseMultiplePowerup(player, powerUps);
             for (Powerup powerUp : powerUps) {
                 effects.add(() ->
