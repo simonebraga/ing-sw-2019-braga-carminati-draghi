@@ -788,18 +788,59 @@ public class CliMain implements ViewInterface {
         else if (choice.equals("No") || choice.equals("NO") || choice.equals("N") || choice.equals("n") || choice.equals("Nope"))
             return false;
         else
-            return booleanQuestion(s);
+            return booleanQuestion(s);      //wrong input then ask again
     }
 
     @Override
     public int[] chooseMultiplePowerup(Powerup[] p) {
 
-        return new int[0];
+        char wantToContinue;
+        Powerup[] temp = new Powerup[p.length - 1];
+        int[] out = new int[p.length];
+        int i = 0;
+
+        do {
+            out[i] = choosePowerup(p);
+            System.out.print("Do you want to pick another powerup? Yes or No: ");
+            wantToContinue = (char) scannerIn.nextInt();
+            if (wantToContinue == 'y') {
+                for (int j = 0; j < p.length - 1; j++) {
+                    temp[j] = p[j + 1];
+                    if (j == p.length - 2)
+                        temp[j + 1] = p[p.length - 1];
+                }
+                p = temp;
+            }
+            i++;
+        } while (wantToContinue == 'y' && p.length != 0);
+
+        return out;
     }
 
     @Override
     public int[] chooseMultipleWeapon(WeaponName[] w) {
-        return new int[0];
+
+        char wantToContinue;
+        WeaponName[] temp = new WeaponName[w.length - 1];
+        int[] out = new int[w.length];
+        int i = 0;
+
+        do {
+            out[i] = chooseWeapon(w);
+            System.out.print("Do you want to pick another weapon? Yes or No: ");
+            wantToContinue = (char) scannerIn.nextInt();
+            if (wantToContinue == 'y') {
+                for (int j = 0; j < w.length - 1; j++) {
+                    temp[j] = w[j + 1];
+                    if (j == w.length - 2)
+                        temp[j + 1] = w[w.length - 1];
+                }
+                w = temp;
+            }
+            i++;
+        } while (wantToContinue == 'y' && w.length != 0);
+
+        return out;
     }
 
     @Override
