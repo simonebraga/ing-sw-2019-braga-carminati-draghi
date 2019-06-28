@@ -45,27 +45,27 @@ class SquaresVisibleInADirection {
                 case 'N':
                     for (Square square : map) {
                         if(table.getGameMap().getCoord(square).get(0) == table.getGameMap().getCoord(start).get(0) &&
-                                table.getGameMap().getCoord(square).get(1) == 1 + table.getGameMap().getCoord(start).get(1))
+                                table.getGameMap().getCoord(square).get(1) == i + table.getGameMap().getCoord(start).get(1))
                             squaresAssigned.add(square);
                     }
                     break;
                 case 'S':
                     for (Square square : map) {
                         if(table.getGameMap().getCoord(square).get(0) == table.getGameMap().getCoord(start).get(0) &&
-                                table.getGameMap().getCoord(square).get(1) == -1 + table.getGameMap().getCoord(start).get(1))
+                                table.getGameMap().getCoord(square).get(1) == -i + table.getGameMap().getCoord(start).get(1))
                             squaresAssigned.add(square);
                     }
                     break;
                 case 'W':
                     for (Square square : map) {
-                        if(table.getGameMap().getCoord(square).get(0) == -1 + table.getGameMap().getCoord(start).get(0) &&
+                        if(table.getGameMap().getCoord(square).get(0) == -i + table.getGameMap().getCoord(start).get(0) &&
                                 table.getGameMap().getCoord(square).get(1) == table.getGameMap().getCoord(start).get(1))
                             squaresAssigned.add(square);
                     }
                     break;
                 default:
                     for (Square square : map) {
-                        if(table.getGameMap().getCoord(square).get(0) == +1 + table.getGameMap().getCoord(start).get(0) &&
+                        if(table.getGameMap().getCoord(square).get(0) == +i + table.getGameMap().getCoord(start).get(0) &&
                                 table.getGameMap().getCoord(square).get(1) == table.getGameMap().getCoord(start).get(1))
                             squaresAssigned.add(square);
                     }

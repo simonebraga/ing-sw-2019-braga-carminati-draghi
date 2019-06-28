@@ -18,6 +18,11 @@ import java.util.ArrayList;
 public class FunctionalFactory {
 
     /**
+     * The maximum number of powerUps that a player can have.
+     */
+    private final static Integer MAX_POWERUPS = 3;
+
+    /**
      * Creates and returns a FunctionalEffect that grabs an AmmoTile in a AmmoSquare.
      * @param player The Player that does the action.
      * @param table The table that contains all the data from the current match.
@@ -28,9 +33,10 @@ public class FunctionalFactory {
             TileSquare square = (TileSquare) player.getPosition();
             AmmoTile tileTemp = square.removeTile();
             player.getAmmoPocket().addAmmo(tileTemp.getAmmo());
-            if(tileTemp.getPowerup() == 1 && player.getPowerupPocket().getPowerups().size()<3){
+            if(tileTemp.getPowerup() == 1 && player.getPowerupPocket().getPowerups().size()<MAX_POWERUPS){
                 player.getPowerupPocket().addPowerup(table.getPowerupDeck().draw());
             }
+            table.getAmmoTileDeck().discard(tileTemp);
         };
     }
 
