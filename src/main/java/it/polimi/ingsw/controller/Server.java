@@ -497,7 +497,7 @@ public class Server implements ServerRemote {
 
         int[] maps = new int[max-min+1];
         for (int i = 0 ; i <= max-min ; i++)
-            maps[i] = max-min+i;
+            maps[i] = min+i;
 
         try {
             return executorService.submit(() -> maps[clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps))]).get(inactivityTime,TimeUnit.SECONDS);
