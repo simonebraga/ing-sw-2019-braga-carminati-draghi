@@ -53,12 +53,12 @@ public class ShootAOECreator extends ShootCreatorAbstract implements EffectsCrea
         target.getPlayers().forEach(a -> {
             if(a!= player) {
                 effects.add(new FunctionalFactory().createDamagePlayer(player, a, damages, marks));
-            }
-            if(!targets.getPlayersTargeted().contains(a)){
-                targets.getPlayersTargeted().add(a);
-            }
-            if(!targets.getPlayersDamaged().contains(a) && damages>0){
+                if(!targets.getPlayersTargeted().contains(a)){
+                    targets.getPlayersTargeted().add(a);
+                }
+                if(!targets.getPlayersDamaged().contains(a) && damages>0){
                     targets.getPlayersDamaged().add(a);
+                }
             }
         });
         if(table.getIsDomination() && table.getGameMap().getSpawnSquares().contains(target) &&
