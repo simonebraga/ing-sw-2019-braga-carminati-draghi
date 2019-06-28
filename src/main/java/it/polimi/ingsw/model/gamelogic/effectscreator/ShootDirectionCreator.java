@@ -127,6 +127,7 @@ public class ShootDirectionCreator implements EffectsCreator{
             }
 
             squaresTarget.forEach(square -> playersTarget.addAll(square.getPlayers()));
+            playersTarget.remove(player);
             squaresTarget = squaresTarget.stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square) &&
                     !targets.getSquaresDamaged().contains(square)).collect(Collectors.toCollection(ArrayList::new));
 
