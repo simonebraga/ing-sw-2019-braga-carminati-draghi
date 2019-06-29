@@ -7,9 +7,13 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.mapclasses.*;
+import it.polimi.ingsw.model.mapclasses.GameMap;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.Square;
+import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
+import it.polimi.ingsw.model.smartmodel.SmartPlayer;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
 
@@ -82,7 +86,7 @@ public class CliMain implements ViewInterface {
     /**
      * This final attribute defines squares high in cli printing.
      */
-    private static final int SQUARES_HIGH = 10;
+    private static final int SQUARES_HIGH = 11;
 
     /**
      * This final attribute defines the maximum number of character of a player nickname that will be printed.
@@ -205,7 +209,7 @@ public class CliMain implements ViewInterface {
         int loginOutput;
         boolean success = false;
         do {
-            System.out.println("Choose a nickname: ");
+            System.out.print("Choose a nickname: ");
             if (scannerIn.hasNextLine())
                 nickname = scannerIn.nextLine();
             loginOutput = client.login(nickname);
@@ -268,21 +272,16 @@ public class CliMain implements ViewInterface {
      * This method printf the match to the CLI.
      */
     private void printModel() {
-        printKillShotTrack();
-        printMap();
-        printBoards();
-    }
 
-    /**
-     * This method resize each nickname to be 6 character or shorter.
-     *
-     * @param players an ArrayList of Players whom nickname will be trimmed.
-     * @param trimSize an integer defining the character index to which nicknames will be trimmed.
-     */
-    private void trimNickSize(ArrayList<Player> players, int trimSize) {
-        for (Player player : players) {
-            player.setUsername(player.getUsername().substring(0, trimSize));
+        ArrayList<String> nicknames = new ArrayList<>(model.getSmartPlayerMap().keySet());
+
+        printKillShotTrack();
+
+        for (String nick : nicknames) {
+            printBoard(nick, model.getSmartPlayerMap().get(nick));
         }
+
+        printMap();
     }
 
     /**
@@ -311,47 +310,240 @@ public class CliMain implements ViewInterface {
             fetchMaps();
         }
 
-        for (int i = 0; i < map.getGrid().length; i++) {    //for each row
-            if (Arrays.equals(map.getGrid()[i], map.getGrid()[map.getGrid().length]))     //if the i row on the map is the last row
-                printRow(map.getGrid()[i],true, map.getSpawnSquares());
+        for (int i = 0; i < map.getGrid().length; i++) {
+            if (i == 0)
+                printRow(map.getGrid()[i], map.getSpawnSquares(),true);
             else
-                printRow(map.getGrid()[i], false, map.getSpawnSquares());
+                printRow(map.getGrid()[i], map.getSpawnSquares(),false);
+        }
+    }
+
+
+    /**
+     * This method prints a grid map row to the command line.
+     *
+     * @param squares an array of Square to be formatted and printed.
+     * @param spawnSquares a list of SpawnSquare that contains all squares that are not TileSquare nor void squares.
+     */
+    private void printRow(Square[] squares, ArrayList<SpawnSquare> spawnSquares, boolean isFirstRow) {
+
+        //retrieve fundamental info from row status
+        ArrayList<Border> upperBorders = retrieveBordersInfo(squares,"up", isFirstRow);
+        ArrayList<Border> leftBorders = retrieveBordersInfo(squares,"left", isFirstRow);
+        Border rightMostBorder = retrieveLastBorderInfo(squares);
+        ArrayList<ArrayList<Figure>> figuresInsideSquares = getFiguresInsideRow(squares);
+        ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
+        ArrayList<String> squareTypes = new ArrayList<>();
+        getContentOfEachSquare(squares,spawnSquares,squareContentInfo,squareTypes);
+
+        printFirstLine(upperBorders);
+        printSpawnTags(squares, leftBorders, rightMostBorder, spawnSquares, 1);
+
+        //FIXME
+        //all square content info lines
+        for (int i = 0; i < 5; i++) {
+
+            printContentLine(squares, spawnSquares);
+
+            //close last column
+            if (rightMostBorder.equals(Border.WALL)) {
+                System.out.println("|");
+            } else {    //rightMostBorder == Border.NOTHING
+                System.out.println(" ");
+            }
+        }
+
+        //FIXME
+        //all players in square nicknames
+        for (int i = 0; i < 6; i++) {
+
+            printFigureLine(leftBorders, squareContentInfo, figuresInsideSquares.get(0).get(0),squareTypes, i);
+
+            //close last column
+            if (rightMostBorder.equals(Border.WALL)) {
+                System.out.println("|");
+            } else {    //rightMostBorder == Border.NOTHING
+                System.out.println(" ");
+            }
+        }
+
+        //all remaining lines
+    }
+
+    /**
+     * This method prints spaces from a row index to another. Indexes are included in the count.
+     *
+     * @param from integer index from where to start.
+     * @param to integer index to where to stop.
+     */
+    private void printSpacesFromIndexToIndex(int from, int to) {
+
+        for (int j = from; j <= to; j++) {
+            System.out.print(" ");
         }
     }
 
     /**
-     * This method memorizes the borders of all squares in a row, from left to right.
+     * This method prints the first characters line of a map grid row to the command line.
+     *
+     * @param upperBorders a list of Border containing the upper border of each square by the position of such square in the row.
+     */
+    private void printFirstLine(ArrayList<Border> upperBorders) {
+
+        for (Border upperBorder : upperBorders) {
+
+            switch (upperBorder) {
+                case DOOR: {
+                    System.out.print("+--|");
+                    printSpacesFromIndexToIndex(4, SQUARES_WIDTH - 5);
+                    System.out.print("|--");
+                    break;
+                }
+                case NOTHING: {
+                    System.out.print("+-");
+                    printSpacesFromIndexToIndex(2, SQUARES_WIDTH - 3);
+                    System.out.print("-");
+                    break;
+                }
+                case WALL: {
+                    System.out.print("+");
+                    for (int k = 0; k < SQUARES_WIDTH - 2; k++) {
+                        System.out.print("-");
+                    }
+                }
+            }
+        }
+        System.out.println("+");
+    }
+
+    /**
+     * This method prints the border character of a square box depending on the type of the left square's border.
+     *
+     * @param border a Border of a square.
+     * @param rowIndex an integer which is the current printing row index relative to a square box high (0 is the first box line index).
+     */
+    private void printBorderChar(Border border, int rowIndex) {
+
+        switch (border) {
+            case DOOR:{
+                if (rowIndex >= 3 && rowIndex <= SQUARES_HIGH - 4)
+                    System.out.print(" ");
+                else if (rowIndex == 1 || rowIndex == SQUARES_HIGH - 2)
+                    System.out.println("|");
+                else if (rowIndex == 2)
+                    System.out.print("\u27c2");
+                else
+                    System.out.print("T");
+                break;
+            }
+            case WALL:{
+                System.out.print("|");
+                break;
+            }
+            case NOTHING:{
+                if (rowIndex == 1)
+                    System.out.print("'");
+                else if (rowIndex == SQUARES_HIGH - 2)
+                    System.out.print(".");
+                else
+                    System.out.print(" ");
+                break;
+            }
+        }
+    }
+
+    /**
+     * This method prints a full line that displays the color tag for each spawn square and spaces for each other square in the grid row.
+     *
+     * @param squares an array of Square that contains all the squares of the grid row.
+     * @param leftBorders an ArrayList of Border containing all squares left border from left to right square.
+     * @param rightMostBorder a Border which is the last border on the grid row.
+     * @param spawnSquares an ArrayList of SpawnSquare containing all map spawn squares.
+     * @param rowIndex the current printing line index.
+     */
+    private void printSpawnTags(Square[] squares, ArrayList<Border> leftBorders, Border rightMostBorder, ArrayList<SpawnSquare> spawnSquares, int rowIndex) {
+
+        //search for spawn square in this row
+        int spawnSquareIndex = -1;
+        boolean found = false;
+        while (!found && spawnSquareIndex < squares.length) {
+            spawnSquareIndex++;
+            if (spawnSquares.contains(squares[spawnSquareIndex])) found = true;
+        }
+
+        SpawnSquare temp = (SpawnSquare) squares[spawnSquareIndex];
+        Color color = temp.getColor();
+
+        for (int i = 0; i < squares.length; i++) {
+
+            printBorderChar(leftBorders.get(i), rowIndex);
+            System.out.print(" ");
+
+            if (i == spawnSquareIndex) {
+
+                //print color tag
+                switch (color) {
+                    case RED:{
+                        System.out.print("SPAWN:RED   ");
+                        break;
+                    }
+                    case BLUE:{
+                        System.out.print("SPAWN:BLUE  ");
+                        break;
+                    }
+                    case YELLOW:{
+                        System.out.print("SPAWN:YELLOW");
+                        break;
+                    }
+                }
+
+                //fill to the next border
+                printSpacesFromIndexToIndex(14, SQUARES_WIDTH - 2);
+            } else {
+
+                //void line to the next border
+                printSpacesFromIndexToIndex(2, SQUARES_WIDTH - 2);
+            }
+        }
+        //last border closing
+        printBorderChar(rightMostBorder, rowIndex);
+    }
+
+
+    /**
+     * This method memorizes the borders of all squares in a row, from left to right square.
      *
      * @param squares an array of Square to be scanned left to right.
      * @param leftOrUp a String flag representing which border to memorize (upper border or left border of the square).
      * @return an ArrayList of Border that contains all squares border (up or left border) from left to right.
      */
-    private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp) {
+    private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp, boolean isFirstRow) {
 
         ArrayList<Border> borders = new ArrayList<>();
 
         if (leftOrUp.equals("up")) {
-            for (Square square : squares) {
 
-                if (square.getUp() != null) {
+            for (Square square : squares) {
+                if (square != null)
                     borders.add(square.getUp());
 
-                } else {    //void square
-                    if (square.getY() != 0)         //square is not part of the first row
-                        borders.add(Border.WALL);
-                    else
+                else {    //void square
+
+                    if (isFirstRow)
                         borders.add(Border.NOTHING);
+                    else
+                        borders.add(Border.WALL);
                 }
             }
+
         } else if (leftOrUp.equals("left")) {
-            for (Square square : squares) {
 
-                if (square.getUp() != null) {
-                    borders.add(square.getLeft());
+            for (int i = 0; i < squares.length; i++) {
+                if (squares[i].getUp() != null)
+                    borders.add(squares[i].getLeft());
+                else {
 
-                } else {    //void square
-
-                    if (square.getX() != 0)         //not the first square in the row
+                    if (i != 0)         //not the first square in the row
                         borders.add(Border.WALL);
                     else
                         borders.add(Border.NOTHING);
@@ -381,18 +573,20 @@ public class CliMain implements ViewInterface {
      * @param squares an array of Square to be scanned.
      * @return an ArrayList of ArrayList of String that contains all user names by each square.
      */
-    private ArrayList<ArrayList<String>> getFiguresInsideRow(Square[] squares){
+    private ArrayList<ArrayList<Figure>> getFiguresInsideRow(Square[] squares){
 
-        ArrayList<ArrayList<String>> playersBySquareInRow = new ArrayList<>();
+        ArrayList<ArrayList<Figure>> playersBySquareInRow = new ArrayList<>();
         for (Square square : squares) {
-            ArrayList<String> playersInSquare = new ArrayList<>();
+            ArrayList<Figure> playersInSquare = new ArrayList<>();
             for (Player player : square.getPlayers()) {
-                playersInSquare.add(player.getFigure().name());
+                playersInSquare.add(player.getFigure());
             }
             playersBySquareInRow.add(playersInSquare);
         }
         return playersBySquareInRow;
     }
+
+    //TODO(You left here, keep refactoring from here below)
 
     /**
      * This method parse info from a map grid row to strings and collects them into a list.
@@ -447,113 +641,49 @@ public class CliMain implements ViewInterface {
     }
 
     /**
-     * This method prints the first characters line of a map grid row to the command line.
+     * This method prints a square box line with a figure name inside it.
      *
-     * @param upperBorders a list of Border containing the upper border of each square by the position of such square in the row.
-     * @param squareTypes a list of String representing the type of each square by its position in the row.
-     * @param squareContentInfo a list in which strings about each square content are stored.
+     * @param figure a Figure which name will be formatted and printed.
      */
-    private void printFirstLine(ArrayList<Border> upperBorders, ArrayList<String> squareTypes, ArrayList<ArrayList<String>> squareContentInfo) {
-
-        for (int j = 0; j < upperBorders.size(); j++) {
-
-            if (squareTypes.get(j).equals("spawn")){
-                switch (squareContentInfo.get(j).get(0)){
-                    case "RED":{
-                        System.out.print(ANSI_RED);
-                        break;
-                    }
-                    case "BLUE":{
-                        System.out.print(ANSI_BLUE);
-                        break;
-                    }
-                    case "YELLOW":{
-                        System.out.print(ANSI_YELLOW);
-                        break;
-                    }
-                }
+    private void printFigure(Figure figure) {
+        switch (figure) {
+            case DESTRUCTOR:{
+                System.out.print(":D-STR");
+                break;
             }
-
-            switch (upperBorders.get(j)) {
-                case DOOR:{
-                    System.out.print("+--|");
-                    for (int k = 0; k < SQUARES_WIDTH - 8 ; k++) {
-                        System.out.print(" ");
-                    }
-                    System.out.print("|--");
-                    break;
-                }
-                case NOTHING:{
-                    System.out.print("+-");
-                    for (int i = 0; i < SQUARES_WIDTH - 4; i++) {
-                        System.out.print(" ");
-                    }
-                    System.out.print("-");
-                    break;
-                }
-                case WALL:{
-                    System.out.print("+");
-                    for (int k = 0; k < SQUARES_WIDTH - 2; k++) {
-                        System.out.print("-");
-                    }
-                }
+            case DOZER:{
+                System.out.print("DOZER ");
+                break;
             }
-            System.out.print(ANSI_RESET);
+            case BANSHEE:{
+                System.out.print("BANSHE");
+                break;
+            }
+            case VIOLET:{
+                System.out.print("VIOLET");
+                break;
+            }
+            case SPROG:{
+                System.out.print("SPROG ");
+                break;
+            }
         }
-        System.out.println("+");
+
+        //fill until next border
+        printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
     }
 
-    /**
-     * This method prints a grid map row to the command line.
-     *
-     * @param squares an array of Square to be formatted and printed.
-     * @param isLastRow a boolean flag that says if the row to be printed is the last row in the map grid.
-     * @param spawnSquares a list of SpawnSquare that contains all squares that are not TileSquare nor void squares.
-     */
-    private void printRow(Square[] squares, boolean isLastRow, ArrayList<SpawnSquare> spawnSquares) {
-
-        ArrayList<Border> upperBorders = retrieveBordersInfo(squares,"up");
-        ArrayList<Border> leftBorders = retrieveBordersInfo(squares,"left");
-        Border rightMostBorder = retrieveLastBorderInfo(squares);
-        ArrayList<ArrayList<String>> nicknamesPlayersInsideSquares = getFiguresInsideRow(squares);
-        ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
-        ArrayList<String> squareTypes = new ArrayList<>();
-
-        getContentOfEachSquare(squares,spawnSquares,squareContentInfo,squareTypes);
-
-        printFirstLine(upperBorders,squareTypes,squareContentInfo);
-
-        //all square content info lines
-        for (int i = 0; i < 4; i++) {
-
-            printContentLine(squares, spawnSquares);
-
-            //close last column
-            if (rightMostBorder.equals(Border.WALL)) {
-                System.out.println("|");
-            } else {    //rightMostBorder == Border.NOTHING
-                System.out.println(" ");
-            }
-        }
-
-        //all players in square nicknames
-        for (int i = 0; i < 6; i++) {
-
-            printPlayerLine(squares, spawnSquares);
-
-            //close last column
-            if (rightMostBorder.equals(Border.WALL)) {
-                System.out.println("|");
-            } else {    //rightMostBorder == Border.NOTHING
-                System.out.println(" ");
-            }
-        }
-
-        //all remaining lines
-    }
-
-    private void printPlayerLine(Square[] squares, ArrayList<SpawnSquare> spawnSquares) {
+    private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<ArrayList<String>> squaresInfo, Figure figure, ArrayList<String> squareTypes, int rowIndex) {
         //TODO
+
+        String color = null;
+        int squareCounter = 0;
+
+        if (squareTypes.get(0).equals("spawn"))
+            color = squaresInfo.get(0).get(0);
+
+        printBorderChar(leftBorders.get(0), rowIndex);
+        printFigure(figure);
 
     }
 
@@ -561,7 +691,7 @@ public class CliMain implements ViewInterface {
         //TODO
     }
 
-    private void printBoards() {
+    private void printBoard(String nickname, SmartPlayer player) {
         //TODO print player boards with damage, points, marks, weapons, ammos, first player marker and
     }
 
@@ -592,17 +722,18 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > f.length) {
 
             for (int i = 0; i < f.length; i++) {
-                System.out.println(i + 1 + " - " + f[i].name());
+                System.out.println((i + 1) + " - " + f[i].name());
             }
             System.out.print("\nChoose a figure by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > f.length)
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
-        return choice;
+        return choice - 1;
     }
 
     @Override
@@ -610,17 +741,18 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > w.length) {
 
             for (int i = 0; i < w.length; i++) {
-                System.out.println(i + 1 + " - " + w[i].name());
+                System.out.println((i + 1) + " - " + w[i].name());
             }
             System.out.print("\nChoose a weapon by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > w.length)
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
-        return choice;
+        return choice - 1;
     }
 
     @Override
@@ -628,6 +760,7 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > s.length) {
 
             for (int i = 0; i < s.length; i++) {
@@ -638,7 +771,7 @@ public class CliMain implements ViewInterface {
             if (choice < 1 || choice > s.length)
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
-        return choice;
+        return choice - 1;
     }
 
     @Override
@@ -646,6 +779,7 @@ public class CliMain implements ViewInterface {
 
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > c.length) {
 
             for (int i = 0; i < c.length; i++) {
@@ -681,6 +815,7 @@ public class CliMain implements ViewInterface {
     public int chooseColor(Color[] c) {
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > c.length) {
 
             for (int i = 0; i < c.length; i++) {
@@ -701,7 +836,7 @@ public class CliMain implements ViewInterface {
         while (choice < 1 || choice > p.length) {
 
             for (int i = 0; i < p.length; i++) {
-                System.out.println(i + 1 + " - " + p[i].getColor().name() + p[i].getName().name());
+                System.out.println(i + 1 + " - " + p[i].getColor().name() + " " + p[i].getName().name());
             }
             System.out.print("\nChoose power up by its number: ");
             choice = scannerIn.nextInt();
@@ -715,16 +850,27 @@ public class CliMain implements ViewInterface {
     public int chooseMap(int[] m) {
 
         int choice = -1;
-        List<int[]> maps = Arrays.asList(m);
 
-        while (!maps.contains(choice)) {
+        //boxing from primitive int[] to Integer[]
+        Integer[] boxedArray = new Integer[m.length];
+        for (int i = 0; i < m.length; i++) {
+            boxedArray[i] = m[i];
+        }
+
+        List<Integer> maps = Arrays.asList(boxedArray);
+
+        System.out.println();
+        while (!maps.contains(choice - 1)) {
 
             for (int i = 0; i < m.length; i++) {
-                System.out.println(m[i]);
+                System.out.println(m[i] + 1);
             }
             System.out.print("\nChoose map by its number: ");
-            choice = scannerIn.nextInt();
-            if (!maps.contains(choice))
+
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+
+            if (!maps.contains(choice - 1))
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
         return choice - 1;
@@ -732,20 +878,25 @@ public class CliMain implements ViewInterface {
 
     @Override
     public int chooseMode(Character[] c) {
-        int out = -1;
-        char choice = '0';
 
-        while (choice != 'n' && choice != 'd') {
+        String fullChoice;
+        Character choice = '0';
 
-            System.out.println("Normal Mode | Domination Mode");
+        while (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D') {
+
+            System.out.println("\nNormal Mode | Domination Mode");
             System.out.print("\nChoose game mode (n/d): ");
-            choice = (char) scannerIn.nextInt();
-            if (choice != 'n' && choice != 'd')
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
-        }
 
+            fullChoice = scannerIn.nextLine();  //allow user to type in also the full case name
+            choice = fullChoice.toCharArray()[0];
+
+            if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D') {
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                scannerIn.nextLine();
+            }
+        }
         for (int i = 0; i < c.length; i++) {
-            if (c[i].equals(choice)) return i;
+            if ((c[i]) == choice || (c[i] == choice + 32)) return i;    //check upper and lower case
         }
         return -1;
     }
@@ -767,17 +918,59 @@ public class CliMain implements ViewInterface {
         else if (choice.equals("No") || choice.equals("NO") || choice.equals("N") || choice.equals("n") || choice.equals("Nope"))
             return false;
         else
-            return booleanQuestion(s);
+            return booleanQuestion(s);      //wrong input then ask again
     }
 
     @Override
     public int[] chooseMultiplePowerup(Powerup[] p) {
-        return new int[0];
+
+        char wantToContinue;
+        Powerup[] temp = new Powerup[p.length - 1];
+        int[] out = new int[p.length];
+        int i = 0;
+
+        do {
+            out[i] = choosePowerup(p);
+            System.out.print("Do you want to pick another powerup? Yes or No: ");
+            wantToContinue = (char) scannerIn.nextInt();
+            if (wantToContinue == 'y') {
+                for (int j = 0; j < p.length - 1; j++) {
+                    temp[j] = p[j + 1];
+                    if (j == p.length - 2)
+                        temp[j + 1] = p[p.length - 1];
+                }
+                p = temp;
+            }
+            i++;
+        } while (wantToContinue == 'y' && p.length != 0);
+
+        return out;
     }
 
     @Override
     public int[] chooseMultipleWeapon(WeaponName[] w) {
-        return new int[0];
+
+        char wantToContinue;
+        WeaponName[] temp = new WeaponName[w.length - 1];
+        int[] out = new int[w.length];
+        int i = 0;
+
+        do {
+            out[i] = chooseWeapon(w);
+            System.out.print("Do you want to pick another weapon? Yes or No: ");
+            wantToContinue = (char) scannerIn.nextInt();
+            if (wantToContinue == 'y') {
+                for (int j = 0; j < w.length - 1; j++) {
+                    temp[j] = w[j + 1];
+                    if (j == w.length - 2)
+                        temp[j + 1] = w[w.length - 1];
+                }
+                w = temp;
+            }
+            i++;
+        } while (wantToContinue == 'y' && w.length != 0);
+
+        return out;
     }
 
     @Override

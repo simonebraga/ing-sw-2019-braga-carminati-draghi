@@ -244,20 +244,20 @@ public class MoveAndShootCreator implements EffectsCreator{
                 }
             }
         }else{
-            if(maxDistShoot == 0){
+            if(maxDistShoot == 0){ //Shotgun
                 playersTarget = new ArrayList<> (player.getPosition().getPlayers());
                 playersTarget.remove(player);
-                if(playersTarget.isEmpty()){
-                    throw new IllegalActionException();
-                }
-            }else{
+            }else{ //Rocket launcher and grenade launcher
                 playersTarget = new ArrayList<>();
                 table.getGameMap().getVisibility(player.getPosition()).forEach(square ->
                         playersTarget.addAll(square.getPlayers()));
                 playersTarget.remove(player);
-                if (minDistShoot == 1){
+                if (minDistShoot == 1){ //Rocket Launcher
                     playersTarget.removeAll(player.getPosition().getPlayers());
                 }
+            }
+            if(playersTarget.isEmpty()){
+                throw new IllegalActionException();
             }
             playerTarget = server.choosePlayer(player, playersTarget);
             effects.add(new FunctionalFactory().createDamagePlayer(player, playerTarget, damages, marks));

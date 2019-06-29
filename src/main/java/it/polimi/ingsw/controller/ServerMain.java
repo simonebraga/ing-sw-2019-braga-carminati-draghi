@@ -118,6 +118,7 @@ public class ServerMain {
         Integer currentPlayerIndex = 0;
         Integer startingPlayerIndex = 0;
 
+        //create a new directory for save files if it doesn't exist yet
         File savesDir = new File(SAVE_FILES_DIRECTORY);
         if (!savesDir.exists()) {
             boolean wasCreated = savesDir.mkdir();
@@ -126,8 +127,8 @@ public class ServerMain {
             }
         }
 
-        //create a new save_list.json file in working directory
-        File savesListFile = new File( SAVE_LIST_PATH);
+        //create a new save_list.json file in working directory if it doesn't exist yet
+        File savesListFile = new File(SAVE_LIST_PATH);
         if (!savesListFile.exists()) {
             try {
                 boolean wasCreated = savesListFile.createNewFile();
@@ -150,85 +151,111 @@ public class ServerMain {
         GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
 
         Integer mapIndex = null;
-        try {
+        Character gameMode = null;
 
-            if (gameTable == null) {    //create new match
 
-                System.out.println("Creating new match...");
+        if (gameTable == null) {    //create new match
 
-                System.out.println("Binding clients to figures...");
-                //binds each user to a unique player
-                ArrayList<Player> players = new ArrayList<>();
-                Figure[] allFigures = Figure.values();
-                Integer i = 0;
-                for (String nick : server.getNicknameSet()) {
-                    players.add(new Player(allFigures[i], nick));    //should not overflow because users are never more than figures
-                    i++;
-                }
-                System.out.println("Done");
+            System.out.println("Creating new match...");
 
-                //ask game mode and map index to administrator
-                Character gameMode = server.chooseMode(players.get(adminIndex));
+            System.out.println("Binding clients to figures...");
+
+            //binds each user to a unique player
+            ArrayList<Player> players = new ArrayList<>();
+            Figure[] allFigures = Figure.values();
+            Integer i = 0;
+            for (String nick : server.getNicknameSet()) {
+                players.add(new Player(allFigures[i], nick));    //should not overflow because users are never more than figures
+                i++;
+            }
+            System.out.println("Done");
+
+            //ask game mode to administrator if he's still connected
+            try {
+                gameMode = server.chooseMode(players.get(adminIndex));
+            } catch (UnavailableUserException e) {
+
+                //try to elect another match administrator
+                server.resetClientMap();
+                goOn(server, args, adminIndex);
+            }
+
+
+            //ask map index to administrator if he's still connected
+            try {
                 mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
+            } catch (UnavailableUserException e) {
 
-                //initiate a new match
-                System.out.println("Initializing new match...");
-                GameInitializer gameInitializer = new GameInitializer(gameMode, mapIndex, players);
-                gameTable = gameInitializer.run();
-                System.out.println("Done");
+                //try to elect another match administrator
+                server.resetClientMap();
+                goOn(server, args, adminIndex);
 
-                //if too many users dropped during this phase
-                if (players.size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
-                    System.out.println("Too many players have disconnected. Relaunching server...");
-                    server.resetClientMap();
-                    main(args);
-                }
-
-                save(gameTable);
             }
 
-            //calculate starting player and current player indexes
-            while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getCurrentTurnPlayer())) currentPlayerIndex++;
-            while (!gameTable.getPlayers().get(startingPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) startingPlayerIndex++;
 
-            //sync smart model with model
-            SmartModel smartModel = new SmartModel();
-            smartModel.setMapIndex(mapIndex);
-            server.setSmartModel(smartModel);
-            smartModel.update(gameTable);
-            server.notifyModelUpdate();
-            System.out.println("Smart model created");
+            //initiate a new match
+            System.out.println("Initializing new match...");
+            GameInitializer gameInitializer = new GameInitializer(gameMode, mapIndex, players);
+            gameTable = gameInitializer.run();
+            System.out.println("Done");
 
-            System.out.println("Starting game...");
-            //start or continue match
-            if (gameTable.getGamePhase().equals(FIRST_TURNS_PHASE)) {   //game is in first turns phase
-
-                //make each player spawn and first turn
-                firstTurns(server, gameTable, currentPlayerIndex);  //would never throw FrenzyModeException
-            }
-
-            if (gameTable.getGamePhase().equals(ROLLING_TURNS_PHASE)) {  //game is in rolling turns phase
-
-                //match rolling...
-                rollMatch(server, gameTable, currentPlayerIndex);      //would throw FrenzyModeException at some point or game will stop for loss of players
-
-                //game has ended before final frenzy because too many people disconnected
-                System.out.println("Not enough players to continue the game");
-                gameOver(gameTable);
-
-                //restart program
+            //if too many users dropped during this phase
+            if (players.size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
+                System.out.println("Too many players have disconnected. Relaunching server...");
+                server.resetClientMap();
                 main(args);
             }
-        } catch (UnavailableUserException e) {
 
-            //try to elect another match administrator
-            adminIndex++;
-            goOn(server, args, adminIndex);
+            //finally created usable match
+            save(gameTable);
+        }
 
-        } catch (FrenzyModeException e) {
-            finalFrenzy(server,gameTable);
+        //calculate starting player and current player indexes
+        while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getCurrentTurnPlayer())) currentPlayerIndex++;
+        while (!gameTable.getPlayers().get(startingPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) startingPlayerIndex++;
+
+        //sync smart model with model
+        SmartModel smartModel = new SmartModel();
+        smartModel.setMapIndex(mapIndex);
+        server.setSmartModel(smartModel);
+        smartModel.update(gameTable);
+        server.notifyModelUpdate();
+        System.out.println("Smart model created");
+
+        System.out.println("Starting game...");
+        //start or continue match
+        if (gameTable.getGamePhase().equals(FIRST_TURNS_PHASE)) {   //game is in first turns phase
+
+            //make each player spawn and first turn
+            try {
+                firstTurns(server, gameTable, currentPlayerIndex);  //would never throw FrenzyModeException
+            } catch (FrenzyModeException e) {
+
+                finalFrenzy(server,gameTable);
+                main(args);
+            }
+        }
+
+        if (gameTable.getGamePhase().equals(ROLLING_TURNS_PHASE)) {  //game is in rolling turns phase
+
+            //match rolling...
+            try {
+                rollMatch(server, gameTable, currentPlayerIndex);      //would throw FrenzyModeException at some point or game will stop for loss of players
+            } catch (FrenzyModeException e) {
+
+                finalFrenzy(server,gameTable);
+                main(args);
+                e.printStackTrace();
+            }
+
+            //game has ended before final frenzy because too many people disconnected
+            System.out.println("Not enough players to continue the game");
+            gameOver(gameTable);
+
+            //restart program
             main(args);
         }
+
     }
 
     /**

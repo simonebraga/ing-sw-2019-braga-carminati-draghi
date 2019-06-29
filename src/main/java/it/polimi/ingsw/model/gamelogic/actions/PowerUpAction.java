@@ -111,8 +111,10 @@ public class PowerUpAction {
                 player.getPowerupPocket().getPowerups().
                         stream().filter(powerUp -> powerUp.getName() == PowerupName.TARGETINGSCOPE).
                         collect(Collectors.toList());
-        if (!powerUps.isEmpty()) {
+        if(!powerUps.isEmpty()){
             powerUps = server.chooseMultiplePowerup(player, powerUps);
+        }
+        if(!powerUps.isEmpty()) {
             for (Powerup powerUp : powerUps) {
                 effects.add(() ->
                         table.getPowerupDeck().discard(

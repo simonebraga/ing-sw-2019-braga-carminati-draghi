@@ -117,7 +117,7 @@ public class TurnManager {
         for (Square spawnSquare : spawnSquares) {
             SpawnSquare spawnSquare1 = (SpawnSquare) spawnSquare;
             if(spawnSquare1.getWeapons().size()<3){
-                while(spawnSquare1.getWeapons().size()<3) {
+                while(spawnSquare1.getWeapons().size()<3 && !table.getWeaponDeck().getActiveCards().isEmpty()) {
                     spawnSquare1.addWeapon(table.getWeaponDeck().draw());
                 }
             }

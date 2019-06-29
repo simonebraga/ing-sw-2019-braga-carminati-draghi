@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
@@ -60,6 +61,7 @@ public class PayCreator implements EffectsCreator{
         powerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
         powerUps = powerUps.stream().filter(powerUp -> price.contains(powerUp.getColor())).collect(Collectors.toCollection(ArrayList::new)); //Remove powerUps that cannot be used to pay
         if(!powerUps.isEmpty()){
+            server.sendMessage(player, new MessageRetriever().retrieveMessage("powerUpsToPay"));
             powerUps = server.chooseMultiplePowerup(player, powerUps);
 
             for (Powerup powerUp : powerUps) {
@@ -90,19 +92,20 @@ public class PayCreator implements EffectsCreator{
         powerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
         powerUps.removeAll(powerUpsCaller);
 
-        //Make the user choose and modify powerUps
+        server.sendMessage(player, new MessageRetriever().retrieveMessage("powerUpsToPay"));
+        powerUps = server.chooseMultiplePowerup(player, powerUps);
 
-        if(powerUps.size()>price){
+        if(powerUps.size()>price) {
             throw new IllegalActionException();
-        }else{
-            for (Powerup powerUp : powerUps) {
-                effects.add(() ->
-                        table.getPowerupDeck().discard(
-                                player.getPowerupPocket().removePowerup(
-                                        player.getPowerupPocket().getPowerups().indexOf(powerUp))));
-            }
-            price = price - powerUps.size();
         }
+        for (Powerup powerUp : powerUps) {
+            effects.add(() ->
+                    table.getPowerupDeck().discard(
+                            player.getPowerupPocket().removePowerup(
+                                    player.getPowerupPocket().getPowerups().indexOf(powerUp))));
+        }
+        price = price - powerUps.size();
+
 
         Color choice;
         for(; price>0; price--){
