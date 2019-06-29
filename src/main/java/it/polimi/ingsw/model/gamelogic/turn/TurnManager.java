@@ -28,7 +28,7 @@ public class TurnManager {
     /**
      * The time to do a turn.
      */
-    private static final Integer TIME = 800000000;
+    private static final Integer TIME = 500;
 
     /**
      * The player that does the turn.

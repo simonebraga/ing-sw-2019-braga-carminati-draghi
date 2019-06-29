@@ -12,6 +12,7 @@ import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Sets and creates the effect that moves and shoots a players.
@@ -155,8 +156,12 @@ public class MoveAndShootCreator implements EffectsCreator{
 
         if (moveBeforeShoot){
             if(moveTargetOrShooter){
-                playersTarget = new ArrayList<>(table.getPlayers());
+                playersTarget = table.getPlayers().stream().filter(player1 -> player1.getPosition() != null).collect(Collectors.toCollection(ArrayList::new));
                 playersTarget.remove(player);
+
+                if(playersTarget.isEmpty()){
+                    throw new IllegalActionException();
+                }
 
                 playerTarget = server.choosePlayer(player, playersTarget);
                 new MoveCreator(playerTarget, maxMoves, false).run(server, table, targets);
@@ -170,7 +175,7 @@ public class MoveAndShootCreator implements EffectsCreator{
                 }else{
                     throw new IllegalActionException();
                 }
-            }else{ //PowerGlove
+            }else{ //PowerGlove (Rocket Fist)
                 Character direction;
                 boolean noTargets = true;
 
