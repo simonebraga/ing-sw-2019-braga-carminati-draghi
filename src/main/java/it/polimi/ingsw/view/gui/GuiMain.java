@@ -380,7 +380,7 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public void notifyEvent(String s) {
-        textEvent.setText(s);
+        Platform.runLater(() -> textEvent.setText(s));
     }
 
     @Override
@@ -448,7 +448,7 @@ public class GuiMain extends Application implements ViewInterface {
         try {
             smartModel = client.getModelUpdate();
             if (smartModel != null) {
-                updateSmartModelPane();
+                Platform.runLater(this::updateSmartModelPane);
                 if (currentScenario.get() == 2) {
                     Platform.runLater(this::setCleanScenario);
                     Platform.runLater(this::setGameMapScenario);
