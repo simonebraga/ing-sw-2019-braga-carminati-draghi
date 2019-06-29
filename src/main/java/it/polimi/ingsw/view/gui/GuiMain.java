@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
+import it.polimi.ingsw.model.smartmodel.SmartPowerup;
 import it.polimi.ingsw.model.smartmodel.SmartWeapon;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
@@ -74,9 +75,9 @@ public class GuiMain extends Application implements ViewInterface {
 
         Button buttonLogout = new Button("Logout");
         buttonLogout.setOnAction(behavior -> {
-            client.logout();
             Platform.runLater(this::setCleanScenario);
-            Platform.runLater(this::setLoginScenario);
+            Platform.runLater(this::setLogoutScenario);
+            client.logout();
         });
         AnchorPane anchorPane = new AnchorPane();
         AnchorPane.setTopAnchor(buttonLogout,10.0);
@@ -99,71 +100,114 @@ public class GuiMain extends Application implements ViewInterface {
         smartModelPane.setTop(anchorPaneLogout);
         StackPane stackPaneBottomBar = getBottomBar();
         smartModelPane.setBottom(stackPaneBottomBar);
-
-        StackPane stackPaneGameScenario = new StackPane();
-        stackPaneGameScenario.maxWidthProperty().bind(primaryScene.widthProperty());
-        stackPaneGameScenario.minWidthProperty().bind(primaryScene.widthProperty());
-        stackPaneGameScenario.maxHeightProperty().bind(primaryScene.heightProperty().subtract(anchorPaneLogout.heightProperty()).subtract(stackPaneBottomBar.heightProperty()));
-        stackPaneGameScenario.minHeightProperty().bind(primaryScene.heightProperty().subtract(anchorPaneLogout.heightProperty()).subtract(stackPaneBottomBar.heightProperty()));
+        StackPane stackPaneCenterPane = new StackPane();
+        stackPaneCenterPane.maxHeightProperty().bind(primaryScene.heightProperty().subtract(anchorPaneLogout.heightProperty()).subtract(stackPaneBottomBar.heightProperty()));
+        stackPaneCenterPane.minHeightProperty().bind(primaryScene.heightProperty().subtract(anchorPaneLogout.heightProperty()).subtract(stackPaneBottomBar.heightProperty()));
+        stackPaneCenterPane.maxWidthProperty().bind(primaryScene.widthProperty());
+        stackPaneCenterPane.minWidthProperty().bind(primaryScene.widthProperty());
+        stackPaneCenterPane.setStyle("-fx-border-color: red; -fx-border-width: 1;");
+        smartModelPane.setCenter(stackPaneCenterPane);
 
         StackPane stackPaneMap = new StackPane();
         stackPaneMap.getChildren().add(
-                new ImagePane(properties.getProperty("mapsRoot").concat(properties.getProperty("map"+smartModel.getMapIndex())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                new ImagePane(properties.getProperty("mapsRoot").concat(properties.getProperty("map" + smartModel.getMapIndex())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
         );
         stackPaneMap.setPadding(new Insets(10,10,10,10));
-        stackPaneMap.maxHeightProperty().bind(stackPaneGameScenario.heightProperty().multiply(0.7));
-        stackPaneMap.minHeightProperty().bind(stackPaneGameScenario.heightProperty().multiply(0.7));
-        stackPaneMap.maxWidthProperty().bind(stackPaneGameScenario.widthProperty().multiply(0.5));
-        stackPaneMap.minWidthProperty().bind(stackPaneGameScenario.widthProperty().multiply(0.5));
+        stackPaneMap.maxHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.7));
+        stackPaneMap.minHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.7));
+        stackPaneMap.maxWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5));
+        stackPaneMap.minWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5));
+        stackPaneMap.setStyle("-fx-border-color: red; -fx-border-width: 1;");
 
         GridPane gridPaneOtherPlayers = new GridPane();
+        HBox hBoxMePlayer = new HBox();
         int i = 0;
         for (String nickname : smartModel.getSmartPlayerMap().keySet()) {
             if (nickname.equals(this.nickname)) {
-                //TODO
-            } else {
-                StackPane stackPanePlayerBoard = new StackPane();
-                stackPanePlayerBoard.getChildren().add(
+
+                StackPane stackPaneBoard = new StackPane();
+                stackPaneBoard.getChildren().add(
                         new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartModel.getSmartPlayerMap().get(nickname).getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
                 );
-                stackPanePlayerBoard.setPadding(new Insets(10,10,10,10));
-                stackPanePlayerBoard.maxHeightProperty().bind(stackPaneMap.heightProperty().divide(4));
-                stackPanePlayerBoard.minHeightProperty().bind(stackPaneMap.heightProperty().divide(4));
-                stackPanePlayerBoard.maxWidthProperty().bind(stackPaneGameScenario.widthProperty().subtract(stackPaneMap.widthProperty()).multiply(0.6));
-                stackPanePlayerBoard.minWidthProperty().bind(stackPaneGameScenario.widthProperty().subtract(stackPaneMap.widthProperty()).multiply(0.6));
-                stackPanePlayerBoard.setStyle("-fx-border-color: red; -fx-border-width: 1;");
-                gridPaneOtherPlayers.add(stackPanePlayerBoard,0,i);
+                stackPaneBoard.setPadding(new Insets(10,10,10,10));
+                stackPaneBoard.maxHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.3));
+                stackPaneBoard.minHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.3));
+                stackPaneBoard.maxWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5));
+                stackPaneBoard.minWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5));
+                stackPaneBoard.setStyle("-fx-border-color: red; -fx-border-width: 1;");
+                hBoxMePlayer.getChildren().add(stackPaneBoard);
 
-                HBox hBoxWeapons = new HBox();
-                hBoxWeapons.setStyle("-fx-border-color: red; -fx-border-width: 1;");
                 for (SmartWeapon smartWeapon : smartModel.getSmartPlayerMap().get(nickname).getWeapons()) {
                     StackPane stackPaneWeapon = new StackPane();
-                    if (smartWeapon.getLoaded())
-                        stackPaneWeapon.getChildren().add(
-                                new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;")
-                        );
-                    else
-                        stackPaneWeapon.getChildren().add(
-                                new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weaponBack")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
-                        );
-                    stackPaneWeapon.maxHeightProperty().bind(stackPaneMap.heightProperty().divide(4));
-                    stackPaneWeapon.minHeightProperty().bind(stackPaneMap.heightProperty().divide(4));
-                    stackPaneWeapon.maxWidthProperty().bind(stackPaneGameScenario.widthProperty().subtract(stackPaneMap.widthProperty()).subtract(stackPanePlayerBoard.widthProperty()).divide(3));
-                    stackPaneWeapon.minWidthProperty().bind(stackPaneGameScenario.widthProperty().subtract(stackPaneMap.widthProperty()).subtract(stackPanePlayerBoard.widthProperty()).divide(3));
-                    hBoxWeapons.getChildren().add(stackPaneWeapon);
+                    stackPaneWeapon.getChildren().add(
+                            new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                    );
+                    stackPaneWeapon.setPadding(new Insets(10,10,10,10));
+                    stackPaneWeapon.maxHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.3));
+                    stackPaneWeapon.minHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.3));
+                    stackPaneWeapon.maxWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).divide(6));
+                    stackPaneWeapon.minWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).divide(6));
+                    stackPaneWeapon.setStyle("-fx-border-color: red; -fx-border-width: 1;");
+                    hBoxMePlayer.getChildren().add(stackPaneWeapon);
                 }
-                gridPaneOtherPlayers.add(hBoxWeapons,1,i);
+
+                for (SmartPowerup smartPowerup : smartModel.getSmartPlayerMap().get(nickname).getPowerups()) {
+                    StackPane stackPanePowerup = new StackPane();
+                    stackPanePowerup.getChildren().add(
+                            new ImagePane(properties.getProperty("powerupsRoot").concat(properties.getProperty("powerup" + smartPowerup.getPowerupName().toString() + "_" + smartPowerup.getColor().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                    );
+                    stackPanePowerup.setPadding(new Insets(10,10,10,10));
+                    stackPanePowerup.maxHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.3));
+                    stackPanePowerup.minHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.3));
+                    stackPanePowerup.maxWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).divide(6));
+                    stackPanePowerup.minWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).divide(6));
+                    stackPanePowerup.setStyle("-fx-border-color: red; -fx-border-width: 1;");
+                    hBoxMePlayer.getChildren().add(stackPanePowerup);
+                }
+
+            } else {
+
+                HBox hBoxOtherPlayer = new HBox();
+                gridPaneOtherPlayers.add(hBoxOtherPlayer,0,i);
+
+                StackPane stackPaneBoard = new StackPane();
+                stackPaneBoard.getChildren().add(
+                        new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartModel.getSmartPlayerMap().get(nickname).getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                );
+                stackPaneBoard.setPadding(new Insets(10,10,10,10));
+                stackPaneBoard.maxHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.7).divide(4));
+                stackPaneBoard.minHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.7).divide(4));
+                stackPaneBoard.maxWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).multiply(0.6));
+                stackPaneBoard.minWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).multiply(0.6));
+                stackPaneBoard.setStyle("-fx-border-color: red; -fx-border-width: 1;");
+                hBoxOtherPlayer.getChildren().add(stackPaneBoard);
+
+                for (SmartWeapon smartWeapon : smartModel.getSmartPlayerMap().get(nickname).getWeapons()) {
+                    StackPane stackPaneWeapon = new StackPane();
+                    stackPaneWeapon.getChildren().add(
+                            new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                    );
+                    stackPaneWeapon.setPadding(new Insets(10,10,10,10));
+                    stackPaneWeapon.maxHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.7).divide(4));
+                    stackPaneWeapon.minHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.7).divide(4));
+                    stackPaneWeapon.maxWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).multiply(0.4).divide(3));
+                    stackPaneWeapon.minWidthProperty().bind(stackPaneCenterPane.widthProperty().multiply(0.5).multiply(0.4).divide(3));
+                    stackPaneWeapon.setStyle("-fx-border-color: red; -fx-border-width: 1;");
+                    hBoxOtherPlayer.getChildren().add(stackPaneWeapon);
+                }
 
                 i++;
             }
         }
 
+        //TODO Resume from here
+
         GridPane gridPaneGameScenario = new GridPane();
         gridPaneGameScenario.add(stackPaneMap,0,0);
         gridPaneGameScenario.add(gridPaneOtherPlayers,1,0);
-        stackPaneGameScenario.getChildren().add(gridPaneGameScenario);
+        gridPaneGameScenario.add(hBoxMePlayer,0,1,2,1);
 
-        smartModelPane.setCenter(stackPaneGameScenario);
+        stackPaneCenterPane.getChildren().add(gridPaneGameScenario);
     }
 
     private void setCleanScenario() {
@@ -285,6 +329,19 @@ public class GuiMain extends Application implements ViewInterface {
         currentScenario.set(3);
 
         rootPane.getChildren().add(smartModelPane);
+    }
+
+    private void setLogoutScenario() {
+        currentScenario.set(4);
+
+        Text textWait = new Text("Logging out...");
+        textWait.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(textWait);
+        borderPane.setBottom(getFullscreenButton());
+
+        rootPane.getChildren().add(borderPane);
     }
 
     @Override
