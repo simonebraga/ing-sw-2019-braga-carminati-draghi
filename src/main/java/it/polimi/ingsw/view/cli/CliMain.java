@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
 import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
@@ -14,15 +15,14 @@ import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.model.smartmodel.SmartPlayer;
+import it.polimi.ingsw.model.smartmodel.SmartPowerup;
+import it.polimi.ingsw.model.smartmodel.SmartWeapon;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * This class contains the command line interface implementation of the client.
@@ -81,7 +81,17 @@ public class CliMain implements ViewInterface {
     /**
      * This finale attribute represents the UNICODE code for the "no ammo" symbol.
      */
-    private static final String UNICODE_NO_AMMO = "\uDEC7";
+    private static final String UNICODE_NO_AMMO = "\uD83D\uDEC7";
+
+    /**
+     * This finale attribute represents the UNICODE code for a skull symbol.
+     */
+    private static final String UNICODE_SKULL = "\u2620";
+
+    /**
+     * This finale attribute represents the UNICODE code for a perpendicular symbol.
+     */
+    private static final String UNICODE_UPPER_DOOR_THRESHOLD = "\u27C2";
 
     /**
      * This final attribute defines squares width in cli printing.
@@ -96,19 +106,40 @@ public class CliMain implements ViewInterface {
     /**
      * This final attribute defines the maximum number of character of a player nickname that will be printed.
      */
-    private static final int NICK_PRINT_SIZE = 6;
+    private static final int NICK_PRINT_SIZE = 20;
+
+    /**
+     * This final attribute defines the maximum number of squares per row.
+     */
+    private static final int MAX_SQUARES_BY_ROW = 4;
 
     /**
      * This final attribute defines how many characters compose a full horizontal grid line.
      */
-    private static final int TOTAL_GRID_WIDTH = (SQUARES_WIDTH * 4) - 4 + 1;
+    private static final int TOTAL_GRID_WIDTH = (SQUARES_WIDTH * MAX_SQUARES_BY_ROW) - MAX_SQUARES_BY_ROW + 1;
+
+    /**
+     * This final attribute defines the first line index of the content square section.
+     */
+    private static final int SQUARE_CONTENT_SECTION_STARTING_INDEX = 2;
+
+    /**
+     * This final attribute defines the first line index of the figure square section.
+     */
+    private static final int SQUARE_FIGURE_SECTION_STARTING_INDEX = 5;
+
+    /**
+     * This final attribute defines the maximum amount of character a generic info would be printed.
+     */
+    private static final int MAX_INFO_SIZE = 6;
+
+
+    ////////////////////////////////////////////// match related constants /////////////////////////////////////////////
 
     /**
      * This final attribute defines the maximum amount of weapons stored in a single spawn square.
      */
     private static final int MAX_WEAPONS_BY_SQUARE = 3;
-
-    ////////////////////////////////////////////////////////////// match related constants ///////////////
 
     /**
      * This constant represents the number of maps available in the game.
@@ -120,7 +151,7 @@ public class CliMain implements ViewInterface {
      */
     private static final String MAPS_RESOURCES_PATH = "maps.json";
 
-    ////////////////////////////////////////////////////////////// network related constants ///////////////
+    ////////////////////////////////////// network related constants ///////////////////////////////////////
 
     /**
      * This final attribute defines the value returned from client.login() method when the registration was successful.
@@ -147,7 +178,7 @@ public class CliMain implements ViewInterface {
      */
     private static final int LOGIN_FAILURE_SIGNAL = 4;
 
-    ////////////////////////////////////////////////////////////// class attributes ///////////////
+    ////////////////////////////////////////////// class attributes /////////////////////////////////////////////////////
 
     /**
      * This attribute is the input scanner.
@@ -173,6 +204,11 @@ public class CliMain implements ViewInterface {
      * This attribute represents the game map in use for this match.
      */
     private GameMap map;
+
+    /**
+     * This final attribute defines the 'game_settings.json' file path.
+     */
+    private static final String GAME_SETTINGS_PATH = "game_settings.json";
 
 ////////////////////////////////////////////////////////////// class  methods ////////////////////////////////////////////////
 
@@ -286,12 +322,32 @@ public class CliMain implements ViewInterface {
         ArrayList<String> nicknames = new ArrayList<>(model.getSmartPlayerMap().keySet());
 
         printKillShotTrack();
-
+        printSceneSpacing();
         printMap();
+        printSceneSpacing();
 
         for (String nick : nicknames) {
-            printBoard(nick, model.getSmartPlayerMap().get(nick));
+            if (nick.equals(nickname))
+                printBoard(nick, model.getSmartPlayerMap().get(nick), true);
+            else
+                printBoard(nick, model.getSmartPlayerMap().get(nick), false);
+
+            printSceneSpacing();
         }
+    }
+
+    /**
+     * This methods prints a separation space with a bar in the command line.
+     */
+    private void printSceneSpacing() {
+
+        System.out.println();
+        System.out.println();
+        for (int i = 0; i < TOTAL_GRID_WIDTH; i++) {
+            System.out.print("-");
+        }
+        System.out.println();
+        System.out.println();
     }
 
     /**
@@ -326,6 +382,15 @@ public class CliMain implements ViewInterface {
             else
                 printRow(map.getGrid()[i], map.getSpawnSquares(),false);
         }
+
+
+        //close last line
+        ArrayList<Border> closingBorders = new ArrayList<>();
+        for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
+            closingBorders.add(Border.WALL);
+        }
+
+        printFirstLine(closingBorders);
     }
 
 
@@ -350,9 +415,8 @@ public class CliMain implements ViewInterface {
         printFirstLine(upperBorders);
         printSpawnTagsLine(squares, leftBorders, rightMostBorder, spawnSquares, 1);
 
-        //FIXME
         //all square content info lines
-        for (int i = 2; i < 5; i++) {
+        for (int i = SQUARE_CONTENT_SECTION_STARTING_INDEX; i < SQUARE_FIGURE_SECTION_STARTING_INDEX; i++) {
 
             ArrayList<String> contentInThisRow = new ArrayList<>();
             for (ArrayList<String> contents : squareContentInfo) {
@@ -362,9 +426,8 @@ public class CliMain implements ViewInterface {
 
         }
 
-        //FIXME
         //all players in square nicknames
-        for (int i = 5; i < SQUARES_HIGH - 1; i++) {
+        for (int i = SQUARE_FIGURE_SECTION_STARTING_INDEX; i < SQUARES_HIGH - 1; i++) {
 
             ArrayList<Figure> figuresInThisRow = new ArrayList<>();
             for (ArrayList<Figure> figures : figuresInsideSquares) {
@@ -373,8 +436,6 @@ public class CliMain implements ViewInterface {
 
             printFigureLine(leftBorders, figuresInThisRow, i, rightMostBorder);
         }
-
-        //all remaining lines
     }
 
     /**
@@ -438,7 +499,7 @@ public class CliMain implements ViewInterface {
                 else if (rowIndex == 1 || rowIndex == SQUARES_HIGH - 2)
                     System.out.println("|");
                 else if (rowIndex == 2)
-                    System.out.print("\u27c2");
+                    System.out.print(UNICODE_UPPER_DOOR_THRESHOLD);
                 else
                     System.out.print("T");
                 break;
@@ -887,8 +948,153 @@ public class CliMain implements ViewInterface {
 
     }
 
-    private void printBoard(String nickname, SmartPlayer player) {
-        //TODO print player boards with damage, points, marks, weapons, ammos, first player marker and
+    private void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
+
+        printBoardHeader(nickname, isOwnBoard, player.getPoints());
+        printAdrenalineLevel(player.getDeaths());
+        System.out.println("| Marks:");
+        printMarkTrack(player.getMarks());
+        System.out.print("| Damage: ");
+        printDamageTrack(player.getDamage());
+        System.out.println("| Ammunition:");
+        printPlayerAmmo(player.getAmmo());
+        System.out.println("| Bounties:");
+        printBountyTrack(player.getDeaths());
+        System.out.println("| Weapons:");
+        printPlayerWeapons(player.getWeapons());
+        if (isOwnBoard)
+            printPlayerPowerups(player.getPowerups());
+        printSceneSpacing();
+    }
+
+    /**
+     * This method prints a player's board header with nick and points.
+     *
+     * @param nickname a String which is the username of the printing board. It will be printed inside the header.
+     * @param isOwnBoard a boolean flag that says if this board is the current player own board.
+     * @param points an integer containing the player's points.
+     */
+    private void printBoardHeader(String nickname, boolean isOwnBoard, int points) {
+        if (isOwnBoard) System.out.print(ANSI_GREEN);
+        System.out.print("+ ");
+        System.out.print(nickname.substring(0, NICK_PRINT_SIZE) + ANSI_RESET);
+        System.out.println("   Points: " + points);
+    }
+
+    /**
+     * This method prints the player adrenaline level considering how many times this player died.
+     *
+     * @param deaths an integer containing how many times this player died.
+     */
+    private void printAdrenalineLevel(int deaths) {
+        if (deaths < 3) System.out.println("| Adrenaline level: 0");
+        else if (deaths >=3 && deaths <= 5) System.out.println("| Adrenaline level: 1");
+        else System.out.println("| Adrenaline level: " + ANSI_RED + "MAX" + ANSI_RESET);
+    }
+
+    /**
+     * This method prints the player marks.
+     *
+     * @param marks a Map of Figure and Integer to be printed.
+     */
+    private void printMarkTrack(Map<Figure, Integer> marks) {
+
+        for (Figure f : marks.keySet()) {
+            System.out.print("| ");
+            System.out.println(f.name().substring(0, MAX_INFO_SIZE) + " : " + marks.get(f));
+        }
+        System.out.println();
+    }
+
+    /**
+     * This method prints the player damage.
+     *
+     * @param damage an ArrayList of Figure containing all players that damaged this player in the correct order.
+     */
+    private void printDamageTrack(ArrayList<Figure> damage) {
+        System.out.print(" | ");
+
+        for (Figure f : damage) {
+            System.out.print(f.name().substring(0,MAX_INFO_SIZE) + " | ");
+        }
+
+        for (int i = 0; i < 13 - damage.size(); i++) {
+            System.out.print("      " + " | ");
+        }
+        System.out.println();
+    }
+
+    /**
+     * This method prints all players ammo.
+     *
+     * @param ammo a Map of Color and Integer containing each ammo color amount.
+     */
+    private void printPlayerAmmo(Map<Color, Integer> ammo) {
+        for (Color color : ammo.keySet()) {
+            System.out.print("| ");
+            System.out.println(color.name() + " : " + ammo.get(color));
+        }
+        System.out.println();
+    }
+
+    /**
+     * This method prints all bounties remained on this player.
+     *
+     * @param deaths an integer saying how many times this player died.
+     */
+    private void printBountyTrack(int deaths) {
+
+        ArrayList<Integer> bountyValues = new ArrayList<>();
+
+        //load game settings from "game_settings.json" file
+        InputStream settingsFile = CliMain.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            SettingsJSONParser settings = objectMapper.readValue(settingsFile, SettingsJSONParser.class);
+            bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
+            settingsFile.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //print skulls
+        for (int i = 0; i < deaths; i++) {
+            System.out.print("[" + ANSI_RED + UNICODE_SKULL + ANSI_RESET + "] ");
+            bountyValues.remove(i);
+        }
+
+        //print remaining values
+        for (Integer value : bountyValues)
+            System.out.print("[" + value + "] ");
+
+        System.out.println();
+    }
+
+    /**
+     * This method prints all weapons that a player owns.
+     *
+     * @param weapons an ArrayList of SmartWeapon that contains all player weapons.
+     */
+    private void printPlayerWeapons(ArrayList<SmartWeapon> weapons) {
+        for (SmartWeapon weapon : weapons) {
+            if (weapon.getLoaded())
+                System.out.println(weapon.getWeaponName().name());
+            else
+                System.out.println(ANSI_RED + weapon.getWeaponName().name() + UNICODE_NO_AMMO + ANSI_RESET);
+        }
+    }
+
+    /**
+     * This method prints all powerups that a player owns.
+     *
+     * @param powerups an ArrayList of SmartPowerup that contains all player powerups.
+     */
+    private void printPlayerPowerups(ArrayList<SmartPowerup> powerups) {
+
+        System.out.println("| Power-ups: ");
+        for (SmartPowerup pu : powerups)
+            System.out.println(pu.getColor() + " " + pu.getPowerupName().name());
     }
 
     private void printKillShotTrack() {
