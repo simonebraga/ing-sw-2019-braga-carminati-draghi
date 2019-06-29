@@ -155,7 +155,7 @@ public class MoveAndShootCreator implements EffectsCreator{
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
         if (moveBeforeShoot){
-            if(moveTargetOrShooter){
+            if(moveTargetOrShooter){ //Tractor Beam
                 playersTarget = table.getPlayers().stream().filter(player1 -> player1.getPosition() != null).collect(Collectors.toCollection(ArrayList::new));
                 playersTarget.remove(player);
 
@@ -164,7 +164,7 @@ public class MoveAndShootCreator implements EffectsCreator{
                 }
 
                 playerTarget = server.choosePlayer(player, playersTarget);
-                new MoveCreator(playerTarget, maxMoves, false).run(server, table, targets);
+                new MoveAnotherPlayerCreator(playerTarget, maxMoves, false, player).run(server, table, targets);
                 if((maxDistShoot < 0 && table.getGameMap().getVisibility(player.getPosition()).contains(playerTarget.getPosition()))
                         || (maxDistShoot == 0 && player.getPosition().getPlayers().contains(playerTarget))){
                     effects.add(new FunctionalFactory().createDamagePlayer(player, playerTarget, damages, marks));
@@ -248,7 +248,7 @@ public class MoveAndShootCreator implements EffectsCreator{
                     }
                 }
             }
-        }else{
+        }else{ //Shotgun, Rocket and Grenade Launcher
             if(maxDistShoot == 0){ //Shotgun
                 playersTarget = new ArrayList<> (player.getPosition().getPlayers());
                 playersTarget.remove(player);
@@ -266,11 +266,16 @@ public class MoveAndShootCreator implements EffectsCreator{
             }
             playerTarget = server.choosePlayer(player, playersTarget);
             effects.add(new FunctionalFactory().createDamagePlayer(player, playerTarget, damages, marks));
-            targets.getPlayersTargeted().add(playerTarget);
-            if(damages>0){
+
+            if(!targets.getPlayersTargeted().contains(playerTarget)) { //Needed if the player decides to shootAOE and then shoot to the player
+                targets.getPlayersTargeted().add(playerTarget);
+            }
+            if (damages > 0 && !targets.getPlayersDamaged().contains(playerTarget)) {
                 targets.getPlayersDamaged().add(playerTarget);
             }
-            new MoveCreator(playerTarget, maxMoves, true).run(server, table, targets);
+
+
+            new MoveAnotherPlayerCreator(playerTarget, maxMoves, true, player).run(server, table, targets);
         }
 
         return effects;

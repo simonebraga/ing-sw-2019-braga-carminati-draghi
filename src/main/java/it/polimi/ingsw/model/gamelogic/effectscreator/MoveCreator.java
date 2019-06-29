@@ -19,18 +19,18 @@ public class MoveCreator implements EffectsCreator{
     /**
      * The player that moves.
      */
-    private Player player;
+    protected Player player;
 
     /**
      * The maximum distance where a player can move.
      * <p>If this attribute is set destination -1, the player can move everywhere.</p>
      */
-    private Integer distance;
+    protected Integer distance;
 
     /**
      * Represents if the player must move only in a direction or not.
      */
-    private Boolean sameDirection;
+    protected Boolean sameDirection;
 
     public MoveCreator() {
     }
@@ -63,7 +63,7 @@ public class MoveCreator implements EffectsCreator{
         return effects;
     }
 
-    private ArrayList<Square> findSquares(GameTable table) throws IllegalActionException {
+    protected ArrayList<Square> findSquares(GameTable table) throws IllegalActionException {
         ArrayList<Square> squares;
         if(distance<0){
             squares = new ArrayList<>(table.getGameMap().getGridAsList());
