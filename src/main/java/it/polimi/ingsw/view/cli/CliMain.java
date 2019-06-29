@@ -79,6 +79,11 @@ public class CliMain implements ViewInterface {
     public static final String ANSI_WHITE = "\u001B[37m";
 
     /**
+     * This finale attribute represents the UNICODE code for the "no ammo" symbol.
+     */
+    private static final String UNICODE_NO_AMMO = "\uDEC7";
+
+    /**
      * This final attribute defines squares width in cli printing.
      */
     private static final int SQUARES_WIDTH = 22;
@@ -337,34 +342,24 @@ public class CliMain implements ViewInterface {
         getContentOfEachSquare(squares,spawnSquares,squareContentInfo,squareTypes);
 
         printFirstLine(upperBorders);
-        printSpawnTags(squares, leftBorders, rightMostBorder, spawnSquares, 1);
+        printSpawnTagsLine(squares, leftBorders, rightMostBorder, spawnSquares, 1);
 
         //FIXME
         //all square content info lines
         for (int i = 0; i < 5; i++) {
 
-            printContentLine(squares, spawnSquares);
+            if (spawnSquares.contains(squares[i]))
+                printContentLine(leftBorders, squareContentInfo, i, rightMostBorder, true);
+            else
+                printContentLine(leftBorders, squareContentInfo, i, rightMostBorder, false);
 
-            //close last column
-            if (rightMostBorder.equals(Border.WALL)) {
-                System.out.println("|");
-            } else {    //rightMostBorder == Border.NOTHING
-                System.out.println(" ");
-            }
         }
 
         //FIXME
         //all players in square nicknames
         for (int i = 0; i < 6; i++) {
 
-            printFigureLine(leftBorders, squareContentInfo, figuresInsideSquares.get(0).get(0),squareTypes, i);
-
-            //close last column
-            if (rightMostBorder.equals(Border.WALL)) {
-                System.out.println("|");
-            } else {    //rightMostBorder == Border.NOTHING
-                System.out.println(" ");
-            }
+            printFigureLine(leftBorders, figuresInsideSquares.get(i), i, rightMostBorder);
         }
 
         //all remaining lines
@@ -461,7 +456,7 @@ public class CliMain implements ViewInterface {
      * @param spawnSquares an ArrayList of SpawnSquare containing all map spawn squares.
      * @param rowIndex the current printing line index.
      */
-    private void printSpawnTags(Square[] squares, ArrayList<Border> leftBorders, Border rightMostBorder, ArrayList<SpawnSquare> spawnSquares, int rowIndex) {
+    private void printSpawnTagsLine(Square[] squares, ArrayList<Border> leftBorders, Border rightMostBorder, ArrayList<SpawnSquare> spawnSquares, int rowIndex) {
 
         //search for spawn square in this row
         int spawnSquareIndex = -1;
@@ -586,8 +581,6 @@ public class CliMain implements ViewInterface {
         return playersBySquareInRow;
     }
 
-    //TODO(You left here, keep refactoring from here below)
-
     /**
      * This method parse info from a map grid row to strings and collects them into a list.
      *
@@ -598,46 +591,199 @@ public class CliMain implements ViewInterface {
      */
     private void getContentOfEachSquare(Square[] squares, ArrayList<SpawnSquare> spawnSquares, ArrayList<ArrayList<String>> squareContentInfo, ArrayList<String> squareTypes) {
 
+        ArrayList<String> infoArray = new ArrayList<>();
+
         for (Square square : squares) {
-            if (spawnSquares.contains(square)) {    //square is a spawnSquare
 
-                SpawnSquare spawnSquare = (SpawnSquare) square;
+            if (square != null) {   //tile or spawn squares
 
-                ArrayList<String> infoArray = new ArrayList<>();
-                infoArray.add(spawnSquare.getColor().name());
+                if (spawnSquares.contains(square)) {    //square is a spawnSquare
 
-                for (Weapon weapon : spawnSquare.getWeapons()) {
-                    infoArray.add(weapon.getName().name());
-                    infoArray.add(weapon.getIsLoaded().toString());
-                }
+                    SpawnSquare spawnSquare = (SpawnSquare) square;
 
-                squareContentInfo.add(infoArray);
-                squareTypes.add("spawn");
-            } else {
+                    for (Weapon weapon : spawnSquare.getWeapons()) {
+                        if (weapon.getIsLoaded())
+                            infoArray.add(parseWeaponName(weapon.getName(),true));
+                        else
+                            infoArray.add(parseWeaponName(weapon.getName(),false));
+                    }
 
-                if (square.getUp() == null) {   //void square
-
-                    ArrayList<String> infoArray = new ArrayList<>();
-                    infoArray.add("null");
                     squareContentInfo.add(infoArray);
-                    squareTypes.add("void");
+                    squareTypes.add("spawn");
 
-                } else {    //tile square
+                } else {    //square is a tile square
 
                     TileSquare tileSquare = (TileSquare) square;
 
-                    ArrayList<String> infoArray = new ArrayList<>();
-                    infoArray.add(tileSquare.getTile().getPowerup().toString());
+                    infoArray.add(tileSquare.getTile().getPowerup().toString() + "PU");
 
                     for (Color color : tileSquare.getTile().getAmmo()) {
-                        infoArray.add(color.name());
+                        infoArray.add(parseColorName(color));
                     }
 
                     squareContentInfo.add(infoArray);
                     squareTypes.add("tile");
                 }
+            } else {            //square is void
+
+                    infoArray.add("null");
+                    squareContentInfo.add(infoArray);
+                    squareTypes.add("void");
             }
         }
+    }
+
+    /**
+     * This method parse a weapon name into a shorten version of the same weapon name.
+     *
+     * @param name a WeaponName to be parsed to a 5 characters string.
+     * @return a 5 characters String which represents the shorten version of a weapon name.
+     */
+    private String parseWeaponName(WeaponName name, boolean isLoaded) {
+        switch (name) {
+            case FURNACE:{
+                if (isLoaded)
+                    return "FURNC ";
+                else
+                    return "FURNC" + UNICODE_NO_AMMO;
+            }
+            case CYBERBLADE:{
+                if (isLoaded)
+                    return "CYBLD ";
+                else
+                    return "CYBLD" + UNICODE_NO_AMMO;
+            }
+            case ELECTROSCYTHE:{
+                if (isLoaded)
+                    return "ELECT ";
+                else
+                    return "ELECT" + UNICODE_NO_AMMO;
+            }
+            case SHOCKWAVE:{
+                if (isLoaded)
+                    return "SHOCK ";
+                else
+                    return "SHOCK" + UNICODE_NO_AMMO;
+            }
+            case ZX2:{
+                if (isLoaded)
+                    return "ZX2   ";
+                else
+                    return "ZX2  " + UNICODE_NO_AMMO;
+            }
+            case THOR:{
+                if (isLoaded)
+                    return "THOR  ";
+                else
+                    return "THOR " + UNICODE_NO_AMMO;
+            }
+            case SHOTGUN:{
+                if (isLoaded)
+                    return "SHOTG ";
+                else
+                    return "SHOTG" + UNICODE_NO_AMMO;
+            }
+            case WHISPER:{
+                if (isLoaded)
+                    return "WHISP ";
+                else
+                    return "WHISP" + UNICODE_NO_AMMO;
+            }
+            case HEATSEEKER:{
+                if (isLoaded)
+                    return "HTSKR ";
+                else
+                    return "HTSKR" + UNICODE_NO_AMMO;
+            }
+            case MACHINEGUN:{
+                if (isLoaded)
+                    return "MACHG ";
+                else
+                    return "MACHG" + UNICODE_NO_AMMO;
+            }
+            case TRACTORBEAM:{
+                if (isLoaded)
+                    return "TRTBM ";
+                else
+                    return "TRTBM" + UNICODE_NO_AMMO;
+            }
+            case VORTEXCANNON:{
+                if (isLoaded)
+                    return "VORTX ";
+                else
+                    return "VORTX" + UNICODE_NO_AMMO;
+            }
+            case POWERGLOVE:{
+                if (isLoaded)
+                    return "POWGV ";
+                else
+                    return "POWGV" + UNICODE_NO_AMMO;
+            }
+            case SLEDGEHAMMER:{
+                if (isLoaded)
+                    return "SLGHM ";
+                else
+                    return "SLGHM" + UNICODE_NO_AMMO;
+            }
+            case ROCKETLAUNCHER:{
+                if (isLoaded)
+                    return "RKTLC ";
+                else
+                    return "RKTLC" + UNICODE_NO_AMMO;
+            }
+            case HELLION:{
+                if (isLoaded)
+                    return "HELLN ";
+                else
+                    return "HELLN" + UNICODE_NO_AMMO;
+            }
+            case RAILGUN:{
+                if (isLoaded)
+                    return "RAILG ";
+                else
+                    return "RAILG" + UNICODE_NO_AMMO;
+            }
+            case LOCKRIFLE:{
+                if (isLoaded)
+                    return "LOCKR ";
+                else
+                    return "LOCKR" + UNICODE_NO_AMMO;
+            }
+            case PLASMAGUN:{
+                if (isLoaded)
+                    return "PLASM ";
+                else
+                    return "PLASM" + UNICODE_NO_AMMO;
+            }
+            case FLAMETHROWER:{
+                if (isLoaded)
+                    return "FLMTW ";
+                else
+                    return "FLMTW" + UNICODE_NO_AMMO;
+            }
+            case GRENADELAUNCHER:{
+                if (isLoaded)
+                    return "GNDLC ";
+                else
+                    return "GNDLC" + UNICODE_NO_AMMO;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This method parse a Color into a shorten version of the name of that color.
+     *
+     * @param color a Color to be parsed to a 5 characters string.
+     * @return a 5 characters String which represents the shorten version of a color name.
+     */
+    private String parseColorName(Color color) {
+        switch (color) {
+            case BLUE: return "BLUE ";
+            case YELLOW: return "YELLOW";
+            case RED: return "RED   ";
+        }
+        return null;
     }
 
     /**
@@ -673,22 +819,58 @@ public class CliMain implements ViewInterface {
         printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
     }
 
-    private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<ArrayList<String>> squaresInfo, Figure figure, ArrayList<String> squareTypes, int rowIndex) {
-        //TODO
+    /**
+     * This method prints a full line of player line type considering row index, borders and figures inside each square.
+     *
+     * @param leftBorders an ArrayList of Border containing each square left border from left square to right square.
+     * @param figures an ArrayList of Figure containing a figure for each square box.
+     * @param rowIndex an integer representing at which command line row idex is the method printing, relative to the square box high.
+     */
+    private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
 
-        String color = null;
-        int squareCounter = 0;
+        for (int i = 0; i < leftBorders.size(); i++) {
+            printBorderChar(leftBorders.get(i), rowIndex);
+            System.out.print(" ");
+            printFigure(figures.get(i));
+        }
 
-        if (squareTypes.get(0).equals("spawn"))
-            color = squaresInfo.get(0).get(0);
+        //closing line
+        printBorderChar(rightMostBorder, rowIndex);
+    }
 
-        printBorderChar(leftBorders.get(0), rowIndex);
-        printFigure(figure);
+    /**
+     * This method prints a full line of content info about each square of a particular row.
+     *
+     * @param leftBorders an ArrayList of Border containing each square left border from left square to right square.
+     * @param contentBySquare an ArrayList of String containing each square info to be printed.
+     * @param rowIndex an integer representing at which command line row idex is the method printing, relative to the square box high.
+     * @param rightMostBorder a Border representing the right border of the last square in the row
+     * @param isSpawnSquare
+     */
+    private void printContentLine(ArrayList<Border> leftBorders, ArrayList<ArrayList<String>> contentBySquare, int rowIndex, Border rightMostBorder, boolean isSpawnSquare) {
+
+        for (int i = 0; i < leftBorders.size(); i++) {
+            printBorderChar(leftBorders.get(i), rowIndex);
+            System.out.print(" ");
+            printContent(contentBySquare.get(i),isSpawnSquare);
+        }
+
+        //closing line
+        printBorderChar(rightMostBorder, rowIndex);
 
     }
 
-    private void printContentLine(Square[] squares, ArrayList<SpawnSquare> spawnSquares) {
-        //TODO
+    /**
+     * This method prints a box line with square content inside.
+     *
+     * @param content an ArrayList of String containing info about square content.
+     * @param isSpawnSquare a boolean flag that says if the line printed is part of a spawn square box.
+     */
+    private void printContent(ArrayList<String> content, boolean isSpawnSquare) {
+
+        System.out.print(content.get(0));
+        printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);  //fill with spaces to the next border
+
     }
 
     private void printBoard(String nickname, SmartPlayer player) {
