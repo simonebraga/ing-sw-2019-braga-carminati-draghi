@@ -103,6 +103,11 @@ public class CliMain implements ViewInterface {
      */
     private static final int TOTAL_GRID_WIDTH = (SQUARES_WIDTH * 4) - 4 + 1;
 
+    /**
+     * This final attribute defines the maximum amount of weapons stored in a single spawn square.
+     */
+    private static final int MAX_WEAPONS_BY_SQUARE = 3;
+
     ////////////////////////////////////////////////////////////// match related constants ///////////////
 
     /**
@@ -282,11 +287,11 @@ public class CliMain implements ViewInterface {
 
         printKillShotTrack();
 
+        printMap();
+
         for (String nick : nicknames) {
             printBoard(nick, model.getSmartPlayerMap().get(nick));
         }
-
-        printMap();
     }
 
     /**
@@ -329,6 +334,7 @@ public class CliMain implements ViewInterface {
      *
      * @param squares an array of Square to be formatted and printed.
      * @param spawnSquares a list of SpawnSquare that contains all squares that are not TileSquare nor void squares.
+     * @param isFirstRow a boolean flag that says if the row printed is the first grid row.
      */
     private void printRow(Square[] squares, ArrayList<SpawnSquare> spawnSquares, boolean isFirstRow) {
 
@@ -346,20 +352,26 @@ public class CliMain implements ViewInterface {
 
         //FIXME
         //all square content info lines
-        for (int i = 0; i < 5; i++) {
+        for (int i = 2; i < 5; i++) {
 
-            if (spawnSquares.contains(squares[i]))
-                printContentLine(leftBorders, squareContentInfo, i, rightMostBorder, true);
-            else
-                printContentLine(leftBorders, squareContentInfo, i, rightMostBorder, false);
+            ArrayList<String> contentInThisRow = new ArrayList<>();
+            for (ArrayList<String> contents : squareContentInfo) {
+                contentInThisRow.add(contents.get(i));
+            }
+            printContentLine(leftBorders, contentInThisRow, i, rightMostBorder);
 
         }
 
         //FIXME
         //all players in square nicknames
-        for (int i = 0; i < 6; i++) {
+        for (int i = 5; i < SQUARES_HIGH - 1; i++) {
 
-            printFigureLine(leftBorders, figuresInsideSquares.get(i), i, rightMostBorder);
+            ArrayList<Figure> figuresInThisRow = new ArrayList<>();
+            for (ArrayList<Figure> figures : figuresInsideSquares) {
+                figuresInThisRow.add(figures.get(i));
+            }
+
+            printFigureLine(leftBorders, figuresInThisRow, i, rightMostBorder);
         }
 
         //all remaining lines
@@ -608,6 +620,10 @@ public class CliMain implements ViewInterface {
                             infoArray.add(parseWeaponName(weapon.getName(),false));
                     }
 
+                    for (int i = 0; i < MAX_WEAPONS_BY_SQUARE - spawnSquare.getWeapons().size(); i++) {
+                        infoArray.add("      ");    //no weapon
+                    }
+
                     squareContentInfo.add(infoArray);
                     squareTypes.add("spawn");
 
@@ -615,7 +631,7 @@ public class CliMain implements ViewInterface {
 
                     TileSquare tileSquare = (TileSquare) square;
 
-                    infoArray.add(tileSquare.getTile().getPowerup().toString() + "PU");
+                    infoArray.add(tileSquare.getTile().getPowerup().toString() + "PU   ");
 
                     for (Color color : tileSquare.getTile().getAmmo()) {
                         infoArray.add(parseColorName(color));
@@ -844,15 +860,14 @@ public class CliMain implements ViewInterface {
      * @param leftBorders an ArrayList of Border containing each square left border from left square to right square.
      * @param contentBySquare an ArrayList of String containing each square info to be printed.
      * @param rowIndex an integer representing at which command line row idex is the method printing, relative to the square box high.
-     * @param rightMostBorder a Border representing the right border of the last square in the row
-     * @param isSpawnSquare
+     * @param rightMostBorder a Border representing the right border of the last square in the row.
      */
-    private void printContentLine(ArrayList<Border> leftBorders, ArrayList<ArrayList<String>> contentBySquare, int rowIndex, Border rightMostBorder, boolean isSpawnSquare) {
+    private void printContentLine(ArrayList<Border> leftBorders, ArrayList<String> contentBySquare, int rowIndex, Border rightMostBorder) {
 
         for (int i = 0; i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
-            printContent(contentBySquare.get(i),isSpawnSquare);
+            printContent(contentBySquare.get(i));
         }
 
         //closing line
@@ -864,11 +879,10 @@ public class CliMain implements ViewInterface {
      * This method prints a box line with square content inside.
      *
      * @param content an ArrayList of String containing info about square content.
-     * @param isSpawnSquare a boolean flag that says if the line printed is part of a spawn square box.
      */
-    private void printContent(ArrayList<String> content, boolean isSpawnSquare) {
+    private void printContent(String content) {
 
-        System.out.print(content.get(0));
+        System.out.print(content);
         printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);  //fill with spaces to the next border
 
     }
