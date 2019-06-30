@@ -422,7 +422,55 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public int choosePlayer(Figure[] f) {
-        return 0;
+        CustomStream customStream = new CustomStream();
+
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
+
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+            borderPane.setCenter(vBoxChoice);
+
+            Text textQuestion = new Text("Make your choice");
+            textQuestion.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+
+            HBox hBoxButtonGroup = new HBox();
+            hBoxButtonGroup.setSpacing(10);
+            hBoxButtonGroup.setAlignment(Pos.CENTER);
+
+            for (int i = 0 ; i < f.length ; i++) {
+                if (f[i] != null) {
+                    Button button = new Button();
+                    StackPane stackPanePlayerIcon = new StackPane();
+                    stackPanePlayerIcon.getChildren().add(
+                            new ImagePane(properties.getProperty("figuresRoot").concat(properties.getProperty("figure" + f[i].toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                    );
+                    button.setGraphic(stackPanePlayerIcon);
+                    stackPanePlayerIcon.maxWidthProperty().bind(primaryScene.widthProperty().divide(f.length + 3));
+                    stackPanePlayerIcon.minWidthProperty().bind(primaryScene.widthProperty().divide(f.length + 3));
+                    stackPanePlayerIcon.maxHeightProperty().bind(stackPanePlayerIcon.widthProperty());
+                    stackPanePlayerIcon.minHeightProperty().bind(stackPanePlayerIcon.widthProperty());
+                    int finalI = i;
+                    button.setOnAction(behav -> {
+                        customStream.putLine(Integer.toString(finalI));
+                        Platform.runLater(this::setCleanScenario);
+                        Platform.runLater(this::setGameMapScenario);
+                    });
+                    hBoxButtonGroup.getChildren().add(button);
+                }
+            }
+            vBoxChoice.getChildren().add(textQuestion);
+            vBoxChoice.getChildren().add(hBoxButtonGroup);
+
+            rootPane.getChildren().add(borderPane);
+        });
+
+        customStream.resetBuffer();
+        return Integer.parseInt(customStream.getLine());
     }
 
     @Override
@@ -479,11 +527,10 @@ public class GuiMain extends Application implements ViewInterface {
                 stackPaneMapIcon.getChildren().add(
                         new ImagePane(properties.getProperty("mapsiconsRoot").concat(properties.getProperty("mapicon" + (i+1))),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
                 );
-                stackPaneMapIcon.maxWidthProperty().bind(primaryScene.widthProperty().divide(6));
-                stackPaneMapIcon.minWidthProperty().bind(primaryScene.widthProperty().divide(6));
+                stackPaneMapIcon.maxWidthProperty().bind(primaryScene.widthProperty().divide(m.length + 1));
+                stackPaneMapIcon.minWidthProperty().bind(primaryScene.widthProperty().divide(m.length + 1));
                 stackPaneMapIcon.maxHeightProperty().bind(stackPaneMapIcon.widthProperty().divide(1.3));
                 stackPaneMapIcon.minHeightProperty().bind(stackPaneMapIcon.widthProperty().divide(1.3));
-                stackPaneMapIcon.setStyle("-fx-border-color: red; -fx-border-width: 1;");
                 radioButton.setGraphic(stackPaneMapIcon);
                 radioButton.setUserData(i);
                 radioButton.setToggleGroup(toggleGroupMapChoice);
@@ -507,6 +554,7 @@ public class GuiMain extends Application implements ViewInterface {
             rootPane.getChildren().add(borderPane);
         });
 
+        customStream.resetBuffer();
         return Integer.parseInt(customStream.getLine());
     }
 
@@ -557,6 +605,7 @@ public class GuiMain extends Application implements ViewInterface {
             rootPane.getChildren().add(borderPane);
         });
 
+        customStream.resetBuffer();
         return Integer.parseInt(customStream.getLine());
     }
 
