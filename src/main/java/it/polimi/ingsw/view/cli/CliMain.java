@@ -1113,25 +1113,37 @@ public class CliMain implements ViewInterface {
             System.out.println(pu.getColor() + " " + pu.getPowerupName().name());
     }
 
+    /**
+     * This method prints the killshot track if the game is in normal mode or each spawn damage if the game is in domination mode.
+     */
     private void printKillShotTrack() {
 
-        Map<String, SmartPlayer> users = model.getSmartPlayerMap();
         Integer maxKills = settings.getMaxKills();
-        Integer currentKills = 0;
+        ArrayList<Figure> killShotTrack = model.getKillshotTrack();
 
         if (!model.getDomination()) {
 
-            //count number of kills
-            for (SmartPlayer player : users.values()) {
-                currentKills += player.getDeaths();
-            }
-            //TODO(print also killers on KillShotTrack)
+            //print normal mode kill shot track
             System.out.print("KILL SHOT TRACK: ");
-            for (int i = 0; i < maxKills - currentKills; i++) {
+            for (Figure figure : killShotTrack) {
+                System.out.print(" | ");
+                printFigure(figure);
+            }
+            for (int i = killShotTrack.size(); i <= maxKills; i++) {
                 System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
             }
+            System.out.println(" |");
         } else {
-            //TODO(print spawn damage track)
+
+            //print spawn squares damages by color
+            for (Color color : model.getSpawnDamageTrack().keySet()) {
+                System.out.println("SPAWN DAMAGES: ");
+                for (Figure figure : model.getSpawnDamageTrack().get(color)) {
+                    System.out.print(" | ");
+                    printFigure(figure);
+                }
+                System.out.println(" |");
+            }
         }
     }
 
