@@ -14,6 +14,7 @@ import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.smartmodel.*;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +26,7 @@ import java.util.*;
  * @author Draghi96
  */
 public class CliMain implements ViewInterface {
+
 
     ////////////////////////////////////////////////////////////// cli formatting constants ///////////////
 
@@ -127,6 +129,16 @@ public class CliMain implements ViewInterface {
      * This final attribute defines the maximum amount of character a generic info would be printed.
      */
     private static final int MAX_INFO_SIZE = 6;
+
+    /**
+     * This final attribute defines the invalid input message to send to the user.
+     */
+    private static final String INVALID_INPUT_MESSAGE = "Invalid input";
+
+    /**
+     * This final attribute defines the null info field.
+     */
+    private static final String VOID_INFO_SPACING = "      ";
 
 
     ////////////////////////////////////////////// match related constants /////////////////////////////////////////////
@@ -703,7 +715,7 @@ public class CliMain implements ViewInterface {
                     }
 
                     for (int i = 0; i < MAX_WEAPONS_BY_SQUARE - weapons.get(spawnSquare.getColor()).size(); i++) {
-                        infoArray.add("      ");    //no weapon
+                        infoArray.add(VOID_INFO_SPACING);    //no weapon
                     }
 
                     squareContentInfo.add(infoArray);
@@ -730,7 +742,7 @@ public class CliMain implements ViewInterface {
             } else {            //square is void
 
                 for (int i = SQUARE_CONTENT_SECTION_STARTING_INDEX; i < SQUARE_FIGURE_SECTION_STARTING_INDEX; i++)
-                    infoArray.add("      ");
+                    infoArray.add(VOID_INFO_SPACING);
                 squareContentInfo.add(infoArray);
                 squareTypes.add("void");
             }
@@ -1047,7 +1059,7 @@ public class CliMain implements ViewInterface {
         }
 
         for (int i = 0; i < 13 - damage.size(); i++) {
-            System.out.print("      " + " | ");
+            System.out.print(VOID_INFO_SPACING + " | ");
         }
         System.out.println();
     }
@@ -1179,7 +1191,7 @@ public class CliMain implements ViewInterface {
             System.out.print("\nChoose a figure by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > f.length)
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
         return choice - 1;
     }
@@ -1198,7 +1210,7 @@ public class CliMain implements ViewInterface {
             System.out.print("\nChoose a weapon by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > w.length)
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
         return choice - 1;
     }
@@ -1217,7 +1229,7 @@ public class CliMain implements ViewInterface {
             System.out.print("\nChoose effect usage by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > s.length)
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
         return choice - 1;
     }
@@ -1249,12 +1261,16 @@ public class CliMain implements ViewInterface {
                         System.out.println(i + 1 + "West");
                         break;
                     }
+                    default:{
+                        System.out.println("A wrong character has been send from the server.");
+                        break;
+                    }
                 }
             }
             System.out.print("\nChoose direction by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > c.length)
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
         return choice - 1;
     }
@@ -1272,7 +1288,7 @@ public class CliMain implements ViewInterface {
             System.out.print("\nChoose color by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > c.length)
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
         return choice - 1;
     }
@@ -1289,7 +1305,7 @@ public class CliMain implements ViewInterface {
             System.out.print("\nChoose power up by its number: ");
             choice = scannerIn.nextInt();
             if (choice < 1 || choice > p.length)
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
         return choice - 1;
     }
@@ -1319,7 +1335,7 @@ public class CliMain implements ViewInterface {
                 choice = scannerIn.nextInt();
 
             if (!maps.contains(choice - 1))
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
         return choice - 1;
     }
@@ -1338,20 +1354,33 @@ public class CliMain implements ViewInterface {
             fullChoice = scannerIn.nextLine();  //allow user to type in also the full case name
             choice = fullChoice.toCharArray()[0];
 
-            if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D') {
-                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
-                scannerIn.nextLine();
-            }
+            if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D')
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
-        for (int i = 0; i < c.length; i++) {
-            if ((c[i]) == choice || (c[i] == choice + 32)) return i;    //check upper and lower case
-        }
+
+        for (int i = 0; i < c.length; i++)
+            if (c[i].toString().equalsIgnoreCase(choice.toString())) return i;    //check upper and lower case
         return -1;
     }
 
     @Override
     public int chooseSquare(Square[] s) {
-        return 0;
+
+        int choice = 0;
+
+        while (choice < 1 || choice > s.length) {
+            for (int i = 0; i < s.length; i++)
+                System.out.println(i + " - (" + s[i].getX() + "," + s[i].getY() + ")");
+            System.out.println("\nChoose a Square by its number: ");
+
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+
+            if (choice < 1 || choice > s.length)
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
+        }
+
+        return choice - 1;
     }
 
     @Override
@@ -1424,12 +1453,13 @@ public class CliMain implements ViewInterface {
     @Override
     public void notifyModelUpdate() {
 
-        try {
-            model = client.getModelUpdate();
+        Platform.runLater(() -> {
+            try {
+                model = client.getModelUpdate();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             printModel();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        });
     }
 }
