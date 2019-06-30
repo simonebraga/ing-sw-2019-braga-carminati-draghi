@@ -13,10 +13,7 @@ import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
-import it.polimi.ingsw.model.smartmodel.SmartModel;
-import it.polimi.ingsw.model.smartmodel.SmartPowerup;
-import it.polimi.ingsw.model.smartmodel.SmartTile;
-import it.polimi.ingsw.model.smartmodel.SmartWeapon;
+import it.polimi.ingsw.model.smartmodel.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +39,7 @@ class TestSmartModel {
         ArrayList<Player> players = new ArrayList<>(Arrays.asList(player1,player2,player3));
         gameTable = new GameInitializer('N',2,players).run();
         for (Player player : gameTable.getPlayers()) {
+            player.getPointTrack().setValue(new ArrayList<>(Arrays.asList(1, 1, 3)));
             player.getDamageTrack().setDamage(new ArrayList<>(Arrays.asList(player3,player2,player2)));
             player.getMarkTrack().addMarks(player1,2);
             player.getAmmoPocket().reduceAmmo(new ArrayList<>(Arrays.asList(Color.RED,Color.YELLOW,Color.BLUE)));
@@ -220,5 +218,16 @@ class TestSmartModel {
         for (Color color : smartModelAfterSerialization.getSpawnDamageTrack().keySet()) {
             assertEquals(expectedDamage,smartModelAfterSerialization.getSpawnDamageTrack().get(color));
         }
+    }
+
+    @Test
+    void testPointTrack() {
+        SmartModel smartModel = new SmartModel();
+        smartModel.update(gameTable);
+        smartModel.setMapIndex(2);
+        SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
+        ArrayList<Integer> expectedPointTrack = new ArrayList<>(Arrays.asList(1,1,3));
+        for (SmartPlayer smartPlayer : smartModelAfterSerialization.getSmartPlayerMap().values())
+            assertEquals(expectedPointTrack,smartPlayer.getPointTrack());
     }
 }

@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.Map;
 
 public class SmartPlayer {
@@ -14,6 +13,7 @@ public class SmartPlayer {
     private Map<Color,Integer> ammo;
     private ArrayList<SmartWeapon> weapons;
     private ArrayList<SmartPowerup> powerups;
+    private ArrayList<Integer> pointTrack;
     private int posX;
     private int posY;
     private int deaths;
@@ -37,6 +37,10 @@ public class SmartPlayer {
 
     public ArrayList<SmartPowerup> getPowerups() {
         return powerups;
+    }
+
+    public ArrayList<Integer> getPointTrack() {
+        return pointTrack;
     }
 
     public int getPosX() {
@@ -63,7 +67,7 @@ public class SmartPlayer {
         this.marks = marks;
     }
 
-    public void setAmmo(EnumMap<Color, Integer> ammo) {
+    public void setAmmo(Map<Color, Integer> ammo) {
         this.ammo = ammo;
     }
 
@@ -73,6 +77,10 @@ public class SmartPlayer {
 
     public void setPowerups(ArrayList<SmartPowerup> powerups) {
         this.powerups = powerups;
+    }
+
+    public void setPointTrack(ArrayList<Integer> pointTrack) {
+        this.pointTrack = pointTrack;
     }
 
     public void setPosX(int posX) {

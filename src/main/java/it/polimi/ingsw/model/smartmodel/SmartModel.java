@@ -130,6 +130,9 @@ public class SmartModel {
             // Setup deaths
             smartPlayer.setDeaths(defaultPointtrackSize - player.getPointTrack().getValue().size());
 
+            // Setup pointTrack
+            smartPlayer.setPointTrack(player.getPointTrack().getValue());
+
             // Setup points
             smartPlayer.setPoints(player.getPoints());
 

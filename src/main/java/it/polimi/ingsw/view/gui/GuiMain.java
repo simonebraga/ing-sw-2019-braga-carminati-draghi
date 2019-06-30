@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.gui;
 
+import it.polimi.ingsw.controller.CustomStream;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
@@ -21,6 +22,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -52,6 +55,36 @@ public class GuiMain extends Application implements ViewInterface {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void setScenario(int i) {
+        switch (i) {
+            case 1: {
+                Platform.runLater(this::setCleanScenario);
+                Platform.runLater(this::setLoginScenario);
+                break;
+            }
+            case 2: {
+                Platform.runLater(this::setCleanScenario);
+                Platform.runLater(this::setStartWaitScenario);
+                break;
+            }
+            case 3: {
+                Platform.runLater(this::setCleanScenario);
+                Platform.runLater(this::setGameMapScenario);
+                break;
+            }
+            case 4: {
+                Platform.runLater(this::setCleanScenario);
+                Platform.runLater(this::setLogoutScenario);
+                break;
+            }
+            case 0:
+            default: {
+                Platform.runLater(this::setCleanScenario);
+                break;
+            }
+        }
     }
 
     private AnchorPane getFullscreenButton() {
@@ -199,8 +232,6 @@ public class GuiMain extends Application implements ViewInterface {
                 i++;
             }
         }
-
-        //TODO Resume from here
 
         GridPane gridPaneGameScenario = new GridPane();
         gridPaneGameScenario.add(stackPaneMap,0,0);
@@ -366,11 +397,17 @@ public class GuiMain extends Application implements ViewInterface {
     }
 
     @Override
+    public void stop() {
+        System.exit(0);
+    }
+
+    @Override
     public void logout() {
         if (currentScenario.get() != 1) {
             Platform.runLater(this::setCleanScenario);
             Platform.runLater(this::setLoginScenario);
         }
+        client = null;
     }
 
     @Override
@@ -415,12 +452,112 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public int chooseMap(int[] m) {
-        return 0;
+        CustomStream customStream = new CustomStream();
+
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
+
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+            borderPane.setCenter(vBoxChoice);
+
+            Text textQuestion = new Text("Select the map");
+            textQuestion.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+
+            HBox hBoxToggleGroup = new HBox();
+            hBoxToggleGroup.setSpacing(10);
+            hBoxToggleGroup.setAlignment(Pos.CENTER);
+
+            ToggleGroup toggleGroupMapChoice = new ToggleGroup();
+            for (int i : m) {
+                RadioButton radioButton = new RadioButton();
+                StackPane stackPaneMapIcon = new StackPane();
+                stackPaneMapIcon.getChildren().add(
+                        new ImagePane(properties.getProperty("mapsiconsRoot").concat(properties.getProperty("mapicon" + (i+1))),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                );
+                stackPaneMapIcon.maxWidthProperty().bind(primaryScene.widthProperty().divide(6));
+                stackPaneMapIcon.minWidthProperty().bind(primaryScene.widthProperty().divide(6));
+                stackPaneMapIcon.maxHeightProperty().bind(stackPaneMapIcon.widthProperty().divide(1.3));
+                stackPaneMapIcon.minHeightProperty().bind(stackPaneMapIcon.widthProperty().divide(1.3));
+                stackPaneMapIcon.setStyle("-fx-border-color: red; -fx-border-width: 1;");
+                radioButton.setGraphic(stackPaneMapIcon);
+                radioButton.setUserData(i);
+                radioButton.setToggleGroup(toggleGroupMapChoice);
+                hBoxToggleGroup.getChildren().add(radioButton);
+            }
+
+            Button buttonChoose = new Button("Select");
+            buttonChoose.setPrefWidth(100);
+            buttonChoose.setOnAction(behavior -> {
+                if (toggleGroupMapChoice.getSelectedToggle() != null) {
+                    customStream.putLine(toggleGroupMapChoice.getSelectedToggle().getUserData().toString());
+                    Platform.runLater(this::setCleanScenario);
+                    Platform.runLater(this::setStartWaitScenario);
+                }
+            });
+
+            vBoxChoice.getChildren().add(textQuestion);
+            vBoxChoice.getChildren().add(hBoxToggleGroup);
+            vBoxChoice.getChildren().add(buttonChoose);
+
+            rootPane.getChildren().add(borderPane);
+        });
+
+        return Integer.parseInt(customStream.getLine());
     }
 
     @Override
     public int chooseMode(Character[] c) {
-        return 0;
+        CustomStream customStream = new CustomStream();
+
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
+
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+            borderPane.setCenter(vBoxChoice);
+
+            Text textQuestion = new Text("Select the game mode");
+            textQuestion.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+            vBoxChoice.getChildren().add(textQuestion);
+            for (int i = 0 ; i < c.length ; i++) {
+                if (c[i] != null) {
+                    Button button = new Button();
+                    switch (c[i]) {
+                        case 'N': {
+                            button.setText("Normal");
+                            break;
+                        }
+                        case 'D': {
+                            button.setText("Domination");
+                            break;
+                        }
+                        default:
+                            button.setText(c[i].toString());
+                    }
+                    int finalI = i;
+                    button.setOnAction(behavior -> {
+                        customStream.putLine(Integer.toString(finalI));
+                        Platform.runLater(this::setCleanScenario);
+                        Platform.runLater(this::setStartWaitScenario);
+                    });
+                    button.setPrefWidth(150);
+                    vBoxChoice.getChildren().add(button);
+                }
+            }
+
+            rootPane.getChildren().add(borderPane);
+        });
+
+        return Integer.parseInt(customStream.getLine());
     }
 
     @Override
@@ -445,17 +582,19 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public void notifyModelUpdate() {
-        try {
-            smartModel = client.getModelUpdate();
-            if (smartModel != null) {
-                Platform.runLater(this::updateSmartModelPane);
-                if (currentScenario.get() == 2) {
-                    Platform.runLater(this::setCleanScenario);
-                    Platform.runLater(this::setGameMapScenario);
+        Platform.runLater(() -> {
+            try {
+                smartModel = client.getModelUpdate();
+                if (smartModel != null) {
+                    Platform.runLater(this::updateSmartModelPane);
+                    if (currentScenario.get() == 2) {
+                        Platform.runLater(this::setCleanScenario);
+                        Platform.runLater(this::setGameMapScenario);
+                    }
                 }
+            } catch (Exception ignored) {
             }
-        } catch (Exception ignored) {
-        }
+        });
     }
 }
 
