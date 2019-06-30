@@ -14,6 +14,7 @@ import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.smartmodel.*;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -1452,12 +1453,13 @@ public class CliMain implements ViewInterface {
     @Override
     public void notifyModelUpdate() {
 
-        try {
-            model = client.getModelUpdate();
+        Platform.runLater(() -> {
+            try {
+                model = client.getModelUpdate();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             printModel();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        });
     }
 }
