@@ -23,6 +23,7 @@ public class ShootDirectionCreator implements EffectsCreator{
     private static final Integer RAILGUN_PIERCING_DAMAGES = 2;
     private static final Integer FLAME_THROWER_BARBECUE_FIRST_SQUARE_DAMAGES = 2;
     private static final Integer FLAME_THROWER_BARBECUE_SECOND_SQUARE_DAMAGES = 1;
+    private static final Integer FLAME_THROWER_BASIC_DAMAGE = 1;
 
     /**
      * The player that shoots.
@@ -175,7 +176,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                     throw new IllegalActionException();
                 }
 
-                effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
+                effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets, RAILGUN_PIERCING_DAMAGES));
             }
         }else{ //FlameThrower
             boolean noTargets = false;
@@ -191,7 +192,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                 noTargets = true;
             }else{
                 if(directShoot){
-                    effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
+                    effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets, FLAME_THROWER_BASIC_DAMAGE));
                 }else{
                     playersTarget.forEach(playerTarget -> {
                         effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, FLAME_THROWER_BARBECUE_FIRST_SQUARE_DAMAGES, 0));
@@ -229,7 +230,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                 }
             }else{
                 if(directShoot){
-                    effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets));
+                    effects.addAll(directShoot(server, table, playersTarget, squaresTarget, targets, FLAME_THROWER_BASIC_DAMAGE));
                 }else{
                     playersTarget.forEach(playerTarget -> {
                         effects.add(new FunctionalFactory().createDamagePlayer(this.player, playerTarget, FLAME_THROWER_BARBECUE_SECOND_SQUARE_DAMAGES, 0));
@@ -252,7 +253,7 @@ public class ShootDirectionCreator implements EffectsCreator{
         return effects;
     }
 
-    private ArrayList<FunctionalEffect> directShoot(Server server, GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets) throws IllegalActionException, UnavailableUserException {
+    private ArrayList<FunctionalEffect> directShoot(Server server, GameTable table, ArrayList<Player> playersTarget, ArrayList<Square> squaresTarget, Targets targets, Integer damages) throws IllegalActionException, UnavailableUserException {
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         Boolean playerOrSquare = true;
         if(table.getIsDomination()){
@@ -263,7 +264,7 @@ public class ShootDirectionCreator implements EffectsCreator{
                 throw new IllegalActionException();
             }
             Player target = server.choosePlayer(player, playersTarget);
-            effects.add(new FunctionalFactory().createDamagePlayer(player, target, 1, 0));
+            effects.add(new FunctionalFactory().createDamagePlayer(player, target, damages, 0));
             targets.getPlayersTargeted().add(target);
             targets.getPlayersDamaged().add(target);
             playersTarget.remove(target);

@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
  */
 public class ShootShockWaveCreator implements EffectsCreator{
 
+    private final static Integer SHOCK_WAVE_BASIC_DAMAGE = 1;
+    private final static Integer SHOCK_WAVE_TSUNAMI_DAMAGE = 1;
+
     /**
      * The player that shoots.
      */
@@ -75,7 +78,7 @@ public class ShootShockWaveCreator implements EffectsCreator{
 
         if(tsunami){
             playersTarget.forEach(playerTarget -> {
-                effects.add(new FunctionalFactory().createDamagePlayer(player, playerTarget, 1, 0));
+                effects.add(new FunctionalFactory().createDamagePlayer(player, playerTarget, SHOCK_WAVE_TSUNAMI_DAMAGE, 0));
                 if(!targets.getPlayersTargeted().contains(playerTarget)){
                     targets.getPlayersTargeted().add(playerTarget);
                 }
@@ -126,7 +129,7 @@ public class ShootShockWaveCreator implements EffectsCreator{
                 throw new IllegalActionException();
             }
             Player target1 = server.choosePlayer(player, playersTarget);
-            effects.add(new FunctionalFactory().createDamagePlayer(player, target1, 1, 0));
+            effects.add(new FunctionalFactory().createDamagePlayer(player, target1, SHOCK_WAVE_BASIC_DAMAGE, 0));
             targets.getPlayersTargeted().add(target1);
             targets.getPlayersDamaged().add(target1);
             playersTarget.removeAll(target1.getPosition().getPlayers());
