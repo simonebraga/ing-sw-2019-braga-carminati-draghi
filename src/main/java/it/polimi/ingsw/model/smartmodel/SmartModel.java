@@ -6,6 +6,10 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
+import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 
 import java.util.ArrayList;
@@ -22,6 +26,10 @@ public class SmartModel {
     private int mapIndex;
     private Boolean isDomination;
     private final int defaultPointtrackSize;
+    private Map<Color,ArrayList<WeaponName>> spawnWeaponMap;
+    private ArrayList<SmartTile> mapTiles;
+    private ArrayList<Figure> killshotTrack;
+    private Map<Color,ArrayList<Figure>> spawnDamageTrack;
 
     public Map<String, SmartPlayer> getSmartPlayerMap() {
         return smartPlayerMap;
@@ -33,6 +41,26 @@ public class SmartModel {
 
     public Boolean getDomination() {
         return isDomination;
+    }
+
+    public int getDefaultPointtrackSize() {
+        return defaultPointtrackSize;
+    }
+
+    public Map<Color, ArrayList<WeaponName>> getSpawnWeaponMap() {
+        return spawnWeaponMap;
+    }
+
+    public ArrayList<SmartTile> getMapTiles() {
+        return mapTiles;
+    }
+
+    public ArrayList<Figure> getKillshotTrack() {
+        return killshotTrack;
+    }
+
+    public Map<Color, ArrayList<Figure>> getSpawnDamageTrack() {
+        return spawnDamageTrack;
     }
 
     public void setMapIndex(int mapIndex) {
@@ -107,7 +135,49 @@ public class SmartModel {
 
             smartPlayerMap.put(player.getUsername(),smartPlayer);
         }
+
+        // Setup is domination
         isDomination = gameTable.getIsDomination();
+
+        // Setup spawn weapons
+        spawnWeaponMap = new HashMap<>();
+        for (SpawnSquare spawnSquare : gameTable.getGameMap().getSpawnSquares()) {
+            ArrayList<WeaponName> arrayList = new ArrayList<>();
+            for (Weapon weapon : spawnSquare.getWeapons())
+                arrayList.add(weapon.getName());
+            spawnWeaponMap.put(spawnSquare.getColor(),arrayList);
+        }
+
+        // Setup map tiles
+        mapTiles = new ArrayList<>();
+        for (TileSquare tileSquare : gameTable.getGameMap().getTileSquares()) {
+            if (tileSquare.getTile() != null) {
+                SmartTile smartTile = new SmartTile();
+                smartTile.setPowerup(tileSquare.getTile().getPowerup());
+                smartTile.setAmmo(tileSquare.getTile().getAmmo());
+                smartTile.setPosX(tileSquare.getX());
+                smartTile.setPosY(tileSquare.getY());
+                mapTiles.add(smartTile);
+            }
+        }
+
+        // Setup killshottrack
+        killshotTrack = new ArrayList<>();
+        for (Player player : gameTable.getKillshotTrack().getKillTrack())
+            killshotTrack.add(player.getFigure());
+
+        // Setup spawn damage track
+        spawnDamageTrack = new HashMap<>();
+        if (isDomination) {
+            for (SpawnSquare spawnSquare : gameTable.getGameMap().getSpawnSquares()) {
+                DominationSpawnSquare dominationSpawnSquare = (DominationSpawnSquare) spawnSquare;
+                ArrayList<Figure> arrayList = new ArrayList<>();
+                for (Player player : dominationSpawnSquare.getDamage())
+                    arrayList.add(player.getFigure());
+                spawnDamageTrack.put(dominationSpawnSquare.getColor(),arrayList);
+            }
+        }
+
     }
 
     public static SmartModel fromString(String s) {

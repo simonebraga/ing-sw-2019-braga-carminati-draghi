@@ -517,11 +517,9 @@ public class Server implements ServerRemote {
      */
     public Character chooseMode(Player player) throws UnavailableUserException {
 
-        //TODO Remove S option
-        Character[] modes = new Character[3];
+        Character[] modes = new Character[2];
         modes[0] = 'N';
         modes[1] = 'D';
-        modes[2] = 'S';
 
         try {
             return executorService.submit(() -> modes[clientMap.get(player.getUsername()).singleChoice("mode",gson.toJson(modes))]).get(inactivityTime,TimeUnit.SECONDS);

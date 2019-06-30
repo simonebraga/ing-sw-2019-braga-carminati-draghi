@@ -1,15 +1,21 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.cardclasses.AmmoTile;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.PowerupName;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
+import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
+import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.model.smartmodel.SmartPowerup;
+import it.polimi.ingsw.model.smartmodel.SmartTile;
 import it.polimi.ingsw.model.smartmodel.SmartWeapon;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,7 +40,7 @@ class TestSmartModel {
         player2 = new Player(Figure.BANSHEE,"Alessandro");
         player3 = new Player(Figure.VIOLET,"Samuele");
         ArrayList<Player> players = new ArrayList<>(Arrays.asList(player1,player2,player3));
-        gameTable = new GameInitializer('N',1,players).run();
+        gameTable = new GameInitializer('N',2,players).run();
         for (Player player : gameTable.getPlayers()) {
             player.getDamageTrack().setDamage(new ArrayList<>(Arrays.asList(player3,player2,player2)));
             player.getMarkTrack().addMarks(player1,2);
@@ -43,6 +49,16 @@ class TestSmartModel {
             player.getWeaponPocket().addWeapon(new Weapon(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE,Color.YELLOW)),WeaponName.FURNACE,true));
             player.getPowerupPocket().setPowerups(new ArrayList<>(Arrays.asList(new Powerup(Color.BLUE,PowerupName.NEWTON))));
             player.setPosition(gameTable.getGameMap().getSquare(1, 1));
+        }
+        for (SpawnSquare spawnSquare : gameTable.getGameMap().getSpawnSquares()) {
+            spawnSquare.addWeapon(new Weapon(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE,Color.YELLOW)),WeaponName.FURNACE,true));
+        }
+        for (TileSquare tileSquare : gameTable.getGameMap().getTileSquares()) {
+            tileSquare.addTile(new AmmoTile(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE)),1));
+        }
+        try {
+            gameTable.getKillshotTrack().kill(player1);
+        } catch (FrenzyModeException ignored) {
         }
     }
 
@@ -149,5 +165,60 @@ class TestSmartModel {
         smartModel.setMapIndex(2);
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
         assertEquals(false,smartModelAfterSerialization.getDomination());
+    }
+
+    @Test
+    void testSpawnWeapon() {
+        SmartModel smartModel = new SmartModel();
+        smartModel.update(gameTable);
+        smartModel.setMapIndex(2);
+        SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
+        WeaponName expectedWeapon = WeaponName.FURNACE;
+        for (Color color : smartModelAfterSerialization.getSpawnWeaponMap().keySet())
+            for (WeaponName weaponName : smartModelAfterSerialization.getSpawnWeaponMap().get(color))
+                assertEquals(expectedWeapon,weaponName);
+    }
+
+    @Test
+    void testMapTiles() {
+        SmartModel smartModel = new SmartModel();
+        smartModel.update(gameTable);
+        smartModel.setMapIndex(2);
+        SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
+        SmartTile expectedTile = new SmartTile();
+        expectedTile.setAmmo(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE)));
+        expectedTile.setPowerup(1);
+        for (SmartTile smartTile : smartModelAfterSerialization.getMapTiles()) {
+            assertEquals(expectedTile,smartTile);
+        }
+    }
+
+    @Test
+    void testKillshotTrack() {
+        SmartModel smartModel = new SmartModel();
+        smartModel.update(gameTable);
+        smartModel.setMapIndex(2);
+        SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
+        ArrayList<Figure> expectedKillshottrack = new ArrayList<>(Arrays.asList(Figure.DOZER));
+        assertEquals(expectedKillshottrack,smartModelAfterSerialization.getKillshotTrack());
+    }
+
+    @Test
+    void testspawnDamageTrack() {
+        ArrayList<Player> players = new ArrayList<>(Arrays.asList(player1,player2,player3));
+        GameTable gameTableDomination = new GameInitializer('D',2,players).run();
+        for (SpawnSquare spawnSquare : gameTableDomination.getGameMap().getSpawnSquares()) {
+            DominationSpawnSquare dominationSpawnSquare = (DominationSpawnSquare) spawnSquare;
+            dominationSpawnSquare.addDamage(player2);
+            dominationSpawnSquare.addDamage(player3);
+        }
+        SmartModel smartModel = new SmartModel();
+        smartModel.update(gameTableDomination);
+        smartModel.setMapIndex(2);
+        SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
+        ArrayList<Figure> expectedDamage = new ArrayList<>(Arrays.asList(Figure.BANSHEE,Figure.VIOLET));
+        for (Color color : smartModelAfterSerialization.getSpawnDamageTrack().keySet()) {
+            assertEquals(expectedDamage,smartModelAfterSerialization.getSpawnDamageTrack().get(color));
+        }
     }
 }
