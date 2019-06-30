@@ -206,6 +206,11 @@ public class CliMain implements ViewInterface {
     private GameMap map;
 
     /**
+     * This attribute contains the game settings loaded from file.
+     */
+    private SettingsJSONParser settings;
+
+    /**
      * This final attribute defines the 'game_settings.json' file path.
      */
     private static final String GAME_SETTINGS_PATH = "game_settings.json";
@@ -233,6 +238,9 @@ public class CliMain implements ViewInterface {
      */
     public void launch() {
 
+        if (settings == null)
+            fetchSettings();
+
         System.out.println("Welcome to Adrenaline!\n");
 
         //create client
@@ -245,6 +253,23 @@ public class CliMain implements ViewInterface {
         }
 
         chooseNickName();
+    }
+
+    /**
+     * This method fetches game settings from a JSON file.
+     */
+    private void fetchSettings() {
+
+        //load game settings from "game_settings.json" file
+        InputStream settingsFile = CliMain.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            settings = objectMapper.readValue(settingsFile, SettingsJSONParser.class);
+            settingsFile.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -321,6 +346,9 @@ public class CliMain implements ViewInterface {
 
         ArrayList<String> nicknames = new ArrayList<>(model.getSmartPlayerMap().keySet());
 
+        if (map == null)
+            fetchMaps();
+
         printKillShotTrack();
         printSceneSpacing();
         printMap();
@@ -371,10 +399,6 @@ public class CliMain implements ViewInterface {
      * This method prints the maps grid to the command line.
      */
     private void printMap() {
-
-        if (map == null) {  //fetch maps from file
-            fetchMaps();
-        }
 
         for (int i = 0; i < map.getGrid().length; i++) {
             if (i == 0)
@@ -948,6 +972,13 @@ public class CliMain implements ViewInterface {
 
     }
 
+    /**
+     * This method prints each player board.
+     *
+     * @param nickname a String which is the users nickname.
+     * @param player as SmartPlayer whom board will be printed.
+     * @param isOwnBoard a boolean flag that says if the board printed is the current client player's board.
+     */
     private void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
 
         printBoardHeader(nickname, isOwnBoard, player.getPoints());
@@ -1044,19 +1075,7 @@ public class CliMain implements ViewInterface {
      */
     private void printBountyTrack(int deaths) {
 
-        ArrayList<Integer> bountyValues = new ArrayList<>();
-
-        //load game settings from "game_settings.json" file
-        InputStream settingsFile = CliMain.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            SettingsJSONParser settings = objectMapper.readValue(settingsFile, SettingsJSONParser.class);
-            bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
-            settingsFile.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ArrayList<Integer> bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
 
         //print skulls
         for (int i = 0; i < deaths; i++) {
@@ -1098,7 +1117,25 @@ public class CliMain implements ViewInterface {
     }
 
     private void printKillShotTrack() {
-        //TODO print killShotTrack
+
+        Map<String, SmartPlayer> users = model.getSmartPlayerMap();
+        Integer maxKills = settings.getMaxKills();
+        Integer currentKills = 0;
+
+        if (!model.getDomination()) {
+
+            //count number of kills
+            for (SmartPlayer player : users.values()) {
+                currentKills += player.getDeaths();
+            }
+            //TODO(print also killers on KillShotTrack)
+            System.out.print("KILL SHOT TRACK: ");
+            for (int i = 0; i < maxKills - currentKills; i++) {
+                System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
+            }
+        } else {
+            //TODO(print spawn damage track)
+        }
     }
 
     /////////////////////////////////////////// ViewInterface implementations //////////////////////////////////////////////
