@@ -1338,19 +1338,18 @@ public class CliMain implements ViewInterface {
             fullChoice = scannerIn.nextLine();  //allow user to type in also the full case name
             choice = fullChoice.toCharArray()[0];
 
-            if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D') {
+            if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D')
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
-                scannerIn.nextLine();
-            }
         }
         for (int i = 0; i < c.length; i++) {
-            if ((c[i]) == choice || (c[i] == choice + 32)) return i;    //check upper and lower case
+            if (c[i].toString().equalsIgnoreCase(choice.toString())) return i;    //check upper and lower case
         }
         return -1;
     }
 
     @Override
     public int chooseSquare(Square[] s) {
+        //TODO(!!!!!!!)
         return 0;
     }
 
