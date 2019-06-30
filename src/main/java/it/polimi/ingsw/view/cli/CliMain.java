@@ -1341,16 +1341,30 @@ public class CliMain implements ViewInterface {
             if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D')
                 System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
         }
-        for (int i = 0; i < c.length; i++) {
+
+        for (int i = 0; i < c.length; i++)
             if (c[i].toString().equalsIgnoreCase(choice.toString())) return i;    //check upper and lower case
-        }
         return -1;
     }
 
     @Override
     public int chooseSquare(Square[] s) {
-        //TODO(!!!!!!!)
-        return 0;
+
+        int choice = 0;;
+
+        while (choice < 1 || choice > s.length) {
+            for (int i = 0; i < s.length; i++)
+                System.out.println(i + " - (" + s[i].getX() + "," + s[i].getY() + ")");
+            System.out.println("\nChoose a Square by its number: ");
+
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+
+            if (choice < 1 || choice > s.length)
+                System.out.println(ANSI_RED + "Invalid input." + ANSI_RESET);
+        }
+
+        return choice - 1;
     }
 
     @Override
