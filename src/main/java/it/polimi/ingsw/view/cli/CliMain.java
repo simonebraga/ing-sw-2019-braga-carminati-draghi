@@ -2,7 +2,6 @@ package it.polimi.ingsw.view.cli;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.cardclasses.Powerup;
-import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Border;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
@@ -12,11 +11,7 @@ import it.polimi.ingsw.model.mapclasses.GameMap;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.mapclasses.TileSquare;
-import it.polimi.ingsw.model.playerclasses.Player;
-import it.polimi.ingsw.model.smartmodel.SmartModel;
-import it.polimi.ingsw.model.smartmodel.SmartPlayer;
-import it.polimi.ingsw.model.smartmodel.SmartPowerup;
-import it.polimi.ingsw.model.smartmodel.SmartWeapon;
+import it.polimi.ingsw.model.smartmodel.*;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
 
@@ -381,7 +376,7 @@ public class CliMain implements ViewInterface {
     /**
      * This method fetches maps from JSON and select the current match map.
      */
-    private void fetchMaps(){
+    private void fetchMaps() {
         ObjectMapper mapper = new ObjectMapper();
         InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
         GameMap[] gameMaps = null;
@@ -432,9 +427,8 @@ public class CliMain implements ViewInterface {
         ArrayList<Border> leftBorders = retrieveBordersInfo(squares,"left", isFirstRow);
         Border rightMostBorder = retrieveLastBorderInfo(squares);
         ArrayList<ArrayList<Figure>> figuresInsideSquares = getFiguresInsideRow(squares);
-        ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
         ArrayList<String> squareTypes = new ArrayList<>();
-        getContentOfEachSquare(squares,spawnSquares,squareContentInfo,squareTypes);
+        ArrayList<ArrayList<String>> squareContentInfo = getContentOfEachSquare(squares,spawnSquares,squareTypes);
 
         printFirstLine(upperBorders);
         printSpawnTagsLine(squares, leftBorders, rightMostBorder, spawnSquares, 1);
@@ -607,6 +601,7 @@ public class CliMain implements ViewInterface {
      *
      * @param squares an array of Square to be scanned left to right.
      * @param leftOrUp a String flag representing which border to memorize (upper border or left border of the square).
+     * @param isFirstRow a boolean that says if this printed grid row is the first grid row.
      * @return an ArrayList of Border that contains all squares border (up or left border) from left to right.
      */
     private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp, boolean isFirstRow) {
@@ -665,13 +660,16 @@ public class CliMain implements ViewInterface {
      * @param squares an array of Square to be scanned.
      * @return an ArrayList of ArrayList of String that contains all user names by each square.
      */
-    private ArrayList<ArrayList<Figure>> getFiguresInsideRow(Square[] squares){
+    private ArrayList<ArrayList<Figure>> getFiguresInsideRow(Square[] squares) {
+        
+        ArrayList<SmartPlayer> players = new ArrayList<>(model.getSmartPlayerMap().values());
 
         ArrayList<ArrayList<Figure>> playersBySquareInRow = new ArrayList<>();
         for (Square square : squares) {
             ArrayList<Figure> playersInSquare = new ArrayList<>();
-            for (Player player : square.getPlayers()) {
-                playersInSquare.add(player.getFigure());
+            for (SmartPlayer player : players) {
+                if (player.getPosX() == square.getX() && player.getPosY() == square.getY()) 
+                    playersInSquare.add(player.getFigure());
             }
             playersBySquareInRow.add(playersInSquare);
         }
@@ -683,13 +681,15 @@ public class CliMain implements ViewInterface {
      *
      * @param squares an array of Square to be scanned.
      * @param spawnSquares an ArrayList of SpawnSquare that represent all squares that are not TileSquare or void squares.
-     * @param squareContentInfo the list in which data will be collected.
      * @param squareTypes a list of String representing the type of each square by its position in the row.
      */
-    private void getContentOfEachSquare(Square[] squares, ArrayList<SpawnSquare> spawnSquares, ArrayList<ArrayList<String>> squareContentInfo, ArrayList<String> squareTypes) {
+    private ArrayList<ArrayList<String>> getContentOfEachSquare(Square[] squares, ArrayList<SpawnSquare> spawnSquares, ArrayList<String> squareTypes) {
 
+        ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
         ArrayList<String> infoArray = new ArrayList<>();
-
+        ArrayList<SmartTile> tiles = new ArrayList<>(model.getMapTiles());
+        Map<Color,ArrayList<WeaponName>> weapons = model.getSpawnWeaponMap();
+        
         for (Square square : squares) {
 
             if (square != null) {   //tile or spawn squares
@@ -698,14 +698,11 @@ public class CliMain implements ViewInterface {
 
                     SpawnSquare spawnSquare = (SpawnSquare) square;
 
-                    for (Weapon weapon : spawnSquare.getWeapons()) {
-                        if (weapon.getIsLoaded())
-                            infoArray.add(parseWeaponName(weapon.getName(),true));
-                        else
-                            infoArray.add(parseWeaponName(weapon.getName(),false));
+                    for (WeaponName weapon : weapons.get(spawnSquare.getColor())) {
+                        infoArray.add(parseWeaponName(weapon,true));
                     }
 
-                    for (int i = 0; i < MAX_WEAPONS_BY_SQUARE - spawnSquare.getWeapons().size(); i++) {
+                    for (int i = 0; i < MAX_WEAPONS_BY_SQUARE - weapons.get(spawnSquare.getColor()).size(); i++) {
                         infoArray.add("      ");    //no weapon
                     }
 
@@ -716,10 +713,15 @@ public class CliMain implements ViewInterface {
 
                     TileSquare tileSquare = (TileSquare) square;
 
-                    infoArray.add(tileSquare.getTile().getPowerup().toString() + "PU   ");
-
-                    for (Color color : tileSquare.getTile().getAmmo()) {
-                        infoArray.add(parseColorName(color));
+                    for (SmartTile tile : tiles) {
+                        if (tile.getPosX() == tileSquare.getX() && tile.getPosY() == tileSquare.getY()) {
+                            
+                            infoArray.add(tile.getPowerup() + "PU   ");
+                            
+                            for (Color color : tile.getAmmo()) {
+                                infoArray.add(parseColorName(color));
+                            }
+                        }
                     }
 
                     squareContentInfo.add(infoArray);
@@ -727,18 +729,21 @@ public class CliMain implements ViewInterface {
                 }
             } else {            //square is void
 
-                    infoArray.add("null");
-                    squareContentInfo.add(infoArray);
-                    squareTypes.add("void");
+                for (int i = SQUARE_CONTENT_SECTION_STARTING_INDEX; i < SQUARE_FIGURE_SECTION_STARTING_INDEX; i++)
+                    infoArray.add("      ");
+                squareContentInfo.add(infoArray);
+                squareTypes.add("void");
             }
         }
+        return squareContentInfo;
     }
 
     /**
      * This method parse a weapon name into a shorten version of the same weapon name.
      *
      * @param name a WeaponName to be parsed to a 5 characters string.
-     * @return a 5 characters String which represents the shorten version of a weapon name.
+     * @param isLoaded a boolean flag saying if the weapon is loaded.
+     * @return a MAX_INFO_SIZE - 1 characters long String which represents the shorten version of a weapon name.
      */
     private String parseWeaponName(WeaponName name, boolean isLoaded) {
         switch (name) {
@@ -876,7 +881,7 @@ public class CliMain implements ViewInterface {
      * This method parse a Color into a shorten version of the name of that color.
      *
      * @param color a Color to be parsed to a 5 characters string.
-     * @return a 5 characters String which represents the shorten version of a color name.
+     * @return a MAX_INFO_SIZE characters long String which represents the shorten version of a color name.
      */
     private String parseColorName(Color color) {
         switch (color) {
@@ -926,6 +931,7 @@ public class CliMain implements ViewInterface {
      * @param leftBorders an ArrayList of Border containing each square left border from left square to right square.
      * @param figures an ArrayList of Figure containing a figure for each square box.
      * @param rowIndex an integer representing at which command line row idex is the method printing, relative to the square box high.
+     * @param rightMostBorder a Border which is the last square's right border.
      */
     private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
 
@@ -933,6 +939,7 @@ public class CliMain implements ViewInterface {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             printFigure(figures.get(i));
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
         }
 
         //closing line
@@ -952,23 +959,12 @@ public class CliMain implements ViewInterface {
         for (int i = 0; i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
-            printContent(contentBySquare.get(i));
+            System.out.print(contentBySquare.get(i));
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);  //fill with spaces to the next border
         }
 
         //closing line
         printBorderChar(rightMostBorder, rowIndex);
-
-    }
-
-    /**
-     * This method prints a box line with square content inside.
-     *
-     * @param content an ArrayList of String containing info about square content.
-     */
-    private void printContent(String content) {
-
-        System.out.print(content);
-        printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);  //fill with spaces to the next border
 
     }
 
@@ -1008,8 +1004,9 @@ public class CliMain implements ViewInterface {
     private void printBoardHeader(String nickname, boolean isOwnBoard, int points) {
         if (isOwnBoard) System.out.print(ANSI_GREEN);
         System.out.print("+ ");
-        System.out.print(nickname.substring(0, NICK_PRINT_SIZE) + ANSI_RESET);
+        System.out.print(nickname.substring(0, NICK_PRINT_SIZE));
         System.out.println("   Points: " + points);
+        System.out.print(ANSI_RESET);
     }
 
     /**
