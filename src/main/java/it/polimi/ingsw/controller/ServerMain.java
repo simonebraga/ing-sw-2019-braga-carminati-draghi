@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class contains the server main method.<br>
@@ -612,7 +613,7 @@ public class ServerMain {
     }
 
     private static void checkPlayers(Server server, GameTable gameTable) {
-        if (server.getActivePlayers().size() <= MINIMUM_CONNECTED_USERS_THRESHOLD) {
+        if (server.getActivePlayers().size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
             System.out.println("Too many players have disconnected. Ending game...");
             gameOver(gameTable);
         }
@@ -688,7 +689,7 @@ public class ServerMain {
             }
 
             //sort keys in descending order
-            ArrayList<Long> sortedKeys = (ArrayList<Long>) Arrays.asList(killsByPlayer.keySet().toArray()).stream().sorted();
+            ArrayList<Long> sortedKeys = new ArrayList<>(killsByPlayer.keySet().stream().sorted().collect(Collectors.toCollection(ArrayList::new)));
 
             //give points away to each player
             int scoreValuesCounter = 0;
