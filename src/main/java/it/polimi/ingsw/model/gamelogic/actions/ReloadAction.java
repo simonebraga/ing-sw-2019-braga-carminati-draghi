@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.exceptionclasses.IllegalActionException;
 import it.polimi.ingsw.model.gamelogic.effectscreator.PayCreator;
 import it.polimi.ingsw.model.gamelogic.effectscreator.Targets;
+import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.network.UnavailableUserException;
 
@@ -24,13 +25,11 @@ public class ReloadAction implements Action{
         ArrayList<Weapon> weapons = (ArrayList<Weapon>) player.getWeaponPocket().getWeapons().stream().filter(weapon -> !weapon.getIsLoaded()).collect(Collectors.toList());
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
         if(!weapons.isEmpty()){
-            Boolean choice = server.booleanQuestion(player, "Do you want to reload?");
-            if(choice){
-                weapons = server.chooseMultipleWeapon(player, weapons);
-                for (Weapon weapon : weapons) {
-                    effects.addAll(new PayCreator(player, weapon.getPrice()).run(server, table, targets));
-                    effects.add(weapon::reload);
-                }
+            server.sendMessage(player, new MessageRetriever().retrieveMessage("reload"));
+            weapons = server.chooseMultipleWeapon(player, weapons);
+            for (Weapon weapon : weapons) {
+                effects.addAll(new PayCreator(player, weapon.getPrice()).run(server, table, targets));
+                effects.add(weapon::reload);
             }
         }
         return effects;

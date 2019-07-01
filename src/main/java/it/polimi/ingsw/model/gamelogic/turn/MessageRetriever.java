@@ -11,12 +11,12 @@ import java.util.Properties;
  */
 public class MessageRetriever {
 
-    private static final String PATH = "src/main/resources/messages.properties";
+    private static final String PATH = "messages.properties";
 
     public String retrieveMessage(String message){
         InputStream inputStream = null;
 
-        inputStream = MessageRetriever.class.getClassLoader().getResourceAsStream("messages.properties");
+        inputStream = MessageRetriever.class.getClassLoader().getResourceAsStream(PATH);
         Properties properties = new Properties();
         try {
             properties.load(inputStream);
