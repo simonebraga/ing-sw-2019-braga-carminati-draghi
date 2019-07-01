@@ -222,6 +222,8 @@ public class CliMain implements ViewInterface {
      */
     private static final String GAME_SETTINGS_PATH = "game_settings.json";
 
+    private static String[] args;
+
 ////////////////////////////////////////////////////////////// class  methods ////////////////////////////////////////////////
 
     /**
@@ -237,13 +239,27 @@ public class CliMain implements ViewInterface {
      */
     public static void main(String[] args) {
         CliMain temp = new CliMain();
-        temp.launch();
+        temp.launch(args);
     }
 
     /**
      * This method implements the application using CLI.
      */
-    public void launch() {
+    public void launch(String[] args) {
+
+
+        this.args = args;
+
+        //fetch default network properties
+        Properties properties = new Properties();
+        try {
+            properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
+        } catch (IOException e) {
+            System.out.println(ANSI_RED + "Cannot access network settings file." + ANSI_RESET);
+            client = null;
+            launch(args);
+            e.printStackTrace();
+        }
 
         if (settings == null)
             fetchSettings();
@@ -252,13 +268,21 @@ public class CliMain implements ViewInterface {
 
         //create client
         try {
-            client = new Client(chooseNetworkTechnology(),this);
+            if (args[0] != null && args[1] != null)
+                client = new Client(chooseNetworkTechnology(),this, args[0], args[1]);
+            else if (args[0] != null && args[1] == null)
+                client = new Client(chooseNetworkTechnology(),this, args[0], properties.getProperty("clientIp"));
+            else if (args[0] == null && args[1] != null)
+                client = new Client(chooseNetworkTechnology(),this, properties.getProperty("serverIp"), args[1]);
+            else
+                client = new Client(chooseNetworkTechnology(),this);
+
             System.out.println("Client created");
         } catch (Exception e) {
-            System.out.println("Server not responding.\n");
-            launch();
+            System.out.println(ANSI_RED + "Server not responding.\n" + ANSI_RESET);
+            client = null;
+            launch(args);
         }
-
         chooseNickName();
     }
 
@@ -1164,7 +1188,8 @@ public class CliMain implements ViewInterface {
     @Override
     public void logout() {
         System.out.println(ANSI_RED + "You were forcefully disconnected" + ANSI_RESET);
-        launch();
+        client = null;
+        launch(args);
     }
 
     @Override
