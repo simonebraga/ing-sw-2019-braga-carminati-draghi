@@ -37,12 +37,12 @@ public class GameInitializer {
     /**
      * This final attribute indicates the character associated to domination mode.
      */
-    private static final char DOMINATION_MODE_ID = 'd';
+    private static final Character DOMINATION_MODE_ID = 'd';
 
     /**
      * This final attribute indicates the character associated to normal mode.
      */
-    private static final char NORMAL_MODE_ID = 'n';
+    private static final Character NORMAL_MODE_ID = 'n';
 
     /**
      * This final attribute indicates the game settings file path.
@@ -296,7 +296,7 @@ public class GameInitializer {
         GameMap[] gameMaps = objectMapper.readValue(file,GameMap[].class);
         file.close();
 
-        if (gameMode == NORMAL_MODE_ID){
+        if (gameMode == NORMAL_MODE_ID) {
             return gameMaps[mapIndex];
         } else {    //gameMode == DOMINATION_MODE_ID
             return gameMaps[mapIndex + (gameMaps.length / 2)];    //normal mode maps will be formatted before domination mode maps in JSON
