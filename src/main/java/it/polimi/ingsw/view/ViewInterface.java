@@ -20,7 +20,7 @@ public interface ViewInterface {
     int chooseMap(int[] m);
     int chooseMode(Character[] c);
     int chooseSquare(Square[] s);
-    Boolean booleanQuestion(String s);
+    int booleanQuestion(String s);
     int[] chooseMultiplePowerup(Powerup[] p);
     int[] chooseMultipleWeapon(WeaponName[] w);
     void notifyModelUpdate();

@@ -850,9 +850,9 @@ public class GuiMain extends Application implements ViewInterface {
     }
 
     @Override
-    public Boolean booleanQuestion(String s) {
+    public int booleanQuestion(String s) {
         //TODO
-        return null;
+        return 0;
     }
 
     @Override

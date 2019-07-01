@@ -17,5 +17,5 @@ public interface ClientRemote extends Remote {
     String genericWithResponse(String id, String parameters) throws RemoteException;
     int singleChoice(String id, String parameters) throws RemoteException;
     int[] multipleChoice(String id, String parameters) throws RemoteException;
-    Boolean booleanQuestion(String parameters) throws RemoteException;
+    boolean booleanQuestion(String parameters) throws RemoteException;
 }

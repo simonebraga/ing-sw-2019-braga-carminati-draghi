@@ -322,9 +322,9 @@ public class Client implements ClientRemote {
     }
 
     @Override
-    public Boolean booleanQuestion(String parameters) throws RemoteException {
+    public boolean booleanQuestion(String parameters) throws RemoteException {
 
-        return view.booleanQuestion(parameters);
+        return true;
     }
 
     // Network methods

@@ -79,11 +79,11 @@ public class ServerSocketSpeaker implements ClientRemote {
     }
 
     @Override
-    public Boolean booleanQuestion(String parameters) throws RemoteException {
+    public boolean booleanQuestion(String parameters) throws RemoteException {
         customStream.resetBuffer();
         out.println("booleanQuestion;" + parameters);
         out.flush();
-        return gson.fromJson(customStream.getLine(),Boolean.class);
+        return gson.fromJson(customStream.getLine(),boolean.class);
     }
 
     /**

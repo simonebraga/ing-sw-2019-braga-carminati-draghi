@@ -96,8 +96,8 @@ class TestServerMethods {
         }
 
         @Override
-        public Boolean booleanQuestion(String s) {
-            return true;
+        public int booleanQuestion(String s) {
+            return 1;
         }
 
         @Override

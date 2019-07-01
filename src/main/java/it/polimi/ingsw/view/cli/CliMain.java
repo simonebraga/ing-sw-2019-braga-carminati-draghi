@@ -1409,16 +1409,16 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public Boolean booleanQuestion(String s) {
+    public int booleanQuestion(String s) {
 
         System.out.println(s);
         System.out.print("Yes or No: ");
         String choice = scannerIn.nextLine();
 
         if (choice.equals("Yes") || choice.equals("YES") || choice.equals("Y") || choice.equals("y") || choice.equals("Yeah"))
-            return true;
+            return 1;
         else if (choice.equals("No") || choice.equals("NO") || choice.equals("N") || choice.equals("n") || choice.equals("Nope"))
-            return false;
+            return 0;
         else
             return booleanQuestion(s);      //wrong input then ask again
     }
