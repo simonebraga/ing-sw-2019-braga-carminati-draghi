@@ -148,8 +148,9 @@ public class ServerMain {
         }
 
         //search in old save files a compatible match
-        GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
-
+        //GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
+        GameTable gameTable = null;
+        
         Integer mapIndex = null;
         Character gameMode = null;
 
@@ -207,7 +208,7 @@ public class ServerMain {
             }
 
             //finally created usable match
-            save(gameTable);
+            //save(gameTable);
         }
 
         //calculate starting player and current player indexes
@@ -283,7 +284,7 @@ public class ServerMain {
         gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
         //auto save
-        save(gameTable);
+        //save(gameTable);
 
         //execute other first turns, from current player to starting player -1, if they are connected
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) {
@@ -302,12 +303,12 @@ public class ServerMain {
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
             //auto save
-            save(gameTable);
+            //save(gameTable);
         }
 
         //transitioning match phase
         gameTable.setGamePhase(ROLLING_TURNS_PHASE);
-        save(gameTable);
+        //save(gameTable);
     }
 
     /**
@@ -337,7 +338,7 @@ public class ServerMain {
             //pass turn to next player
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(i));
 
-            save(gameTable);
+            //save(gameTable);
         }
         //if this while stops without FinalFrenzy exception throw it's because there are less than 3 players connected
     }
@@ -600,7 +601,7 @@ public class ServerMain {
             if (currentPlayerIndex == gameTable.getPlayers().size()) currentPlayerIndex = 0;
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
-            save(gameTable);
+            //save(gameTable);
         }
     }
 
