@@ -73,22 +73,30 @@ public class Client implements ClientRemote {
         this.view = view;
 
         if (i == 0) {
-            // RMI setup
-            System.setProperty("java.rmi.server.hostname",clientIp);
-            try {
-                UnicastRemoteObject.exportObject(this,clientPortRMI);
-            } catch (RemoteException e) {
-                System.err.println("Error exporting remote object");
-                throw new Exception();
-            }
-            try {
-                server = (ServerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
-            } catch (RemoteException e) {
-                System.err.println("Error getting RMI registry");
-                throw new Exception();
-            } catch (NotBoundException e) {
-                System.err.println("Error with RMI registry remote object lookup");
-                throw new Exception();
+            boolean init = false;
+            while (!init) {
+                try {
+                    // RMI setup
+                    System.setProperty("java.rmi.server.hostname",clientIp);
+                    try {
+                        UnicastRemoteObject.exportObject(this,clientPortRMI);
+                    } catch (RemoteException e) {
+                        System.err.println("Error exporting remote object");
+                        throw new Exception();
+                    }
+                    try {
+                        server = (ServerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
+                    } catch (RemoteException e) {
+                        System.err.println("Error getting RMI registry");
+                        throw new Exception();
+                    } catch (NotBoundException e) {
+                        System.err.println("Error with RMI registry remote object lookup");
+                        throw new Exception();
+                    }
+                    init = true;
+                } catch (Exception e) {
+                    clientPortRMI++;
+                }
             }
         } else if (i == 1) {
             // Socket setup

@@ -412,7 +412,31 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public void sendMessage(String s) {
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
 
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+
+            Text textMessage = new Text(s);
+            textMessage.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+            HBox hBoxTextMessage = new HBox(textMessage);
+            hBoxTextMessage.setAlignment(Pos.CENTER);
+
+            Button buttonOk = new Button("Ok");
+            buttonOk.setOnAction(behavior -> {
+                Platform.runLater(this::setCleanScenario);
+                Platform.runLater(this::setGameMapScenario);
+            });
+
+            vBoxChoice.getChildren().addAll(textMessage,buttonOk);
+
+            rootPane.getChildren().add(vBoxChoice);
+        });
     }
 
     @Override
@@ -475,27 +499,238 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public int chooseWeapon(WeaponName[] w) {
-        return 0;
+        CustomStream customStream = new CustomStream();
+
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
+
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+            borderPane.setCenter(vBoxChoice);
+
+            Text textQuestion = new Text("Make your choice");
+            textQuestion.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+
+            HBox hBoxButtonGroup = new HBox();
+            hBoxButtonGroup.setSpacing(10);
+            hBoxButtonGroup.setAlignment(Pos.CENTER);
+
+            for (int i = 0 ; i < w.length ; i++) {
+                if (w[i] != null) {
+                    Button button = new Button();
+                    StackPane stackPanePlayerIcon = new StackPane();
+                    stackPanePlayerIcon.getChildren().add(
+                            new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + w[i].toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                    );
+                    button.setGraphic(stackPanePlayerIcon);
+                    stackPanePlayerIcon.maxWidthProperty().bind(primaryScene.widthProperty().divide(w.length + 3));
+                    stackPanePlayerIcon.minWidthProperty().bind(primaryScene.widthProperty().divide(w.length + 3));
+                    stackPanePlayerIcon.maxHeightProperty().bind(stackPanePlayerIcon.widthProperty().multiply(1.7));
+                    stackPanePlayerIcon.minHeightProperty().bind(stackPanePlayerIcon.widthProperty().multiply(1.7));
+                    int finalI = i;
+                    button.setOnAction(behav -> {
+                        customStream.putLine(Integer.toString(finalI));
+                        Platform.runLater(this::setCleanScenario);
+                        Platform.runLater(this::setGameMapScenario);
+                    });
+                    hBoxButtonGroup.getChildren().add(button);
+                }
+            }
+            vBoxChoice.getChildren().add(textQuestion);
+            vBoxChoice.getChildren().add(hBoxButtonGroup);
+
+            rootPane.getChildren().add(borderPane);
+        });
+
+        customStream.resetBuffer();
+        return Integer.parseInt(customStream.getLine());
     }
 
     @Override
     public int chooseString(String[] s) {
+        //TODO
         return 0;
     }
 
     @Override
     public int chooseDirection(Character[] c) {
-        return 0;
+        CustomStream customStream = new CustomStream();
+
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
+
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+            borderPane.setCenter(vBoxChoice);
+
+            Text textQuestion = new Text("Make your choice");
+            textQuestion.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+
+            HBox hBoxButtonGroup = new HBox();
+            hBoxButtonGroup.setSpacing(10);
+            hBoxButtonGroup.setAlignment(Pos.CENTER);
+
+            for (int i = 0 ; i < c.length ; i++) {
+                if (c[i] != null) {
+                    Button button = new Button();
+                    switch (c[i]) {
+                        case 'N': {
+                            button.setText("↑");
+                            break;
+                        }
+                        case 'S': {
+                            button.setText("↓");
+                            break;
+                        }
+                        case 'W': {
+                            button.setText("←");
+                            break;
+                        }
+                        case 'E': {
+                            button.setText("→");
+                            break;
+                        }
+                        default: button.setText(c[i].toString());
+                    }
+                    int finalI = i;
+                    button.setOnAction(behav -> {
+                        customStream.putLine(Integer.toString(finalI));
+                        Platform.runLater(this::setCleanScenario);
+                        Platform.runLater(this::setGameMapScenario);
+                    });
+                    hBoxButtonGroup.getChildren().add(button);
+                }
+            }
+            vBoxChoice.getChildren().add(textQuestion);
+            vBoxChoice.getChildren().add(hBoxButtonGroup);
+
+            rootPane.getChildren().add(borderPane);
+        });
+
+        customStream.resetBuffer();
+        return Integer.parseInt(customStream.getLine());
     }
 
     @Override
     public int chooseColor(Color[] c) {
-        return 0;
+        CustomStream customStream = new CustomStream();
+
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
+
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+            borderPane.setCenter(vBoxChoice);
+
+            Text textQuestion = new Text("Make your choice");
+            textQuestion.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+
+            HBox hBoxButtonGroup = new HBox();
+            hBoxButtonGroup.setSpacing(10);
+            hBoxButtonGroup.setAlignment(Pos.CENTER);
+
+            for (int i = 0 ; i < c.length ; i++) {
+                if (c[i] != null) {
+                    Button button = new Button();
+                    button.setPrefWidth(40);
+                    button.setPrefHeight(40);
+                    switch (c[i]) {
+                        case RED: {
+                            button.setStyle("-fx-background-color: red;");
+                            break;
+                        }
+                        case BLUE: {
+                            button.setStyle("-fx-background-color: blue;");
+                            break;
+                        }
+                        case YELLOW: {
+                            button.setStyle("-fx-background-color: yellow;");
+                            break;
+                        }
+                        default: button.setText(c[i].toString());
+                    }
+                    int finalI = i;
+                    button.setOnAction(behav -> {
+                        customStream.putLine(Integer.toString(finalI));
+                        Platform.runLater(this::setCleanScenario);
+                        Platform.runLater(this::setGameMapScenario);
+                    });
+                    hBoxButtonGroup.getChildren().add(button);
+                }
+            }
+            vBoxChoice.getChildren().add(textQuestion);
+            vBoxChoice.getChildren().add(hBoxButtonGroup);
+
+            rootPane.getChildren().add(borderPane);
+        });
+
+        customStream.resetBuffer();
+        return Integer.parseInt(customStream.getLine());
     }
 
     @Override
     public int choosePowerup(Powerup[] p) {
-        return 0;
+        CustomStream customStream = new CustomStream();
+
+        Platform.runLater(this::setCleanScenario);
+        Platform.runLater(() -> {
+            VBox vBoxChoice = new VBox();
+            vBoxChoice.setSpacing(10);
+            vBoxChoice.setAlignment(Pos.CENTER);
+
+            BorderPane borderPane = new BorderPane();
+            borderPane.setTop(getLogoutButton());
+            borderPane.setBottom(getBottomBar());
+            borderPane.setCenter(vBoxChoice);
+
+            Text textQuestion = new Text("Make your choice");
+            textQuestion.setFont(Font.font("Tahoma",FontWeight.NORMAL,20));
+
+            HBox hBoxButtonGroup = new HBox();
+            hBoxButtonGroup.setSpacing(10);
+            hBoxButtonGroup.setAlignment(Pos.CENTER);
+
+            for (int i = 0 ; i < p.length ; i++) {
+                if (p[i] != null) {
+                    Button button = new Button();
+                    StackPane stackPanePlayerIcon = new StackPane();
+                    stackPanePlayerIcon.getChildren().add(
+                            new ImagePane(properties.getProperty("powerupsRoot").concat(properties.getProperty("powerup" + p[i].getName().toString() + "_" + p[i].getColor().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                    );
+                    button.setGraphic(stackPanePlayerIcon);
+                    stackPanePlayerIcon.maxWidthProperty().bind(primaryScene.widthProperty().divide(p.length + 3));
+                    stackPanePlayerIcon.minWidthProperty().bind(primaryScene.widthProperty().divide(p.length + 3));
+                    stackPanePlayerIcon.maxHeightProperty().bind(stackPanePlayerIcon.widthProperty().multiply(1.56));
+                    stackPanePlayerIcon.minHeightProperty().bind(stackPanePlayerIcon.widthProperty().multiply(1.56));
+                    int finalI = i;
+                    button.setOnAction(behav -> {
+                        customStream.putLine(Integer.toString(finalI));
+                        Platform.runLater(this::setCleanScenario);
+                        Platform.runLater(this::setGameMapScenario);
+                    });
+                    hBoxButtonGroup.getChildren().add(button);
+                }
+            }
+            vBoxChoice.getChildren().add(textQuestion);
+            vBoxChoice.getChildren().add(hBoxButtonGroup);
+
+            rootPane.getChildren().add(borderPane);
+        });
+
+        customStream.resetBuffer();
+        return Integer.parseInt(customStream.getLine());
     }
 
     @Override
@@ -611,21 +846,25 @@ public class GuiMain extends Application implements ViewInterface {
 
     @Override
     public int chooseSquare(Square[] s) {
+        //TODO
         return 0;
     }
 
     @Override
     public Boolean booleanQuestion(String s) {
+        //TODO
         return null;
     }
 
     @Override
     public int[] chooseMultiplePowerup(Powerup[] p) {
+        //TODO
         return new int[0];
     }
 
     @Override
     public int[] chooseMultipleWeapon(WeaponName[] w) {
+        //TODO
         return new int[0];
     }
 
