@@ -202,7 +202,7 @@ public class ServerMain {
 
             //if too many users dropped during this phase
             if (players.size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
-                System.out.println("Too many players have disconnected. Relaunching server...");
+                System.out.println("Too many players have disconnected. Restarting server...");
                 server.resetClientMap();
                 main(args);
             }
@@ -269,6 +269,8 @@ public class ServerMain {
      */
     private static void firstTurns(Server server, GameTable gameTable, Integer currentPlayerIndex) throws FrenzyModeException {
 
+        checkPlayers(server, gameTable);
+
         //execute first player turn, if he is still connected
         if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
 
@@ -288,6 +290,8 @@ public class ServerMain {
 
         //execute other first turns, from current player to starting player -1, if they are connected
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) {
+
+            checkPlayers(server, gameTable);
 
             if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
 
@@ -591,6 +595,8 @@ public class ServerMain {
 
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(stopPlayer)) {
 
+            checkPlayers(server, gameTable);
+
             if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
                 TurnManager turn = new TurnManager(gameTable.getPlayers().get(currentPlayerIndex), true, isBefore);
                 turn.runTurn(server, gameTable);
@@ -605,6 +611,13 @@ public class ServerMain {
         }
     }
 
+    private static void checkPlayers(Server server, GameTable gameTable) {
+        if (server.getActivePlayers().size() <= MINIMUM_CONNECTED_USERS_THRESHOLD) {
+            System.out.println("Too many players have disconnected. Ending game...");
+            gameOver(gameTable);
+        }
+    }
+
     /**
      * This method runs all last operations before considering a match over.
      *
@@ -613,7 +626,7 @@ public class ServerMain {
     private static void gameOver(GameTable gameTable) {
 
         calculateFinalPoints(gameTable);
-        deleteSave(gameTable.getSaveFileName());
+        //deleteSave(gameTable.getSaveFileName());
 
         //announce scoreboard
         Player winner = gameTable.getPlayers().get(0);
