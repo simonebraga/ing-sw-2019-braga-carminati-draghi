@@ -538,12 +538,14 @@ public class Server implements ServerRemote {
      */
     public Square chooseSquare(Player player, ArrayList<Square> arrayList) throws UnavailableUserException {
 
-        Square[] squares = new Square[arrayList.size()];
-        for (int i = 0 ; i < arrayList.size() ; i++)
-            squares[i] = arrayList.get(i);
+        int[][] coords = new int[2][arrayList.size()];
+        for (int i = 0 ; i < arrayList.size() ; i++) {
+            coords[0][i] = arrayList.get(i).getX();
+            coords[1][i] = arrayList.get(i).getY();
+        }
 
         try {
-            return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("square",gson.toJson(squares)))).get(inactivityTime,TimeUnit.SECONDS);
+            return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("square",gson.toJson(coords)))).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
             forceLogout(player);
             throw new UnavailableUserException();

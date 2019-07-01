@@ -19,7 +19,7 @@ public interface ViewInterface {
     int choosePowerup(Powerup[] p);
     int chooseMap(int[] m);
     int chooseMode(Character[] c);
-    int chooseSquare(Square[] s);
+    int chooseSquare(int[][] s);
     int booleanQuestion(String s);
     int[] chooseMultiplePowerup(Powerup[] p);
     int[] chooseMultipleWeapon(WeaponName[] w);

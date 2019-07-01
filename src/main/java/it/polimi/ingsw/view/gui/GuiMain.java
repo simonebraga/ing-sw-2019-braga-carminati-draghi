@@ -844,7 +844,7 @@ public class GuiMain extends Application implements ViewInterface {
     }
 
     @Override
-    public int chooseSquare(Square[] s) {
+    public int chooseSquare(int[][] s) {
         //TODO
         return 0;
     }

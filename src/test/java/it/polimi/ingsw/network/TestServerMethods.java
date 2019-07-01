@@ -91,7 +91,7 @@ class TestServerMethods {
         }
 
         @Override
-        public int chooseSquare(Square[] s) {
+        public int chooseSquare(int[][] s) {
             return 0;
         }
 

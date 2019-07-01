@@ -295,7 +295,7 @@ public class Client implements ClientRemote {
                 return view.chooseMode(gson.fromJson(parameters,Character[].class));
             }
             case "square": {
-                return view.chooseSquare(gson.fromJson(parameters, Square[].class));
+                return view.chooseSquare(gson.fromJson(parameters, int[][].class));
             }
             default: {
                 System.err.println("Unsupported singleChoice id");

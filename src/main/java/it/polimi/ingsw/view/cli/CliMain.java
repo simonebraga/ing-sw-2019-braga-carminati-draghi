@@ -1389,13 +1389,13 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseSquare(Square[] s) {
+    public int chooseSquare(int[][] s) {
 
         int choice = 0;
 
         while (choice < 1 || choice > s.length) {
             for (int i = 0; i < s.length; i++)
-                System.out.println(i + " - (" + s[i].getX() + "," + s[i].getY() + ")");
+                System.out.println(i + " - (" + s[0][i] + "," + s[1][i] + ")");
             System.out.println("\nChoose a Square by its number: ");
 
             if (scannerIn.hasNextInt())
