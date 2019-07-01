@@ -22,8 +22,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -34,6 +32,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//TODO Javadoc
 public class GuiMain extends Application implements ViewInterface {
 
     private Properties properties;
@@ -644,8 +643,8 @@ public class GuiMain extends Application implements ViewInterface {
             for (int i = 0 ; i < c.length ; i++) {
                 if (c[i] != null) {
                     Button button = new Button();
-                    button.setPrefWidth(40);
-                    button.setPrefHeight(40);
+                    button.setPrefWidth(70);
+                    button.setPrefHeight(70);
                     switch (c[i]) {
                         case RED: {
                             button.setStyle("-fx-background-color: red;");

@@ -46,6 +46,76 @@ public class Client implements ClientRemote {
 
     /**
      * This method is the constructor of the class. It checks the parameters in input to determine if setup a connection using Sockets or RMI
+     * This constructor uses custom ip parameters
+     * @param i This parameter determines which type of connection must be used
+     *          0 - RMI
+     *          1 - Socket
+     * @param view is the interface used to communicate with the user
+     * @param serverIp is the ip of the server to connect to
+     * @param clientIp is the ip of the client
+     * @throws Exception if any step of the setup goes wrong
+     */
+    public Client(int i, ViewInterface view, String serverIp, String clientIp) throws Exception {
+        Properties properties = new Properties();
+        try {
+            properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
+        } catch (IOException e) {
+            System.err.println("Error reading network_settings.properties");
+            throw new Exception();
+        }
+
+        this.remoteName = properties.getProperty("remoteName");
+        this.serverIp = serverIp;
+        this.clientIp = clientIp;
+        this.serverPortRMI = Integer.parseInt(properties.getProperty("serverRmiPort"));
+        this.clientPortRMI = Integer.parseInt(properties.getProperty("clientRmiPort"));
+        this.serverPortSocket = Integer.parseInt(properties.getProperty("serverSocketPort"));
+        this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
+        this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
+        this.view = view;
+
+        if (i == 0) {
+            boolean init = false;
+            while (!init) {
+                try {
+                    // RMI setup
+                    System.setProperty("java.rmi.server.hostname",clientIp);
+                    try {
+                        UnicastRemoteObject.exportObject(this,clientPortRMI);
+                    } catch (RemoteException e) {
+                        System.err.println("Error exporting remote object");
+                        throw new Exception();
+                    }
+                    try {
+                        server = (ServerRemote) LocateRegistry.getRegistry(serverIp, serverPortRMI).lookup(remoteName);
+                    } catch (RemoteException e) {
+                        System.err.println("Error getting RMI registry");
+                        throw new Exception();
+                    } catch (NotBoundException e) {
+                        System.err.println("Error with RMI registry remote object lookup");
+                        throw new Exception();
+                    }
+                    init = true;
+                } catch (Exception e) {
+                    clientPortRMI++;
+                }
+            }
+        } else if (i == 1) {
+            // Socket setup
+            try {
+                server = new ClientSocketSpeaker(new Socket(serverIp,serverPortSocket),this, pingLatency);
+            } catch (Exception e) {
+                System.err.println("Error with socket connection initialization");
+                throw new Exception();
+            }
+        } else {
+            System.err.println("Incorrect parameters in Client constructor");
+            throw new Exception();
+        }
+    }
+    /**
+     * This method is the constructor of the class. It checks the parameters in input to determine if setup a connection using Sockets or RMI
+     * This constructor uses default ip parameters, read from "network_settings.properties"
      * @param i This parameter determines which type of connection must be used
      *          0 - RMI
      *          1 - Socket
