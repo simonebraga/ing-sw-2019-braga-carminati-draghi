@@ -32,6 +32,20 @@ import java.util.ArrayList;
         @JsonSubTypes.Type(value = ShootSpawnSquareCreator.class, name = "ShootSpawnSquare")
 })
 public interface EffectsCreator {
+    /**
+     * Sets the player that does the actions.
+     * @param player The player that does the actions.
+     */
     void setPlayer(Player player);
+
+    /**
+     * This method is used to set and creates the effects.
+     * @param server The server where the game is running.
+     * @param table Represents all the data of the game.
+     * @param targets The targets of the shoots done during the turn.
+     * @return A list of FunctionalEffects that represent all the modification that are done on the data.
+     * @throws IllegalActionException The player selected an illegal action. This exception makes the turn restart.
+     * @throws UnavailableUserException The player has disconnected or didn't answer within the time limit.
+     */
     ArrayList<FunctionalEffect> run(Server server, GameTable table, Targets targets) throws IllegalActionException, UnavailableUserException;
 }

@@ -28,7 +28,7 @@ public class TurnManager {
     /**
      * The time to do a turn.
      */
-    private static final Integer TIME = 500;
+    private static final Integer TIME_MILLISEC = 240000;
 
     /**
      * The player that does the turn.
@@ -54,7 +54,7 @@ public class TurnManager {
     public void runTurn(Server server, GameTable table) throws FrenzyModeException {
         final String errorProperty = "error";
 
-        TimerTurn timerTurn = new TimerTurn(server, TIME, player);
+        TimerTurn timerTurn = new TimerTurn(server, TIME_MILLISEC, player);
         timerTurn.start();
 
         doPowerUps(server, table);

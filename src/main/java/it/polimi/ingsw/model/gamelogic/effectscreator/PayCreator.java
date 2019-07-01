@@ -86,6 +86,16 @@ public class PayCreator implements EffectsCreator{
         return effects;
     }
 
+    /**
+     * Used when the player must has to pay, but he can pay with any color.
+     * @param server The server where the game is running.
+     * @param table Represents all the data of the game.
+     * @param powerUpsCaller The powerUps that have been used by the player during the action. This powerUps cannot be used to pay.
+     * @param price The price that must be payed.
+     * @return A list of FunctionalEffects that represent all the modification that are done on the data.
+     * @throws IllegalActionException The player selected an illegal action. This exception makes the turn restart.
+     * @throws UnavailableUserException The player has disconnected or didn't answer within the time limit.
+     */
     public ArrayList<FunctionalEffect> payAnyColor(Server server, GameTable table, ArrayList<Powerup> powerUpsCaller, Integer price) throws IllegalActionException, UnavailableUserException {
         ArrayList<Powerup> powerUps;
         ArrayList<FunctionalEffect> effects =new ArrayList<>();

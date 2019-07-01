@@ -59,6 +59,11 @@ public abstract class ShootCreatorAbstract {
     public ShootCreatorAbstract() {
     }
 
+    /**
+     * Finds the squares when a player can shoot.
+     * @param squares The ArrayList where the method inserts all the squares where the player can shoot.
+     * @param table Represents all the data of the game.
+     */
     protected void findSquares(ArrayList<Square> squares, GameTable table){
         ArrayList<Square> map = new ArrayList<>(table.getGameMap().getGridAsList());
         Player visibilityStarter;
