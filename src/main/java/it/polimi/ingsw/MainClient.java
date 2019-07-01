@@ -1,5 +1,8 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.view.cli.CliMain;
+import it.polimi.ingsw.view.gui.GuiMain;
+
 //TODO Javadoc
 public class MainClient {
 
@@ -77,16 +80,12 @@ public class MainClient {
         }
         switch (interfaceType) {
             case 1: {
-                System.out.println("Started CLI with arguments:");
-                for (String s : newArgs)
-                    System.out.println(s);
+                CliMain.main(newArgs);
                 break;
             }
             case 0:
             default: {
-                System.out.println("Started GUI with arguments:");
-                for (String s : newArgs)
-                    System.out.println(s);
+                GuiMain.main(newArgs);
                 break;
             }
         }
