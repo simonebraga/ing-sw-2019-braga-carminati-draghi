@@ -36,7 +36,7 @@ public class TimerTurn extends Thread{
         stop.set(false);
         while (!stop.get() && time>0){
             try {
-                TimeUnit.SECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(500);
                 time-=500;
             } catch (InterruptedException e) {
                 e.printStackTrace();
