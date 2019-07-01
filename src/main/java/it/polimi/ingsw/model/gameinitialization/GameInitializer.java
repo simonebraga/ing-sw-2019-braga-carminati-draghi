@@ -218,7 +218,7 @@ public class GameInitializer {
                 }
 
                 GameTable gameTable;
-                if (gameMode == DOMINATION_MODE_ID) {
+                if (gameMode.toString().equalsIgnoreCase(DOMINATION_MODE_ID.toString())) {
                     gameTable = new GameTable(chosenStartingPlayerMarker,chosenKillshotTrack,
                             chosenDoubleKillCounter,chosenGameMap,this.connectedPlayers,loadedWeaponDeck,
                             loadedPowerupDeck,loadedAmmoTileDeck,chosenStartingPlayerMarker.getTarget(),true);
@@ -243,7 +243,7 @@ public class GameInitializer {
 
                 spawnSquares = new ArrayList<>(spawnSquares.stream().filter(square->gameTable.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toList()));
                 for (Square square: spawnSquares){
-                    if (gameMode == NORMAL_MODE_ID) {
+                    if (gameMode.toString().equalsIgnoreCase(NORMAL_MODE_ID.toString())) {
                         SpawnSquare spawnSquare = (SpawnSquare) square;
                         for (int i = 0; i < WEAPONS_BY_SPAWN; i++) {
                             spawnSquare.addWeapon(gameTable.getWeaponDeck().draw());
@@ -296,7 +296,7 @@ public class GameInitializer {
         GameMap[] gameMaps = objectMapper.readValue(file,GameMap[].class);
         file.close();
 
-        if (gameMode == NORMAL_MODE_ID) {
+        if (gameMode.toString().equalsIgnoreCase(NORMAL_MODE_ID.toString())) {
             return gameMaps[mapIndex];
         } else {    //gameMode == DOMINATION_MODE_ID
             return gameMaps[mapIndex + (gameMaps.length / 2)];    //normal mode maps will be formatted before domination mode maps in JSON
