@@ -7,14 +7,10 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
-import it.polimi.ingsw.model.mapclasses.GameMap;
-import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
-import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.smartmodel.*;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
-import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,6 +107,11 @@ public class CliMain implements ViewInterface {
     private static final int MAX_SQUARES_BY_ROW = 4;
 
     /**
+     * This final attribute defines the maximum number of squares per column.
+     */
+    private static final int MAX_SQUARES_BY_COLUMN = 3;
+
+    /**
      * This final attribute defines how many characters compose a full horizontal grid line.
      */
     private static final int TOTAL_GRID_WIDTH = (SQUARES_WIDTH * MAX_SQUARES_BY_ROW) - MAX_SQUARES_BY_ROW + 1;
@@ -156,7 +157,7 @@ public class CliMain implements ViewInterface {
     /**
      * This constant represents the JSON file path containing all game maps.
      */
-    private static final String MAPS_RESOURCES_PATH = "maps.json";
+    private static final String CLIENT_MAPS_RESOURCES_PATH = "client_maps.json";
 
     ////////////////////////////////////// network related constants ///////////////////////////////////////
 
@@ -210,7 +211,7 @@ public class CliMain implements ViewInterface {
     /**
      * This attribute represents the game map in use for this match.
      */
-    private GameMap map;
+    private SmartMap map;
 
     /**
      * This attribute contains the game settings loaded from file.
@@ -221,8 +222,6 @@ public class CliMain implements ViewInterface {
      * This final attribute defines the 'game_settings.json' file path.
      */
     private static final String GAME_SETTINGS_PATH = "game_settings.json";
-
-    private static String[] args;
 
 ////////////////////////////////////////////////////////////// class  methods ////////////////////////////////////////////////
 
@@ -246,9 +245,6 @@ public class CliMain implements ViewInterface {
      * This method implements the application using CLI.
      */
     public void launch(String[] args) {
-
-
-        this.args = args;
 
         //fetch default network properties
         Properties properties = new Properties();
@@ -409,10 +405,10 @@ public class CliMain implements ViewInterface {
      */
     private void fetchMaps() {
         ObjectMapper mapper = new ObjectMapper();
-        InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(MAPS_RESOURCES_PATH);
-        GameMap[] gameMaps = null;
+        InputStream gameMapsInputStream = CliMain.class.getClassLoader().getResourceAsStream(CLIENT_MAPS_RESOURCES_PATH);
+        SmartMap[] gameMaps = null;
         try {
-            gameMaps = mapper.readValue(gameMapsInputStream, GameMap[].class);
+            gameMaps = mapper.readValue(gameMapsInputStream, SmartMap[].class);
             gameMapsInputStream.close();
         } catch (IOException e) {
             System.out.println("Cannot fetch maps from file.");
@@ -426,18 +422,45 @@ public class CliMain implements ViewInterface {
      */
     private void printMap() {
 
-        for (int i = 0; i < map.getGrid().length; i++) {
+        for (int i = 0; i < MAX_SQUARES_BY_COLUMN; i++) {
+
+            //retrieve players on this row
+            ArrayList<SmartPlayer> players = new ArrayList<>();
+            for (SmartPlayer player : model.getSmartPlayerMap().values()) {
+                if (player.getPosY() == i)
+                    players.add(player);
+            }
+
+            //retrieve tiles on this row
+            ArrayList<SmartTile> tiles = new ArrayList<>();
+            for (SmartTile tile : model.getMapTiles()) {
+                if (tile.getPosY() == i)
+                    tiles.add(tile);
+            }
+
+            Color spawnColor = map.getSpawnColors()[i];
+
+            ArrayList<WeaponName> weapons = new ArrayList<>();
+            for (WeaponName weapon : model.getSpawnWeaponMap().get(spawnColor))
+                weapons.add(weapon);
+
+
             if (i == 0)
-                printRow(map.getGrid()[i], map.getSpawnSquares(),true);
+                printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
+                        map.getSquareTypes()[i], spawnColor, players, tiles, weapons);
             else
-                printRow(map.getGrid()[i], map.getSpawnSquares(),false);
+                printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
+                        map.getSquareTypes()[i], spawnColor, players, tiles, weapons);
         }
 
 
         //close last line
         ArrayList<Border> closingBorders = new ArrayList<>();
         for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
-            closingBorders.add(Border.WALL);
+            if (map.getSquareTypes()[map.getSquareTypes().length - 1][i].equals("void"))
+                closingBorders.add(Border.NOTHING);
+            else
+                closingBorders.add(Border.WALL);
         }
 
         printFirstLine(closingBorders);
@@ -447,22 +470,26 @@ public class CliMain implements ViewInterface {
     /**
      * This method prints a grid map row to the command line.
      *
-     * @param squares an array of Square to be formatted and printed.
-     * @param spawnSquares a list of SpawnSquare that contains all squares that are not TileSquare nor void squares.
-     * @param isFirstRow a boolean flag that says if the row printed is the first grid row.
+     * @param upperBordersArray an array of Border with all row upper borders from left to right.
+     * @param leftBordersArray an array of Border with all row left borders from left to right.
+     * @param rightMostBorder a Border that indicates the row last square right border.
+     * @param squaresTypeArray an array on String containing all square types in this row left to right.
+     * @param spawnColor a Color that indicates the row spawn square color.
+     * @param players an ArrayList of SmartPlayer containing all players on this row
+     * @param tiles an ArrayList of SmartTile containing all tiles on this row.
+     * @param weapons an ArrayList of WeaponName containing all weapons name of weapons of this row.
      */
-    private void printRow(Square[] squares, ArrayList<SpawnSquare> spawnSquares, boolean isFirstRow) {
+    private void printRow(Border[] upperBordersArray, Border[] leftBordersArray, Border rightMostBorder, String[] squaresTypeArray,
+                          Color spawnColor, ArrayList<SmartPlayer> players, ArrayList<SmartTile> tiles, ArrayList<WeaponName> weapons) {
 
-        //retrieve fundamental info from row status
-        ArrayList<Border> upperBorders = retrieveBordersInfo(squares,"up", isFirstRow);
-        ArrayList<Border> leftBorders = retrieveBordersInfo(squares,"left", isFirstRow);
-        Border rightMostBorder = retrieveLastBorderInfo(squares);
-        ArrayList<ArrayList<Figure>> figuresInsideSquares = getFiguresInsideRow(squares);
-        ArrayList<String> squareTypes = new ArrayList<>();
-        ArrayList<ArrayList<String>> squareContentInfo = getContentOfEachSquare(squares,spawnSquares,squareTypes);
+        ArrayList<Border> upperBorders = new ArrayList<>(Arrays.asList(upperBordersArray));
+        ArrayList<Border> leftBorders = new ArrayList<>(Arrays.asList(leftBordersArray));
+        ArrayList<ArrayList<Figure>> figuresInsideSquares = getFiguresInsideRow(players);
+        ArrayList<String> squareTypes = new ArrayList<>(Arrays.asList(squaresTypeArray));
+        ArrayList<ArrayList<String>> squareContentInfo = getContentOfEachSquare(squareTypes, tiles, weapons);
 
         printFirstLine(upperBorders);
-        printSpawnTagsLine(squares, leftBorders, rightMostBorder, spawnSquares, 1);
+        printSpawnTagsLine(spawnColor, leftBorders, rightMostBorder, squareTypes, 1);
 
         //all square content info lines
         int k = 0;
@@ -573,26 +600,22 @@ public class CliMain implements ViewInterface {
     /**
      * This method prints a full line that displays the color tag for each spawn square and spaces for each other square in the grid row.
      *
-     * @param squares an array of Square that contains all the squares of the grid row.
+     * @param spawnColor a Color enum that defines of what color this row's spawn square is.
      * @param leftBorders an ArrayList of Border containing all squares left border from left to right square.
      * @param rightMostBorder a Border which is the last border on the grid row.
-     * @param spawnSquares an ArrayList of SpawnSquare containing all map spawn squares.
+     * @param squareTypes an ArrayList of String containing all square types from left to right.
      * @param rowIndex the current printing line index.
      */
-    private void printSpawnTagsLine(Square[] squares, ArrayList<Border> leftBorders, Border rightMostBorder, ArrayList<SpawnSquare> spawnSquares, int rowIndex) {
+    private void printSpawnTagsLine(Color spawnColor, ArrayList<Border> leftBorders, Border rightMostBorder, ArrayList<String> squareTypes, int rowIndex) {
 
         //search for spawn square in this row
         int spawnSquareIndex = -1;
-        boolean found = false;
-        while (!found && spawnSquareIndex < squares.length) {
-            spawnSquareIndex++;
-            if (spawnSquares.contains(squares[spawnSquareIndex])) found = true;
+        for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
+            if (squareTypes.get(i).equals("spawn"))
+                spawnSquareIndex = i;
         }
 
-        SpawnSquare temp = (SpawnSquare) squares[spawnSquareIndex];
-        Color color = temp.getColor();
-
-        for (int i = 0; i < squares.length; i++) {
+        for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
 
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
@@ -600,7 +623,7 @@ public class CliMain implements ViewInterface {
             if (i == spawnSquareIndex) {
 
                 //print color tag
-                switch (color) {
+                switch (spawnColor) {
                     case RED:{
                         System.out.print("SPAWN:RED   ");
                         break;
@@ -688,87 +711,75 @@ public class CliMain implements ViewInterface {
     }
 
     /**
-     * This method collects all players user names inside a map grid row in a list.
+     * This method collects all grid row players figures by square.
      *
-     * @param squares an array of Square to be scanned.
-     * @return an ArrayList of ArrayList of String that contains all user names by each square.
+     * @param players an ArrayList of SmartPlayers to be scanned.
+     * @return an ArrayList of ArrayList of Figure that contains all players figure by each square.
      */
-    private ArrayList<ArrayList<Figure>> getFiguresInsideRow(Square[] squares) {
-        
-        ArrayList<SmartPlayer> players = new ArrayList<>(model.getSmartPlayerMap().values());
+    private ArrayList<ArrayList<Figure>> getFiguresInsideRow(ArrayList<SmartPlayer> players) {
 
-        ArrayList<ArrayList<Figure>> playersBySquareInRow = new ArrayList<>();
-        for (Square square : squares) {
-            ArrayList<Figure> playersInSquare = new ArrayList<>();
+        ArrayList<ArrayList<Figure>> figuresBySquareInRow = new ArrayList<>();
+
+        ArrayList<Figure> figureInSquare = new ArrayList<>();
+        for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
             for (SmartPlayer player : players) {
-                if (player.getPosX() == square.getX() && player.getPosY() == square.getY()) 
-                    playersInSquare.add(player.getFigure());
+                if (player.getPosX() == i)
+                    figureInSquare.add(player.getFigure());
             }
-            playersBySquareInRow.add(playersInSquare);
+            figuresBySquareInRow.add(figureInSquare);
         }
-        return playersBySquareInRow;
+
+        return figuresBySquareInRow;
     }
 
     /**
      * This method parse info from a map grid row to strings and collects them into a list.
      *
-     * @param squares an array of Square to be scanned.
-     * @param spawnSquares an ArrayList of SpawnSquare that represent all squares that are not TileSquare or void squares.
      * @param squareTypes a list of String representing the type of each square by its position in the row.
+     * @param tiles an ArrayList of SmartTile containing all row tiles.
+     * @param weaponNames an ArrayList of WeaponName containing names of all weapon name in this row.
      */
-    private ArrayList<ArrayList<String>> getContentOfEachSquare(Square[] squares, ArrayList<SpawnSquare> spawnSquares, ArrayList<String> squareTypes) {
+    private ArrayList<ArrayList<String>> getContentOfEachSquare(ArrayList<String> squareTypes, ArrayList<SmartTile> tiles, ArrayList<WeaponName> weaponNames) {
 
-        ArrayList<ArrayList<String>> squareContentInfo = new ArrayList<>();
-        ArrayList<String> infoArray = new ArrayList<>();
-        ArrayList<SmartTile> tiles = new ArrayList<>(model.getMapTiles());
-        Map<Color,ArrayList<WeaponName>> weapons = model.getSpawnWeaponMap();
-        
-        for (Square square : squares) {
+        ArrayList<ArrayList<String>> squaresContentInfo = new ArrayList<>();
 
-            if (square != null) {   //tile or spawn squares
+        for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
 
-                if (spawnSquares.contains(square)) {    //square is a spawnSquare
+            ArrayList<String> singleSquareInfo = new ArrayList<>();
 
-                    SpawnSquare spawnSquare = (SpawnSquare) square;
+            if (squareTypes.get(i).equals("spawn")) {   //spawn square
 
-                    for (WeaponName weapon : weapons.get(spawnSquare.getColor())) {
-                        infoArray.add(parseWeaponName(weapon,true));
-                    }
+                for (WeaponName name : weaponNames)
+                    singleSquareInfo.add(parseWeaponName(name, true));
 
-                    for (int i = 0; i < MAX_WEAPONS_BY_SQUARE - weapons.get(spawnSquare.getColor()).size(); i++) {
-                        infoArray.add(VOID_INFO_SPACING);    //no weapon
-                    }
-
-                    squareContentInfo.add(infoArray);
-                    squareTypes.add("spawn");
-
-                } else {    //square is a tile square
-
-                    TileSquare tileSquare = (TileSquare) square;
-
-                    for (SmartTile tile : tiles) {
-                        if (tile.getPosX() == tileSquare.getX() && tile.getPosY() == tileSquare.getY()) {
-                            if (tile.getPowerup() == 1)
-                                infoArray.add(tile.getPowerup() + "PU   ");
-
-                            for (Color color : tile.getAmmo()) {
-                                infoArray.add(parseColorName(color));
-                            }
-                        }
-                    }
-
-                    squareContentInfo.add(infoArray);
-                    squareTypes.add("tile");
+                for (int j = 0; j < MAX_WEAPONS_BY_SQUARE - singleSquareInfo.size(); j++) {
+                    singleSquareInfo.add(VOID_INFO_SPACING);   //no weapon
                 }
-            } else {            //square is void
 
-                for (int i = SQUARE_CONTENT_SECTION_STARTING_INDEX; i < SQUARE_FIGURE_SECTION_STARTING_INDEX; i++)
-                    infoArray.add(VOID_INFO_SPACING);
-                squareContentInfo.add(infoArray);
-                squareTypes.add("void");
+                squaresContentInfo.add(singleSquareInfo);
+
+            } else if (squareTypes.get(i).equals("tile")) {     //tile square
+
+                for (SmartTile tile : tiles) {
+                    if (tile.getPosY() == i) {  //same column
+                        if (tile.getPowerup() == 1)
+                            singleSquareInfo.add(tile.getPowerup() + "PU   ");
+
+                        for (Color color : tile.getAmmo())
+                            singleSquareInfo.add(parseColorName(color));
+                    }
+                    squaresContentInfo.add(singleSquareInfo);
+                }
+
+            } else {            //void square
+
+                for (int j = SQUARE_CONTENT_SECTION_STARTING_INDEX; j < SQUARE_FIGURE_SECTION_STARTING_INDEX; j++)
+                    singleSquareInfo.add(VOID_INFO_SPACING);
+
+                squaresContentInfo.add(singleSquareInfo);
             }
         }
-        return squareContentInfo;
+        return squaresContentInfo;
     }
 
     /**
@@ -993,7 +1004,7 @@ public class CliMain implements ViewInterface {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             System.out.print(contentBySquare.get(i));
-            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);  //fill with spaces to the next border
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);  //fill with spaces to the next border
         }
 
         //closing line
