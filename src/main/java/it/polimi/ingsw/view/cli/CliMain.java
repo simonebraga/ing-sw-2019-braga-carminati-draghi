@@ -256,9 +256,7 @@ public class CliMain implements ViewInterface {
             properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
         } catch (IOException e) {
             System.out.println(ANSI_RED + "Cannot access network settings file." + ANSI_RESET);
-            client = null;
-            launch(args);
-            e.printStackTrace();
+            System.exit(0);
         }
 
         if (settings == null)
@@ -280,8 +278,7 @@ public class CliMain implements ViewInterface {
             System.out.println("Client created");
         } catch (Exception e) {
             System.out.println(ANSI_RED + "Server not responding.\n" + ANSI_RESET);
-            client = null;
-            launch(args);
+            System.exit(0);
         }
         chooseNickName();
     }
@@ -1154,6 +1151,7 @@ public class CliMain implements ViewInterface {
 
         Integer maxKills = settings.getMaxKills();
         ArrayList<Figure> killShotTrack = model.getKillshotTrack();
+        System.out.println();
 
         if (!model.getDomination()) {
 
@@ -1163,7 +1161,7 @@ public class CliMain implements ViewInterface {
                 System.out.print(" | ");
                 printFigure(figure);
             }
-            for (int i = killShotTrack.size(); i <= maxKills; i++) {
+            for (int i = killShotTrack.size(); i < maxKills; i++) {
                 System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
             }
             System.out.println(" |");
@@ -1186,12 +1184,12 @@ public class CliMain implements ViewInterface {
     @Override
     public void logout() {
         System.out.println(ANSI_RED + "You were forcefully disconnected" + ANSI_RESET);
-        client = null;
-        launch(args);
+        System.exit(0);
     }
 
     @Override
     public void sendMessage(String s) {
+        System.out.println();
         System.out.println(s);
     }
 
@@ -1317,6 +1315,7 @@ public class CliMain implements ViewInterface {
     public int choosePowerup(Powerup[] p) {
         int choice = -1;
 
+        System.out.println();
         while (choice < 1 || choice > p.length) {
 
             for (int i = 0; i < p.length; i++) {
@@ -1388,6 +1387,8 @@ public class CliMain implements ViewInterface {
 
         int choice = 0;
 
+        System.out.println();
+
         while (choice < 1 || choice > s.length) {
             for (int i = 0; i < s.length; i++)
                 System.out.println(i+1 + " - (" + s[0][i] + "," + s[1][i] + ")");
@@ -1406,6 +1407,7 @@ public class CliMain implements ViewInterface {
     @Override
     public int booleanQuestion(String s) {
 
+        System.out.println();
         System.out.println(s);
         System.out.print("Yes or No: ");
         String choice = scannerIn.nextLine();
@@ -1421,12 +1423,12 @@ public class CliMain implements ViewInterface {
     @Override
     public int[] chooseMultiplePowerup(Powerup[] p) {
 
-        char wantToContinue;
+        char wantToContinue = 'y';
         Powerup[] temp = new Powerup[p.length - 1];
         int[] out = new int[p.length];
         int i = 0;
 
-        do {
+        while (wantToContinue == 'y' && p.length != 0) {
             out[i] = choosePowerup(p);
             System.out.print("Do you want to pick another powerup? Yes or No: ");
             wantToContinue = (char) scannerIn.nextInt();
@@ -1439,7 +1441,7 @@ public class CliMain implements ViewInterface {
                 p = temp;
             }
             i++;
-        } while (wantToContinue == 'y' && p.length != 0);
+        }
 
         return out;
     }
@@ -1447,12 +1449,12 @@ public class CliMain implements ViewInterface {
     @Override
     public int[] chooseMultipleWeapon(WeaponName[] w) {
 
-        char wantToContinue;
+        char wantToContinue = 'y';
         WeaponName[] temp = new WeaponName[w.length - 1];
         int[] out = new int[w.length];
         int i = 0;
 
-        do {
+        while (wantToContinue == 'y' && w.length != 0) {
             out[i] = chooseWeapon(w);
             System.out.print("Do you want to pick another weapon? Yes or No: ");
             wantToContinue = (char) scannerIn.nextInt();
@@ -1465,21 +1467,18 @@ public class CliMain implements ViewInterface {
                 w = temp;
             }
             i++;
-        } while (wantToContinue == 'y' && w.length != 0);
+        }
 
         return out;
     }
 
     @Override
     public void notifyModelUpdate() {
-
-        Platform.runLater(() -> {
-            try {
-                model = client.getModelUpdate();
-                printModel();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        try {
+            model=client.getModelUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        printModel();
     }
 }
