@@ -202,11 +202,7 @@ public class ServerMain {
             System.out.println("Done");
 
             //if too many users dropped during this phase
-            if (players.size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
-                System.out.println("Too many players have disconnected. Restarting server...");
-                server.resetClientMap();
-                main(args);
-            }
+            checkPlayers(server,gameTable,true);
 
             //finally created usable match
             //save(gameTable);
@@ -252,7 +248,7 @@ public class ServerMain {
 
             //game has ended before final frenzy because too many people disconnected
             System.out.println("Not enough players to continue the game");
-            gameOver(gameTable);
+            gameOver(server, gameTable);
 
             //restart program
             main(args);
@@ -270,7 +266,7 @@ public class ServerMain {
      */
     private static void firstTurns(Server server, GameTable gameTable, Integer currentPlayerIndex) throws FrenzyModeException {
 
-        checkPlayers(server, gameTable);
+        checkPlayers(server, gameTable, false);
 
         //execute first player turn, if he is still connected
         if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
@@ -292,7 +288,7 @@ public class ServerMain {
         //execute other first turns, from current player to starting player -1, if they are connected
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) {
 
-            checkPlayers(server, gameTable);
+            checkPlayers(server, gameTable, false);
 
             if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
 
@@ -327,7 +323,7 @@ public class ServerMain {
 
         //this while will break at some point because of FrenzyModeException throw
         int i=currentPlayerIndex;
-        while(gameTable.getPlayers().size() >= MINIMUM_CONNECTED_USERS_THRESHOLD) {   //there are at least 3 players still connected
+        while(server.getActivePlayers().size() >= MINIMUM_CONNECTED_USERS_THRESHOLD) {   //there are at least 3 players still connected
 
             //execute turn if player is still connected
             if (server.isConnected(gameTable.getPlayers().get(i))) {
@@ -346,7 +342,7 @@ public class ServerMain {
             //save(gameTable);
         }
         //if this while stops without FinalFrenzy exception throw it's because there are less than 3 players connected
-        checkPlayers(server, gameTable);
+        checkPlayers(server, gameTable, false);
     }
 
     /**
@@ -574,7 +570,7 @@ public class ServerMain {
             }
 
             //end game
-            gameOver(gameTable);
+            gameOver(server, gameTable);
 
         } catch (FrenzyModeException e) {
             //should never go here
@@ -597,7 +593,7 @@ public class ServerMain {
 
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(stopPlayer)) {
 
-            checkPlayers(server, gameTable);
+            checkPlayers(server, gameTable, false);
 
             if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
                 TurnManager turn = new TurnManager(gameTable.getPlayers().get(currentPlayerIndex), true, isBefore);
@@ -613,10 +609,42 @@ public class ServerMain {
         }
     }
 
-    private static void checkPlayers(Server server, GameTable gameTable) {
+    /**
+     * This method checks if there are still enough active players on the server.
+     *
+     * @param server a Server method with all methods to connect with clients.
+     * @param gameTable a GameTable with all match info.
+     * @param isSetUpPhase a boolean saying if the check was made in the setup phase or in the match.
+     */
+    private static void checkPlayers(Server server, GameTable gameTable, boolean isSetUpPhase) {
         if (server.getActivePlayers().size() < MINIMUM_CONNECTED_USERS_THRESHOLD) {
-            System.out.println("Too many players have disconnected. Ending game...");
-            gameOver(gameTable);
+            if (isSetUpPhase) {
+                System.out.println("Too many players have disconnected. Restarting server...");
+                for (Player player :  gameTable.getPlayers()) {
+                    if (server.isConnected(player)) {
+                        try {
+                            server.sendMessage(player,"Too many players have disconnected. Restarting server...");
+                        } catch (UnavailableUserException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                String[] args = new String[0];
+                server.resetClientMap();
+                main(args);
+            } else {
+                System.out.println("Too many players have disconnected. Ending game...");
+                for (Player player : gameTable.getPlayers()) {
+                    if (server.isConnected(player)) {
+                        try {
+                            server.sendMessage(player,"Too many players have disconnected. Ending game...");
+                        } catch (UnavailableUserException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                gameOver(server, gameTable);
+            }
         }
     }
 
@@ -625,19 +653,48 @@ public class ServerMain {
      *
      * @param gameTable a GameTable object that holds all match information.
      */
-    private static void gameOver(GameTable gameTable) {
+    private static void gameOver(Server server, GameTable gameTable) {
 
         calculateFinalPoints(gameTable);
         //deleteSave(gameTable.getSaveFileName());
 
         //announce scoreboard
+        System.out.println("SCOREBOARD:");
+        for (Player p : gameTable.getPlayers()) {
+            if (server.isConnected(p)) {
+                try {
+                    server.sendMessage(p,"SCOREBOARD:");
+                } catch (UnavailableUserException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         Player winner = gameTable.getPlayers().get(0);
         for (Player player : gameTable.getPlayers()) {
             if (player.getPoints() > winner.getPoints())
                 winner = player;
-            System.out.println("\n" + player.getUsername() + ": " + player.getPoints());
+            System.out.println("\n" + player.getUsername() + ": " + player.getPoints() + " points");
+            for (Player p : gameTable.getPlayers()) {
+                if (server.isConnected(p)) {
+                    try {
+                        server.sendMessage(p,player.getUsername() + ": " + player.getPoints() + " points");
+                    } catch (UnavailableUserException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
         System.out.println("\nThe winner is " + winner.getUsername() + "!");
+        for (Player player : gameTable.getPlayers()) {
+            if (server.isConnected(player)) {
+                try {
+                    server.sendMessage(player, "The winner is " + winner.getUsername() + "!");
+                } catch (UnavailableUserException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.exit(0);
     }
 
     /**
