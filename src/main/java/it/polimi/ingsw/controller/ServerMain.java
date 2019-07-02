@@ -346,6 +346,7 @@ public class ServerMain {
             //save(gameTable);
         }
         //if this while stops without FinalFrenzy exception throw it's because there are less than 3 players connected
+        checkPlayers(server, gameTable);
     }
 
     /**
