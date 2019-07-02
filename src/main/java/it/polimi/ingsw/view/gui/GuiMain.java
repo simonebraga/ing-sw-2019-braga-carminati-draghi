@@ -146,7 +146,7 @@ public class GuiMain extends Application implements ViewInterface {
 
         StackPane stackPaneMap = new StackPane();
         stackPaneMap.getChildren().add(
-                new ImagePane(properties.getProperty("mapsRoot").concat(properties.getProperty("map" + smartModel.getMapIndex())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
+                new ImagePane(properties.getProperty("mapsRoot").concat(properties.getProperty("map" + (smartModel.getMapIndex()+1))),"-fx-background-size: contain; -fx-background-repeat: no-repeat;")
         );
         stackPaneMap.setPadding(new Insets(10,10,10,10));
         stackPaneMap.maxHeightProperty().bind(stackPaneCenterPane.heightProperty().multiply(0.7));
