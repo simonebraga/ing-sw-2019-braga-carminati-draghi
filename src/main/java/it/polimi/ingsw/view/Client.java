@@ -83,6 +83,7 @@ public class Client implements ClientRemote {
                     System.setProperty("java.rmi.server.hostname",clientIp);
                     try {
                         UnicastRemoteObject.exportObject(this,clientPortRMI);
+                        init = true;
                     } catch (RemoteException e) {
                         System.err.println("Error exporting remote object");
                         throw new Exception();
@@ -96,10 +97,9 @@ public class Client implements ClientRemote {
                         System.err.println("Error with RMI registry remote object lookup");
                         throw new Exception();
                     }
-                    init = true;
                 } catch (Exception e) {
                     clientPortRMI++;
-                    if (clientPortRMI > clientPortRMIBound)
+                    if ((init)||(clientPortRMI > clientPortRMIBound))
                         throw new Exception();
                 }
             }
@@ -154,6 +154,7 @@ public class Client implements ClientRemote {
                     System.setProperty("java.rmi.server.hostname",clientIp);
                     try {
                         UnicastRemoteObject.exportObject(this,clientPortRMI);
+                        init = true;
                     } catch (RemoteException e) {
                         System.err.println("Error exporting remote object");
                         throw new Exception();
@@ -167,10 +168,9 @@ public class Client implements ClientRemote {
                         System.err.println("Error with RMI registry remote object lookup");
                         throw new Exception();
                     }
-                    init = true;
                 } catch (Exception e) {
                     clientPortRMI++;
-                    if (clientPortRMI > clientPortRMIBound)
+                    if ((init)||(clientPortRMI > clientPortRMIBound))
                         throw new Exception();
                 }
             }
