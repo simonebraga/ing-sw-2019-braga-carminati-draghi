@@ -465,14 +465,15 @@ public class CliMain implements ViewInterface {
         printSpawnTagsLine(squares, leftBorders, rightMostBorder, spawnSquares, 1);
 
         //all square content info lines
+        int k = 0;
         for (int i = SQUARE_CONTENT_SECTION_STARTING_INDEX; i < SQUARE_FIGURE_SECTION_STARTING_INDEX; i++) {
 
-            ArrayList<String> contentInThisRow = new ArrayList<>();
+            ArrayList<String> contentInThisLine = new ArrayList<>();
             for (ArrayList<String> contents : squareContentInfo) {
-                contentInThisRow.add(contents.get(i));
+                contentInThisLine.add(contents.get(k));
             }
-            printContentLine(leftBorders, contentInThisRow, i, rightMostBorder);
-
+            printContentLine(leftBorders, contentInThisLine, i, rightMostBorder);
+            k++;
         }
 
         //all players in square nicknames
@@ -546,7 +547,7 @@ public class CliMain implements ViewInterface {
                 if (rowIndex >= 3 && rowIndex <= SQUARES_HIGH - 4)
                     System.out.print(" ");
                 else if (rowIndex == 1 || rowIndex == SQUARES_HIGH - 2)
-                    System.out.println("|");
+                    System.out.print("|");
                 else if (rowIndex == 2)
                     System.out.print(UNICODE_UPPER_DOOR_THRESHOLD);
                 else
@@ -624,6 +625,7 @@ public class CliMain implements ViewInterface {
         }
         //last border closing
         printBorderChar(rightMostBorder, rowIndex);
+        System.out.println();
     }
 
 
@@ -746,9 +748,9 @@ public class CliMain implements ViewInterface {
 
                     for (SmartTile tile : tiles) {
                         if (tile.getPosX() == tileSquare.getX() && tile.getPosY() == tileSquare.getY()) {
-                            
-                            infoArray.add(tile.getPowerup() + "PU   ");
-                            
+                            if (tile.getPowerup() == 1)
+                                infoArray.add(tile.getPowerup() + "PU   ");
+
                             for (Color color : tile.getAmmo()) {
                                 infoArray.add(parseColorName(color));
                             }
@@ -996,7 +998,7 @@ public class CliMain implements ViewInterface {
 
         //closing line
         printBorderChar(rightMostBorder, rowIndex);
-
+        System.out.println();
     }
 
     /**
