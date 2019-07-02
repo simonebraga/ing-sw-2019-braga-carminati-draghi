@@ -1,0 +1,25 @@
+[ {
+  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],
+  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "DOOR" ], [ "WALL", "WALL", "WALL", "NOTHING" ], [ "WALL", "NOTHING", "DOOR", "NOTHING" ] ],
+  "rightMostBorders" : [ "WALL", "WALL", "WALL" ],
+  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
+  "spawnColors" : [ "BLUE", "RED", "YELLOW" ]
+}, {
+  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],
+  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "DOOR" ], [ "WALL", "WALL", "WALL", "NOTHING" ], [ "WALL", "NOTHING", "DOOR", "NOTHING" ] ],
+  "rightMostBorders" : [ "WALL", "WALL", "WALL" ],
+  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
+  "spawnColors" : [ "BLUE", "RED", "YELLOW" ]
+}, {
+  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],
+  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "DOOR" ], [ "WALL", "WALL", "WALL", "NOTHING" ], [ "WALL", "NOTHING", "DOOR", "NOTHING" ] ],
+  "rightMostBorders" : [ "WALL", "WALL", "WALL" ],
+  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
+  "spawnColors" : [ "BLUE", "RED", "YELLOW" ]
+}, {
+  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],
+  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "DOOR" ], [ "WALL", "WALL", "WALL", "NOTHING" ], [ "WALL", "NOTHING", "DOOR", "NOTHING" ] ],
+  "rightMostBorders" : [ "WALL", "WALL", "WALL" ],
+  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
+  "spawnColors" : [ "BLUE", "RED", "YELLOW" ]
+} ]
