@@ -339,8 +339,6 @@ public class CliMain implements ViewInterface {
                     System.out.println(ANSI_RED + "Something went wrong" + ANSI_RESET);
                     break;
                 }
-                default:
-                    throw new IllegalStateException("Unexpected value: " + loginOutput);
             }
         } while (!success);
     }
@@ -1233,7 +1231,8 @@ public class CliMain implements ViewInterface {
                 System.out.println((i + 1) + " - " + w[i].name());
             }
             System.out.print("\nChoose a weapon by its number: ");
-            choice = scannerIn.nextInt();
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
             if (choice < 1 || choice > w.length)
                 System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
@@ -1284,10 +1283,6 @@ public class CliMain implements ViewInterface {
                     }
                     case 'W':{
                         System.out.println(i + 1 + "West");
-                        break;
-                    }
-                    default:{
-                        System.out.println("A wrong character has been send from the server.");
                         break;
                     }
                 }
@@ -1395,7 +1390,7 @@ public class CliMain implements ViewInterface {
 
         while (choice < 1 || choice > s.length) {
             for (int i = 0; i < s.length; i++)
-                System.out.println(i + " - (" + s[0][i] + "," + s[1][i] + ")");
+                System.out.println(i+1 + " - (" + s[0][i] + "," + s[1][i] + ")");
             System.out.println("\nChoose a Square by its number: ");
 
             if (scannerIn.hasNextInt())
@@ -1481,10 +1476,10 @@ public class CliMain implements ViewInterface {
         Platform.runLater(() -> {
             try {
                 model = client.getModelUpdate();
+                printModel();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            printModel();
         });
     }
 }
