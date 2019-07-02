@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.*;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,11 +50,15 @@ class TestSmartModel {
             player.getPowerupPocket().setPowerups(new ArrayList<>(Arrays.asList(new Powerup(Color.BLUE,PowerupName.NEWTON))));
             player.setPosition(gameTable.getGameMap().getSquare(1, 1));
         }
-        for (SpawnSquare spawnSquare : gameTable.getGameMap().getSpawnSquares()) {
-            spawnSquare.addWeapon(new Weapon(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE,Color.YELLOW)),WeaponName.FURNACE,true));
+        ArrayList<Square> spawnSquares = gameTable.getGameMap().getGridAsList().stream().filter(square -> gameTable.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+        for (Square spawnSquare : spawnSquares) {
+            SpawnSquare spawnSquare1 = (SpawnSquare) spawnSquare;
+            spawnSquare1.setWeapons(new ArrayList<>(Arrays.asList(new Weapon(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE,Color.YELLOW)),WeaponName.FURNACE,true))));
         }
-        for (TileSquare tileSquare : gameTable.getGameMap().getTileSquares()) {
-            tileSquare.addTile(new AmmoTile(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE)),1));
+        ArrayList<Square> tileSquares = gameTable.getGameMap().getGridAsList().stream().filter(square -> gameTable.getGameMap().getTileSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+        for (Square tileSquare : tileSquares) {
+            TileSquare tileSquare1 = (TileSquare) tileSquare;
+            tileSquare1.setTile(new AmmoTile(new ArrayList<>(Arrays.asList(Color.RED,Color.BLUE)),1));
         }
         try {
             gameTable.getKillshotTrack().kill(player1);
@@ -205,11 +211,14 @@ class TestSmartModel {
     void testspawnDamageTrack() {
         ArrayList<Player> players = new ArrayList<>(Arrays.asList(player1,player2,player3));
         GameTable gameTableDomination = new GameInitializer('D',2,players).run();
-        for (SpawnSquare spawnSquare : gameTableDomination.getGameMap().getSpawnSquares()) {
-            DominationSpawnSquare dominationSpawnSquare = (DominationSpawnSquare) spawnSquare;
+
+        ArrayList<Square> spawnSquares = gameTableDomination.getGameMap().getGridAsList().stream().filter(square -> gameTableDomination.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+        for (Square square : spawnSquares) {
+            DominationSpawnSquare dominationSpawnSquare = (DominationSpawnSquare) square;
             dominationSpawnSquare.addDamage(player2);
             dominationSpawnSquare.addDamage(player3);
         }
+
         SmartModel smartModel = new SmartModel();
         smartModel.update(gameTableDomination);
         smartModel.setMapIndex(2);

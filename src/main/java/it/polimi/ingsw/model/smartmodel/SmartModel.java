@@ -9,6 +9,7 @@ import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
+import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class contains all the useful information of the model that must be available to the player.
@@ -142,44 +144,43 @@ public class SmartModel {
         // Setup is domination
         isDomination = gameTable.getIsDomination();
 
-        // Setup spawn weapons
+        // Setup spawn weapons & spawn damage tracks if in Domination mode
         spawnWeaponMap = new HashMap<>();
-        for (SpawnSquare spawnSquare : gameTable.getGameMap().getSpawnSquares()) {
+        spawnDamageTrack = new HashMap<>();
+        ArrayList<Square> spawnSquares = gameTable.getGameMap().getGridAsList().stream().filter(square -> gameTable.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+        for (Square square : spawnSquares) {
+            SpawnSquare square1 = (SpawnSquare) square;
             ArrayList<WeaponName> arrayList = new ArrayList<>();
-            for (Weapon weapon : spawnSquare.getWeapons())
+            for (Weapon weapon : square1.getWeapons())
                 arrayList.add(weapon.getName());
-            spawnWeaponMap.put(spawnSquare.getColor(),arrayList);
+            spawnWeaponMap.put(square1.getColor(),arrayList);
+
+            if (isDomination) {
+                DominationSpawnSquare square2 = (DominationSpawnSquare) square1;
+                ArrayList<Figure> arrayList1 = new ArrayList<>();
+                for (Player player : square2.getDamage())
+                    arrayList1.add(player.getFigure());
+                spawnDamageTrack.put(square2.getColor(),arrayList1);
+            }
         }
 
         // Setup map tiles
         mapTiles = new ArrayList<>();
-        for (TileSquare tileSquare : gameTable.getGameMap().getTileSquares()) {
-            if (tileSquare.getTile() != null) {
-                SmartTile smartTile = new SmartTile();
-                smartTile.setPowerup(tileSquare.getTile().getPowerup());
-                smartTile.setAmmo(tileSquare.getTile().getAmmo());
-                smartTile.setPosX(tileSquare.getX());
-                smartTile.setPosY(tileSquare.getY());
-                mapTiles.add(smartTile);
-            }
+        ArrayList<Square> tileSquares = gameTable.getGameMap().getGridAsList().stream().filter(square -> gameTable.getGameMap().getTileSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+        for (Square square : tileSquares) {
+            TileSquare square1 = (TileSquare) square;
+            SmartTile smartTile = new SmartTile();
+            smartTile.setPowerup(square1.getTile().getPowerup());
+            smartTile.setAmmo(square1.getTile().getAmmo());
+            smartTile.setPosX(square1.getX());
+            smartTile.setPosY(square1.getY());
+            mapTiles.add(smartTile);
         }
 
         // Setup killshottrack
         killshotTrack = new ArrayList<>();
         for (Player player : gameTable.getKillshotTrack().getKillTrack())
             killshotTrack.add(player.getFigure());
-
-        // Setup spawn damage track
-        spawnDamageTrack = new HashMap<>();
-        if (isDomination) {
-            for (SpawnSquare spawnSquare : gameTable.getGameMap().getSpawnSquares()) {
-                DominationSpawnSquare dominationSpawnSquare = (DominationSpawnSquare) spawnSquare;
-                ArrayList<Figure> arrayList = new ArrayList<>();
-                for (Player player : dominationSpawnSquare.getDamage())
-                    arrayList.add(player.getFigure());
-                spawnDamageTrack.put(dominationSpawnSquare.getColor(),arrayList);
-            }
-        }
 
     }
 
