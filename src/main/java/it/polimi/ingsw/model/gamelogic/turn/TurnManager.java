@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
  */
 public class TurnManager {
 
+    private static final String ERROR = "error";
+    private static final String ERROR_RELOAD = "errorReload";
+
     /**
      * The time to do a turn.
      */
@@ -52,7 +55,6 @@ public class TurnManager {
     }
 
     public void runTurn(Server server, GameTable table) throws FrenzyModeException {
-        final String errorProperty = "error";
 
         TimerTurn timerTurn = new TimerTurn(server, TIME_MILLISEC, player);
         timerTurn.start();
@@ -78,7 +80,7 @@ public class TurnManager {
         }
         while (!resultAction && server.isConnected(player)){
             try {
-                server.sendMessage(player, new MessageRetriever().retrieveMessage(errorProperty));
+                server.sendMessage(player, new MessageRetriever().retrieveMessage(ERROR_RELOAD));
             } catch (UnavailableUserException e) {
             }
             try {
@@ -125,14 +127,13 @@ public class TurnManager {
     }
 
     private void doAction (Server server, GameTable table, Targets targets){
-        final String errorProperty = "error";
         targets.reset();
         ArrayList<DominationSpawnSquare> targetsInitial = new ArrayList<>(targets.getSquaresDamaged());
         boolean resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(server, table, targets);
         while (!resultAction && server.isConnected(player)){
             targets = new Targets(new ArrayList<>(targetsInitial));
             try {
-                server.sendMessage(player, new MessageRetriever().retrieveMessage(errorProperty));
+                server.sendMessage(player, new MessageRetriever().retrieveMessage(ERROR));
             } catch (UnavailableUserException e) {
             }
             resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(server, table, targets);
