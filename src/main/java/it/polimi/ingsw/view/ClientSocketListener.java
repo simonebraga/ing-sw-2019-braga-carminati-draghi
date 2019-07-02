@@ -50,37 +50,63 @@ public class ClientSocketListener implements Runnable {
 
                 String method = getHeading(line);
                 String parameters = getBody(line);
-                try {
-                    // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
-                    switch (method) {
-                        case "genericWithoutResponse": {
-                            client.genericWithoutResponse(getHeading(parameters),getBody(parameters));
-                            break;
-                        }
-                        case "genericWithResponse": {
-                            clientSocketSpeaker.returnMessage(client.genericWithResponse(getHeading(parameters),getBody(parameters)));
-                            break;
-                        }
-                        case "singleChoice": {
-                            clientSocketSpeaker.returnMessage(gson.toJson(client.singleChoice(getHeading(parameters),getBody(parameters))));
-                            break;
-                        }
-                        case "multipleChoice": {
-                            clientSocketSpeaker.returnMessage(gson.toJson(client.multipleChoice(getHeading(parameters),getBody(parameters))));
-                            break;
-                        }
-                        case "booleanQuestion": {
-                            clientSocketSpeaker.returnMessage(gson.toJson(client.booleanQuestion(parameters)));
-                            break;
-                        }
-                        case "return": {
-                            customStream.putLine(parameters);
-                            break;
-                        }
-                        default: System.out.println("Received invalid protocol message: " + line);
+                // This switch-case must be configured to invoke all the remote methods of Client with the correct parameters
+                switch (method) {
+                    case "genericWithoutResponse": {
+                        new Thread(() -> {
+                            try {
+                                client.genericWithoutResponse(getHeading(parameters),getBody(parameters));
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
                     }
-                } catch (RemoteException e) {
-                    System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                    case "genericWithResponse": {
+                        new Thread(() -> {
+                            try {
+                                clientSocketSpeaker.returnMessage(client.genericWithResponse(getHeading(parameters),getBody(parameters)));
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
+                    }
+                    case "singleChoice": {
+                        new Thread(() -> {
+                            try {
+                                clientSocketSpeaker.returnMessage(gson.toJson(client.singleChoice(getHeading(parameters),getBody(parameters))));
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
+                    }
+                    case "multipleChoice": {
+                        new Thread(() -> {
+                            try {
+                                clientSocketSpeaker.returnMessage(gson.toJson(client.multipleChoice(getHeading(parameters),getBody(parameters))));
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
+                    }
+                    case "booleanQuestion": {
+                        new Thread(() -> {
+                            try {
+                                clientSocketSpeaker.returnMessage(gson.toJson(client.booleanQuestion(parameters)));
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
+                    }
+                    case "return": {
+                        customStream.putLine(parameters);
+                        break;
+                    }
+                    default: System.out.println("Received invalid protocol message: " + line);
                 }
             } catch (Exception e) {
                 break;

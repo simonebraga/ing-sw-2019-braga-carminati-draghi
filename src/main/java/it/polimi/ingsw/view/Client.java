@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.network.ClientRemote;
 import it.polimi.ingsw.network.ServerRemote;
@@ -35,6 +34,7 @@ public class Client implements ClientRemote {
     private String clientIp;
     private int serverPortRMI;
     private int clientPortRMI;
+    private int clientPortRMIBound;
     private int serverPortSocket;
     private int pingFrequency;
     private int pingLatency;
@@ -69,6 +69,7 @@ public class Client implements ClientRemote {
         this.clientIp = clientIp;
         this.serverPortRMI = Integer.parseInt(properties.getProperty("serverRmiPort"));
         this.clientPortRMI = Integer.parseInt(properties.getProperty("clientRmiPort"));
+        this.clientPortRMIBound = this.clientPortRMI + 100;
         this.serverPortSocket = Integer.parseInt(properties.getProperty("serverSocketPort"));
         this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
         this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
@@ -98,6 +99,8 @@ public class Client implements ClientRemote {
                     init = true;
                 } catch (Exception e) {
                     clientPortRMI++;
+                    if (clientPortRMI > clientPortRMIBound)
+                        throw new Exception();
                 }
             }
         } else if (i == 1) {
@@ -137,6 +140,7 @@ public class Client implements ClientRemote {
         this.clientIp = properties.getProperty("clientIp");
         this.serverPortRMI = Integer.parseInt(properties.getProperty("serverRmiPort"));
         this.clientPortRMI = Integer.parseInt(properties.getProperty("clientRmiPort"));
+        this.clientPortRMIBound = this.clientPortRMI + 100;
         this.serverPortSocket = Integer.parseInt(properties.getProperty("serverSocketPort"));
         this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
         this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
@@ -166,6 +170,8 @@ public class Client implements ClientRemote {
                     init = true;
                 } catch (Exception e) {
                     clientPortRMI++;
+                    if (clientPortRMI > clientPortRMIBound)
+                        throw new Exception();
                 }
             }
         } else if (i == 1) {

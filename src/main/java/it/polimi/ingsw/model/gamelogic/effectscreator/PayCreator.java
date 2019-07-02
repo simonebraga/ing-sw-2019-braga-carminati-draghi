@@ -102,19 +102,21 @@ public class PayCreator implements EffectsCreator{
         powerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
         powerUps.removeAll(powerUpsCaller);
 
-        server.sendMessage(player, new MessageRetriever().retrieveMessage("powerUpsToPay"));
-        powerUps = server.chooseMultiplePowerup(player, powerUps);
+        if(!powerUps.isEmpty()) {
+            server.sendMessage(player, new MessageRetriever().retrieveMessage("powerUpsToPay"));
+            powerUps = server.chooseMultiplePowerup(player, powerUps);
 
-        if(powerUps.size()>price) {
-            throw new IllegalActionException();
+            if (powerUps.size() > price) {
+                throw new IllegalActionException();
+            }
+            for (Powerup powerUp : powerUps) {
+                effects.add(() ->
+                        table.getPowerupDeck().discard(
+                                player.getPowerupPocket().removePowerup(
+                                        player.getPowerupPocket().getPowerups().indexOf(powerUp))));
+            }
+            price = price - powerUps.size();
         }
-        for (Powerup powerUp : powerUps) {
-            effects.add(() ->
-                    table.getPowerupDeck().discard(
-                            player.getPowerupPocket().removePowerup(
-                                    player.getPowerupPocket().getPowerups().indexOf(powerUp))));
-        }
-        price = price - powerUps.size();
 
 
         Color choice;

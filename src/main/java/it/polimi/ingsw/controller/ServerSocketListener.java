@@ -75,32 +75,46 @@ public class ServerSocketListener implements Runnable {
 
                 String method = getHeading(line);
                 String parameters = getBody(line);
-                try {
-                    // This switch-case must be configured to invoke all the remote methods of Server with the correct parameters
-                    switch (method) {
-                        case "login": {
-                            int ret = server.login(parameters,serverSocketSpeaker);
-                            if ((ret == 0) || (ret == 2))
-                                startPingThread();
-                            serverSocketSpeaker.returnMessage(gson.toJson(ret));
-                            break;
-                        }
-                        case "logout": {
-                            server.logout(serverSocketSpeaker);
-                            break;
-                        }
-                        case "getModelUpdate": {
-                            serverSocketSpeaker.returnMessage(gson.toJson(server.getModelUpdate()));
-                            break;
-                        }
-                        case "return": {
-                            customStream.putLine(parameters);
-                            break;
-                        }
-                        default: System.out.println("Received invalid protocol message: " + line);
+                // This switch-case must be configured to invoke all the remote methods of Server with the correct parameters
+                switch (method) {
+                    case "login": {
+                        new Thread(() -> {
+                            try {
+                                int ret = server.login(parameters,serverSocketSpeaker);
+                                if ((ret == 0) || (ret == 2))
+                                    startPingThread();
+                                serverSocketSpeaker.returnMessage(gson.toJson(ret));
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
                     }
-                } catch (RemoteException e) {
-                    System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                    case "logout": {
+                        new Thread(() -> {
+                            try {
+                                server.logout(serverSocketSpeaker);
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
+                    }
+                    case "getModelUpdate": {
+                        new Thread(() -> {
+                            try {
+                                serverSocketSpeaker.returnMessage(gson.toJson(server.getModelUpdate()));
+                            } catch (RemoteException e) {
+                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
+                            }
+                        }).start();
+                        break;
+                    }
+                    case "return": {
+                        customStream.putLine(parameters);
+                        break;
+                    }
+                    default: System.out.println("Received invalid protocol message: " + line);
                 }
             } catch (Exception e) {
                 break;
