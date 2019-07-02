@@ -177,9 +177,8 @@ public class ServerMain {
                 gameMode = server.chooseMode(players.get(adminIndex));
             } catch (UnavailableUserException e) {
 
-                //try to elect another match administrator
-                server.resetClientMap();
-                goOn(server, args, adminIndex);
+                System.out.println("No response from users");
+                System.exit(0);
             }
 
 
@@ -188,9 +187,8 @@ public class ServerMain {
                 mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
             } catch (UnavailableUserException e) {
 
-                //try to elect another match administrator
-                server.resetClientMap();
-                goOn(server, args, adminIndex);
+                System.out.println("No response from users");
+                System.exit(0);
 
             }
 
@@ -230,7 +228,6 @@ public class ServerMain {
             } catch (FrenzyModeException e) {
 
                 finalFrenzy(server,gameTable);
-                main(args);
             }
         }
 
@@ -242,16 +239,11 @@ public class ServerMain {
             } catch (FrenzyModeException e) {
 
                 finalFrenzy(server,gameTable);
-                main(args);
-                e.printStackTrace();
             }
 
             //game has ended before final frenzy because too many people disconnected
             System.out.println("Not enough players to continue the game");
             gameOver(server, gameTable);
-
-            //restart program
-            main(args);
         }
 
     }
@@ -629,9 +621,7 @@ public class ServerMain {
                         }
                     }
                 }
-                String[] args = new String[0];
-                server.resetClientMap();
-                main(args);
+                System.exit(0);
             } else {
                 System.out.println("Too many players have disconnected. Ending game...");
                 for (Player player : gameTable.getPlayers()) {
