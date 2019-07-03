@@ -435,7 +435,7 @@ public class CliMain implements ViewInterface {
             //retrieve tiles on this row
             ArrayList<SmartTile> tiles = new ArrayList<>();
             for (SmartTile tile : model.getMapTiles()) {
-                if (tile.getPosY() == i) {
+                if (tile.getPosX() == i) {
                     //System.out.println(tile.toString());
                     tiles.add(tile);
                 }
@@ -779,7 +779,7 @@ public class CliMain implements ViewInterface {
             } else if (squareTypes.get(i).equals("tile")) {     //tile square
 
                 for (SmartTile tile : tiles) {
-                    if (tile.getPosY() == i) {  //same column
+                    if (tile.getPosX() == i) {  //same column
                         if (tile.getPowerup() == 1)
                             singleSquareInfo.add(tile.getPowerup() + "PU   ");
 
@@ -1159,8 +1159,6 @@ public class CliMain implements ViewInterface {
      */
     private void printBountyTrack(int deaths, int maxKills) {
 
-        System.out.println("deaths: " + deaths);
-
         ArrayList<Integer> bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
 
         //print skulls
@@ -1237,7 +1235,7 @@ public class CliMain implements ViewInterface {
 
             //print spawn squares damages by color
             for (Color color : model.getSpawnDamageTrack().keySet()) {
-                System.out.println("SPAWN DAMAGES: ");
+                System.out.println(color.name() + " SPAWN DAMAGES: ");
                 for (Figure figure : model.getSpawnDamageTrack().get(color)) {
                     System.out.print(" | ");
                     printFigure(figure);
@@ -1480,9 +1478,9 @@ public class CliMain implements ViewInterface {
         System.out.print("Yes or No: ");
         String choice = scannerIn.nextLine();
 
-        if (choice.equals("Yes") || choice.equals("YES") || choice.equals("Y") || choice.equals("y") || choice.equals("Yeah"))
+        if (choice.equalsIgnoreCase("yes") || choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yeah"))
             return 1;
-        else if (choice.equals("No") || choice.equals("NO") || choice.equals("N") || choice.equals("n") || choice.equals("Nope"))
+        else if (choice.equalsIgnoreCase("no") || choice.equalsIgnoreCase("n") || choice.equalsIgnoreCase("nope"))
             return 0;
         else
             return booleanQuestion(s);      //wrong input then ask again
@@ -1544,6 +1542,7 @@ public class CliMain implements ViewInterface {
     public void notifyModelUpdate() {
         try {
             model=client.getModelUpdate();
+            System.out.println(model.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
