@@ -209,7 +209,10 @@ class TestSmartModel {
 
     @Test
     void testspawnDamageTrack() {
-        ArrayList<Player> players = new ArrayList<>(Arrays.asList(player1,player2,player3));
+        Player player4 = new Player(Figure.DOZER,"Simone");
+        Player player5 = new Player(Figure.BANSHEE,"Alessandro");
+        Player player6 = new Player(Figure.VIOLET,"Samuele");
+        ArrayList<Player> players = new ArrayList<>(Arrays.asList(player4,player5,player6));
         GameTable gameTableDomination = new GameInitializer('D',2,players).run();
 
         ArrayList<Square> spawnSquares = gameTableDomination.getGameMap().getGridAsList().stream().filter(square -> gameTableDomination.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
@@ -235,8 +238,7 @@ class TestSmartModel {
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
-        //FIXME(why should this expect 1,1,3 ?)
-        ArrayList<Integer> expectedPointTrack = new ArrayList<>(Arrays.asList(8,6,4,2,1));
+        ArrayList<Integer> expectedPointTrack = new ArrayList<>(Arrays.asList(1,1,3));
         for (SmartPlayer smartPlayer : smartModelAfterSerialization.getSmartPlayerMap().values())
             assertEquals(expectedPointTrack,smartPlayer.getPointTrack());
     }
