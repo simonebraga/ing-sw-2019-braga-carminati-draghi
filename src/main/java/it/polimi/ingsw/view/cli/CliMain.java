@@ -228,7 +228,7 @@ public class CliMain implements ViewInterface {
     /**
      * This method clears the console's content.
      */
-    public static void clearScreen() throws IOException, InterruptedException{
+    public synchronized static void clearScreen() throws IOException, InterruptedException{
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
     }
 
@@ -236,7 +236,7 @@ public class CliMain implements ViewInterface {
     /**
      * This method is temporarily used to quickly run this class methods.
      */
-    public static void main(String[] args) {
+    public synchronized static void main(String[] args) {
         CliMain temp = new CliMain();
         temp.launch(args);
     }
@@ -244,7 +244,7 @@ public class CliMain implements ViewInterface {
     /**
      * This method implements the application using CLI.
      */
-    public void launch(String[] args) {
+    public synchronized void launch(String[] args) {
 
         //fetch default network properties
         Properties properties = new Properties();
@@ -364,7 +364,7 @@ public class CliMain implements ViewInterface {
     /**
      * This method printf the match to the CLI.
      */
-    private void printModel() {
+    private synchronized void printModel() {
 
         ArrayList<String> nicknames = new ArrayList<>(model.getSmartPlayerMap().keySet());
 
@@ -389,7 +389,7 @@ public class CliMain implements ViewInterface {
     /**
      * This methods prints a separation space with a bar in the command line.
      */
-    private void printSceneSpacing() {
+    private synchronized void printSceneSpacing() {
 
         System.out.println();
         for (int i = 0; i < 2 * TOTAL_GRID_WIDTH; i++) {
@@ -419,7 +419,7 @@ public class CliMain implements ViewInterface {
     /**
      * This method prints the maps grid to the command line.
      */
-    private void printMap() {
+    private synchronized void printMap() {
 
         for (int i = 0; i < MAX_SQUARES_BY_COLUMN; i++) {
 
@@ -474,7 +474,7 @@ public class CliMain implements ViewInterface {
      * @param tiles an ArrayList of SmartTile containing all tiles on this row.
      * @param weapons an ArrayList of WeaponName containing all weapons name of weapons of this row.
      */
-    private void printRow(Border[] upperBordersArray, Border[] leftBordersArray, Border rightMostBorder, String[] squaresTypeArray,
+    private synchronized void printRow(Border[] upperBordersArray, Border[] leftBordersArray, Border rightMostBorder, String[] squaresTypeArray,
                           Color spawnColor, ArrayList<SmartPlayer> players, ArrayList<SmartTile> tiles, ArrayList<WeaponName> weapons) {
 
         ArrayList<Border> upperBorders = new ArrayList<>(Arrays.asList(upperBordersArray));
@@ -520,7 +520,7 @@ public class CliMain implements ViewInterface {
      * @param from integer index from where to start.
      * @param to integer index to where to stop.
      */
-    private void printSpacesFromIndexToIndex(int from, int to) {
+    private synchronized void printSpacesFromIndexToIndex(int from, int to) {
 
         for (int j = from; j <= to; j++) {
             System.out.print(" ");
@@ -532,7 +532,7 @@ public class CliMain implements ViewInterface {
      *
      * @param upperBorders a list of Border containing the upper border of each square by the position of such square in the row.
      */
-    private void printFirstLine(ArrayList<Border> upperBorders) {
+    private synchronized void printFirstLine(ArrayList<Border> upperBorders) {
 
         for (Border upperBorder : upperBorders) {
 
@@ -566,7 +566,7 @@ public class CliMain implements ViewInterface {
      * @param border a Border of a square.
      * @param rowIndex an integer which is the current printing row index relative to a square box high (0 is the first box line index).
      */
-    private void printBorderChar(Border border, int rowIndex) {
+    private synchronized void printBorderChar(Border border, int rowIndex) {
 
         switch (border) {
             case DOOR:{
@@ -605,7 +605,7 @@ public class CliMain implements ViewInterface {
      * @param squareTypes an ArrayList of String containing all square types from left to right.
      * @param rowIndex the current printing line index.
      */
-    private void printSpawnTagsLine(Color spawnColor, ArrayList<Border> leftBorders, Border rightMostBorder, ArrayList<String> squareTypes, int rowIndex) {
+    private synchronized void printSpawnTagsLine(Color spawnColor, ArrayList<Border> leftBorders, Border rightMostBorder, ArrayList<String> squareTypes, int rowIndex) {
 
         //search for spawn square in this row
         int spawnSquareIndex = -1;
@@ -658,6 +658,7 @@ public class CliMain implements ViewInterface {
      * @param leftOrUp a String flag representing which border to memorize (upper border or left border of the square).
      * @param isFirstRow a boolean that says if this printed grid row is the first grid row.
      * @return an ArrayList of Border that contains all squares border (up or left border) from left to right.
+     * @deprecated
      */
     private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp, boolean isFirstRow) {
 
@@ -700,6 +701,7 @@ public class CliMain implements ViewInterface {
      *
      * @param squares an array of Square to be scanned.
      * @return a Border associated with the closing border of this map grid row.
+     * @deprecated
      */
     private Border retrieveLastBorderInfo(Square[] squares) {
 
@@ -715,7 +717,7 @@ public class CliMain implements ViewInterface {
      * @param players an ArrayList of SmartPlayers to be scanned.
      * @return an ArrayList of ArrayList of Figure that contains all players figure by each square.
      */
-    private ArrayList<ArrayList<Figure>> getFiguresInsideRow(ArrayList<SmartPlayer> players) {
+    private synchronized ArrayList<ArrayList<Figure>> getFiguresInsideRow(ArrayList<SmartPlayer> players) {
 
         ArrayList<ArrayList<Figure>> figuresBySquareInRow = new ArrayList<>();
 
@@ -738,7 +740,7 @@ public class CliMain implements ViewInterface {
      * @param tiles an ArrayList of SmartTile containing all row tiles.
      * @param weaponNames an ArrayList of WeaponName containing names of all weapon name in this row.
      */
-    private ArrayList<ArrayList<String>> getContentOfEachSquare(ArrayList<String> squareTypes, ArrayList<SmartTile> tiles, ArrayList<WeaponName> weaponNames) {
+    private synchronized ArrayList<ArrayList<String>> getContentOfEachSquare(ArrayList<String> squareTypes, ArrayList<SmartTile> tiles, ArrayList<WeaponName> weaponNames) {
 
         ArrayList<ArrayList<String>> squaresContentInfo = new ArrayList<>();
 
@@ -944,7 +946,7 @@ public class CliMain implements ViewInterface {
      *
      * @param figure a Figure which name will be formatted and printed.
      */
-    private void printFigure(Figure figure) {
+    private synchronized void printFigure(Figure figure) {
         switch (figure) {
             case DESTRUCTOR:{
                 System.out.print(":D-STR");
@@ -980,7 +982,7 @@ public class CliMain implements ViewInterface {
      * @param rowIndex an integer representing at which command line row idex is the method printing, relative to the square box high.
      * @param rightMostBorder a Border which is the last square's right border.
      */
-    private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
+    private synchronized void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
 
         for (int i = 0; i < figures.size() && i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
@@ -1010,7 +1012,7 @@ public class CliMain implements ViewInterface {
      * @param rowIndex an integer representing at which command line row idex is the method printing, relative to the square box high.
      * @param rightMostBorder a Border representing the right border of the last square in the row.
      */
-    private void printContentLine(ArrayList<Border> leftBorders, ArrayList<String> contentBySquare, int rowIndex, Border rightMostBorder) {
+    private synchronized void printContentLine(ArrayList<Border> leftBorders, ArrayList<String> contentBySquare, int rowIndex, Border rightMostBorder) {
 
         for (int i = 0; i < contentBySquare.size() && i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
@@ -1039,7 +1041,7 @@ public class CliMain implements ViewInterface {
      * @param player as SmartPlayer whom board will be printed.
      * @param isOwnBoard a boolean flag that says if the board printed is the current client player's board.
      */
-    private void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
+    private synchronized void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
 
         printBoardHeader(nickname, isOwnBoard, player.getPoints(), player.getFigure());
         printAdrenalineLevel(player.getDamage().size());
@@ -1065,7 +1067,7 @@ public class CliMain implements ViewInterface {
      * @param isOwnBoard a boolean flag that says if this board is the current player own board.
      * @param points an integer containing the player's points.
      */
-    private void printBoardHeader(String nickname, boolean isOwnBoard, int points, Figure figure) {
+    private synchronized void printBoardHeader(String nickname, boolean isOwnBoard, int points, Figure figure) {
         if (isOwnBoard) System.out.print(ANSI_GREEN);
         System.out.print("+ ");
         if (nickname.length() > NICK_PRINT_SIZE)
@@ -1083,7 +1085,7 @@ public class CliMain implements ViewInterface {
      *
      * @param damage an integer containing how many times this player was hit.
      */
-    private void printAdrenalineLevel(int damage) {
+    private synchronized void printAdrenalineLevel(int damage) {
         if (damage < 3) System.out.println("| Adrenaline level: 0");
         else if (damage >=3 && damage <= 5) System.out.println("| Adrenaline level: 1");
         else System.out.println("| Adrenaline level: " + ANSI_RED + "MAX" + ANSI_RESET);
@@ -1094,7 +1096,7 @@ public class CliMain implements ViewInterface {
      *
      * @param marks a Map of Figure and Integer to be printed.
      */
-    private void printMarkTrack(Map<Figure, Integer> marks) {
+    private synchronized void printMarkTrack(Map<Figure, Integer> marks) {
 
         for (Figure f : marks.keySet()) {
             System.out.print("| ");
@@ -1110,7 +1112,7 @@ public class CliMain implements ViewInterface {
      *
      * @param damage an ArrayList of Figure containing all players that damaged this player in the correct order.
      */
-    private void printDamageTrack(ArrayList<Figure> damage) {
+    private synchronized void printDamageTrack(ArrayList<Figure> damage) {
         System.out.print(" | ");
 
         for (Figure f : damage) {
@@ -1129,7 +1131,7 @@ public class CliMain implements ViewInterface {
      *
      * @param ammo a Map of Color and Integer containing each ammo color amount.
      */
-    private void printPlayerAmmo(Map<Color, Integer> ammo) {
+    private synchronized void printPlayerAmmo(Map<Color, Integer> ammo) {
         for (Color color : ammo.keySet()) {
             System.out.print("| ");
             System.out.println(color.name() + " : " + ammo.get(color));
@@ -1142,7 +1144,7 @@ public class CliMain implements ViewInterface {
      * @param deaths an integer saying how many times this player died.
      * @param maxKills an integer which represents the total bounty track size.
      */
-    private void printBountyTrack(int deaths, int maxKills) {
+    private synchronized void printBountyTrack(int deaths, int maxKills) {
 
         ArrayList<Integer> bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
 
@@ -1174,7 +1176,7 @@ public class CliMain implements ViewInterface {
      *
      * @param weapons an ArrayList of SmartWeapon that contains all player weapons.
      */
-    private void printPlayerWeapons(ArrayList<SmartWeapon> weapons) {
+    private synchronized void printPlayerWeapons(ArrayList<SmartWeapon> weapons) {
         for (SmartWeapon weapon : weapons) {
             if (weapon.getLoaded())
                 System.out.println(weapon.getWeaponName().name());
@@ -1188,7 +1190,7 @@ public class CliMain implements ViewInterface {
      *
      * @param powerups an ArrayList of SmartPowerup that contains all player powerups.
      */
-    private void printPlayerPowerups(ArrayList<SmartPowerup> powerups) {
+    private synchronized void printPlayerPowerups(ArrayList<SmartPowerup> powerups) {
 
         System.out.println("| Power-ups: ");
         for (SmartPowerup pu : powerups)
@@ -1198,7 +1200,7 @@ public class CliMain implements ViewInterface {
     /**
      * This method prints the killshot track if the game is in normal mode or each spawn damage if the game is in domination mode.
      */
-    private void printKillShotTrack() {
+    private synchronized void printKillShotTrack() {
 
         Integer maxKills = settings.getMaxKills();
         ArrayList<Figure> killShotTrack = model.getKillshotTrack();
@@ -1233,24 +1235,24 @@ public class CliMain implements ViewInterface {
     /////////////////////////////////////////// ViewInterface implementations //////////////////////////////////////////////
 
     @Override
-    public void logout() {
+    public synchronized void logout() {
         System.out.println(ANSI_RED + "You were forcefully disconnected" + ANSI_RESET);
         System.exit(0);
     }
 
     @Override
-    public void sendMessage(String s) {
+    public synchronized void sendMessage(String s) {
         System.out.println();
         System.out.println(s);
     }
 
     @Override
-    public void notifyEvent(String s) {
+    public synchronized void notifyEvent(String s) {
         sendMessage(s);
     }
 
     @Override
-    public int choosePlayer(Figure[] f) {
+    public synchronized int choosePlayer(Figure[] f) {
 
         int choice = -1;
 
@@ -1269,7 +1271,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseWeapon(WeaponName[] w) {
+    public synchronized int chooseWeapon(WeaponName[] w) {
 
         int choice = -1;
 
@@ -1289,7 +1291,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseString(String[] s) {
+    public synchronized int chooseString(String[] s) {
 
         int choice = -1;
 
@@ -1308,7 +1310,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseDirection(Character[] c) {
+    public synchronized int chooseDirection(Character[] c) {
 
         int choice = -1;
 
@@ -1345,7 +1347,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseColor(Color[] c) {
+    public synchronized int chooseColor(Color[] c) {
         int choice = -1;
 
         System.out.println();
@@ -1363,7 +1365,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int choosePowerup(Powerup[] p) {
+    public synchronized int choosePowerup(Powerup[] p) {
         int choice = -1;
 
         System.out.println();
@@ -1381,7 +1383,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseMap(int[] m) {
+    public synchronized int chooseMap(int[] m) {
 
         int choice = -1;
 
@@ -1411,7 +1413,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseMode(Character[] c) {
+    public synchronized int chooseMode(Character[] c) {
 
         String fullChoice;
         Character choice = '0';
@@ -1434,7 +1436,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int chooseSquare(int[][] s) {
+    public synchronized int chooseSquare(int[][] s) {
 
         int choice = 0;
 
@@ -1456,7 +1458,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int booleanQuestion(String s) {
+    public synchronized int booleanQuestion(String s) {
 
         System.out.println();
         System.out.println(s);
@@ -1472,7 +1474,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int[] chooseMultiplePowerup(Powerup[] p) {
+    public synchronized int[] chooseMultiplePowerup(Powerup[] p) {
 
         char wantToContinue = 'y';
         Powerup[] temp = new Powerup[p.length - 1];
@@ -1498,7 +1500,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public int[] chooseMultipleWeapon(WeaponName[] w) {
+    public synchronized int[] chooseMultipleWeapon(WeaponName[] w) {
 
         char wantToContinue = 'y';
         WeaponName[] temp = new WeaponName[w.length - 1];
@@ -1524,7 +1526,7 @@ public class CliMain implements ViewInterface {
     }
 
     @Override
-    public void notifyModelUpdate() {
+    public synchronized void notifyModelUpdate() {
         try {
             model=client.getModelUpdate();
         } catch (Exception e) {
