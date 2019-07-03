@@ -74,10 +74,6 @@
           <version>3.0.2</version>
         </plugin>
         <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.22.1</version>
         </plugin>
@@ -133,6 +129,98 @@
               <goals>
                 <goal>report</goal>
               </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>client-jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <outputFile>target/client.jar</outputFile>
+                <artifactSet>
+                  <excludes>
+                    <exclude>org.openjfx:*</exclude>
+                    <exclude>org.junit.platform:*</exclude>
+                    <exclude>org.junit.jupiter:*</exclude>
+                    <exclude>org.opentest4j:*</exclude>
+                  </excludes>
+                </artifactSet>
+                <filters>
+                  <filter>
+                    <artifact>*:*</artifact>
+                    <excludes>
+                      <exclude>it/polimi/ingsw/controller/Server.class</exclude>
+                      <exclude>it/polimi/ingsw/controller/ServerMain.class</exclude>
+                      <exclude>it/polimi/ingsw/controller/ServerSocketAcceptor.class</exclude>
+                      <exclude>it/polimi/ingsw/controller/ServerSocketListener.class</exclude>
+                      <exclude>it/polimi/ingsw/controller/ServerSocketSpeaker.class</exclude>
+                      <exclude>it/polimi/ingsw/model/effectclasses/**</exclude>
+                      <exclude>it/polimi/ingsw/model/exceptionclasses/**</exclude>
+                      <exclude>it/polimi/ingsw/model/gameinitialization/**</exclude>
+                      <exclude>it/polimi/ingsw/model/gamelogic/actions/**</exclude>
+                      <exclude>it/polimi/ingsw/model/gamelogic/effectscreator/**</exclude>
+                      <exclude>it/polimi/ingsw/model/gamelogic/turn/**</exclude>
+                      <exclude>it/polimi/ingsw/model/mapclasses/**</exclude>
+                      <exclude>it/polimi/ingsw/model/playerclasses/**</exclude>
+                      <exclude>it/polimi/ingsw/model/GameTable.class</exclude>
+                      <exclude>decks/**</exclude>
+                      <exclude>weapons/**</exclude>
+                      <exclude>maps.json</exclude>
+                      <exclude>messages.properties</exclude>
+                    </excludes>
+                  </filter>
+                </filters>
+                <transformers>
+                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    <mainClass>it.polimi.ingsw.MainClient</mainClass>
+                  </transformer>
+                </transformers>
+              </configuration>
+            </execution>
+            <execution>
+              <id>server-jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+              <configuration>
+                <outputFile>target/server.jar</outputFile>
+                <artifactSet>
+                  <excludes>
+                    <exclude>org.openjfx:*</exclude>
+                    <exclude>org.junit.platform:*</exclude>
+                    <exclude>org.junit.jupiter:*</exclude>
+                    <exclude>org.opentest4j:*</exclude>
+                  </excludes>
+                </artifactSet>
+                <filters>
+                  <filter>
+                    <artifact>*:*</artifact>
+                    <excludes>
+                      <exclude>it/polimi/ingsw/view/cli/**</exclude>
+                      <exclude>it/polimi/ingsw/view/gui/**</exclude>
+                      <exclude>it/polimi/ingsw/view/ViewInterface.class</exclude>
+                      <exclude>it/polimi/ingsw/view/ClientSocketListener.class</exclude>
+                      <exclude>it/polimi/ingsw/view/ClientSocketSpeaker.class</exclude>
+                      <exclude>it/polimi/ingsw/MainClient.class</exclude>
+                      <exclude>graphics/**</exclude>
+                      <exclude>client_maps.json</exclude>
+                    </excludes>
+                  </filter>
+                </filters>
+                <transformers>
+                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    <mainClass>it.polimi.ingsw.controller.ServerMain</mainClass>
+                  </transformer>
+                </transformers>
+              </configuration>
             </execution>
           </executions>
         </plugin>

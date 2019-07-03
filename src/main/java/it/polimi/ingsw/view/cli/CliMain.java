@@ -82,11 +82,6 @@ public class CliMain implements ViewInterface {
     private static final String UNICODE_SKULL = "\u2620";
 
     /**
-     * This finale attribute represents the UNICODE code for a perpendicular symbol.
-     */
-    private static final String UNICODE_UPPER_DOOR_THRESHOLD = "\u27C2";
-
-    /**
      * This final attribute defines squares width in cli printing.
      */
     private static final int SQUARES_WIDTH = 22;
@@ -140,6 +135,11 @@ public class CliMain implements ViewInterface {
      * This final attribute defines the null info field.
      */
     private static final String VOID_INFO_SPACING = "      ";
+
+    /**
+     * This finale attribute represents the character for a the door threshold.
+     */
+    private static final String UPPER_DOOR_THRESHOLD_CHAR = "_";
 
 
     ////////////////////////////////////////////// match related constants /////////////////////////////////////////////
@@ -373,16 +373,16 @@ public class CliMain implements ViewInterface {
 
         printKillShotTrack();
         printSceneSpacing();
+        System.out.println("MAP:\n");
         printMap();
         printSceneSpacing();
 
+        System.out.println("PLAYER BOARDS:\n");
         for (String nick : nicknames) {
             if (nick.equals(nickname))
                 printBoard(nick, model.getSmartPlayerMap().get(nick), true);
             else
                 printBoard(nick, model.getSmartPlayerMap().get(nick), false);
-
-            printSceneSpacing();
         }
     }
 
@@ -391,7 +391,6 @@ public class CliMain implements ViewInterface {
      */
     private void printSceneSpacing() {
 
-        System.out.println();
         System.out.println();
         for (int i = 0; i < TOTAL_GRID_WIDTH; i++) {
             System.out.print("-");
@@ -427,29 +426,33 @@ public class CliMain implements ViewInterface {
             //retrieve players on this row
             ArrayList<SmartPlayer> players = new ArrayList<>();
             for (SmartPlayer player : model.getSmartPlayerMap().values()) {
-                if (player.getPosY() == i)
+                if (player.getPosY() == i) {
+                    //System.out.println(player.getFigure());
                     players.add(player);
+                }
             }
 
             //retrieve tiles on this row
             ArrayList<SmartTile> tiles = new ArrayList<>();
             for (SmartTile tile : model.getMapTiles()) {
-                if (tile.getPosY() == i)
+                if (tile.getPosY() == i) {
+                    //System.out.println(tile.toString());
                     tiles.add(tile);
+                }
             }
 
             Color spawnColor = map.getSpawnColors()[i];
+            //System.out.println(spawnColor);
 
             ArrayList<WeaponName> weapons = new ArrayList<>();
             for (WeaponName weapon : model.getSpawnWeaponMap().get(spawnColor))
                 weapons.add(weapon);
 
+            for (WeaponName name : weapons) {
+                //System.out.println(name);
+            }
 
-            if (i == 0)
-                printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
-                        map.getSquareTypes()[i], spawnColor, players, tiles, weapons);
-            else
-                printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
+            printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
                         map.getSquareTypes()[i], spawnColor, players, tiles, weapons);
         }
 
@@ -488,6 +491,17 @@ public class CliMain implements ViewInterface {
         ArrayList<String> squareTypes = new ArrayList<>(Arrays.asList(squaresTypeArray));
         ArrayList<ArrayList<String>> squareContentInfo = getContentOfEachSquare(squareTypes, tiles, weapons);
 
+        for (String type : squareTypes) {
+            //System.out.println(type);
+        }
+        //System.out.println();
+        for (ArrayList<String> tileArray : squareContentInfo) {
+            for (String tile : tileArray) {
+                //System.out.println(tile);
+            }
+            //System.out.println();
+        }
+
         printFirstLine(upperBorders);
         printSpawnTagsLine(spawnColor, leftBorders, rightMostBorder, squareTypes, 1);
 
@@ -497,21 +511,25 @@ public class CliMain implements ViewInterface {
 
             ArrayList<String> contentInThisLine = new ArrayList<>();
             for (ArrayList<String> contents : squareContentInfo) {
-                contentInThisLine.add(contents.get(k));
+                if (!contents.isEmpty())
+                    contentInThisLine.add(contents.get(k));
             }
             printContentLine(leftBorders, contentInThisLine, i, rightMostBorder);
             k++;
         }
 
+        k=0;
         //all players in square nicknames
         for (int i = SQUARE_FIGURE_SECTION_STARTING_INDEX; i < SQUARES_HIGH - 1; i++) {
 
             ArrayList<Figure> figuresInThisRow = new ArrayList<>();
             for (ArrayList<Figure> figures : figuresInsideSquares) {
-                figuresInThisRow.add(figures.get(i));
+                if (!figures.isEmpty())
+                    figuresInThisRow.add(figures.get(k));
             }
 
             printFigureLine(leftBorders, figuresInThisRow, i, rightMostBorder);
+            k++;
         }
     }
 
@@ -545,9 +563,9 @@ public class CliMain implements ViewInterface {
                     break;
                 }
                 case NOTHING: {
-                    System.out.print("+-");
+                    System.out.print("+ ");
                     printSpacesFromIndexToIndex(2, SQUARES_WIDTH - 3);
-                    System.out.print("-");
+                    System.out.print(" ");
                     break;
                 }
                 case WALL: {
@@ -576,7 +594,7 @@ public class CliMain implements ViewInterface {
                 else if (rowIndex == 1 || rowIndex == SQUARES_HIGH - 2)
                     System.out.print("|");
                 else if (rowIndex == 2)
-                    System.out.print(UNICODE_UPPER_DOOR_THRESHOLD);
+                    System.out.print(UPPER_DOOR_THRESHOLD_CHAR);
                 else
                     System.out.print("T");
                 break;
@@ -587,9 +605,9 @@ public class CliMain implements ViewInterface {
             }
             case NOTHING:{
                 if (rowIndex == 1)
-                    System.out.print("'");
+                    System.out.print(" ");
                 else if (rowIndex == SQUARES_HIGH - 2)
-                    System.out.print(".");
+                    System.out.print(" ");
                 else
                     System.out.print(" ");
                 break;
@@ -929,7 +947,7 @@ public class CliMain implements ViewInterface {
      */
     private String parseColorName(Color color) {
         switch (color) {
-            case BLUE: return "BLUE ";
+            case BLUE: return "BLUE  ";
             case YELLOW: return "YELLOW";
             case RED: return "RED   ";
         }
@@ -979,15 +997,24 @@ public class CliMain implements ViewInterface {
      */
     private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
 
-        for (int i = 0; i < leftBorders.size(); i++) {
+        for (int i = 0; i < figures.size() && i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             printFigure(figures.get(i));
-            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);
+        }
+
+        //print void if there are not enough figures
+        for (int i = figures.size(); i < leftBorders.size(); i++) {
+            printBorderChar(leftBorders.get(i), rowIndex);
+            System.out.print(" ");
+            System.out.print(VOID_INFO_SPACING);
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);
         }
 
         //closing line
         printBorderChar(rightMostBorder, rowIndex);
+        System.out.println();
     }
 
     /**
@@ -1000,11 +1027,19 @@ public class CliMain implements ViewInterface {
      */
     private void printContentLine(ArrayList<Border> leftBorders, ArrayList<String> contentBySquare, int rowIndex, Border rightMostBorder) {
 
-        for (int i = 0; i < leftBorders.size(); i++) {
+        for (int i = 0; i < contentBySquare.size() && i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             System.out.print(contentBySquare.get(i));
             printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);  //fill with spaces to the next border
+        }
+
+        //print void if there are not enough info
+        for (int i = contentBySquare.size(); i < leftBorders.size(); i++) {
+            printBorderChar(leftBorders.get(i), rowIndex);
+            System.out.print(" ");
+            System.out.print(VOID_INFO_SPACING);
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);
         }
 
         //closing line
@@ -1021,21 +1056,21 @@ public class CliMain implements ViewInterface {
      */
     private void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
 
-        printBoardHeader(nickname, isOwnBoard, player.getPoints());
-        printAdrenalineLevel(player.getDeaths());
+        printBoardHeader(nickname, isOwnBoard, player.getPoints(), player.getFigure());
+        printAdrenalineLevel(player.getDamage().size());
         System.out.println("| Marks:");
         printMarkTrack(player.getMarks());
         System.out.print("| Damage: ");
         printDamageTrack(player.getDamage());
         System.out.println("| Ammunition:");
         printPlayerAmmo(player.getAmmo());
-        System.out.println("| Bounties:");
-        printBountyTrack(player.getDeaths());
+        System.out.print("| Bounties: ");
+        printBountyTrack(player.getDeaths(), settings.getMaxKills());
         System.out.println("| Weapons:");
         printPlayerWeapons(player.getWeapons());
         if (isOwnBoard)
             printPlayerPowerups(player.getPowerups());
-        printSceneSpacing();
+        System.out.println("+\n");
     }
 
     /**
@@ -1045,22 +1080,27 @@ public class CliMain implements ViewInterface {
      * @param isOwnBoard a boolean flag that says if this board is the current player own board.
      * @param points an integer containing the player's points.
      */
-    private void printBoardHeader(String nickname, boolean isOwnBoard, int points) {
+    private void printBoardHeader(String nickname, boolean isOwnBoard, int points, Figure figure) {
         if (isOwnBoard) System.out.print(ANSI_GREEN);
         System.out.print("+ ");
-        System.out.print(nickname.substring(0, NICK_PRINT_SIZE));
-        System.out.println("   Points: " + points);
+        if (nickname.length() > NICK_PRINT_SIZE)
+            System.out.print(nickname.substring(0, NICK_PRINT_SIZE - 1));
+        else
+            System.out.print(nickname);
+        System.out.print("                    Figure: ");
+        printFigure(figure);
+        System.out.println("      Points: " + points);
         System.out.print(ANSI_RESET);
     }
 
     /**
      * This method prints the player adrenaline level considering how many times this player died.
      *
-     * @param deaths an integer containing how many times this player died.
+     * @param damage an integer containing how many times this player was hit.
      */
-    private void printAdrenalineLevel(int deaths) {
-        if (deaths < 3) System.out.println("| Adrenaline level: 0");
-        else if (deaths >=3 && deaths <= 5) System.out.println("| Adrenaline level: 1");
+    private void printAdrenalineLevel(int damage) {
+        if (damage < 3) System.out.println("| Adrenaline level: 0");
+        else if (damage >=3 && damage <= 5) System.out.println("| Adrenaline level: 1");
         else System.out.println("| Adrenaline level: " + ANSI_RED + "MAX" + ANSI_RESET);
     }
 
@@ -1073,9 +1113,11 @@ public class CliMain implements ViewInterface {
 
         for (Figure f : marks.keySet()) {
             System.out.print("| ");
-            System.out.println(f.name().substring(0, MAX_INFO_SIZE) + " : " + marks.get(f));
+            printFigure(f);
+            System.out.println(" : " + marks.get(f));
         }
-        System.out.println();
+        if (marks.keySet().isEmpty())
+            System.out.println("| No marks");
     }
 
     /**
@@ -1087,10 +1129,11 @@ public class CliMain implements ViewInterface {
         System.out.print(" | ");
 
         for (Figure f : damage) {
-            System.out.print(f.name().substring(0,MAX_INFO_SIZE) + " | ");
+            printFigure(f);
+            System.out.print(" | ");
         }
 
-        for (int i = 0; i < 13 - damage.size(); i++) {
+        for (int i = 0; i < 12 - damage.size(); i++) {
             System.out.print(VOID_INFO_SPACING + " | ");
         }
         System.out.println();
@@ -1106,27 +1149,39 @@ public class CliMain implements ViewInterface {
             System.out.print("| ");
             System.out.println(color.name() + " : " + ammo.get(color));
         }
-        System.out.println();
     }
 
     /**
      * This method prints all bounties remained on this player.
      *
      * @param deaths an integer saying how many times this player died.
+     * @param maxKills an integer which represents the total bounty track size.
      */
-    private void printBountyTrack(int deaths) {
+    private void printBountyTrack(int deaths, int maxKills) {
+
+        System.out.println("deaths: " + deaths);
 
         ArrayList<Integer> bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
 
         //print skulls
-        for (int i = 0; i < deaths; i++) {
+        int i = 0;
+        while ( i < deaths && i < bountyValues.size()) {
             System.out.print("[" + ANSI_RED + UNICODE_SKULL + ANSI_RESET + "] ");
-            bountyValues.remove(i);
+            bountyValues.get(i);
+            i++;
         }
 
+
         //print remaining values
-        for (Integer value : bountyValues)
-            System.out.print("[" + value + "] ");
+        for (int k = i; k < bountyValues.size(); k++) {
+            if (bountyValues.get(k) != 1)
+                System.out.print("[" + bountyValues.get(k) + "] ");
+            else {
+                for (int j = k; j < maxKills; j++) {
+
+                }
+            }
+        }
 
         System.out.println();
     }

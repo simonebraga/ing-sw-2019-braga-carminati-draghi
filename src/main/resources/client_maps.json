@@ -1,20 +1,20 @@
 [ {
-  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],
-  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "DOOR" ], [ "WALL", "WALL", "WALL", "NOTHING" ], [ "WALL", "NOTHING", "DOOR", "NOTHING" ] ],
-  "rightMostBorders" : [ "WALL", "WALL", "WALL" ],
-  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
+  "upperBorders" : [ [ "WALL", "WALL", "WALL", "NOTHING" ], [ "DOOR", "WALL", "DOOR", "WALL" ], [ "WALL", "DOOR", "WALL", "NOTHING" ] ],
+  "leftBorders" : [ [ "WALL", "NOTHING", "NOTHING", "WALL" ], [ "WALL", "NOTHING", "NOTHING", "DOOR" ], [ "NOTHING", "WALL", "NOTHING", "DOOR" ] ],
+  "rightMostBorders" : [ "NOTHING", "WALL", "WALL" ],
+  "squareTypes" : [ [ "tile", "tile", "spawn", "void" ], [ "spawn", "tile", "tile", "tile" ], [ "void", "tile", "tile", "spawn" ] ],
   "spawnColors" : [ "BLUE", "RED", "YELLOW" ]
 }, {
-  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],
-  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "DOOR" ], [ "WALL", "WALL", "WALL", "NOTHING" ], [ "WALL", "NOTHING", "DOOR", "NOTHING" ] ],
+  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "DOOR", "WALL", "DOOR", "DOOR" ], [ "WALL", "DOOR", "NOTHING", "NOTHING" ] ],
+  "leftBorders" : [ [ "WALL", "NOTHING", "NOTHING", "DOOR" ], [ "WALL", "NOTHING", "WALL", "NOTHING" ], [ "NOTHING", "WALL", "DOOR", "NOTHING" ] ],
   "rightMostBorders" : [ "WALL", "WALL", "WALL" ],
-  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
+  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "void", "tile", "tile", "spawn" ] ],
   "spawnColors" : [ "BLUE", "RED", "YELLOW" ]
 }, {
-  "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],
-  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "DOOR" ], [ "WALL", "WALL", "WALL", "NOTHING" ], [ "WALL", "NOTHING", "DOOR", "NOTHING" ] ],
-  "rightMostBorders" : [ "WALL", "WALL", "WALL" ],
-  "squareTypes" : [ [ "tile", "tile", "spawn", "tile" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
+  "upperBorders" : [ [ "WALL", "WALL", "WALL", "NOTHING" ], [ "NOTHING", "DOOR", "DOOR", "WALL" ], [ "DOOR", "DOOR", "WALL", "NOTHING" ] ],
+  "leftBorders" : [ [ "WALL", "DOOR", "NOTHING", "WALL" ], [ "WALL", "WALL", "NOTHING", "DOOR" ], [ "WALL", "NOTHING", "NOTHING", "DOOR" ] ],
+  "rightMostBorders" : [ "NOTHING", "WALL", "WALL" ],
+  "squareTypes" : [ [ "tile", "tile", "spawn", "void" ], [ "spawn", "tile", "tile", "tile" ], [ "tile", "tile", "tile", "spawn" ] ],
   "spawnColors" : [ "BLUE", "RED", "YELLOW" ]
 }, {
   "upperBorders" : [ [ "WALL", "WALL", "WALL", "WALL" ], [ "NOTHING", "DOOR", "DOOR", "DOOR" ], [ "DOOR", "DOOR", "NOTHING", "NOTHING" ] ],

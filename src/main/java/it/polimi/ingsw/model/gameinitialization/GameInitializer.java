@@ -9,10 +9,7 @@ import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
 import it.polimi.ingsw.model.mapclasses.*;
-import it.polimi.ingsw.model.playerclasses.DoubleKillCounter;
-import it.polimi.ingsw.model.playerclasses.KillshotTrack;
-import it.polimi.ingsw.model.playerclasses.Player;
-import it.polimi.ingsw.model.playerclasses.StartingPlayerMarker;
+import it.polimi.ingsw.model.playerclasses.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -185,6 +182,13 @@ public class GameInitializer {
         }
 
         if (!connectedPlayers.isEmpty()) {
+
+            //set players point track
+            for (Player player : connectedPlayers) {
+                PointTrack pointTrack = new PointTrack();
+                pointTrack.setValue(bountyValues);
+                player.setPointTrack(pointTrack);
+            }
 
             //randomly elect starting player
             int startingPlayerIndex = ThreadLocalRandom.current().nextInt(0, connectedPlayers.size());
