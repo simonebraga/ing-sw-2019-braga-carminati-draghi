@@ -373,16 +373,16 @@ public class CliMain implements ViewInterface {
 
         printKillShotTrack();
         printSceneSpacing();
+        System.out.println("MAP:\n");
         printMap();
         printSceneSpacing();
 
+        System.out.println("PLAYER BOARDS:\n");
         for (String nick : nicknames) {
             if (nick.equals(nickname))
                 printBoard(nick, model.getSmartPlayerMap().get(nick), true);
             else
                 printBoard(nick, model.getSmartPlayerMap().get(nick), false);
-
-            printSceneSpacing();
         }
     }
 
@@ -391,7 +391,6 @@ public class CliMain implements ViewInterface {
      */
     private void printSceneSpacing() {
 
-        System.out.println();
         System.out.println();
         for (int i = 0; i < TOTAL_GRID_WIDTH; i++) {
             System.out.print("-");
@@ -491,6 +490,17 @@ public class CliMain implements ViewInterface {
         ArrayList<ArrayList<Figure>> figuresInsideSquares = getFiguresInsideRow(players);
         ArrayList<String> squareTypes = new ArrayList<>(Arrays.asList(squaresTypeArray));
         ArrayList<ArrayList<String>> squareContentInfo = getContentOfEachSquare(squareTypes, tiles, weapons);
+
+        for (String type : squareTypes) {
+            //System.out.println(type);
+        }
+        //System.out.println();
+        for (ArrayList<String> tileArray : squareContentInfo) {
+            for (String tile : tileArray) {
+                //System.out.println(tile);
+            }
+            //System.out.println();
+        }
 
         printFirstLine(upperBorders);
         printSpawnTagsLine(spawnColor, leftBorders, rightMostBorder, squareTypes, 1);
@@ -987,7 +997,7 @@ public class CliMain implements ViewInterface {
      */
     private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
 
-        for (int i = 0; i < figures.size(); i++) {
+        for (int i = 0; i < figures.size() && i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             printFigure(figures.get(i));
@@ -1017,7 +1027,7 @@ public class CliMain implements ViewInterface {
      */
     private void printContentLine(ArrayList<Border> leftBorders, ArrayList<String> contentBySquare, int rowIndex, Border rightMostBorder) {
 
-        for (int i = 0; i < contentBySquare.size(); i++) {
+        for (int i = 0; i < contentBySquare.size() && i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             System.out.print(contentBySquare.get(i));
@@ -1046,21 +1056,21 @@ public class CliMain implements ViewInterface {
      */
     private void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
 
-        printBoardHeader(nickname, isOwnBoard, player.getPoints());
-        printAdrenalineLevel(player.getDeaths());
+        printBoardHeader(nickname, isOwnBoard, player.getPoints(), player.getFigure());
+        printAdrenalineLevel(player.getDamage().size());
         System.out.println("| Marks:");
         printMarkTrack(player.getMarks());
         System.out.print("| Damage: ");
         printDamageTrack(player.getDamage());
         System.out.println("| Ammunition:");
         printPlayerAmmo(player.getAmmo());
-        System.out.println("| Bounties:");
-        printBountyTrack(player.getDeaths());
+        System.out.print("| Bounties: ");
+        printBountyTrack(player.getDeaths(), settings.getMaxKills());
         System.out.println("| Weapons:");
         printPlayerWeapons(player.getWeapons());
         if (isOwnBoard)
             printPlayerPowerups(player.getPowerups());
-        printSceneSpacing();
+        System.out.println("+\n");
     }
 
     /**
@@ -1070,22 +1080,27 @@ public class CliMain implements ViewInterface {
      * @param isOwnBoard a boolean flag that says if this board is the current player own board.
      * @param points an integer containing the player's points.
      */
-    private void printBoardHeader(String nickname, boolean isOwnBoard, int points) {
+    private void printBoardHeader(String nickname, boolean isOwnBoard, int points, Figure figure) {
         if (isOwnBoard) System.out.print(ANSI_GREEN);
         System.out.print("+ ");
-        System.out.print(nickname.substring(0, NICK_PRINT_SIZE));
-        System.out.println("   Points: " + points);
+        if (nickname.length() > NICK_PRINT_SIZE)
+            System.out.print(nickname.substring(0, NICK_PRINT_SIZE - 1));
+        else
+            System.out.print(nickname);
+        System.out.print("                    Figure: ");
+        printFigure(figure);
+        System.out.println("      Points: " + points);
         System.out.print(ANSI_RESET);
     }
 
     /**
      * This method prints the player adrenaline level considering how many times this player died.
      *
-     * @param deaths an integer containing how many times this player died.
+     * @param damage an integer containing how many times this player was hit.
      */
-    private void printAdrenalineLevel(int deaths) {
-        if (deaths < 3) System.out.println("| Adrenaline level: 0");
-        else if (deaths >=3 && deaths <= 5) System.out.println("| Adrenaline level: 1");
+    private void printAdrenalineLevel(int damage) {
+        if (damage < 3) System.out.println("| Adrenaline level: 0");
+        else if (damage >=3 && damage <= 5) System.out.println("| Adrenaline level: 1");
         else System.out.println("| Adrenaline level: " + ANSI_RED + "MAX" + ANSI_RESET);
     }
 
@@ -1098,9 +1113,11 @@ public class CliMain implements ViewInterface {
 
         for (Figure f : marks.keySet()) {
             System.out.print("| ");
-            System.out.println(f.name().substring(0, MAX_INFO_SIZE) + " : " + marks.get(f));
+            printFigure(f);
+            System.out.println(" : " + marks.get(f));
         }
-        System.out.println();
+        if (marks.keySet().isEmpty())
+            System.out.println("| No marks");
     }
 
     /**
@@ -1112,10 +1129,11 @@ public class CliMain implements ViewInterface {
         System.out.print(" | ");
 
         for (Figure f : damage) {
-            System.out.print(f.name().substring(0,MAX_INFO_SIZE) + " | ");
+            printFigure(f);
+            System.out.print(" | ");
         }
 
-        for (int i = 0; i < 13 - damage.size(); i++) {
+        for (int i = 0; i < 12 - damage.size(); i++) {
             System.out.print(VOID_INFO_SPACING + " | ");
         }
         System.out.println();
@@ -1131,27 +1149,39 @@ public class CliMain implements ViewInterface {
             System.out.print("| ");
             System.out.println(color.name() + " : " + ammo.get(color));
         }
-        System.out.println();
     }
 
     /**
      * This method prints all bounties remained on this player.
      *
      * @param deaths an integer saying how many times this player died.
+     * @param maxKills an integer which represents the total bounty track size.
      */
-    private void printBountyTrack(int deaths) {
+    private void printBountyTrack(int deaths, int maxKills) {
+
+        System.out.println("deaths: " + deaths);
 
         ArrayList<Integer> bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
 
         //print skulls
-        for (int i = 0; i < deaths; i++) {
+        int i = 0;
+        while ( i < deaths && i < bountyValues.size()) {
             System.out.print("[" + ANSI_RED + UNICODE_SKULL + ANSI_RESET + "] ");
-            bountyValues.remove(i);
+            bountyValues.get(i);
+            i++;
         }
 
+
         //print remaining values
-        for (Integer value : bountyValues)
-            System.out.print("[" + value + "] ");
+        for (int k = i; k < bountyValues.size(); k++) {
+            if (bountyValues.get(k) != 1)
+                System.out.print("[" + bountyValues.get(k) + "] ");
+            else {
+                for (int j = k; j < maxKills; j++) {
+
+                }
+            }
+        }
 
         System.out.println();
     }
