@@ -150,14 +150,19 @@ public class CliMain implements ViewInterface {
     private static final int MAX_WEAPONS_BY_SQUARE = 3;
 
     /**
-     * This constant represents the number of maps available in the game.
+     * This final attribute represents the number of maps available in the game.
      */
     private static final int GAME_MAPS_NUMBER = 4;
 
     /**
-     * This constant represents the JSON file path containing all game maps.
+     * This final attribute represents the JSON file path containing all game maps.
      */
     private static final String CLIENT_MAPS_RESOURCES_PATH = "client_maps.json";
+
+    /**
+     * This final attribute defines the maximum amount of player by square.
+     */
+    private static final int MAX_PLAYER_BY_SQUARE = 5;
 
     ////////////////////////////////////// network related constants ///////////////////////////////////////
 
@@ -479,7 +484,7 @@ public class CliMain implements ViewInterface {
 
         ArrayList<Border> upperBorders = new ArrayList<>(Arrays.asList(upperBordersArray));
         ArrayList<Border> leftBorders = new ArrayList<>(Arrays.asList(leftBordersArray));
-        ArrayList<ArrayList<Figure>> figuresInsideSquares = getFiguresInsideRow(players);
+        ArrayList<ArrayList<String>> figuresInsideSquares = getFiguresInsideRow(players);
         ArrayList<String> squareTypes = new ArrayList<>(Arrays.asList(squaresTypeArray));
         ArrayList<ArrayList<String>> squareContentInfo = getContentOfEachSquare(squareTypes, tiles, weapons);
 
@@ -503,13 +508,13 @@ public class CliMain implements ViewInterface {
         //all players in square nicknames
         for (int i = SQUARE_FIGURE_SECTION_STARTING_INDEX; i < SQUARES_HIGH - 1; i++) {
 
-            ArrayList<Figure> figuresInThisRow = new ArrayList<>();
-            for (ArrayList<Figure> figures : figuresInsideSquares) {
+            ArrayList<String> figuresInThisLine = new ArrayList<>();
+            for (ArrayList<String> figures : figuresInsideSquares) {
                 if (!figures.isEmpty())
-                    figuresInThisRow.add(figures.get(k));
+                    figuresInThisLine.add(figures.get(k));
             }
 
-            printFigureLine(leftBorders, figuresInThisRow, i, rightMostBorder);
+            printFigureLine(leftBorders, figuresInThisLine, i, rightMostBorder);
             k++;
         }
     }
@@ -717,19 +722,34 @@ public class CliMain implements ViewInterface {
      * @param players an ArrayList of SmartPlayers to be scanned.
      * @return an ArrayList of ArrayList of Figure that contains all players figure by each square.
      */
-    private synchronized ArrayList<ArrayList<Figure>> getFiguresInsideRow(ArrayList<SmartPlayer> players) {
+    private synchronized ArrayList<ArrayList<String>> getFiguresInsideRow(ArrayList<SmartPlayer> players) {
 
-        ArrayList<ArrayList<Figure>> figuresBySquareInRow = new ArrayList<>();
+        ArrayList<ArrayList<String>> figuresBySquareInRow = new ArrayList<>();
 
-        ArrayList<Figure> figureInSquare = new ArrayList<>();
-        for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
-            for (SmartPlayer player : players) {
-                if (player.getPosX() == i)
-                    figureInSquare.add(player.getFigure());
+        //FIXME(remove souts)
+
+        for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {  //for each square in this row
+
+            ArrayList<String> figuresInSquare = new ArrayList<>();
+
+            for (int j = 0; j < players.size(); j++) {    //scan each player
+                if (players.get(j).getPosX() == i) {
+                    System.out.println("Adding: " + parseFigure(players.get(j).getFigure()));
+                    figuresInSquare.add(parseFigure(players.get(j).getFigure()));
+                }
             }
-            figuresBySquareInRow.add(figureInSquare);
+
+            //fill the rest with null figures
+            for (int j = 0; j < MAX_PLAYER_BY_SQUARE - figuresInSquare.size(); j++) {
+                System.out.println("STEP");
+                figuresInSquare.add(VOID_INFO_SPACING);
+            }
+
+            System.out.println();
+            figuresBySquareInRow.add(figuresInSquare);
         }
 
+        System.out.println("getFiguresInsideRow: " + figuresBySquareInRow.toString());
         return figuresBySquareInRow;
     }
 
@@ -946,32 +966,25 @@ public class CliMain implements ViewInterface {
      *
      * @param figure a Figure which name will be formatted and printed.
      */
-    private synchronized void printFigure(Figure figure) {
+    private synchronized String parseFigure(Figure figure) {
         switch (figure) {
             case DESTRUCTOR:{
-                System.out.print(":D-STR");
-                break;
+                return ":D-STR";
             }
             case DOZER:{
-                System.out.print("DOZER ");
-                break;
+                return "DOZER ";
             }
             case BANSHEE:{
-                System.out.print("BANSHE");
-                break;
+                return "BANSHE";
             }
             case VIOLET:{
-                System.out.print("VIOLET");
-                break;
+                return "VIOLET";
             }
             case SPROG:{
-                System.out.print("SPROG ");
-                break;
+                return "SPROG ";
             }
         }
-
-        //fill until next border
-        printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
+        return VOID_INFO_SPACING;
     }
 
     /**
@@ -982,16 +995,16 @@ public class CliMain implements ViewInterface {
      * @param rowIndex an integer representing at which command line row idex is the method printing, relative to the square box high.
      * @param rightMostBorder a Border which is the last square's right border.
      */
-    private synchronized void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
+    private synchronized void printFigureLine(ArrayList<Border> leftBorders, ArrayList<String> figures, int rowIndex, Border rightMostBorder) {
 
         for (int i = 0; i < figures.size() && i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
-            printFigure(figures.get(i));
+            System.out.print(figures.get(i));
             printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);
         }
 
-        //print void if there are not enough figures
+        //print void if there are not enough info
         for (int i = figures.size(); i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
@@ -1075,7 +1088,9 @@ public class CliMain implements ViewInterface {
         else
             System.out.print(nickname);
         System.out.print("                    Figure: ");
-        printFigure(figure);
+        System.out.print(parseFigure(figure));
+        //fill until next border
+        printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
         System.out.println("      Points: " + points);
         System.out.print(ANSI_RESET);
     }
@@ -1086,8 +1101,8 @@ public class CliMain implements ViewInterface {
      * @param damage an integer containing how many times this player was hit.
      */
     private synchronized void printAdrenalineLevel(int damage) {
-        if (damage < 3) System.out.println("| Adrenaline level: 0");
-        else if (damage >=3 && damage <= 5) System.out.println("| Adrenaline level: 1");
+        if (damage < 3) System.out.println("| Adrenaline level: " + UNICODE_NO_AMMO);
+        else if (damage <= 5) System.out.println("| Adrenaline level: I");
         else System.out.println("| Adrenaline level: " + ANSI_RED + "MAX" + ANSI_RESET);
     }
 
@@ -1100,7 +1115,9 @@ public class CliMain implements ViewInterface {
 
         for (Figure f : marks.keySet()) {
             System.out.print("| ");
-            printFigure(f);
+            System.out.print(parseFigure(f));
+            //fill until next border
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             System.out.println(" : " + marks.get(f));
         }
         if (marks.keySet().isEmpty())
@@ -1116,7 +1133,9 @@ public class CliMain implements ViewInterface {
         System.out.print(" | ");
 
         for (Figure f : damage) {
-            printFigure(f);
+            System.out.print(parseFigure(f));
+            //fill until next border
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             System.out.print(" | ");
         }
 
@@ -1212,7 +1231,9 @@ public class CliMain implements ViewInterface {
             System.out.print("KILL SHOT TRACK: ");
             for (Figure figure : killShotTrack) {
                 System.out.print(" | ");
-                printFigure(figure);
+                System.out.print(parseFigure(figure));
+                //fill until next border
+                printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             }
             for (int i = killShotTrack.size(); i < maxKills; i++) {
                 System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
@@ -1225,7 +1246,9 @@ public class CliMain implements ViewInterface {
                 System.out.println(color.name() + " SPAWN DAMAGES: ");
                 for (Figure figure : model.getSpawnDamageTrack().get(color)) {
                     System.out.print(" | ");
-                    printFigure(figure);
+                    System.out.print(parseFigure(figure));
+                    //fill until next border
+                    printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
                 }
                 System.out.println(" |");
             }
@@ -1442,15 +1465,15 @@ public class CliMain implements ViewInterface {
 
         System.out.println();
 
-        while (choice < 1 || choice > s.length) {
-            for (int i = 0; i < s.length; i++)
+        while (choice < 1 || choice > s[0].length) {
+            for (int i = 0; i < s[0].length; i++)
                 System.out.println(i+1 + " - (" + s[0][i] + "," + s[1][i] + ")");
             System.out.println("\nChoose a Square by its number: ");
 
             if (scannerIn.hasNextInt())
                 choice = scannerIn.nextInt();
 
-            if (choice < 1 || choice > s.length)
+            if (choice < 1 || choice > s[0].length)
                 System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
         }
 
