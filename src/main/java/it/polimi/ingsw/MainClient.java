@@ -3,9 +3,25 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.view.cli.CliMain;
 import it.polimi.ingsw.view.gui.GuiMain;
 
-//TODO Javadoc
+/**
+ * This class represents a object which is the first object that interacts with the user on client side.
+ *
+ * @author simonebraga
+ */
 public class MainClient {
 
+    /**
+     * This method is the first method of the client application and it gets optional commands as arguments. It will invoke the CLI or the GUI.
+     *
+     * @param args an array of String which contains optional starting parameters:
+     *
+     * <p>Allowed parameters:<br>
+     *  -serverIp "a string containing the server ip to which create a connection<br>
+     *  -clientIp "a string containign the custom client ip to use client-side<br>
+     *  -interface "GUI | CLI" to specify which interface to use<br><br>
+     *   Parameters can be in any order. Parameters fields must be preceded by '-'.<br>
+     *   Default parameters are read from file. Default value for -interface parameter is "GUI".</p>
+     */
     public static void main(String[] args) {
 
         String[] newArgs = new String[2];
