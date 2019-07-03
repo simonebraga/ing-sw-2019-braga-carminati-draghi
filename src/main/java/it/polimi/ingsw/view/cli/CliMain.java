@@ -392,7 +392,7 @@ public class CliMain implements ViewInterface {
     private void printSceneSpacing() {
 
         System.out.println();
-        for (int i = 0; i < TOTAL_GRID_WIDTH; i++) {
+        for (int i = 0; i < 2 * TOTAL_GRID_WIDTH; i++) {
             System.out.print("-");
         }
         System.out.println();
@@ -426,31 +426,23 @@ public class CliMain implements ViewInterface {
             //retrieve players on this row
             ArrayList<SmartPlayer> players = new ArrayList<>();
             for (SmartPlayer player : model.getSmartPlayerMap().values()) {
-                if (player.getPosY() == i) {
-                    //System.out.println(player.getFigure());
+                if (player.getPosY() == i)
                     players.add(player);
-                }
             }
 
             //retrieve tiles on this row
             ArrayList<SmartTile> tiles = new ArrayList<>();
             for (SmartTile tile : model.getMapTiles()) {
-                if (tile.getPosX() == i) {
-                    //System.out.println(tile.toString());
+                if (tile.getPosX() == i)
                     tiles.add(tile);
-                }
             }
 
             Color spawnColor = map.getSpawnColors()[i];
-            //System.out.println(spawnColor);
 
             ArrayList<WeaponName> weapons = new ArrayList<>();
             for (WeaponName weapon : model.getSpawnWeaponMap().get(spawnColor))
                 weapons.add(weapon);
 
-            for (WeaponName name : weapons) {
-                //System.out.println(name);
-            }
 
             printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
                         map.getSquareTypes()[i], spawnColor, players, tiles, weapons);
@@ -490,17 +482,6 @@ public class CliMain implements ViewInterface {
         ArrayList<ArrayList<Figure>> figuresInsideSquares = getFiguresInsideRow(players);
         ArrayList<String> squareTypes = new ArrayList<>(Arrays.asList(squaresTypeArray));
         ArrayList<ArrayList<String>> squareContentInfo = getContentOfEachSquare(squareTypes, tiles, weapons);
-
-        for (String type : squareTypes) {
-            //System.out.println(type);
-        }
-        //System.out.println();
-        for (ArrayList<String> tileArray : squareContentInfo) {
-            for (String tile : tileArray) {
-                //System.out.println(tile);
-            }
-            //System.out.println();
-        }
 
         printFirstLine(upperBorders);
         printSpawnTagsLine(spawnColor, leftBorders, rightMostBorder, squareTypes, 1);
@@ -761,6 +742,7 @@ public class CliMain implements ViewInterface {
 
         ArrayList<ArrayList<String>> squaresContentInfo = new ArrayList<>();
 
+        //for each square in this row
         for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {
 
             ArrayList<String> singleSquareInfo = new ArrayList<>();
@@ -778,15 +760,18 @@ public class CliMain implements ViewInterface {
 
             } else if (squareTypes.get(i).equals("tile")) {     //tile square
 
+                //scan every tile in this row
                 for (SmartTile tile : tiles) {
+                    singleSquareInfo = new ArrayList<>();
                     if (tile.getPosX() == i) {  //same column
                         if (tile.getPowerup() == 1)
                             singleSquareInfo.add(tile.getPowerup() + "PU   ");
 
                         for (Color color : tile.getAmmo())
                             singleSquareInfo.add(parseColorName(color));
+
+                        squaresContentInfo.add(singleSquareInfo);
                     }
-                    squaresContentInfo.add(singleSquareInfo);
                 }
 
             } else {            //void square
@@ -1542,7 +1527,6 @@ public class CliMain implements ViewInterface {
     public void notifyModelUpdate() {
         try {
             model=client.getModelUpdate();
-            System.out.println(model.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
