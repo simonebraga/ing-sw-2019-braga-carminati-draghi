@@ -427,7 +427,7 @@ public class CliMain implements ViewInterface {
             //retrieve players on this row
             ArrayList<SmartPlayer> players = new ArrayList<>();
             for (SmartPlayer player : model.getSmartPlayerMap().values()) {
-                if (player.getPosX() == i) {
+                if (player.getPosY() == i) {
                     //System.out.println(player.getFigure());
                     players.add(player);
                 }
@@ -436,7 +436,7 @@ public class CliMain implements ViewInterface {
             //retrieve tiles on this row
             ArrayList<SmartTile> tiles = new ArrayList<>();
             for (SmartTile tile : model.getMapTiles()) {
-                if (tile.getPosX() == i) {
+                if (tile.getPosY() == i) {
                     //System.out.println(tile.toString());
                     tiles.add(tile);
                 }
@@ -450,7 +450,7 @@ public class CliMain implements ViewInterface {
                 weapons.add(weapon);
 
             for (WeaponName name : weapons) {
-               // System.out.println(name);
+                //System.out.println(name);
             }
 
             printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
@@ -501,7 +501,8 @@ public class CliMain implements ViewInterface {
 
             ArrayList<String> contentInThisLine = new ArrayList<>();
             for (ArrayList<String> contents : squareContentInfo) {
-                contentInThisLine.add(contents.get(k));
+                if (!contents.isEmpty())
+                    contentInThisLine.add(contents.get(k));
             }
             printContentLine(leftBorders, contentInThisLine, i, rightMostBorder);
             k++;
@@ -552,9 +553,9 @@ public class CliMain implements ViewInterface {
                     break;
                 }
                 case NOTHING: {
-                    System.out.print("+-");
+                    System.out.print("+ ");
                     printSpacesFromIndexToIndex(2, SQUARES_WIDTH - 3);
-                    System.out.print("-");
+                    System.out.print(" ");
                     break;
                 }
                 case WALL: {
@@ -594,9 +595,9 @@ public class CliMain implements ViewInterface {
             }
             case NOTHING:{
                 if (rowIndex == 1)
-                    System.out.print("'");
+                    System.out.print(" ");
                 else if (rowIndex == SQUARES_HIGH - 2)
-                    System.out.print(".");
+                    System.out.print(" ");
                 else
                     System.out.print(" ");
                 break;
@@ -994,7 +995,7 @@ public class CliMain implements ViewInterface {
         }
 
         //print void if there are not enough figures
-        for (int i = 0; i < leftBorders.size() - figures.size(); i++) {
+        for (int i = figures.size(); i < leftBorders.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             System.out.print(VOID_INFO_SPACING);
@@ -1016,11 +1017,19 @@ public class CliMain implements ViewInterface {
      */
     private void printContentLine(ArrayList<Border> leftBorders, ArrayList<String> contentBySquare, int rowIndex, Border rightMostBorder) {
 
-        for (int i = 0; i < leftBorders.size(); i++) {
+        for (int i = 0; i < contentBySquare.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             System.out.print(contentBySquare.get(i));
             printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);  //fill with spaces to the next border
+        }
+
+        //print void if there are not enough info
+        for (int i = contentBySquare.size(); i < leftBorders.size(); i++) {
+            printBorderChar(leftBorders.get(i), rowIndex);
+            System.out.print(" ");
+            System.out.print(VOID_INFO_SPACING);
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);
         }
 
         //closing line
