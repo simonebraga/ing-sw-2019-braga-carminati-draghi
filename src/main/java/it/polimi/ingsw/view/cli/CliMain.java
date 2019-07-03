@@ -1402,7 +1402,7 @@ public class CliMain implements ViewInterface {
 
         while (choice < 1 || choice > s[0].length) {
             for (int i = 0; i < s[0].length; i++)
-                System.out.println(i+1 + " - (" + s[0][i] + "," + s[1][i] + ")");
+                System.out.println(i+1 + " - (" + s[1][i] + "," + s[0][i] + ")");
             System.out.println("\nChoose a Square by its number: ");
 
             if (scannerIn.hasNextInt())
