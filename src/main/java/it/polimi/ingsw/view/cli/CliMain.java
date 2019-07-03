@@ -82,11 +82,6 @@ public class CliMain implements ViewInterface {
     private static final String UNICODE_SKULL = "\u2620";
 
     /**
-     * This finale attribute represents the UNICODE code for a perpendicular symbol.
-     */
-    private static final String UNICODE_UPPER_DOOR_THRESHOLD = "\u27C2";
-
-    /**
      * This final attribute defines squares width in cli printing.
      */
     private static final int SQUARES_WIDTH = 22;
@@ -140,6 +135,11 @@ public class CliMain implements ViewInterface {
      * This final attribute defines the null info field.
      */
     private static final String VOID_INFO_SPACING = "      ";
+
+    /**
+     * This finale attribute represents the character for a the door threshold.
+     */
+    private static final String UPPER_DOOR_THRESHOLD_CHAR = "_";
 
 
     ////////////////////////////////////////////// match related constants /////////////////////////////////////////////
@@ -427,29 +427,33 @@ public class CliMain implements ViewInterface {
             //retrieve players on this row
             ArrayList<SmartPlayer> players = new ArrayList<>();
             for (SmartPlayer player : model.getSmartPlayerMap().values()) {
-                if (player.getPosY() == i)
+                if (player.getPosX() == i) {
+                    //System.out.println(player.getFigure());
                     players.add(player);
+                }
             }
 
             //retrieve tiles on this row
             ArrayList<SmartTile> tiles = new ArrayList<>();
             for (SmartTile tile : model.getMapTiles()) {
-                if (tile.getPosY() == i)
+                if (tile.getPosX() == i) {
+                    //System.out.println(tile.toString());
                     tiles.add(tile);
+                }
             }
 
             Color spawnColor = map.getSpawnColors()[i];
+            //System.out.println(spawnColor);
 
             ArrayList<WeaponName> weapons = new ArrayList<>();
             for (WeaponName weapon : model.getSpawnWeaponMap().get(spawnColor))
                 weapons.add(weapon);
 
+            for (WeaponName name : weapons) {
+               // System.out.println(name);
+            }
 
-            if (i == 0)
-                printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
-                        map.getSquareTypes()[i], spawnColor, players, tiles, weapons);
-            else
-                printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
+            printRow(map.getUpperBorders()[i], map.getLeftBorders()[i], map.getRightMostBorders()[i],
                         map.getSquareTypes()[i], spawnColor, players, tiles, weapons);
         }
 
@@ -503,15 +507,18 @@ public class CliMain implements ViewInterface {
             k++;
         }
 
+        k=0;
         //all players in square nicknames
         for (int i = SQUARE_FIGURE_SECTION_STARTING_INDEX; i < SQUARES_HIGH - 1; i++) {
 
             ArrayList<Figure> figuresInThisRow = new ArrayList<>();
             for (ArrayList<Figure> figures : figuresInsideSquares) {
-                figuresInThisRow.add(figures.get(i));
+                if (!figures.isEmpty())
+                    figuresInThisRow.add(figures.get(k));
             }
 
             printFigureLine(leftBorders, figuresInThisRow, i, rightMostBorder);
+            k++;
         }
     }
 
@@ -576,7 +583,7 @@ public class CliMain implements ViewInterface {
                 else if (rowIndex == 1 || rowIndex == SQUARES_HIGH - 2)
                     System.out.print("|");
                 else if (rowIndex == 2)
-                    System.out.print(UNICODE_UPPER_DOOR_THRESHOLD);
+                    System.out.print(UPPER_DOOR_THRESHOLD_CHAR);
                 else
                     System.out.print("T");
                 break;
@@ -929,7 +936,7 @@ public class CliMain implements ViewInterface {
      */
     private String parseColorName(Color color) {
         switch (color) {
-            case BLUE: return "BLUE ";
+            case BLUE: return "BLUE  ";
             case YELLOW: return "YELLOW";
             case RED: return "RED   ";
         }
@@ -979,15 +986,24 @@ public class CliMain implements ViewInterface {
      */
     private void printFigureLine(ArrayList<Border> leftBorders, ArrayList<Figure> figures, int rowIndex, Border rightMostBorder) {
 
-        for (int i = 0; i < leftBorders.size(); i++) {
+        for (int i = 0; i < figures.size(); i++) {
             printBorderChar(leftBorders.get(i), rowIndex);
             System.out.print(" ");
             printFigure(figures.get(i));
-            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);
+        }
+
+        //print void if there are not enough figures
+        for (int i = 0; i < leftBorders.size() - figures.size(); i++) {
+            printBorderChar(leftBorders.get(i), rowIndex);
+            System.out.print(" ");
+            System.out.print(VOID_INFO_SPACING);
+            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 2);
         }
 
         //closing line
         printBorderChar(rightMostBorder, rowIndex);
+        System.out.println();
     }
 
     /**
