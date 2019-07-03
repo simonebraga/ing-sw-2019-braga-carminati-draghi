@@ -235,7 +235,8 @@ class TestSmartModel {
         smartModel.update(gameTable);
         smartModel.setMapIndex(2);
         SmartModel smartModelAfterSerialization = SmartModel.fromString(smartModel.toString());
-        ArrayList<Integer> expectedPointTrack = new ArrayList<>(Arrays.asList(1,1,3));
+        //FIXME(why should this expect 1,1,3 ?)
+        ArrayList<Integer> expectedPointTrack = new ArrayList<>(Arrays.asList(8,6,4,2,1));
         for (SmartPlayer smartPlayer : smartModelAfterSerialization.getSmartPlayerMap().values())
             assertEquals(expectedPointTrack,smartPlayer.getPointTrack());
     }
