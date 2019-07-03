@@ -139,7 +139,7 @@ public class CliMain implements ViewInterface {
     /**
      * This finale attribute represents the character for a the door threshold.
      */
-    private static final String UPPER_DOOR_THRESHOLD_CHAR = "_";
+    private static final String UPPER_DOOR_THRESHOLD_CHAR = "#";
 
 
     ////////////////////////////////////////////// match related constants /////////////////////////////////////////////
@@ -538,9 +538,9 @@ public class CliMain implements ViewInterface {
 
             switch (upperBorder) {
                 case DOOR: {
-                    System.out.print("+--|");
+                    System.out.print("+--#");
                     printSpacesFromIndexToIndex(4, SQUARES_WIDTH - 5);
-                    System.out.print("|--");
+                    System.out.print("#--");
                     break;
                 }
                 case NOTHING: {
@@ -577,7 +577,7 @@ public class CliMain implements ViewInterface {
                 else if (rowIndex == 2)
                     System.out.print(UPPER_DOOR_THRESHOLD_CHAR);
                 else
-                    System.out.print("T");
+                    System.out.print("#");
                 break;
             }
             case WALL:{
