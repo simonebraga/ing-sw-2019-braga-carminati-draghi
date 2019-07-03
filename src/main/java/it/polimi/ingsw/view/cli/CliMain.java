@@ -655,67 +655,6 @@ public class CliMain implements ViewInterface {
         System.out.println();
     }
 
-
-    /**
-     * This method memorizes the borders of all squares in a row, from left to right square.
-     *
-     * @param squares an array of Square to be scanned left to right.
-     * @param leftOrUp a String flag representing which border to memorize (upper border or left border of the square).
-     * @param isFirstRow a boolean that says if this printed grid row is the first grid row.
-     * @return an ArrayList of Border that contains all squares border (up or left border) from left to right.
-     * @deprecated
-     */
-    private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp, boolean isFirstRow) {
-
-        ArrayList<Border> borders = new ArrayList<>();
-
-        if (leftOrUp.equals("up")) {
-
-            for (Square square : squares) {
-                if (square != null)
-                    borders.add(square.getUp());
-
-                else {    //void square
-
-                    if (isFirstRow)
-                        borders.add(Border.NOTHING);
-                    else
-                        borders.add(Border.WALL);
-                }
-            }
-
-        } else if (leftOrUp.equals("left")) {
-
-            for (int i = 0; i < squares.length; i++) {
-                if (squares[i].getUp() != null)
-                    borders.add(squares[i].getLeft());
-                else {
-
-                    if (i != 0)         //not the first square in the row
-                        borders.add(Border.WALL);
-                    else
-                        borders.add(Border.NOTHING);
-                }
-            }
-        }
-        return borders;
-    }
-
-    /**
-     * This method checks what kind of square a row of the map grid finishes with and associates a closing border to the row.
-     *
-     * @param squares an array of Square to be scanned.
-     * @return a Border associated with the closing border of this map grid row.
-     * @deprecated
-     */
-    private Border retrieveLastBorderInfo(Square[] squares) {
-
-        if (squares[squares.length - 1].getUp() == null)        //last square is void
-            return Border.NOTHING;
-        else
-            return Border.WALL;
-    }
-
     /**
      * This method collects all grid row players figures by square.
      *
@@ -726,30 +665,25 @@ public class CliMain implements ViewInterface {
 
         ArrayList<ArrayList<String>> figuresBySquareInRow = new ArrayList<>();
 
-        //FIXME(remove souts)
-
         for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {  //for each square in this row
 
             ArrayList<String> figuresInSquare = new ArrayList<>();
 
             for (int j = 0; j < players.size(); j++) {    //scan each player
-                if (players.get(j).getPosX() == i) {
-                    System.out.println("Adding: " + parseFigure(players.get(j).getFigure()));
+                if (players.get(j).getPosX() == i) {    //checks if this player is on same row square
                     figuresInSquare.add(parseFigure(players.get(j).getFigure()));
                 }
             }
 
+            int numberOfFiguresUntilNow = figuresInSquare.size();
             //fill the rest with null figures
-            for (int j = 0; j < MAX_PLAYER_BY_SQUARE - figuresInSquare.size(); j++) {
-                System.out.println("STEP");
+            for (int j = 0; j < MAX_PLAYER_BY_SQUARE - numberOfFiguresUntilNow; j++) {
                 figuresInSquare.add(VOID_INFO_SPACING);
             }
 
-            System.out.println();
             figuresBySquareInRow.add(figuresInSquare);
         }
 
-        System.out.println("getFiguresInsideRow: " + figuresBySquareInRow.toString());
         return figuresBySquareInRow;
     }
 
@@ -774,7 +708,8 @@ public class CliMain implements ViewInterface {
                 for (WeaponName name : weaponNames)
                     singleSquareInfo.add(parseWeaponName(name, true));
 
-                for (int j = 0; j < MAX_WEAPONS_BY_SQUARE - singleSquareInfo.size(); j++) {
+                int numberOfInfoUntilNow = singleSquareInfo.size();
+                for (int j = 0; j < MAX_WEAPONS_BY_SQUARE - numberOfInfoUntilNow; j++) {
                     singleSquareInfo.add(VOID_INFO_SPACING);   //no weapon
                 }
 
