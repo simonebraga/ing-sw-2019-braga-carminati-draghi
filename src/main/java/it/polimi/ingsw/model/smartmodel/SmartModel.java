@@ -184,12 +184,14 @@ public class SmartModel {
         ArrayList<Square> tileSquares = gameTable.getGameMap().getGridAsList().stream().filter(square -> gameTable.getGameMap().getTileSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
         for (Square square : tileSquares) {
             TileSquare square1 = (TileSquare) square;
-            SmartTile smartTile = new SmartTile();
-            smartTile.setPowerup(square1.getTile().getPowerup());
-            smartTile.setAmmo(square1.getTile().getAmmo());
-            smartTile.setPosX(square1.getX());
-            smartTile.setPosY(square1.getY());
-            mapTiles.add(smartTile);
+            if (square1.getTile() != null) {
+                SmartTile smartTile = new SmartTile();
+                smartTile.setPowerup(square1.getTile().getPowerup());
+                smartTile.setAmmo(square1.getTile().getAmmo());
+                smartTile.setPosX(square1.getX());
+                smartTile.setPosY(square1.getY());
+                mapTiles.add(smartTile);
+            }
         }
 
         // Setup killshottrack
