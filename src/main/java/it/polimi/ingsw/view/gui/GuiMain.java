@@ -6,6 +6,8 @@ import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
+import it.polimi.ingsw.model.smartmodel.SmartPowerup;
+import it.polimi.ingsw.model.smartmodel.SmartWeapon;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
 import javafx.application.Application;
@@ -35,8 +37,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 //TODO Javadoc
 public class GuiMain extends Application implements ViewInterface {
 
-    private int height;
-    private int width;
+    private double height;
+    private double width;
+    private double spacing;
     private int textSize;
     private Stage primaryStage;
     private Scene primaryScene;
@@ -53,8 +56,9 @@ public class GuiMain extends Application implements ViewInterface {
     private Gson gson;
 
     public GuiMain() {
-        this.width = 1280;
-        this.height = 720;
+        this.height = 960;
+        this.width = (this.height - 52) * 320/167;
+        this.spacing = this.height / 72;
         this.textSize = 20;
         this.textEvent = new Text();
         this.textEvent.setFill(Color.FIREBRICK);
@@ -125,9 +129,122 @@ public class GuiMain extends Application implements ViewInterface {
     }
 
     private void setupGamePane() throws Exception {
+        cleanGamePane();
+
+        double mapWidth = width * 0.5 - spacing;
+        double mapHeight = (height - 36 - 16) * 0.73 - spacing;
+        double mapOffsetX = spacing;
+        double mapOffsetY = spacing;
+
+        double myBoardWidth = width * 0.5 - spacing;
+        double myBoardHeight = (height - 36 - 16) * 0.27 - spacing;
+        double myBoardOffsetX = spacing;
+        double myBoardOffsetY = (height - 36 - 16) * 0.73 + spacing;
+
+        double playerBoardWidth = (width * 0.5 * 0.65) - spacing;
+        double playerBoardHeight = (height - 36 - 16) * 0.73 * 0.25 - spacing;
+        double playerBoardOffsetX = width * 0.5 + spacing;
+        double playerBoardOffsetY = spacing;
+
+        double myWeaponWidth = ((width * 0.5 - spacing) / 6) - spacing;
+        double myWeaponHeight = myBoardHeight;
+        double myWeaponOffsetX = playerBoardOffsetX;
+        double myWeaponOffsetY = myBoardOffsetY;
+
+        double myPowerupWidth = myWeaponWidth;
+        double myPowerupHeight = myWeaponHeight;
+        double myPowerupOffsetX = myWeaponOffsetX;
+        double myPowerupOffsetY = myWeaponOffsetY;
+
+        double playerWeaponWidth = (width * 0.5 * 0.35 - spacing) / 3 - spacing;
+        double playerWeaponHeight = playerBoardHeight;
+        double playerWeaponOffsetX = (width * 0.5 * 1.65) + spacing;
+        double playerWeaponOffsetY = spacing;
+
         //TODO Remove Exception when tested (Maybe)
-        gamePane.setStyle("-fx-border-color: red; -fx-border-width: 2;");
+        gamePane.setStyle("-fx-border-color: red; -fx-border-width: 1;");
         Pane collectorPane = new Pane();
+
+        // Setup the map
+        //TODO Remove the border
+        ImagePane imagePaneMap = new ImagePane(properties.getProperty("mapsRoot").concat(properties.getProperty("map" + (smartModel.getMapIndex()+1))),"-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+        imagePaneMap.setPrefHeight(mapHeight);
+        imagePaneMap.setPrefWidth(mapWidth);
+        imagePaneMap.setLayoutX(mapOffsetX);
+        imagePaneMap.setLayoutY(mapOffsetY);
+        collectorPane.getChildren().add(imagePaneMap);
+
+        // Setup the players informations
+        int playerCounter = 0;
+        for (String nickname : smartModel.getSmartPlayerMap().keySet())
+            if (nickname.equals(this.nickname)) {
+                //TODO Remove the border
+                ImagePane imagePaneMyBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartModel.getSmartPlayerMap().get(nickname).getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+                imagePaneMyBoard.setPrefHeight(myBoardHeight);
+                imagePaneMyBoard.setPrefWidth(myBoardWidth);
+                imagePaneMyBoard.setLayoutX(myBoardOffsetX);
+                imagePaneMyBoard.setLayoutY(myBoardOffsetY);
+                collectorPane.getChildren().add(imagePaneMyBoard);
+
+                int weaponCounter = 0;
+                for (SmartWeapon smartWeapon : smartModel.getSmartPlayerMap().get(nickname).getWeapons()) {
+                    ImagePane imagePaneWeapon;
+                    if (smartWeapon.getLoaded())
+                        //TODO Remove the border
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+                    else
+                        //TODO Remove the border
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weaponBack")),"-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+                    imagePaneWeapon.setPrefHeight(myWeaponHeight);
+                    imagePaneWeapon.setPrefWidth(myWeaponWidth);
+                    imagePaneWeapon.setLayoutX(myWeaponOffsetX + (spacing + myWeaponWidth) * weaponCounter);
+                    imagePaneWeapon.setLayoutY(myWeaponOffsetY);
+                    collectorPane.getChildren().add(imagePaneWeapon);
+
+                    weaponCounter++;
+                }
+
+                int powerupCounter = 0;
+                for (SmartPowerup smartPowerup : smartModel.getSmartPlayerMap().get(nickname).getPowerups()) {
+                    //TODO Remove the border
+                    ImagePane imagePanePowerup = new ImagePane(properties.getProperty("powerupsRoot").concat(properties.getProperty("powerup" + smartPowerup.getPowerupName().toString() + "_" + smartPowerup.getColor().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+                    imagePanePowerup.setPrefHeight(myPowerupHeight);
+                    imagePanePowerup.setPrefWidth(myPowerupWidth);
+                    imagePanePowerup.setLayoutX(myPowerupOffsetX + (spacing + myWeaponWidth) * weaponCounter + (spacing + myPowerupWidth) * powerupCounter);
+                    imagePanePowerup.setLayoutY(myPowerupOffsetY);
+                    collectorPane.getChildren().add(imagePanePowerup);
+
+                    powerupCounter++;
+                }
+
+            } else {
+                //TODO Remove the border
+                ImagePane imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartModel.getSmartPlayerMap().get(nickname).getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+                imagePanePlayerBoard.setPrefHeight(playerBoardHeight);
+                imagePanePlayerBoard.setPrefWidth(playerBoardWidth);
+                imagePanePlayerBoard.setLayoutX(playerBoardOffsetX);
+                imagePanePlayerBoard.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter);
+                collectorPane.getChildren().add(imagePanePlayerBoard);
+
+                int weaponCounter = 0;
+                for (SmartWeapon smartWeapon : smartModel.getSmartPlayerMap().get(nickname).getWeapons()) {
+                    ImagePane imagePaneWeapon;
+                    if (smartWeapon.getLoaded())
+                        //TODO Remove the border
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+                    else
+                        //TODO Remove the border
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weaponBack")),"-fx-background-size: contain; -fx-background-repeat: no-repeat; -fx-border-color: green; -fx-border-width: 1;");
+                    imagePaneWeapon.setPrefHeight(playerWeaponHeight);
+                    imagePaneWeapon.setPrefWidth(playerWeaponWidth);
+                    imagePaneWeapon.setLayoutX(playerWeaponOffsetX + (playerWeaponWidth + spacing) * weaponCounter);
+                    imagePaneWeapon.setLayoutY(playerWeaponOffsetY + (playerWeaponHeight + spacing) * playerCounter);
+                    collectorPane.getChildren().add(imagePaneWeapon);
+                    weaponCounter++;
+                }
+
+                playerCounter++;
+            }
 
         Platform.runLater(() -> gamePane.getChildren().add(collectorPane));
     }
@@ -139,6 +256,10 @@ public class GuiMain extends Application implements ViewInterface {
     private void cleanRequestPane() {
         pendingRequest.set(false);
         Platform.runLater(() -> requestPane.getChildren().clear());
+    }
+
+    private void cleanGamePane() {
+        Platform.runLater(() -> gamePane.getChildren().clear());
     }
 
     private void setLoginScenario() {
