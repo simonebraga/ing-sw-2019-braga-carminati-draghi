@@ -144,9 +144,9 @@ public class TurnManager {
             } catch (UnavailableUserException e) {
             }
             resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(server, table, targets);
-            server.getSmartModel().update(table);
-            server.notifyModelUpdate();
         }
+        server.getSmartModel().update(table);
+        server.notifyModelUpdate();
     }
 
     private void doPowerUps(Server server, GameTable table){
