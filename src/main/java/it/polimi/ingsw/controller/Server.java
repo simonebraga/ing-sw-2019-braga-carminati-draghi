@@ -640,4 +640,8 @@ public class Server implements ServerRemote {
             }
         }
     }
+
+    public SmartModel getSmartModel() {
+        return smartModel;
+    }
 }

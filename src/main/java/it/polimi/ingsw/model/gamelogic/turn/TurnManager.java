@@ -91,6 +91,10 @@ public class TurnManager {
             }
         }
         reload.forEach(FunctionalEffect::doAction);
+        if(!reload.isEmpty()){
+            server.getSmartModel().update(table);
+            server.notifyModelUpdate();
+        }
 
         timerTurn.setStop(true);
 
@@ -124,6 +128,9 @@ public class TurnManager {
                 }
             }
         }
+
+        server.getSmartModel().update(table);
+        server.notifyModelUpdate();
     }
 
     private void doAction (Server server, GameTable table, Targets targets){
@@ -137,6 +144,8 @@ public class TurnManager {
             } catch (UnavailableUserException e) {
             }
             resultAction = new ActionManager(player, finalFrenzy, beforeFirstPlayer).runAction(server, table, targets);
+            server.getSmartModel().update(table);
+            server.notifyModelUpdate();
         }
     }
 
@@ -151,5 +160,9 @@ public class TurnManager {
         } catch (UnavailableUserException e) {
         }
         powerUpEffects.forEach(FunctionalEffect::doAction);
+        if(!powerUpEffects.isEmpty()){
+            server.getSmartModel().update(table);
+            server.notifyModelUpdate();
+        }
     }
 }
