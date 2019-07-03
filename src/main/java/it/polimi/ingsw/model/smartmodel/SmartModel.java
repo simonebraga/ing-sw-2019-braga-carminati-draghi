@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.smartmodel;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.cardclasses.Powerup;
@@ -7,12 +8,15 @@ import it.polimi.ingsw.model.cardclasses.Weapon;
 import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
+import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
 import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.mapclasses.TileSquare;
 import it.polimi.ingsw.model.playerclasses.Player;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -70,8 +74,19 @@ public class SmartModel {
     }
 
     public SmartModel() {
-        //TODO Setup the reading of default point track
-        defaultPointtrackSize = 7;
+        InputStream file = SmartModel.class.getClassLoader().getResourceAsStream("game_settings.json");
+        ObjectMapper mapper = new ObjectMapper();
+        SettingsJSONParser settings = new SettingsJSONParser();
+        try {
+            settings = mapper.readValue(file,SettingsJSONParser.class);
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (settings != null)
+            defaultPointtrackSize = settings.getBounties().length;
+        else
+            defaultPointtrackSize = 0;
     }
 
     public synchronized void update(GameTable gameTable) {
