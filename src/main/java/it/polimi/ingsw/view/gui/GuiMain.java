@@ -52,7 +52,7 @@ public class GuiMain extends Application implements ViewInterface {
     private Gson gson;
 
     public GuiMain() {
-        this.height = 720;
+        this.height = 980;
         this.width = (this.height - 52) * 320/167;
         this.spacing = this.height / 72;
         this.textSize = 20;
@@ -236,6 +236,17 @@ public class GuiMain extends Application implements ViewInterface {
             weaponSpawnCounter++;
         }
 
+        int figureCounter = 0;
+        for (Figure figure : smartModel.getKillshotTrack()) {
+            ImagePane imagePaneFigure = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + figure.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+            imagePaneFigure.setPrefHeight((128.0 / 1931) * mapHeight);
+            imagePaneFigure.setPrefWidth((854.0 / 2551) * mapWidth / 8);
+            imagePaneFigure.setLayoutX(mapOffsetX + (182.0 / 2551) * mapWidth + figureCounter * (854.0 / 2551) * mapWidth / 8);
+            imagePaneFigure.setLayoutY(mapOffsetY + (103.0 / 1931) * mapHeight);
+            collectorPane.getChildren().add(imagePaneFigure);
+            figureCounter++;
+        }
+
         // Setup the players informations
         int playerCounter = 0;
         int playerTotalCounter = 0;
@@ -279,6 +290,31 @@ public class GuiMain extends Application implements ViewInterface {
                     powerupCounter++;
                 }
 
+                ArrayList<Figure> damage = smartPlayer.getDamage();
+                for (int i = 0 ; i < damage.size() ; i++) {
+                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                    imagePaneDamagePoint.setPrefHeight((76.0 / 277) * myBoardHeight);
+                    imagePaneDamagePoint.setPrefWidth((64.0 / 1124) * myBoardWidth);
+                    imagePaneDamagePoint.setLayoutX(myBoardOffsetX + (98.0 / 1124) * myBoardWidth + i * (64.0 / 1124) * myBoardWidth);
+                    imagePaneDamagePoint.setLayoutY(myBoardOffsetY + (92.0 / 277) * myBoardHeight);
+                    collectorPane.getChildren().add(imagePaneDamagePoint);
+                }
+
+                ArrayList<Figure> marks = new ArrayList<>();
+                for (Figure figure : smartPlayer.getMarks().keySet()) {
+                    for (int i = 0; i < smartPlayer.getMarks().get(figure) ; i++) {
+                        marks.add(figure);
+                    }
+                }
+                for (int i = 0; i < marks.size() ; i++) {
+                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                    imagePaneDamagePoint.setPrefHeight((76.0 / 277) * myBoardHeight);
+                    imagePaneDamagePoint.setPrefWidth((64.0 / 1124) * myBoardWidth);
+                    imagePaneDamagePoint.setLayoutX(myBoardOffsetX + (543.0 / 1124) * myBoardWidth + i * (64.0 / 1124) * myBoardWidth / 2);
+                    imagePaneDamagePoint.setLayoutY(myBoardOffsetY + (57.0 / 277) * myBoardHeight - (76.0 / 277) * myBoardHeight);
+                    collectorPane.getChildren().add(imagePaneDamagePoint);
+                }
+
             } else {
                 ImagePane imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                 imagePanePlayerBoard.setPrefHeight(playerBoardHeight);
@@ -300,6 +336,31 @@ public class GuiMain extends Application implements ViewInterface {
                     imagePaneWeapon.setLayoutY(playerWeaponOffsetY + (playerWeaponHeight + spacing) * playerCounter);
                     collectorPane.getChildren().add(imagePaneWeapon);
                     weaponCounter++;
+                }
+
+                ArrayList<Figure> damage = smartPlayer.getDamage();
+                for (int i = 0 ; i < damage.size() ; i++) {
+                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                    imagePaneDamagePoint.setPrefHeight((76.0 / 277) * playerBoardHeight);
+                    imagePaneDamagePoint.setPrefWidth((64.0 / 1124) * playerBoardWidth);
+                    imagePaneDamagePoint.setLayoutX(playerBoardOffsetX + (98.0 / 1124) * playerBoardWidth + i * (64.0 / 1124) * playerBoardWidth);
+                    imagePaneDamagePoint.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter + (92.0 / 277) * playerBoardHeight);
+                    collectorPane.getChildren().add(imagePaneDamagePoint);
+                }
+
+                ArrayList<Figure> marks = new ArrayList<>();
+                for (Figure figure : smartPlayer.getMarks().keySet()) {
+                    for (int i = 0; i < smartPlayer.getMarks().get(figure) ; i++) {
+                        marks.add(figure);
+                    }
+                }
+                for (int i = 0; i < marks.size() ; i++) {
+                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                    imagePaneDamagePoint.setPrefHeight((76.0 / 277) * playerBoardHeight);
+                    imagePaneDamagePoint.setPrefWidth((64.0 / 1124) * playerBoardWidth);
+                    imagePaneDamagePoint.setLayoutX(playerBoardOffsetX + (543.0 / 1124) * playerBoardWidth + i * (64.0 / 1124) * playerBoardWidth / 2);
+                    imagePaneDamagePoint.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter + (57.0 / 277) * playerBoardHeight - (76.0 / 277) * playerBoardHeight);
+                    collectorPane.getChildren().add(imagePaneDamagePoint);
                 }
 
                 playerCounter++;
