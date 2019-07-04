@@ -431,7 +431,7 @@ public class CliMain implements ViewInterface {
             //retrieve players on this row
             ArrayList<SmartPlayer> players = new ArrayList<>();
             for (SmartPlayer player : model.getSmartPlayerMap().values()) {
-                if (player.getPosY() == i)
+                if (player.getPosX() == i)
                     players.add(player);
             }
 
@@ -670,7 +670,7 @@ public class CliMain implements ViewInterface {
             ArrayList<String> figuresInSquare = new ArrayList<>();
 
             for (int j = 0; j < players.size(); j++) {    //scan each player
-                if (players.get(j).getPosX() == i) {    //checks if this player is on same row square
+                if (players.get(j).getPosY() == i) {    //checks if this player is on same row square
                     figuresInSquare.add(parseFigure(players.get(j).getFigure()));
                 }
             }
@@ -720,7 +720,7 @@ public class CliMain implements ViewInterface {
                 //scan every tile in this row
                 for (SmartTile tile : tiles) {
                     singleSquareInfo = new ArrayList<>();
-                    if (tile.getPosX() == i) {  //same column
+                    if (tile.getPosY() == i) {  //same column
                         if (tile.getPowerup() == 1)
                             singleSquareInfo.add(tile.getPowerup() + "PU   ");
 
