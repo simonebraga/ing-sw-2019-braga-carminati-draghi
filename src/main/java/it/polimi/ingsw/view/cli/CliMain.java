@@ -703,10 +703,11 @@ public class CliMain implements ViewInterface {
                 squaresContentInfo.add(singleSquareInfo);
 
             } else if (squareTypes.get(i).equals("tile")) {     //tile square
+                boolean found = false;
+                singleSquareInfo = new ArrayList<>();
 
                 //scan every tile in this row
                 for (SmartTile tile : tiles) {
-                    singleSquareInfo = new ArrayList<>();
                     if (tile.getPosY() == i) {  //same column
                         if (tile.getPowerup() == 1)
                             singleSquareInfo.add(tile.getPowerup() + "PU   ");
@@ -714,9 +715,17 @@ public class CliMain implements ViewInterface {
                         for (Color color : tile.getAmmo())
                             singleSquareInfo.add(parseColorName(color));
 
-                        squaresContentInfo.add(singleSquareInfo);
+                        found = true;
                     }
                 }
+
+                if(!found){ //squares with no AmmoTiles
+                    for (int j = 0; j < MAX_WEAPONS_BY_SQUARE; j++) {
+                        singleSquareInfo.add(VOID_INFO_SPACING);
+                    }
+                }
+
+                squaresContentInfo.add(singleSquareInfo);
 
             } else {            //void square
 
