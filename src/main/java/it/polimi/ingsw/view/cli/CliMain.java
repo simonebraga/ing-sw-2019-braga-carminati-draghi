@@ -1439,12 +1439,16 @@ public class CliMain implements ViewInterface {
                 System.out.println("Already chosen");
             else
                 System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
-            wantToContinue = booleanQuestion("Do you want to pick another one?");
+            if(indexes.size()<p.length){
+                wantToContinue = booleanQuestion("Do you want to pick another one?");
+            }else{
+                wantToContinue = 0;
+            }
         }
 
         out = new int[indexes.size()];
         for (int j = 0; j < out.length; j++) {
-            out[j] = indexes.get(j);
+            out[j] = indexes.get(j)-1;
         }
 
         return out;
@@ -1474,12 +1478,16 @@ public class CliMain implements ViewInterface {
                 System.out.println("Already chosen");
             else
                 System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
-            wantToContinue = booleanQuestion("Do you want to pick another one?");
+            if(indexes.size()<w.length){
+                wantToContinue = booleanQuestion("Do you want to pick another one?");
+            }else{
+                wantToContinue = 0;
+            }
         }
 
         out = new int[indexes.size()];
         for (int j = 0; j < out.length; j++) {
-            out[j] = indexes.get(j);
+            out[j] = indexes.get(j)-1;
         }
 
         return out;
