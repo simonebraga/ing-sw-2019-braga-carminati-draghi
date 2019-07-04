@@ -1413,6 +1413,8 @@ public class CliMain implements ViewInterface {
         System.out.println(s);
         System.out.print("Yes or No: ");
         String choice = scannerIn.nextLine();
+        while (choice.isBlank())
+            choice = scannerIn.nextLine();
 
         if (choice.equalsIgnoreCase("yes") || choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yeah"))
             return 1;
@@ -1425,24 +1427,33 @@ public class CliMain implements ViewInterface {
     @Override
     public synchronized int[] chooseMultiplePowerup(Powerup[] p) {
 
-        char wantToContinue = 'y';
-        Powerup[] temp = new Powerup[p.length - 1];
-        int[] out = new int[p.length];
-        int i = 0;
+        int wantToContinue;
+        Integer choice = 0;
+        ArrayList<Integer> indexes = new ArrayList<>();
+        int[] out;
 
-        while (wantToContinue == 'y' && p.length != 0) {
-            out[i] = choosePowerup(p);
-            System.out.print("Do you want to pick another powerup? Yes or No: ");
-            wantToContinue = (char) scannerIn.nextInt();
-            if (wantToContinue == 'y') {
-                for (int j = 0; j < p.length - 1; j++) {
-                    temp[j] = p[j + 1];
-                    if (j == p.length - 2)
-                        temp[j + 1] = p[p.length - 1];
-                }
-                p = temp;
-            }
-            i++;
+        System.out.println();
+        for (int j = 0; j < p.length; j++) {
+            System.out.println(j + " - " + p[j].getColor().name() + " " + p[j].getName().name());
+        }
+
+        wantToContinue = booleanQuestion("Do you want to pick a powerup?");
+
+        while (wantToContinue == 1 && indexes.size() < p.length) {
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+            if (!indexes.contains(choice) && choice > 0 && choice < p.length)
+                indexes.add(choice);
+            else if (indexes.contains(choice))
+                System.out.println("Already chosen");
+            else
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
+            wantToContinue = booleanQuestion("Do you want to pick another one?");
+        }
+
+        out = new int[indexes.size()];
+        for (int j = 0; j < out.length; j++) {
+            out[j] = indexes.get(j);
         }
 
         return out;
@@ -1451,24 +1462,33 @@ public class CliMain implements ViewInterface {
     @Override
     public synchronized int[] chooseMultipleWeapon(WeaponName[] w) {
 
-        char wantToContinue = 'y';
-        WeaponName[] temp = new WeaponName[w.length - 1];
-        int[] out = new int[w.length];
-        int i = 0;
+        int wantToContinue;
+        Integer choice = 0;
+        ArrayList<Integer> indexes = new ArrayList<>();
+        int[] out;
 
-        while (wantToContinue == 'y' && w.length != 0) {
-            out[i] = chooseWeapon(w);
-            System.out.print("Do you want to pick another weapon? Yes or No: ");
-            wantToContinue = (char) scannerIn.nextInt();
-            if (wantToContinue == 'y') {
-                for (int j = 0; j < w.length - 1; j++) {
-                    temp[j] = w[j + 1];
-                    if (j == w.length - 2)
-                        temp[j + 1] = w[w.length - 1];
-                }
-                w = temp;
-            }
-            i++;
+        System.out.println();
+        for (int j = 0; j < w.length; j++) {
+            System.out.println(j + " - " + w[j].name());
+        }
+
+        wantToContinue = booleanQuestion("Do you want to pick a weapon?");
+
+        while (wantToContinue == 1 && indexes.size() < w.length) {
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+            if (!indexes.contains(choice) && choice > 0 && choice < w.length)
+                indexes.add(choice);
+            else if (indexes.contains(choice))
+                System.out.println("Already chosen");
+            else
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
+            wantToContinue = booleanQuestion("Do you want to pick another one?");
+        }
+
+        out = new int[indexes.size()];
+        for (int j = 0; j < out.length; j++) {
+            out[j] = indexes.get(j);
         }
 
         return out;
