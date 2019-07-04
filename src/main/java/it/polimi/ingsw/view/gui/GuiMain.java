@@ -237,6 +237,8 @@ public class GuiMain extends Application implements ViewInterface {
         }
 
         if (!smartModel.getDomination()) {
+
+            // Setup killshot track in normal mode
             int figureCounter = 0;
             for (Figure figure : smartModel.getKillshotTrack()) {
                 ImagePane imagePaneFigure = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + figure.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
@@ -248,6 +250,7 @@ public class GuiMain extends Application implements ViewInterface {
                 figureCounter++;
             }
 
+            // Setup frenxy counter in normal mode
             for (int i = 0; i < smartModel.getKillCount() ; i++) {
                 ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                 imagePaneSkull.setPrefHeight((128.0 / 1931) * mapHeight);
@@ -256,8 +259,80 @@ public class GuiMain extends Application implements ViewInterface {
                 imagePaneSkull.setLayoutY(mapOffsetY + (103.0 / 1931) * mapHeight);
                 collectorPane.getChildren().add(imagePaneSkull);
             }
+
         } else {
-            //TODO Domination panel
+
+            double dominationBoardHeight = (364.0 / 1931) * mapHeight;
+            double dominationBoardWidth = (1124.0 / 2551) * mapWidth;
+            double dominationBoardOffsetX = mapOffsetX + (163.0 / 2551) * mapWidth;
+            double dominationBoardOffsetY = mapOffsetY + (7.0 / 1931) * mapHeight;
+            double dominationBlobHeight = (78.0 / 364) * dominationBoardHeight;
+            double dominationBlobWidth = (452.0 / 1124 / 7) * dominationBoardWidth;
+            double dominationKilltrackOffsetX = mapOffsetX + (1010.0 / 2551) * mapWidth;
+            double dominationKilltrackOffsetY = mapOffsetY + (49.0 / 1931) * mapHeight;
+
+            // Setup domination board
+            ImagePane imagePaneDominationBoard = new ImagePane(properties.getProperty("boardDominationRoot").concat(properties.getProperty("boardDomination")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+            imagePaneDominationBoard.setPrefHeight(dominationBoardHeight);
+            imagePaneDominationBoard.setPrefWidth(dominationBoardWidth);
+            imagePaneDominationBoard.setLayoutX(dominationBoardOffsetX);
+            imagePaneDominationBoard.setLayoutY(dominationBoardOffsetY);
+            collectorPane.getChildren().add(imagePaneDominationBoard);
+
+            // Setup spawn damage tracks in domination mode
+            int colorCounter = 0;
+            for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartModel.getSpawnDamageTrack().keySet()) {
+                double i = 0;
+                double j = 0;
+                for (Figure figure : smartModel.getSpawnDamageTrack().get(color)) {
+                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + figure.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                    imagePaneDamagePoint.setPrefHeight(dominationBlobHeight);
+                    imagePaneDamagePoint.setPrefWidth(dominationBlobWidth);
+                    imagePaneDamagePoint.setLayoutX(mapOffsetX + (179.0 / 2551) * mapWidth + (i + j) * dominationBlobWidth);
+                    imagePaneDamagePoint.setLayoutY(mapOffsetY + (29.0 / 1931) * mapHeight + colorCounter * (dominationBlobHeight + (40.0 / 364) * dominationBoardHeight));
+                    collectorPane.getChildren().add(imagePaneDamagePoint);
+                    if (i < 8)
+                        i += 1;
+                    else
+                        j += 0.3;
+                }
+                colorCounter++;
+            }
+
+            // Setup the killshot track in domination mode
+            for (int i = 0 ; (i < smartModel.getKillshotTrack().size() && i < 8) ; i++) {
+                ImagePane imagePaneBlob = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + smartModel.getKillshotTrack().get(i).toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                imagePaneBlob.setPrefHeight(dominationBlobHeight);
+                imagePaneBlob.setPrefWidth(dominationBlobWidth);
+                imagePaneBlob.setLayoutX(dominationKilltrackOffsetX + i / 2.0 * dominationBlobWidth);
+                imagePaneBlob.setLayoutY(dominationKilltrackOffsetY);
+                collectorPane.getChildren().add(imagePaneBlob);
+            } for (int i = 8 ; i < smartModel.getKillshotTrack().size() ; i++) {
+                ImagePane imagePaneBlob = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + smartModel.getKillshotTrack().get(i).toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                imagePaneBlob.setPrefHeight(dominationBlobHeight);
+                imagePaneBlob.setPrefWidth(dominationBlobWidth);
+                imagePaneBlob.setLayoutX(dominationKilltrackOffsetX + (i - 8) / 2.0 * dominationBlobWidth);
+                imagePaneBlob.setLayoutY(dominationKilltrackOffsetY + dominationBlobHeight);
+                collectorPane.getChildren().add(imagePaneBlob);
+            }
+
+            // Setup the frenzy counter track in domination mode
+            for (int i = 0 ; (i < smartModel.getKillCount() && i < 4) ; i++) {
+                ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                imagePaneSkull.setPrefHeight(dominationBlobHeight);
+                imagePaneSkull.setPrefWidth(dominationBlobWidth);
+                imagePaneSkull.setLayoutX(dominationKilltrackOffsetX + 3 * dominationBlobWidth - i * dominationBlobWidth);
+                imagePaneSkull.setLayoutY(dominationKilltrackOffsetY + dominationBlobHeight);
+                collectorPane.getChildren().add(imagePaneSkull);
+            } for (int i = 4 ; i < smartModel.getKillCount() ; i++) {
+                ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                imagePaneSkull.setPrefHeight(dominationBlobHeight);
+                imagePaneSkull.setPrefWidth(dominationBlobWidth);
+                imagePaneSkull.setLayoutX(dominationKilltrackOffsetX + 3 * dominationBlobWidth - (i - 4) * dominationBlobWidth);
+                imagePaneSkull.setLayoutY(dominationKilltrackOffsetY);
+                collectorPane.getChildren().add(imagePaneSkull);
+            }
+
         }
 
         // Setup the players informations
