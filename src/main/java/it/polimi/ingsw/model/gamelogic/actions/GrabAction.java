@@ -35,6 +35,10 @@ public class GrabAction implements Action{
             ArrayList<Weapon> weaponsAvailable = ((SpawnSquare) player.getPosition()).getWeapons();
             Weapon choice;
 
+            if(weaponsAvailable.isEmpty()){
+                throw new IllegalActionException();
+            }
+
             choice = server.chooseWeapon(player, weaponsAvailable);
 
             if(player.getWeaponPocket().getWeapons().size() == 3){
