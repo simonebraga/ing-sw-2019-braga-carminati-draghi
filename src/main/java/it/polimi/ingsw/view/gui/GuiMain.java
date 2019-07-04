@@ -5,9 +5,7 @@ import it.polimi.ingsw.controller.CustomStream;
 import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
-import it.polimi.ingsw.model.smartmodel.SmartModel;
-import it.polimi.ingsw.model.smartmodel.SmartPowerup;
-import it.polimi.ingsw.model.smartmodel.SmartWeapon;
+import it.polimi.ingsw.model.smartmodel.*;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
 import javafx.application.Application;
@@ -54,7 +52,7 @@ public class GuiMain extends Application implements ViewInterface {
     private Gson gson;
 
     public GuiMain() {
-        this.height = 960;
+        this.height = 720;
         this.width = (this.height - 52) * 320/167;
         this.spacing = this.height / 72;
         this.textSize = 20;
@@ -159,23 +157,94 @@ public class GuiMain extends Application implements ViewInterface {
         double playerWeaponOffsetX = (width * 0.5 * 1.65) + spacing;
         double playerWeaponOffsetY = spacing;
 
+        double mapIconHeight = (1318.0 / 1931) * mapHeight;
+        double mapIconWidth = (1733.0 / 2551) * mapWidth;
+        double mapIconOffsetX = (414.0 / 2551) * mapWidth + spacing;
+        double mapIconOffsetY = (402.0 / 1931) * mapHeight + spacing;
+
+        double squareHeight = mapIconWidth / 4;
+        double squareWidth = mapIconHeight / 3;
+
+        double tileHeight = (mapIconWidth / 4) / 3;
+        double tileWidth = tileHeight;
+
+        double figureHeight = tileHeight;
+        double figureWidth = figureHeight;
+
+        double weaponWidth = (820.0 / (3 * 2551)) * mapWidth;
+        double weaponHeight = weaponWidth * 1.7;
+
         //TODO Remove Exception when tested (Maybe)
-        gamePane.setStyle("-fx-border-color: red; -fx-border-width: 1;");
         Pane collectorPane = new Pane();
 
         // Setup the map
-        ImagePane imagePaneMap = new ImagePane(properties.getProperty("mapsRoot").concat(properties.getProperty("map" + (smartModel.getMapIndex()+1))),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+        ImagePane imagePaneMap = new ImagePane(properties.getProperty("mapsRoot").concat(properties.getProperty("map" + (smartModel.getMapIndex() + 1))), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
         imagePaneMap.setPrefHeight(mapHeight);
         imagePaneMap.setPrefWidth(mapWidth);
         imagePaneMap.setLayoutX(mapOffsetX);
         imagePaneMap.setLayoutY(mapOffsetY);
         collectorPane.getChildren().add(imagePaneMap);
 
+        for (SmartTile smartTile : smartModel.getMapTiles()) {
+            ImagePane imagePaneTile = new ImagePane(properties.getProperty("tilesRoot").concat(properties.getProperty(getTileFileName(smartTile))), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+            imagePaneTile.setPrefHeight(tileHeight);
+            imagePaneTile.setPrefWidth(tileWidth);
+            imagePaneTile.setLayoutX(mapIconOffsetX + smartTile.getPosY() * (squareWidth) + squareWidth * 0.15);
+            imagePaneTile.setLayoutY(mapIconOffsetY + smartTile.getPosX() * (squareHeight) + squareHeight * 0.15);
+            collectorPane.getChildren().add(imagePaneTile);
+        }
+
+        int weaponSpawnCounter = 0;
+        for (WeaponName weaponName : smartModel.getSpawnWeaponMap().get(it.polimi.ingsw.model.enumeratedclasses.Color.BLUE)) {
+            double weaponOffsetX = (1344.0 / 2551) * mapWidth + spacing;
+            double weaponOffsetY = (375.0 / 1931) * mapHeight + spacing - weaponHeight;
+
+            ImagePane imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + weaponName.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+            imagePaneWeapon.setPrefHeight(weaponHeight);
+            imagePaneWeapon.setPrefWidth(weaponWidth);
+            imagePaneWeapon.setLayoutX(weaponOffsetX + weaponWidth * weaponSpawnCounter);
+            imagePaneWeapon.setLayoutY(weaponOffsetY);
+            collectorPane.getChildren().add(imagePaneWeapon);
+            weaponSpawnCounter++;
+        }
+
+        weaponSpawnCounter = 0;
+        for (WeaponName weaponName : smartModel.getSpawnWeaponMap().get(it.polimi.ingsw.model.enumeratedclasses.Color.RED)) {
+            double weaponOffsetX = (320.0 / 2551) * mapWidth + spacing - weaponWidth;
+            double weaponOffsetY = (698.0 / 1931) * mapHeight + spacing;
+
+            ImagePane imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + weaponName.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+            imagePaneWeapon.setPrefHeight(weaponHeight);
+            imagePaneWeapon.setPrefWidth(weaponWidth);
+            imagePaneWeapon.setLayoutX(weaponOffsetX);
+            imagePaneWeapon.setLayoutY(weaponOffsetY + weaponSpawnCounter * weaponWidth);
+            collectorPane.getChildren().add(imagePaneWeapon);
+            weaponSpawnCounter++;
+        }
+
+        weaponSpawnCounter = 0;
+        for (WeaponName weaponName : smartModel.getSpawnWeaponMap().get(it.polimi.ingsw.model.enumeratedclasses.Color.YELLOW)) {
+            double weaponOffsetX = (2240.0 / 2551) * mapWidth + spacing;
+            double weaponOffsetY = (950.0 / 1931) * mapHeight + spacing;
+
+            ImagePane imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + weaponName.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+            imagePaneWeapon.setPrefHeight(weaponHeight);
+            imagePaneWeapon.setPrefWidth(weaponWidth);
+            imagePaneWeapon.setLayoutX(weaponOffsetX);
+            imagePaneWeapon.setLayoutY(weaponOffsetY + weaponSpawnCounter * weaponWidth);
+            collectorPane.getChildren().add(imagePaneWeapon);
+            weaponSpawnCounter++;
+        }
+
         // Setup the players informations
         int playerCounter = 0;
-        for (String nickname : smartModel.getSmartPlayerMap().keySet())
+        int playerTotalCounter = 0;
+        for (String nickname : smartModel.getSmartPlayerMap().keySet()) {
+
+            SmartPlayer smartPlayer = smartModel.getSmartPlayerMap().get(nickname);
+
             if (nickname.equals(this.nickname)) {
-                ImagePane imagePaneMyBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartModel.getSmartPlayerMap().get(nickname).getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                ImagePane imagePaneMyBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                 imagePaneMyBoard.setPrefHeight(myBoardHeight);
                 imagePaneMyBoard.setPrefWidth(myBoardWidth);
                 imagePaneMyBoard.setLayoutX(myBoardOffsetX);
@@ -183,12 +252,12 @@ public class GuiMain extends Application implements ViewInterface {
                 collectorPane.getChildren().add(imagePaneMyBoard);
 
                 int weaponCounter = 0;
-                for (SmartWeapon smartWeapon : smartModel.getSmartPlayerMap().get(nickname).getWeapons()) {
+                for (SmartWeapon smartWeapon : smartPlayer.getWeapons()) {
                     ImagePane imagePaneWeapon;
                     if (smartWeapon.getLoaded())
-                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                     else
-                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weaponBack")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weaponBack")), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                     imagePaneWeapon.setPrefHeight(myWeaponHeight);
                     imagePaneWeapon.setPrefWidth(myWeaponWidth);
                     imagePaneWeapon.setLayoutX(myWeaponOffsetX + (spacing + myWeaponWidth) * weaponCounter);
@@ -199,7 +268,7 @@ public class GuiMain extends Application implements ViewInterface {
                 }
 
                 int powerupCounter = 0;
-                for (SmartPowerup smartPowerup : smartModel.getSmartPlayerMap().get(nickname).getPowerups()) {
+                for (SmartPowerup smartPowerup : smartPlayer.getPowerups()) {
                     ImagePane imagePanePowerup = new ImagePane(properties.getProperty("powerupsRoot").concat(properties.getProperty("powerup" + smartPowerup.getPowerupName().toString() + "_" + smartPowerup.getColor().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                     imagePanePowerup.setPrefHeight(myPowerupHeight);
                     imagePanePowerup.setPrefWidth(myPowerupWidth);
@@ -211,7 +280,7 @@ public class GuiMain extends Application implements ViewInterface {
                 }
 
             } else {
-                ImagePane imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartModel.getSmartPlayerMap().get(nickname).getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                ImagePane imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                 imagePanePlayerBoard.setPrefHeight(playerBoardHeight);
                 imagePanePlayerBoard.setPrefWidth(playerBoardWidth);
                 imagePanePlayerBoard.setLayoutX(playerBoardOffsetX);
@@ -219,12 +288,12 @@ public class GuiMain extends Application implements ViewInterface {
                 collectorPane.getChildren().add(imagePanePlayerBoard);
 
                 int weaponCounter = 0;
-                for (SmartWeapon smartWeapon : smartModel.getSmartPlayerMap().get(nickname).getWeapons()) {
+                for (SmartWeapon smartWeapon : smartPlayer.getWeapons()) {
                     ImagePane imagePaneWeapon;
                     if (smartWeapon.getLoaded())
-                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weapon" + smartWeapon.getWeaponName().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                     else
-                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weaponBack")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                        imagePaneWeapon = new ImagePane(properties.getProperty("weaponsRoot").concat(properties.getProperty("weaponBack")), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                     imagePaneWeapon.setPrefHeight(playerWeaponHeight);
                     imagePaneWeapon.setPrefWidth(playerWeaponWidth);
                     imagePaneWeapon.setLayoutX(playerWeaponOffsetX + (playerWeaponWidth + spacing) * weaponCounter);
@@ -236,7 +305,36 @@ public class GuiMain extends Application implements ViewInterface {
                 playerCounter++;
             }
 
+            ImagePane imagePaneFigure = new ImagePane(properties.getProperty("figuresRoot").concat(properties.getProperty("figure" + smartPlayer.getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+            if ((smartPlayer.getPosX() >= 0) && (smartPlayer.getPosY() >= 0)) {
+
+                imagePaneFigure.setPrefHeight(figureHeight);
+                imagePaneFigure.setPrefWidth(figureWidth);
+                imagePaneFigure.setLayoutX(mapIconOffsetX + smartPlayer.getPosY() * (squareWidth) + squareWidth * 0.1 + spacing * 1.4 * playerTotalCounter);
+                imagePaneFigure.setLayoutY(mapIconOffsetY + smartPlayer.getPosX() * (squareHeight) + squareHeight * 0.55);
+                collectorPane.getChildren().add(imagePaneFigure);
+                playerTotalCounter++;
+            }
+
+        }
+
         Platform.runLater(() -> gamePane.getChildren().add(collectorPane));
+    }
+
+    private String getTileFileName(SmartTile smartTile) {
+        String fileName = "tile";
+        for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartTile.getAmmo())
+            if (Objects.equals(color.toString(), "RED"))
+                fileName += "R";
+        for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartTile.getAmmo())
+            if (Objects.equals(color.toString(), "BLUE"))
+                fileName += "B";
+        for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartTile.getAmmo())
+            if (Objects.equals(color.toString(), "YELLOW"))
+                fileName += "Y";
+        for (int i = 0 ; i < smartTile.getPowerup() ; i++)
+            fileName += "P";
+        return fileName;
     }
 
     private void setCleanScenario() {
