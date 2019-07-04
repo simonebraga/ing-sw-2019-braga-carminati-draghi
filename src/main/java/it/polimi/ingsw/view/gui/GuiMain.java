@@ -236,15 +236,28 @@ public class GuiMain extends Application implements ViewInterface {
             weaponSpawnCounter++;
         }
 
-        int figureCounter = 0;
-        for (Figure figure : smartModel.getKillshotTrack()) {
-            ImagePane imagePaneFigure = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + figure.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
-            imagePaneFigure.setPrefHeight((128.0 / 1931) * mapHeight);
-            imagePaneFigure.setPrefWidth((854.0 / 2551) * mapWidth / 8);
-            imagePaneFigure.setLayoutX(mapOffsetX + (182.0 / 2551) * mapWidth + figureCounter * (854.0 / 2551) * mapWidth / 8);
-            imagePaneFigure.setLayoutY(mapOffsetY + (103.0 / 1931) * mapHeight);
-            collectorPane.getChildren().add(imagePaneFigure);
-            figureCounter++;
+        if (!smartModel.getDomination()) {
+            int figureCounter = 0;
+            for (Figure figure : smartModel.getKillshotTrack()) {
+                ImagePane imagePaneFigure = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + figure.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                imagePaneFigure.setPrefHeight((128.0 / 1931) * mapHeight);
+                imagePaneFigure.setPrefWidth((854.0 / 2551) * mapWidth / 8);
+                imagePaneFigure.setLayoutX(mapOffsetX + (182.0 / 2551) * mapWidth + figureCounter * (854.0 / 2551) * mapWidth / 8 / 2);
+                imagePaneFigure.setLayoutY(mapOffsetY + (103.0 / 1931) * mapHeight);
+                collectorPane.getChildren().add(imagePaneFigure);
+                figureCounter++;
+            }
+
+            for (int i = 0; i < smartModel.getKillCount() ; i++) {
+                ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                imagePaneSkull.setPrefHeight((128.0 / 1931) * mapHeight);
+                imagePaneSkull.setPrefWidth((854.0 / 2551) * mapWidth / 8);
+                imagePaneSkull.setLayoutX(mapOffsetX + (182.0 / 2551) * mapWidth + (854.0 / 2551) * mapWidth * 7 / 8 - i * (854.0 / 2551) * mapWidth / 8);
+                imagePaneSkull.setLayoutY(mapOffsetY + (103.0 / 1931) * mapHeight);
+                collectorPane.getChildren().add(imagePaneSkull);
+            }
+        } else {
+            //TODO Domination panel
         }
 
         // Setup the players informations
@@ -315,6 +328,28 @@ public class GuiMain extends Application implements ViewInterface {
                     collectorPane.getChildren().add(imagePaneDamagePoint);
                 }
 
+                int colorCounter = 0;
+                for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartPlayer.getAmmo().keySet()) {
+                    for (int i = 0 ; i < smartPlayer.getAmmo().get(color) ; i++) {
+                        ImagePane imagePane = new ImagePane(properties.getProperty("ammoRoot").concat(properties.getProperty("ammo" + color.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                        imagePane.setPrefHeight((54.0 / 277) * myBoardHeight);
+                        imagePane.setPrefWidth((54.0 / 1124) * myBoardWidth);
+                        imagePane.setLayoutX(myBoardOffsetX + (916.0 / 1124) * myBoardWidth + i * (54.0 / 1124) * myBoardWidth);
+                        imagePane.setLayoutY(myBoardOffsetY + (48.0 / 277) * myBoardHeight + colorCounter * (54.0 / 277) * myBoardHeight);
+                        collectorPane.getChildren().add(imagePane);
+                    }
+                    colorCounter++;
+                }
+
+                for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
+                    ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                    imagePaneSkull.setPrefHeight((76.0 / 277) * myBoardHeight);
+                    imagePaneSkull.setPrefWidth((360.0 / 6 / 1124) * myBoardWidth);
+                    imagePaneSkull.setLayoutX(myBoardOffsetX + (232.0 / 1124) * myBoardWidth + i * (360.0 / 6 / 1124) * myBoardWidth);
+                    imagePaneSkull.setLayoutY(myBoardOffsetY + (176.0 / 277) * myBoardHeight);
+                    collectorPane.getChildren().add(imagePaneSkull);
+                }
+
             } else {
                 ImagePane imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                 imagePanePlayerBoard.setPrefHeight(playerBoardHeight);
@@ -361,6 +396,28 @@ public class GuiMain extends Application implements ViewInterface {
                     imagePaneDamagePoint.setLayoutX(playerBoardOffsetX + (543.0 / 1124) * playerBoardWidth + i * (64.0 / 1124) * playerBoardWidth / 2);
                     imagePaneDamagePoint.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter + (57.0 / 277) * playerBoardHeight - (76.0 / 277) * playerBoardHeight);
                     collectorPane.getChildren().add(imagePaneDamagePoint);
+                }
+
+                int colorCounter = 0;
+                for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartPlayer.getAmmo().keySet()) {
+                    for (int i = 0 ; i < smartPlayer.getAmmo().get(color) ; i++) {
+                        ImagePane imagePane = new ImagePane(properties.getProperty("ammoRoot").concat(properties.getProperty("ammo" + color.toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                        imagePane.setPrefHeight((54.0 / 277) * playerBoardHeight);
+                        imagePane.setPrefWidth((54.0 / 1124) * playerBoardWidth);
+                        imagePane.setLayoutX(playerBoardOffsetX + (916.0 / 1124) * playerBoardWidth + i * (54.0 / 1124) * playerBoardWidth);
+                        imagePane.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter + (48.0 / 277) * playerBoardHeight + colorCounter * (54.0 / 277) * playerBoardHeight);
+                        collectorPane.getChildren().add(imagePane);
+                    }
+                    colorCounter++;
+                }
+
+                for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
+                    ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
+                    imagePaneSkull.setPrefHeight((76.0 / 277) * playerBoardHeight);
+                    imagePaneSkull.setPrefWidth((360.0 / 6 / 1124) * playerBoardWidth);
+                    imagePaneSkull.setLayoutX(playerBoardOffsetX + (232.0 / 1124) * playerBoardWidth + i * (360.0 / 6 / 1124) * playerBoardWidth);
+                    imagePaneSkull.setLayoutY(playerBoardOffsetY  + (playerBoardOffsetY + playerBoardHeight) * playerCounter + (176.0 / 277) * playerBoardHeight);
+                    collectorPane.getChildren().add(imagePaneSkull);
                 }
 
                 playerCounter++;
