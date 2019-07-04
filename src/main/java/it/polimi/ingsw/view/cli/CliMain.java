@@ -74,12 +74,12 @@ public class CliMain implements ViewInterface {
     /**
      * This finale attribute represents the UNICODE code for the "no ammo" symbol.
      */
-    private static final String UNICODE_NO_AMMO = "\uD83D\uDEC7";
+    private static final String UNICODE_NO_AMMO = "∅";
 
     /**
      * This finale attribute represents the UNICODE code for a skull symbol.
      */
-    private static final String UNICODE_SKULL = "\u2620";
+    private static final String UNICODE_SKULL = "☠";
 
     /**
      * This final attribute defines squares width in cli printing.
