@@ -30,7 +30,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-//TODO Javadoc
+/**
+ * This class contains the graphic implementation of the view to use the application
+ */
 public class GuiMain extends Application implements ViewInterface {
 
     private double height;
@@ -53,17 +55,9 @@ public class GuiMain extends Application implements ViewInterface {
     private static String serverIp;
     private static String clientIp;
 
-    public GuiMain() {
-        this.height = 720;
-        this.width = (this.height - 52) * 320/167;
-        this.spacing = this.height / 72;
-        this.textSize = 20;
-        this.textEvent = new Text();
-        this.textEvent.setFill(Color.FIREBRICK);
-        this.currentScenario = new AtomicInteger();
-        this.pendingRequest = new AtomicBoolean();
-    }
-
+    /**
+     * @return a StackPane containing a button that allows the user to logout
+     */
     private StackPane getTopBar() {
         Button buttonLogout = new Button("Logout");
         buttonLogout.setOnAction(behavior -> {
@@ -78,6 +72,9 @@ public class GuiMain extends Application implements ViewInterface {
         return new StackPane(anchorPane);
     }
 
+    /**
+     * @return a top bat with also a button that allows the user to switch to the map scenario
+     */
     private StackPane getTopBarLinkedMap() {
         Button buttonLogout = new Button("Logout");
         buttonLogout.setOnAction(behavior -> {
@@ -100,6 +97,9 @@ public class GuiMain extends Application implements ViewInterface {
         return new StackPane(anchorPane);
     }
 
+    /**
+     * @return a top bat with also a button that allows the user to switch to the request scenario
+     */
     private StackPane getTopBarLinkedRequest() {
         Button buttonLogout = new Button("Logout");
         buttonLogout.setOnAction(behavior -> {
@@ -122,10 +122,17 @@ public class GuiMain extends Application implements ViewInterface {
         return new StackPane(anchorPane);
     }
 
+    /**
+     * @return a StackPane containing the notifications from the server
+     */
     private StackPane getBottomBar() {
         return new StackPane(textEvent);
     }
 
+    /**
+     * This method sets the game pane with all the useful information to the user
+     * @throws Exception if something goes wrong with the smartmodel parsing
+     */
     private void setupGamePane() throws Exception {
         cleanGamePane();
 
@@ -176,7 +183,6 @@ public class GuiMain extends Application implements ViewInterface {
         double weaponWidth = (820.0 / (3 * 2551)) * mapWidth;
         double weaponHeight = weaponWidth * 1.7;
 
-        //TODO Remove Exception when tested (Maybe)
         Pane collectorPane = new Pane();
 
         // Setup the map
@@ -187,6 +193,7 @@ public class GuiMain extends Application implements ViewInterface {
         imagePaneMap.setLayoutY(mapOffsetY);
         collectorPane.getChildren().add(imagePaneMap);
 
+        // Setup the tiles
         for (SmartTile smartTile : smartModel.getMapTiles()) {
             ImagePane imagePaneTile = new ImagePane(properties.getProperty("tilesRoot").concat(properties.getProperty(getTileFileName(smartTile))), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
             imagePaneTile.setPrefHeight(tileHeight);
@@ -196,6 +203,7 @@ public class GuiMain extends Application implements ViewInterface {
             collectorPane.getChildren().add(imagePaneTile);
         }
 
+        // Setup blue spawn weapons
         int weaponSpawnCounter = 0;
         for (WeaponName weaponName : smartModel.getSpawnWeaponMap().get(it.polimi.ingsw.model.enumeratedclasses.Color.BLUE)) {
             double weaponOffsetX = (1344.0 / 2551) * mapWidth + spacing;
@@ -210,6 +218,7 @@ public class GuiMain extends Application implements ViewInterface {
             weaponSpawnCounter++;
         }
 
+        // Setup red spawn weapons
         weaponSpawnCounter = 0;
         for (WeaponName weaponName : smartModel.getSpawnWeaponMap().get(it.polimi.ingsw.model.enumeratedclasses.Color.RED)) {
             double weaponOffsetX = (320.0 / 2551) * mapWidth + spacing - weaponWidth;
@@ -224,6 +233,7 @@ public class GuiMain extends Application implements ViewInterface {
             weaponSpawnCounter++;
         }
 
+        // Setup yellow spawn weapons
         weaponSpawnCounter = 0;
         for (WeaponName weaponName : smartModel.getSpawnWeaponMap().get(it.polimi.ingsw.model.enumeratedclasses.Color.YELLOW)) {
             double weaponOffsetX = (2240.0 / 2551) * mapWidth + spacing;
@@ -345,6 +355,8 @@ public class GuiMain extends Application implements ViewInterface {
             SmartPlayer smartPlayer = smartModel.getSmartPlayerMap().get(nickname);
 
             if (nickname.equals(this.nickname)) {
+
+                // Setup principal player board
                 ImagePane imagePaneMyBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                 imagePaneMyBoard.setPrefHeight(myBoardHeight);
                 imagePaneMyBoard.setPrefWidth(myBoardWidth);
@@ -352,6 +364,7 @@ public class GuiMain extends Application implements ViewInterface {
                 imagePaneMyBoard.setLayoutY(myBoardOffsetY);
                 collectorPane.getChildren().add(imagePaneMyBoard);
 
+                // Setup principal player weapons
                 int weaponCounter = 0;
                 for (SmartWeapon smartWeapon : smartPlayer.getWeapons()) {
                     ImagePane imagePaneWeapon;
@@ -368,6 +381,7 @@ public class GuiMain extends Application implements ViewInterface {
                     weaponCounter++;
                 }
 
+                // Setup principal player powerups
                 int powerupCounter = 0;
                 for (SmartPowerup smartPowerup : smartPlayer.getPowerups()) {
                     ImagePane imagePanePowerup = new ImagePane(properties.getProperty("powerupsRoot").concat(properties.getProperty("powerup" + smartPowerup.getPowerupName().toString() + "_" + smartPowerup.getColor().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
@@ -380,6 +394,7 @@ public class GuiMain extends Application implements ViewInterface {
                     powerupCounter++;
                 }
 
+                // Setup principal player damage
                 ArrayList<Figure> damage = smartPlayer.getDamage();
                 for (int i = 0 ; i < damage.size() ; i++) {
                     ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
@@ -390,6 +405,7 @@ public class GuiMain extends Application implements ViewInterface {
                     collectorPane.getChildren().add(imagePaneDamagePoint);
                 }
 
+                // Setup principal player marks
                 ArrayList<Figure> marks = new ArrayList<>();
                 for (Figure figure : smartPlayer.getMarks().keySet()) {
                     for (int i = 0; i < smartPlayer.getMarks().get(figure) ; i++) {
@@ -405,6 +421,7 @@ public class GuiMain extends Application implements ViewInterface {
                     collectorPane.getChildren().add(imagePaneDamagePoint);
                 }
 
+                // Setup principal player ammo
                 int colorCounter = 0;
                 for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartPlayer.getAmmo().keySet()) {
                     for (int i = 0 ; i < smartPlayer.getAmmo().get(color) ; i++) {
@@ -418,6 +435,7 @@ public class GuiMain extends Application implements ViewInterface {
                     colorCounter++;
                 }
 
+                // Setup principal player pointtrack
                 for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
                     ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                     imagePaneSkull.setPrefHeight((76.0 / 277) * myBoardHeight);
@@ -428,6 +446,8 @@ public class GuiMain extends Application implements ViewInterface {
                 }
 
             } else {
+
+                // Setup other players boards
                 ImagePane imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())), "-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                 imagePanePlayerBoard.setPrefHeight(playerBoardHeight);
                 imagePanePlayerBoard.setPrefWidth(playerBoardWidth);
@@ -435,6 +455,7 @@ public class GuiMain extends Application implements ViewInterface {
                 imagePanePlayerBoard.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter);
                 collectorPane.getChildren().add(imagePanePlayerBoard);
 
+                // Setup other players weapons
                 int weaponCounter = 0;
                 for (SmartWeapon smartWeapon : smartPlayer.getWeapons()) {
                     ImagePane imagePaneWeapon;
@@ -450,6 +471,7 @@ public class GuiMain extends Application implements ViewInterface {
                     weaponCounter++;
                 }
 
+                // Setup other players damage
                 ArrayList<Figure> damage = smartPlayer.getDamage();
                 for (int i = 0 ; i < damage.size() ; i++) {
                     ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
@@ -460,6 +482,7 @@ public class GuiMain extends Application implements ViewInterface {
                     collectorPane.getChildren().add(imagePaneDamagePoint);
                 }
 
+                // Setup other players marks
                 ArrayList<Figure> marks = new ArrayList<>();
                 for (Figure figure : smartPlayer.getMarks().keySet()) {
                     for (int i = 0; i < smartPlayer.getMarks().get(figure) ; i++) {
@@ -475,6 +498,7 @@ public class GuiMain extends Application implements ViewInterface {
                     collectorPane.getChildren().add(imagePaneDamagePoint);
                 }
 
+                // Setup other players ammo
                 int colorCounter = 0;
                 for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartPlayer.getAmmo().keySet()) {
                     for (int i = 0 ; i < smartPlayer.getAmmo().get(color) ; i++) {
@@ -488,6 +512,7 @@ public class GuiMain extends Application implements ViewInterface {
                     colorCounter++;
                 }
 
+                // Setup other players pointtrack
                 for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
                     ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
                     imagePaneSkull.setPrefHeight((76.0 / 277) * playerBoardHeight);
@@ -500,6 +525,7 @@ public class GuiMain extends Application implements ViewInterface {
                 playerCounter++;
             }
 
+            // Setup players positions on the map
             ImagePane imagePaneFigure = new ImagePane(properties.getProperty("figuresRoot").concat(properties.getProperty("figure" + smartPlayer.getFigure().toString())),"-fx-background-size: contain; -fx-background-repeat: no-repeat;");
             if ((smartPlayer.getPosX() >= 0) && (smartPlayer.getPosY() >= 0)) {
 
@@ -516,6 +542,11 @@ public class GuiMain extends Application implements ViewInterface {
         Platform.runLater(() -> gamePane.getChildren().add(collectorPane));
     }
 
+    /**
+     * This method is used to get the correct file name of a given tile
+     * @param smartTile is the tile to be parsed
+     * @return the correct file name
+     */
     private String getTileFileName(SmartTile smartTile) {
         String fileName = "tile";
         for (it.polimi.ingsw.model.enumeratedclasses.Color color : smartTile.getAmmo())
@@ -532,19 +563,31 @@ public class GuiMain extends Application implements ViewInterface {
         return fileName;
     }
 
+    /**
+     * This method is used to reset the root pane
+     */
     private void setCleanScenario() {
         Platform.runLater(() -> rootPane.getChildren().clear());
     }
 
+    /**
+     * This method is used to reset the pane that contain the request from the server
+     */
     private void cleanRequestPane() {
         pendingRequest.set(false);
         Platform.runLater(() -> requestPane.getChildren().clear());
     }
 
+    /**
+     * This method is used to reset the pane that contains the game map
+     */
     private void cleanGamePane() {
         Platform.runLater(() -> gamePane.getChildren().clear());
     }
 
+    /**
+     * This method is used to set a scenario where the used ca select the info to login and start the game
+     */
     private void setLoginScenario() {
         currentScenario.set(1);
 
@@ -590,6 +633,9 @@ public class GuiMain extends Application implements ViewInterface {
         Platform.runLater(() -> rootPane.getChildren().add(gridPaneLogin));
     }
 
+    /**
+     * This method is used to show a text that displays that the game is aboout to start
+     */
     private void setStartWaitScenario() {
         currentScenario.set(2);
 
@@ -606,6 +652,9 @@ public class GuiMain extends Application implements ViewInterface {
         Platform.runLater(() -> rootPane.getChildren().add(borderPane));
     }
 
+    /**
+     * This method is used to set the scenario that contains the game map
+     */
     private void setGameMapScenario() {
         currentScenario.set(3);
 
@@ -622,6 +671,9 @@ public class GuiMain extends Application implements ViewInterface {
         Platform.runLater(() -> rootPane.getChildren().add(borderPane));
     }
 
+    /**
+     * This method is used to show a text that displays that the logout is being performed
+     */
     private void setLogoutScenario() {
         currentScenario.set(4);
 
@@ -633,6 +685,9 @@ public class GuiMain extends Application implements ViewInterface {
         Platform.runLater(() -> rootPane.getChildren().add(textWait));
     }
 
+    /**
+     * This method is used to set the scenario that contains the last request from the server
+     */
     private void setRequestScenario() {
         currentScenario.set(5);
         pendingRequest.set(true);
@@ -641,6 +696,13 @@ public class GuiMain extends Application implements ViewInterface {
         Platform.runLater(() -> rootPane.getChildren().add(requestPane));
     }
 
+    /**
+     * This method is used to create a new Client instance and to login with the specified network type and nickname
+     * @param networkType This parameter determines which type of connection must be used
+     *          0 - RMI
+     *          1 - Socket
+     * @param nickname is the nickname used to login
+     */
     private void tryLogin(int networkType, String nickname) {
         try {
             client = new Client(networkType,this);
@@ -683,6 +745,10 @@ public class GuiMain extends Application implements ViewInterface {
         }
     }
 
+    /**
+     * This method is used to display a message opening a new windows
+     * @param s is the message to be shown
+     */
     private void popup(String s) {
         StackPane stackPane = new StackPane();
         stackPane.setPadding(new Insets(10,10,10,10));
@@ -734,6 +800,14 @@ public class GuiMain extends Application implements ViewInterface {
             serverIp = networkProperties.getProperty("serverIp");
         if (clientIp == null)
             clientIp = networkProperties.getProperty("clientIp");
+        this.height = 720;
+        this.width = (this.height - 52) * 320/167;
+        this.spacing = this.height / 72;
+        this.textSize = 20;
+        this.textEvent = new Text();
+        this.textEvent.setFill(Color.FIREBRICK);
+        this.currentScenario = new AtomicInteger();
+        this.pendingRequest = new AtomicBoolean();
         this.gson = new Gson();
         this.rootPane = new StackPane();
         this.requestPane = new StackPane();
