@@ -1131,7 +1131,10 @@ public class CliMain implements ViewInterface {
      * @param weapons an ArrayList of SmartWeapon that contains all player weapons.
      */
     private synchronized void printPlayerWeapons(ArrayList<SmartWeapon> weapons) {
+        if (weapons.isEmpty())
+            System.out.println("| Unarmed");
         for (SmartWeapon weapon : weapons) {
+            System.out.print("| ");
             if (weapon.getLoaded())
                 System.out.println(weapon.getWeaponName().name());
             else
@@ -1147,8 +1150,11 @@ public class CliMain implements ViewInterface {
     private synchronized void printPlayerPowerups(ArrayList<SmartPowerup> powerups) {
 
         System.out.println("| Power-ups: ");
-        for (SmartPowerup pu : powerups)
-            System.out.println(pu.getColor() + " " + pu.getPowerupName().name());
+        if (powerups.isEmpty())
+            System.out.println("| No power-ups");
+        for (SmartPowerup pu : powerups) {
+            System.out.println("| " + pu.getColor() + " " + pu.getPowerupName().name());
+        }
     }
 
     /**
