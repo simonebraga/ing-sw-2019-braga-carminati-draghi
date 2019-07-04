@@ -1479,6 +1479,7 @@ public class CliMain implements ViewInterface {
         wantToContinue = booleanQuestion("Do you want to pick a weapon?");
 
         while (wantToContinue == 1 && indexes.size() < w.length) {
+            System.out.print("Pick a weapon: ");
             if (scannerIn.hasNextInt())
                 choice = scannerIn.nextInt();
             if (!indexes.contains(choice) && choice > 0 && choice <= w.length)
