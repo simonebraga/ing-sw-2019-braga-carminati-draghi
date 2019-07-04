@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.enumeratedclasses.Color;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.enumeratedclasses.WeaponName;
 import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
-import it.polimi.ingsw.model.mapclasses.Square;
 import it.polimi.ingsw.model.smartmodel.*;
 import it.polimi.ingsw.view.Client;
 import it.polimi.ingsw.view.ViewInterface;
@@ -31,10 +30,6 @@ public class CliMain implements ViewInterface {
      */
     public static final String ANSI_RESET = "\u001B[0m";
 
-    /**
-     * This final attribute represents the ANSI code black font color.
-     */
-    public static final String ANSI_BLACK = "\u001B[30m";
 
     /**
      * This final attribute represents the ANSI code red font color.
@@ -47,39 +42,14 @@ public class CliMain implements ViewInterface {
     public static final String ANSI_GREEN = "\u001B[32m";
 
     /**
-     * This final attribute represents the ANSI code yellow font color.
-     */
-    public static final String ANSI_YELLOW = "\u001B[33m";
-
-    /**
-     * This final attribute represents the ANSI code blue font color.
-     */
-    public static final String ANSI_BLUE = "\u001B[34m";
-
-    /**
-     * This final attribute represents the ANSI code purple font color.
-     */
-    public static final String ANSI_PURPLE = "\u001B[35m";
-
-    /**
-     * This final attribute represents the ANSI code cyan font color.
-     */
-    public static final String ANSI_CYAN = "\u001B[36m";
-
-    /**
-     * This final attribute represents the ANSI code white font color.
-     */
-    public static final String ANSI_WHITE = "\u001B[37m";
-
-    /**
      * This finale attribute represents the UNICODE code for the "no ammo" symbol.
      */
-    private static final String UNICODE_NO_AMMO = "\uD83D\uDEC7";
+    private static final String UNICODE_NO_AMMO = "∅";
 
     /**
      * This finale attribute represents the UNICODE code for a skull symbol.
      */
-    private static final String UNICODE_SKULL = "\u2620";
+    private static final String UNICODE_SKULL = "☠";
 
     /**
      * This final attribute defines squares width in cli printing.
@@ -122,11 +92,6 @@ public class CliMain implements ViewInterface {
     private static final int SQUARE_FIGURE_SECTION_STARTING_INDEX = 5;
 
     /**
-     * This final attribute defines the maximum amount of character a generic info would be printed.
-     */
-    private static final int MAX_INFO_SIZE = 6;
-
-    /**
      * This final attribute defines the invalid input message to send to the user.
      */
     private static final String INVALID_INPUT_MESSAGE = "Invalid input";
@@ -148,11 +113,6 @@ public class CliMain implements ViewInterface {
      * This final attribute defines the maximum amount of weapons stored in a single spawn square.
      */
     private static final int MAX_WEAPONS_BY_SQUARE = 3;
-
-    /**
-     * This final attribute represents the number of maps available in the game.
-     */
-    private static final int GAME_MAPS_NUMBER = 4;
 
     /**
      * This final attribute represents the JSON file path containing all game maps.
@@ -231,7 +191,6 @@ public class CliMain implements ViewInterface {
 ////////////////////////////////////////////////////////////// class  methods ////////////////////////////////////////////////
 
 
-    //TODO(erase this method after finishing class)
     /**
      * This method is temporarily used to quickly run this class methods.
      */
@@ -1479,6 +1438,7 @@ public class CliMain implements ViewInterface {
         wantToContinue = booleanQuestion("Do you want to pick a weapon?");
 
         while (wantToContinue == 1 && indexes.size() < w.length) {
+            System.out.print("Pick a weapon: ");
             if (scannerIn.hasNextInt())
                 choice = scannerIn.nextInt();
             if (!indexes.contains(choice) && choice > 0 && choice <= w.length)

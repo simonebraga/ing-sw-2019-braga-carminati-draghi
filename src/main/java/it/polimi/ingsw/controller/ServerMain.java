@@ -571,9 +571,7 @@ public class ServerMain {
             gameOver(server, gameTable);
 
         } catch (FrenzyModeException e) {
-            //should never go here
-            System.out.println("Something went terribly wrong inside turn management.\n");
-            e.printStackTrace();
+            //normal execution
         }
     }
 
