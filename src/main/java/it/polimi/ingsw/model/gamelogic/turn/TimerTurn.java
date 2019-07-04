@@ -29,11 +29,11 @@ public class TimerTurn extends Thread{
 
     public void setStop(boolean stop) {
         this.stop.set(stop);
+        System.out.println("changed timer value");
     }
 
     @Override
     public void run() {
-        stop.set(false);
         while (!stop.get() && time>0){
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
@@ -43,7 +43,6 @@ public class TimerTurn extends Thread{
             }
         }
         if(!stop.get()){
-            System.out.println("Forced logout caused by turn timer");
             server.forceLogout(playerOfTurn);
         }
     }
