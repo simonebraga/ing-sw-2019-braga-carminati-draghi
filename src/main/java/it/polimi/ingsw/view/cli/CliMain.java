@@ -230,12 +230,6 @@ public class CliMain implements ViewInterface {
 
 ////////////////////////////////////////////////////////////// class  methods ////////////////////////////////////////////////
 
-    /**
-     * This method clears the console's content.
-     */
-    public synchronized static void clearScreen() throws IOException, InterruptedException{
-        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-    }
 
     //TODO(erase this method after finishing class)
     /**
@@ -355,13 +349,6 @@ public class CliMain implements ViewInterface {
                 rmiOrCli = scannerIn.nextInt();
             }
             scannerIn.nextLine();
-            try {
-                clearScreen();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         } while (rmiOrCli != 0 && rmiOrCli != 1);
         return rmiOrCli;
     }

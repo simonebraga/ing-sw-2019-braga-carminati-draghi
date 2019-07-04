@@ -49,7 +49,7 @@ public class MainClient {
                     break;
                 }
                 case "-clientIp": {
-                    if (newArgs[2] == null) {
+                    if (newArgs[1] == null) {
                         i++;
                         if (i < args.length)
                             newArgs[1] = args[i];
