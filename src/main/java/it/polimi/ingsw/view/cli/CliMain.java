@@ -1163,7 +1163,7 @@ public class CliMain implements ViewInterface {
                 System.out.print(" | ");
                 System.out.print(parseFigure(figure));
             }
-            for (int i = model.getKillCount(); i < maxKills; i++) {
+            for (int i = 0; i < model.getKillCount(); i++) {
                 System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
             }
             System.out.println(" |");
