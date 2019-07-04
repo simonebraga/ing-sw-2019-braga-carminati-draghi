@@ -54,6 +54,7 @@ public class GuiMain extends Application implements ViewInterface {
     private Gson gson;
     private static String serverIp;
     private static String clientIp;
+    private static double staticHeight;
 
     /**
      * @return a StackPane containing a button that allows the user to logout
@@ -774,6 +775,11 @@ public class GuiMain extends Application implements ViewInterface {
             clientIp = args[1];
         else
             clientIp = null;
+        if (args[2] != null) {
+            staticHeight = Integer.parseInt(args[2]);
+        }
+        else
+            staticHeight = 0;
         launch(args);
     }
 
@@ -800,7 +806,10 @@ public class GuiMain extends Application implements ViewInterface {
             serverIp = networkProperties.getProperty("serverIp");
         if (clientIp == null)
             clientIp = networkProperties.getProperty("clientIp");
-        this.height = 720;
+        if (staticHeight > 0)
+            this.height = staticHeight;
+        else
+            this.height = 720;
         this.width = (this.height - 52) * 320/167;
         this.spacing = this.height / 72;
         this.textSize = 20;
