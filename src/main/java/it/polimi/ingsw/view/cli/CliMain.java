@@ -703,10 +703,11 @@ public class CliMain implements ViewInterface {
                 squaresContentInfo.add(singleSquareInfo);
 
             } else if (squareTypes.get(i).equals("tile")) {     //tile square
+                boolean found = false;
+                singleSquareInfo = new ArrayList<>();
 
                 //scan every tile in this row
                 for (SmartTile tile : tiles) {
-                    singleSquareInfo = new ArrayList<>();
                     if (tile.getPosY() == i) {  //same column
                         if (tile.getPowerup() == 1)
                             singleSquareInfo.add(tile.getPowerup() + "PU   ");
@@ -714,9 +715,17 @@ public class CliMain implements ViewInterface {
                         for (Color color : tile.getAmmo())
                             singleSquareInfo.add(parseColorName(color));
 
-                        squaresContentInfo.add(singleSquareInfo);
+                        found = true;
                     }
                 }
+
+                if(!found){ //squares with no AmmoTiles
+                    for (int j = 0; j < MAX_WEAPONS_BY_SQUARE; j++) {
+                        singleSquareInfo.add(VOID_INFO_SPACING);
+                    }
+                }
+
+                squaresContentInfo.add(singleSquareInfo);
 
             } else {            //void square
 
@@ -1439,12 +1448,16 @@ public class CliMain implements ViewInterface {
                 System.out.println("Already chosen");
             else
                 System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
-            wantToContinue = booleanQuestion("Do you want to pick another one?");
+            if(indexes.size()<p.length){
+                wantToContinue = booleanQuestion("Do you want to pick another one?");
+            }else{
+                wantToContinue = 0;
+            }
         }
 
         out = new int[indexes.size()];
         for (int j = 0; j < out.length; j++) {
-            out[j] = indexes.get(j);
+            out[j] = indexes.get(j)-1;
         }
 
         return out;
@@ -1474,12 +1487,16 @@ public class CliMain implements ViewInterface {
                 System.out.println("Already chosen");
             else
                 System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
-            wantToContinue = booleanQuestion("Do you want to pick another one?");
+            if(indexes.size()<w.length){
+                wantToContinue = booleanQuestion("Do you want to pick another one?");
+            }else{
+                wantToContinue = 0;
+            }
         }
 
         out = new int[indexes.size()];
         for (int j = 0; j < out.length; j++) {
-            out[j] = indexes.get(j);
+            out[j] = indexes.get(j)-1;
         }
 
         return out;
