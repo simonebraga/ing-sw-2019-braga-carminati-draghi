@@ -1360,6 +1360,9 @@ public class CliMain implements ViewInterface {
             System.out.print("\nChoose game mode (n/d): ");
 
             fullChoice = scannerIn.nextLine();  //allow user to type in also the full case name
+            while(fullChoice.isBlank()){
+                fullChoice = scannerIn.nextLine();
+            }
             choice = fullChoice.toCharArray()[0];
 
             if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D')
