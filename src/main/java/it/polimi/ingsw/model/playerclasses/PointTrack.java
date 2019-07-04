@@ -37,7 +37,7 @@ public class PointTrack {
     }
 
     public void setValue(ArrayList<Integer> value) {
-        this.value = value;
+        this.value = new ArrayList<>(value);
     }
 
     /**
