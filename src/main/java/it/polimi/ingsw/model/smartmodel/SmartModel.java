@@ -35,6 +35,7 @@ public class SmartModel {
     private Map<Color,ArrayList<WeaponName>> spawnWeaponMap;
     private ArrayList<SmartTile> mapTiles;
     private ArrayList<Figure> killshotTrack;
+    private Integer killCount;
     private Map<Color,ArrayList<Figure>> spawnDamageTrack;
 
     public Map<String, SmartPlayer> getSmartPlayerMap() {
@@ -198,6 +199,7 @@ public class SmartModel {
         killshotTrack = new ArrayList<>();
         for (Player player : gameTable.getKillshotTrack().getKillTrack())
             killshotTrack.add(player.getFigure());
+        killCount = gameTable.getKillshotTrack().getKillCount();
 
     }
 
@@ -208,5 +210,13 @@ public class SmartModel {
     @Override
     public synchronized String toString() {
         return new Gson().toJson(this);
+    }
+
+    public Integer getKillCount() {
+        return killCount;
+    }
+
+    public void setKillCount(Integer killCount) {
+        this.killCount = killCount;
     }
 }
