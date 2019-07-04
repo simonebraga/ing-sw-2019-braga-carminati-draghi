@@ -43,6 +43,7 @@ public class TimerTurn extends Thread{
             }
         }
         if(!stop.get()){
+            System.out.println("Forced logout caused by turn timer");
             server.forceLogout(playerOfTurn);
         }
     }

@@ -1360,6 +1360,9 @@ public class CliMain implements ViewInterface {
             System.out.print("\nChoose game mode (n/d): ");
 
             fullChoice = scannerIn.nextLine();  //allow user to type in also the full case name
+            while(fullChoice.isBlank()){
+                fullChoice = scannerIn.nextLine();
+            }
             choice = fullChoice.toCharArray()[0];
 
             if (choice != 'n' && choice != 'd' && choice != 'N' && choice != 'D')
@@ -1421,15 +1424,16 @@ public class CliMain implements ViewInterface {
 
         System.out.println();
         for (int j = 0; j < p.length; j++) {
-            System.out.println(j + " - " + p[j].getColor().name() + " " + p[j].getName().name());
+            System.out.println(j+1 + " - " + p[j].getColor().name() + " " + p[j].getName().name());
         }
 
         wantToContinue = booleanQuestion("Do you want to pick a powerup?");
 
         while (wantToContinue == 1 && indexes.size() < p.length) {
+            System.out.print("Pick a powerup: ");
             if (scannerIn.hasNextInt())
                 choice = scannerIn.nextInt();
-            if (!indexes.contains(choice) && choice > 0 && choice < p.length)
+            if (!indexes.contains(choice) && choice > 0 && choice <= p.length)
                 indexes.add(choice);
             else if (indexes.contains(choice))
                 System.out.println("Already chosen");
@@ -1456,7 +1460,7 @@ public class CliMain implements ViewInterface {
 
         System.out.println();
         for (int j = 0; j < w.length; j++) {
-            System.out.println(j + " - " + w[j].name());
+            System.out.println(j+1 + " - " + w[j].name());
         }
 
         wantToContinue = booleanQuestion("Do you want to pick a weapon?");
@@ -1464,7 +1468,7 @@ public class CliMain implements ViewInterface {
         while (wantToContinue == 1 && indexes.size() < w.length) {
             if (scannerIn.hasNextInt())
                 choice = scannerIn.nextInt();
-            if (!indexes.contains(choice) && choice > 0 && choice < w.length)
+            if (!indexes.contains(choice) && choice > 0 && choice <= w.length)
                 indexes.add(choice);
             else if (indexes.contains(choice))
                 System.out.println("Already chosen");
