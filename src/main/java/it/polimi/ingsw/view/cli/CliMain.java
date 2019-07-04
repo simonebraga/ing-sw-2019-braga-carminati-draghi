@@ -431,7 +431,7 @@ public class CliMain implements ViewInterface {
             //retrieve players on this row
             ArrayList<SmartPlayer> players = new ArrayList<>();
             for (SmartPlayer player : model.getSmartPlayerMap().values()) {
-                if (player.getPosY() == i)
+                if (player.getPosX() == i)
                     players.add(player);
             }
 
@@ -655,67 +655,6 @@ public class CliMain implements ViewInterface {
         System.out.println();
     }
 
-
-    /**
-     * This method memorizes the borders of all squares in a row, from left to right square.
-     *
-     * @param squares an array of Square to be scanned left to right.
-     * @param leftOrUp a String flag representing which border to memorize (upper border or left border of the square).
-     * @param isFirstRow a boolean that says if this printed grid row is the first grid row.
-     * @return an ArrayList of Border that contains all squares border (up or left border) from left to right.
-     * @deprecated
-     */
-    private ArrayList<Border> retrieveBordersInfo(Square[] squares, String leftOrUp, boolean isFirstRow) {
-
-        ArrayList<Border> borders = new ArrayList<>();
-
-        if (leftOrUp.equals("up")) {
-
-            for (Square square : squares) {
-                if (square != null)
-                    borders.add(square.getUp());
-
-                else {    //void square
-
-                    if (isFirstRow)
-                        borders.add(Border.NOTHING);
-                    else
-                        borders.add(Border.WALL);
-                }
-            }
-
-        } else if (leftOrUp.equals("left")) {
-
-            for (int i = 0; i < squares.length; i++) {
-                if (squares[i].getUp() != null)
-                    borders.add(squares[i].getLeft());
-                else {
-
-                    if (i != 0)         //not the first square in the row
-                        borders.add(Border.WALL);
-                    else
-                        borders.add(Border.NOTHING);
-                }
-            }
-        }
-        return borders;
-    }
-
-    /**
-     * This method checks what kind of square a row of the map grid finishes with and associates a closing border to the row.
-     *
-     * @param squares an array of Square to be scanned.
-     * @return a Border associated with the closing border of this map grid row.
-     * @deprecated
-     */
-    private Border retrieveLastBorderInfo(Square[] squares) {
-
-        if (squares[squares.length - 1].getUp() == null)        //last square is void
-            return Border.NOTHING;
-        else
-            return Border.WALL;
-    }
-
     /**
      * This method collects all grid row players figures by square.
      *
@@ -726,30 +665,25 @@ public class CliMain implements ViewInterface {
 
         ArrayList<ArrayList<String>> figuresBySquareInRow = new ArrayList<>();
 
-        //FIXME(remove souts)
-
         for (int i = 0; i < MAX_SQUARES_BY_ROW; i++) {  //for each square in this row
 
             ArrayList<String> figuresInSquare = new ArrayList<>();
 
             for (int j = 0; j < players.size(); j++) {    //scan each player
-                if (players.get(j).getPosX() == i) {
-                    System.out.println("Adding: " + parseFigure(players.get(j).getFigure()));
+                if (players.get(j).getPosY() == i) {    //checks if this player is on same row square
                     figuresInSquare.add(parseFigure(players.get(j).getFigure()));
                 }
             }
 
+            int numberOfFiguresUntilNow = figuresInSquare.size();
             //fill the rest with null figures
-            for (int j = 0; j < MAX_PLAYER_BY_SQUARE - figuresInSquare.size(); j++) {
-                System.out.println("STEP");
+            for (int j = 0; j < MAX_PLAYER_BY_SQUARE - numberOfFiguresUntilNow; j++) {
                 figuresInSquare.add(VOID_INFO_SPACING);
             }
 
-            System.out.println();
             figuresBySquareInRow.add(figuresInSquare);
         }
 
-        System.out.println("getFiguresInsideRow: " + figuresBySquareInRow.toString());
         return figuresBySquareInRow;
     }
 
@@ -774,7 +708,8 @@ public class CliMain implements ViewInterface {
                 for (WeaponName name : weaponNames)
                     singleSquareInfo.add(parseWeaponName(name, true));
 
-                for (int j = 0; j < MAX_WEAPONS_BY_SQUARE - singleSquareInfo.size(); j++) {
+                int numberOfInfoUntilNow = singleSquareInfo.size();
+                for (int j = 0; j < MAX_WEAPONS_BY_SQUARE - numberOfInfoUntilNow; j++) {
                     singleSquareInfo.add(VOID_INFO_SPACING);   //no weapon
                 }
 
@@ -785,7 +720,7 @@ public class CliMain implements ViewInterface {
                 //scan every tile in this row
                 for (SmartTile tile : tiles) {
                     singleSquareInfo = new ArrayList<>();
-                    if (tile.getPosX() == i) {  //same column
+                    if (tile.getPosY() == i) {  //same column
                         if (tile.getPowerup() == 1)
                             singleSquareInfo.add(tile.getPowerup() + "PU   ");
 
@@ -1116,8 +1051,6 @@ public class CliMain implements ViewInterface {
         for (Figure f : marks.keySet()) {
             System.out.print("| ");
             System.out.print(parseFigure(f));
-            //fill until next border
-            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             System.out.println(" : " + marks.get(f));
         }
         if (marks.keySet().isEmpty())
@@ -1134,8 +1067,6 @@ public class CliMain implements ViewInterface {
 
         for (Figure f : damage) {
             System.out.print(parseFigure(f));
-            //fill until next border
-            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             System.out.print(" | ");
         }
 
@@ -1169,7 +1100,7 @@ public class CliMain implements ViewInterface {
 
         //print skulls
         int i = 0;
-        while ( i < deaths && i < bountyValues.size()) {
+        while ( i < deaths) {
             System.out.print("[" + ANSI_RED + UNICODE_SKULL + ANSI_RESET + "] ");
             bountyValues.get(i);
             i++;
@@ -1177,15 +1108,8 @@ public class CliMain implements ViewInterface {
 
 
         //print remaining values
-        for (int k = i; k < bountyValues.size(); k++) {
-            if (bountyValues.get(k) != 1)
-                System.out.print("[" + bountyValues.get(k) + "] ");
-            else {
-                for (int j = k; j < maxKills; j++) {
-
-                }
-            }
-        }
+        for (int k = i; k < bountyValues.size(); k++)
+            System.out.print("[" + bountyValues.get(k) + "] ");
 
         System.out.println();
     }
@@ -1196,7 +1120,10 @@ public class CliMain implements ViewInterface {
      * @param weapons an ArrayList of SmartWeapon that contains all player weapons.
      */
     private synchronized void printPlayerWeapons(ArrayList<SmartWeapon> weapons) {
+        if (weapons.isEmpty())
+            System.out.println("| Unarmed");
         for (SmartWeapon weapon : weapons) {
+            System.out.print("| ");
             if (weapon.getLoaded())
                 System.out.println(weapon.getWeaponName().name());
             else
@@ -1212,8 +1139,11 @@ public class CliMain implements ViewInterface {
     private synchronized void printPlayerPowerups(ArrayList<SmartPowerup> powerups) {
 
         System.out.println("| Power-ups: ");
-        for (SmartPowerup pu : powerups)
-            System.out.println(pu.getColor() + " " + pu.getPowerupName().name());
+        if (powerups.isEmpty())
+            System.out.println("| No power-ups");
+        for (SmartPowerup pu : powerups) {
+            System.out.println("| " + pu.getColor() + " " + pu.getPowerupName().name());
+        }
     }
 
     /**
@@ -1232,10 +1162,8 @@ public class CliMain implements ViewInterface {
             for (Figure figure : killShotTrack) {
                 System.out.print(" | ");
                 System.out.print(parseFigure(figure));
-                //fill until next border
-                printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             }
-            for (int i = killShotTrack.size(); i < maxKills; i++) {
+            for (int i = 0; i < model.getKillCount(); i++) {
                 System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
             }
             System.out.println(" |");
@@ -1247,8 +1175,6 @@ public class CliMain implements ViewInterface {
                 for (Figure figure : model.getSpawnDamageTrack().get(color)) {
                     System.out.print(" | ");
                     System.out.print(parseFigure(figure));
-                    //fill until next border
-                    printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
                 }
                 System.out.println(" |");
             }
@@ -1467,7 +1393,7 @@ public class CliMain implements ViewInterface {
 
         while (choice < 1 || choice > s[0].length) {
             for (int i = 0; i < s[0].length; i++)
-                System.out.println(i+1 + " - (" + s[0][i] + "," + s[1][i] + ")");
+                System.out.println(i+1 + " - (" + s[1][i] + "," + s[0][i] + ")");
             System.out.println("\nChoose a Square by its number: ");
 
             if (scannerIn.hasNextInt())
@@ -1487,6 +1413,8 @@ public class CliMain implements ViewInterface {
         System.out.println(s);
         System.out.print("Yes or No: ");
         String choice = scannerIn.nextLine();
+        while (choice.isBlank())
+            choice = scannerIn.nextLine();
 
         if (choice.equalsIgnoreCase("yes") || choice.equalsIgnoreCase("y") || choice.equalsIgnoreCase("yeah"))
             return 1;
@@ -1499,24 +1427,33 @@ public class CliMain implements ViewInterface {
     @Override
     public synchronized int[] chooseMultiplePowerup(Powerup[] p) {
 
-        char wantToContinue = 'y';
-        Powerup[] temp = new Powerup[p.length - 1];
-        int[] out = new int[p.length];
-        int i = 0;
+        int wantToContinue;
+        Integer choice = 0;
+        ArrayList<Integer> indexes = new ArrayList<>();
+        int[] out;
 
-        while (wantToContinue == 'y' && p.length != 0) {
-            out[i] = choosePowerup(p);
-            System.out.print("Do you want to pick another powerup? Yes or No: ");
-            wantToContinue = (char) scannerIn.nextInt();
-            if (wantToContinue == 'y') {
-                for (int j = 0; j < p.length - 1; j++) {
-                    temp[j] = p[j + 1];
-                    if (j == p.length - 2)
-                        temp[j + 1] = p[p.length - 1];
-                }
-                p = temp;
-            }
-            i++;
+        System.out.println();
+        for (int j = 0; j < p.length; j++) {
+            System.out.println(j + " - " + p[j].getColor().name() + " " + p[j].getName().name());
+        }
+
+        wantToContinue = booleanQuestion("Do you want to pick a powerup?");
+
+        while (wantToContinue == 1 && indexes.size() < p.length) {
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+            if (!indexes.contains(choice) && choice > 0 && choice < p.length)
+                indexes.add(choice);
+            else if (indexes.contains(choice))
+                System.out.println("Already chosen");
+            else
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
+            wantToContinue = booleanQuestion("Do you want to pick another one?");
+        }
+
+        out = new int[indexes.size()];
+        for (int j = 0; j < out.length; j++) {
+            out[j] = indexes.get(j);
         }
 
         return out;
@@ -1525,24 +1462,33 @@ public class CliMain implements ViewInterface {
     @Override
     public synchronized int[] chooseMultipleWeapon(WeaponName[] w) {
 
-        char wantToContinue = 'y';
-        WeaponName[] temp = new WeaponName[w.length - 1];
-        int[] out = new int[w.length];
-        int i = 0;
+        int wantToContinue;
+        Integer choice = 0;
+        ArrayList<Integer> indexes = new ArrayList<>();
+        int[] out;
 
-        while (wantToContinue == 'y' && w.length != 0) {
-            out[i] = chooseWeapon(w);
-            System.out.print("Do you want to pick another weapon? Yes or No: ");
-            wantToContinue = (char) scannerIn.nextInt();
-            if (wantToContinue == 'y') {
-                for (int j = 0; j < w.length - 1; j++) {
-                    temp[j] = w[j + 1];
-                    if (j == w.length - 2)
-                        temp[j + 1] = w[w.length - 1];
-                }
-                w = temp;
-            }
-            i++;
+        System.out.println();
+        for (int j = 0; j < w.length; j++) {
+            System.out.println(j + " - " + w[j].name());
+        }
+
+        wantToContinue = booleanQuestion("Do you want to pick a weapon?");
+
+        while (wantToContinue == 1 && indexes.size() < w.length) {
+            if (scannerIn.hasNextInt())
+                choice = scannerIn.nextInt();
+            if (!indexes.contains(choice) && choice > 0 && choice < w.length)
+                indexes.add(choice);
+            else if (indexes.contains(choice))
+                System.out.println("Already chosen");
+            else
+                System.out.println(ANSI_RED + INVALID_INPUT_MESSAGE + ANSI_RESET);
+            wantToContinue = booleanQuestion("Do you want to pick another one?");
+        }
+
+        out = new int[indexes.size()];
+        for (int j = 0; j < out.length; j++) {
+            out[j] = indexes.get(j);
         }
 
         return out;

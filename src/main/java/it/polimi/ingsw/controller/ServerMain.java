@@ -263,6 +263,12 @@ public class ServerMain {
         //execute first player turn, if he is still connected
         if (server.isConnected(gameTable.getPlayers().get(currentPlayerIndex))) {
 
+            try {
+                server.sendMessage(gameTable.getPlayers().get(currentPlayerIndex),"Choose a Power up to discard. You will be spawned to the spawn square having its same color.");
+            } catch (UnavailableUserException e) {
+                e.printStackTrace();
+            }
+
             SpawnAction spawnAction0 = new SpawnAction(gameTable.getStartingPlayerMarker().getTarget());
             spawnAction0.run(server,gameTable);
             TurnManager turn0 = new TurnManager(gameTable.getStartingPlayerMarker().getTarget(),false,false);
