@@ -1051,8 +1051,6 @@ public class CliMain implements ViewInterface {
         for (Figure f : marks.keySet()) {
             System.out.print("| ");
             System.out.print(parseFigure(f));
-            //fill until next border
-            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             System.out.println(" : " + marks.get(f));
         }
         if (marks.keySet().isEmpty())
@@ -1069,8 +1067,6 @@ public class CliMain implements ViewInterface {
 
         for (Figure f : damage) {
             System.out.print(parseFigure(f));
-            //fill until next border
-            printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             System.out.print(" | ");
         }
 
@@ -1104,7 +1100,7 @@ public class CliMain implements ViewInterface {
 
         //print skulls
         int i = 0;
-        while ( i < deaths && i < bountyValues.size()) {
+        while ( i < deaths) {
             System.out.print("[" + ANSI_RED + UNICODE_SKULL + ANSI_RESET + "] ");
             bountyValues.get(i);
             i++;
@@ -1112,15 +1108,8 @@ public class CliMain implements ViewInterface {
 
 
         //print remaining values
-        for (int k = i; k < bountyValues.size(); k++) {
-            if (bountyValues.get(k) != 1)
-                System.out.print("[" + bountyValues.get(k) + "] ");
-            else {
-                for (int j = k; j < maxKills; j++) {
-
-                }
-            }
-        }
+        for (int k = i; k < bountyValues.size(); k++)
+            System.out.print("[" + bountyValues.get(k) + "] ");
 
         System.out.println();
     }
@@ -1173,8 +1162,6 @@ public class CliMain implements ViewInterface {
             for (Figure figure : killShotTrack) {
                 System.out.print(" | ");
                 System.out.print(parseFigure(figure));
-                //fill until next border
-                printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
             }
             for (int i = killShotTrack.size(); i < maxKills; i++) {
                 System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
@@ -1188,8 +1175,6 @@ public class CliMain implements ViewInterface {
                 for (Figure figure : model.getSpawnDamageTrack().get(color)) {
                     System.out.print(" | ");
                     System.out.print(parseFigure(figure));
-                    //fill until next border
-                    printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
                 }
                 System.out.println(" |");
             }
