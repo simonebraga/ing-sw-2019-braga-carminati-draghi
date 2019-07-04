@@ -50,9 +50,11 @@ public class GuiMain extends Application implements ViewInterface {
     private SmartModel smartModel;
     private Properties properties;
     private Gson gson;
+    private static String serverIp;
+    private static String clientIp;
 
     public GuiMain() {
-        this.height = 980;
+        this.height = 720;
         this.width = (this.height - 52) * 320/167;
         this.spacing = this.height / 72;
         this.textSize = 20;
@@ -698,6 +700,14 @@ public class GuiMain extends Application implements ViewInterface {
     }
 
     public static void main(String[] args) {
+        if (args[0] != null)
+            serverIp = args[0];
+        else
+            serverIp = null;
+        if (args[1] != null)
+            clientIp = args[1];
+        else
+            clientIp = null;
         launch(args);
     }
 
@@ -712,6 +722,18 @@ public class GuiMain extends Application implements ViewInterface {
             throw new Exception();
         }
 
+        Properties networkProperties = new Properties();
+        try {
+            networkProperties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
+        } catch (Exception e) {
+            System.err.println("Error reading network_settings.properties");
+            throw new Exception();
+        }
+
+        if (serverIp == null)
+            serverIp = networkProperties.getProperty("serverIp");
+        if (clientIp == null)
+            clientIp = networkProperties.getProperty("clientIp");
         this.gson = new Gson();
         this.rootPane = new StackPane();
         this.requestPane = new StackPane();
