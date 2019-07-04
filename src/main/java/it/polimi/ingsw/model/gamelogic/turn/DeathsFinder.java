@@ -77,7 +77,7 @@ public class DeathsFinder {
         int pointTrackCounter = 0;
         boolean stop = false;
 
-        if(pointTrackCounter==deadPlayer.getPointTrack().getValue().size()){ //It is possibe that a player has an empty point track.
+        if(pointTrackCounter==deadPlayer.getPointTrack().getValue().size()){ //It is possible that a player has an empty point track.
             stop = true;
             for (Player player : map.keySet()) { //Gives one point to the remaining players that have done damage.
                 player.addPoints(1);

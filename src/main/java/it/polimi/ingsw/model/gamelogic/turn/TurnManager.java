@@ -106,8 +106,31 @@ public class TurnManager {
             }
         }
 
+        boolean throwFrenzy = false;
+
         //Control if someone is dead
+        try{
         new DeathsFinder().runDeathsFinder(server, table, player);
+        }catch (FrenzyModeException e){
+            if(!table.getGamePhase().equals("ff")){
+                throwFrenzy = true;
+            }
+        }
+
+        //Control if two or more SpawnSquare have more than 8 damages
+        if(table.getIsDomination() && !table.getGamePhase().equals("ff")){
+            int i = 0;
+            ArrayList<Square> squares = table.getGameMap().getGridAsList().stream().filter(square -> table.getGameMap().getSpawnSquares().contains(square)).collect(Collectors.toCollection(ArrayList::new));
+            for (Square square : squares) {
+                DominationSpawnSquare dominationSpawnSquare = (DominationSpawnSquare) square;
+                if(dominationSpawnSquare.getDamage().size()>8){
+                    i++;
+                }
+            }
+            if(i>=2){
+                throwFrenzy = true;
+            }
+        }
 
         //Replace all the AmmoTiles in the TileSquares.
         ArrayList<Square> tileSquares = table.getGameMap().getGridAsList().stream().filter(square1 -> table.getGameMap().getTileSquares().contains(square1)).collect(Collectors.toCollection(ArrayList::new));
@@ -131,6 +154,10 @@ public class TurnManager {
 
         server.getSmartModel().update(table);
         server.notifyModelUpdate();
+
+        if(throwFrenzy){
+            throw new FrenzyModeException();
+        }
     }
 
     private void doAction (Server server, GameTable table, Targets targets){
