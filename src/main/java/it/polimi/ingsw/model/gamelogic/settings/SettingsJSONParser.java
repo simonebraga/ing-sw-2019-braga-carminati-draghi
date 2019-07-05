@@ -18,6 +18,11 @@ public class SettingsJSONParser {
     private Integer[] bounties;
 
     /**
+     * This attribute is the amount of points a player get for damaging another player considering the number of times he hit him when in final frenzy.
+     */
+    private Integer[] frenzyBounties;
+
+    /**
      * This attribute is the amount of extra points a player get for arrange a double kill.
      */
     private Integer doubleKillValue;
@@ -28,11 +33,13 @@ public class SettingsJSONParser {
      * @param maxKills an Integer representing the number of kills needed to end the game.
      * @param bounties an array of Integer representing the amount of points a player get for damaging another player considering the number of times he hit him.
      * @param doubleKillValue an Integer representing the amount of extra points a player get for arrange a double kill.
+     * @param frenzyBounties an array of Integer representing the final frenzy bounties.
      */
-    public SettingsJSONParser(Integer maxKills, Integer[] bounties, Integer doubleKillValue) {
+    public SettingsJSONParser(Integer maxKills, Integer[] bounties, Integer[] frenzyBounties, Integer doubleKillValue) {
         this.maxKills=maxKills;
         this.bounties=bounties;
         this.doubleKillValue=doubleKillValue;
+        this.frenzyBounties=frenzyBounties;
     }
 
     /**
@@ -42,6 +49,7 @@ public class SettingsJSONParser {
         this.maxKills=null;
         this.bounties=null;
         this.doubleKillValue=null;
+        this.frenzyBounties=null;
     }
 
     /**
@@ -62,6 +70,8 @@ public class SettingsJSONParser {
 
     /**
      * This method returns the bounties attribute value.
+     *
+     * @return an array of Integer representing the bounties values.
      */
     public Integer[] getBounties() {
         return bounties;
@@ -90,5 +100,24 @@ public class SettingsJSONParser {
      */
     public void setDoubleKillValue(Integer doubleKillValue) {
         this.doubleKillValue = doubleKillValue;
+    }
+
+    /**
+     * This method returns the frenzyBounties attribute values.
+     *
+     * @return an array of Integer representing the final frenzy bounties.
+     */
+    public Integer[] getFrenzyBounties() {
+        return frenzyBounties;
+    }
+
+    /**
+     * This method sets a new value for the frenzyBounties attribute.
+     *
+     * @param frenzyBounties an array of Integer representing the amount of points a player get for damaging
+     *                      another player considering the number of times he hit him while in final frenzy.
+     */
+    public void setFrenzyBounties(Integer[] frenzyBounties) {
+        this.frenzyBounties = frenzyBounties;
     }
 }
