@@ -46,7 +46,9 @@ public class DeathsFinder {
 
     private void givePoints(Server server, GameTable table, Player deadPlayer) throws FrenzyModeException {
         ArrayList<Player> damageTrack = deadPlayer.getDamageTrack().getDamage();
-        damageTrack.get(0).addPoints(1); //First blood
+        if(deadPlayer.getHasBoardFlipped()) {
+            damageTrack.get(0).addPoints(1); //First blood
+        }
         table.getKillshotTrack().kill(damageTrack.get(KILLER_INDEX)); //Kill
 
         //Overkill (normal and domination)
