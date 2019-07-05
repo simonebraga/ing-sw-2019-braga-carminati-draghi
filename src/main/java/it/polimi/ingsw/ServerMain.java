@@ -390,7 +390,7 @@ public class ServerMain {
 
                 SpawnAction spawnAction = new SpawnAction(gameTable.getPlayers().get(currentPlayerIndex));
                 spawnAction.run(server,gameTable);
-                
+
                 server.getSmartModel().update(gameTable);
                 server.notifyModelUpdate();
 
