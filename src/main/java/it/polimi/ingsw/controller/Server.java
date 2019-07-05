@@ -183,7 +183,6 @@ public class Server implements ServerRemote {
 
         if ((clientMap.keySet().size() >= 3) && (clientMap.keySet().size() <= 5)) {
             loginPhase = false;
-            //TODO Edit the creation of nicknameList so that the player in the first position is the first player connected
             nicknameList = new ArrayList<>(clientMap.keySet());
             Collections.shuffle(nicknameList);
             System.out.println("Login closed");
