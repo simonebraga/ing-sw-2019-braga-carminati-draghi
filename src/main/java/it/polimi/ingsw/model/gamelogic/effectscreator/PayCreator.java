@@ -68,9 +68,9 @@ public class PayCreator implements EffectsCreator{
                 if (!priceReduced.remove(powerUp.getColor())){
                     throw new IllegalActionException();
                 }
-                    table.getPowerupDeck().discard(
-                            player.getPowerupPocket().removePowerup(
-                                    player.getPowerupPocket().getPowerups().indexOf(powerUp)));
+                table.getPowerupDeck().discard(
+                       player.getPowerupPocket().removePowerup(
+                                player.getPowerupPocket().getPowerups().indexOf(powerUp)));
             }
         }
 
