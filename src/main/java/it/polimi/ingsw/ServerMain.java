@@ -365,6 +365,10 @@ public class ServerMain {
 
             SpawnAction spawnAction0 = new SpawnAction(gameTable.getStartingPlayerMarker().getTarget());
             spawnAction0.run(server,gameTable);
+
+            server.getSmartModel().update(gameTable);
+            server.notifyModelUpdate();
+
             TurnManager turn0 = new TurnManager(gameTable.getStartingPlayerMarker().getTarget(),false,false);
             turn0.runTurn(server,gameTable);
         }
