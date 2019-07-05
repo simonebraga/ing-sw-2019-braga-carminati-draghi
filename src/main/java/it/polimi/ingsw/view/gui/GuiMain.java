@@ -779,7 +779,7 @@ public class GuiMain extends Application implements ViewInterface {
      */
     private void tryLogin(int networkType, String nickname) {
         try {
-            client = new Client(networkType,this);
+            client = new Client(networkType,this, serverIp, clientIp);
             this.nickname = nickname;
             int retVal = client.login(nickname);
             switch (retVal) {
