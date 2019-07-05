@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.actions;
 
+import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
@@ -19,6 +20,9 @@ import java.util.Map;
  * Represent one action in a turn.
  */
 public class ActionManager {
+
+    private static final Integer ADRENALINE_LEVEL_1 = 3;
+    private static final Integer ADRENALINE_LEVEL_2 = 6;
 
     /**
      * The player that is doing the action
@@ -58,6 +62,7 @@ public class ActionManager {
 
         ArrayList<String> possibleActions = new ArrayList<>();
         Map<Player, Square> initialSituation = sandboxInitialize(table);
+        ArrayList<Powerup> initialSituationPowerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
         ArrayList<Action> actions = new ArrayList<>();
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
@@ -69,7 +74,7 @@ public class ActionManager {
             }
         }else{
             possibleActions.add(MOVE);
-            if (player.getDamageTrack().getDamage().size() >= 6) {
+            if (player.getDamageTrack().getDamage().size() >= ADRENALINE_LEVEL_2) {
                 possibleActions.add(MOVE_AND_SHOOT);
             } else {
                 possibleActions.add(SHOOT);
@@ -118,7 +123,11 @@ public class ActionManager {
                     numberOfMoves = 3;
                 }
             } else {
-                numberOfMoves = 1;
+                if(player.getDamageTrack().getDamage().size() >= ADRENALINE_LEVEL_1) {
+                    numberOfMoves = 2;
+                }else{
+                    numberOfMoves = 1;
+                }
             }
             actions.add(new MoveAction(numberOfMoves));
             actions.add(new GrabAction());
@@ -133,6 +142,19 @@ public class ActionManager {
                         new FunctionalFactory().createMove(player1, initialSituation.get(player1)).doAction();
                     }
                 });
+
+                //Useful only if the player moves, reloads and shoots.
+                for (Powerup initialSituationPowerUp : initialSituationPowerUps) {
+                    boolean found = false;
+                    for (Powerup powerup : player.getPowerupPocket().getPowerups()) {
+                        if(powerup == initialSituationPowerUp){
+                            found = true;
+                        }
+                    }
+                    if(!found)
+                        table.getPowerupDeck().getInactiveCards().remove(initialSituationPowerUp);
+                }
+                player.getPowerupPocket().setPowerups(initialSituationPowerUps);
                 return false;
             }
         }

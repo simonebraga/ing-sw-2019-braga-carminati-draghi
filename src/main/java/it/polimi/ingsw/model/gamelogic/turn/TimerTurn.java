@@ -29,7 +29,6 @@ public class TimerTurn extends Thread{
 
     public void setStop(boolean stop) {
         this.stop.set(stop);
-        System.out.println("changed timer value");
     }
 
     @Override
