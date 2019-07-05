@@ -390,6 +390,10 @@ public class ServerMain {
 
                 SpawnAction spawnAction = new SpawnAction(gameTable.getPlayers().get(currentPlayerIndex));
                 spawnAction.run(server,gameTable);
+                
+                server.getSmartModel().update(gameTable);
+                server.notifyModelUpdate();
+
                 TurnManager turn = new TurnManager(gameTable.getPlayers().get(currentPlayerIndex),false,false);
                 turn.runTurn(server,gameTable);
             }
