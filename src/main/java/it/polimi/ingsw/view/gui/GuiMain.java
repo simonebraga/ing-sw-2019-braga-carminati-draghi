@@ -302,7 +302,7 @@ public class GuiMain extends Application implements ViewInterface {
                 figureCounter++;
             }
 
-            // Setup frenxy counter in normal mode
+            // Setup frenzy counter in normal mode
             for (int i = 0; i < smartModel.getKillCount() ; i++) {
                 ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")));
                 imagePaneSkull.setPrefHeight((128.0 / 1931) * mapHeight);
@@ -466,7 +466,7 @@ public class GuiMain extends Application implements ViewInterface {
                     }
                 }
                 for (int i = 0; i < marks.size() ; i++) {
-                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())));
+                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + marks.get(i).toString())));
                     imagePaneDamagePoint.setPrefHeight((76.0 / 277) * myBoardHeight);
                     imagePaneDamagePoint.setPrefWidth((64.0 / 1124) * myBoardWidth);
                     imagePaneDamagePoint.setLayoutX(myBoardOffsetX + (543.0 / 1124) * myBoardWidth + i * (64.0 / 1124) * myBoardWidth / 2);
@@ -560,7 +560,7 @@ public class GuiMain extends Application implements ViewInterface {
                     }
                 }
                 for (int i = 0; i < marks.size() ; i++) {
-                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + damage.get(i).toString())));
+                    ImagePane imagePaneDamagePoint = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blob" + marks.get(i).toString())));
                     imagePaneDamagePoint.setPrefHeight((76.0 / 277) * playerBoardHeight);
                     imagePaneDamagePoint.setPrefWidth((64.0 / 1124) * playerBoardWidth);
                     imagePaneDamagePoint.setLayoutX(playerBoardOffsetX + (543.0 / 1124) * playerBoardWidth + i * (64.0 / 1124) * playerBoardWidth / 2);
