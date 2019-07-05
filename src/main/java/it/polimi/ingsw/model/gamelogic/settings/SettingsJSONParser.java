@@ -54,6 +54,8 @@ public class SettingsJSONParser {
 
     /**
      * This method returns the maxKills attribute value.
+     *
+     * @return an Integer which is the attribute value.
      */
     public Integer getMaxKills() {
         return maxKills;
@@ -88,6 +90,8 @@ public class SettingsJSONParser {
 
     /**
      * This method returns the doubleKillValue attribute value.
+     *
+     * @return an Integer which is the attribute value.
      */
     public Integer getDoubleKillValue() {
         return doubleKillValue;
