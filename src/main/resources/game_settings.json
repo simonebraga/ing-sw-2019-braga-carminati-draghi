@@ -1,5 +1,6 @@
 {
   "maxKills" : 8,
   "bounties" : [8,6,4,2,1],
+  "frenzyBounties" : [2,1,1],
   "doubleKillValue" : 1
 }
