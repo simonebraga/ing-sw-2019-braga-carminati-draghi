@@ -57,7 +57,6 @@ public class ClientSocketListener implements Runnable {
                             try {
                                 client.genericWithoutResponse(getHeading(parameters),getBody(parameters));
                             } catch (RemoteException e) {
-                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
                             }
                         }).start();
                         break;
@@ -67,7 +66,6 @@ public class ClientSocketListener implements Runnable {
                             try {
                                 clientSocketSpeaker.returnMessage(client.genericWithResponse(getHeading(parameters),getBody(parameters)));
                             } catch (RemoteException e) {
-                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
                             }
                         }).start();
                         break;
@@ -77,7 +75,6 @@ public class ClientSocketListener implements Runnable {
                             try {
                                 clientSocketSpeaker.returnMessage(gson.toJson(client.singleChoice(getHeading(parameters),getBody(parameters))));
                             } catch (RemoteException e) {
-                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
                             }
                         }).start();
                         break;
@@ -87,7 +84,6 @@ public class ClientSocketListener implements Runnable {
                             try {
                                 clientSocketSpeaker.returnMessage(gson.toJson(client.multipleChoice(getHeading(parameters),getBody(parameters))));
                             } catch (RemoteException e) {
-                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
                             }
                         }).start();
                         break;
@@ -97,7 +93,6 @@ public class ClientSocketListener implements Runnable {
                             try {
                                 clientSocketSpeaker.returnMessage(gson.toJson(client.booleanQuestion(parameters)));
                             } catch (RemoteException e) {
-                                System.err.println("Something very bad happened: RemoteException thrown during a local invocation");
                             }
                         }).start();
                         break;
@@ -106,7 +101,6 @@ public class ClientSocketListener implements Runnable {
                         customStream.putLine(parameters);
                         break;
                     }
-                    default: System.out.println("Received invalid protocol message: " + line);
                 }
             } catch (Exception e) {
                 break;

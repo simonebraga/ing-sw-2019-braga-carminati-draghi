@@ -85,7 +85,6 @@ public class Client implements ClientRemote {
                         UnicastRemoteObject.exportObject(this,clientPortRMI);
                         init = true;
                     } catch (RemoteException e) {
-                        System.err.println("Error exporting remote object");
                         throw new Exception();
                     }
                     try {
@@ -99,8 +98,10 @@ public class Client implements ClientRemote {
                     }
                 } catch (Exception e) {
                     clientPortRMI++;
-                    if ((init)||(clientPortRMI > clientPortRMIBound))
+                    if ((init)||(clientPortRMI > clientPortRMIBound)) {
+                        System.err.println("Error exporting remote object");
                         throw new Exception();
+                    }
                 }
             }
         } else if (i == 1) {
@@ -112,7 +113,6 @@ public class Client implements ClientRemote {
                 throw new Exception();
             }
         } else {
-            System.err.println("Incorrect parameters in Client constructor");
             throw new Exception();
         }
     }
@@ -183,7 +183,6 @@ public class Client implements ClientRemote {
                 throw new Exception();
             }
         } else {
-            System.err.println("Incorrect parameters in Client constructor");
             throw new Exception();
         }
     }
@@ -195,7 +194,6 @@ public class Client implements ClientRemote {
     private void startPingThread() {
 
         new Thread(() -> {
-            System.out.println("Ping thread started");
             while (true) {
                 try {
                     executorService.submit(() -> {
@@ -219,7 +217,6 @@ public class Client implements ClientRemote {
                     e.printStackTrace();
                 }
             }
-            System.out.println("Ping thread stopped");
         }).start();
     }
 
@@ -227,7 +224,6 @@ public class Client implements ClientRemote {
      * This method is used to notify the view that the client is not logged in the server
      */
     private void notifyLogout() {
-        System.out.println("Lost connection with the server");
         view.logout();
     }
 
@@ -255,7 +251,6 @@ public class Client implements ClientRemote {
                 break;
             }
             default: {
-                System.err.println("Unsupported genericWithoutResponse id");
                 throw new RemoteException();
             }
         }
@@ -266,7 +261,6 @@ public class Client implements ClientRemote {
 
         switch (id) {
             default: {
-                System.err.println("Unsupported genericWithResponse id");
                 throw new RemoteException();
             }
         }
@@ -304,7 +298,6 @@ public class Client implements ClientRemote {
                 return view.chooseSquare(gson.fromJson(parameters, int[][].class));
             }
             default: {
-                System.err.println("Unsupported singleChoice id");
                 throw new RemoteException();
             }
         }
@@ -321,7 +314,6 @@ public class Client implements ClientRemote {
                 return view.chooseMultipleWeapon(gson.fromJson(parameters,WeaponName[].class));
             }
             default: {
-                System.err.println("Unsupported multipleChoice id");
                 throw new RemoteException();
             }
         }
