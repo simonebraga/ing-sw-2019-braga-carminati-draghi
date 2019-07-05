@@ -39,7 +39,7 @@ class SquaresVisibleInADirection {
         ArrayList<Square> squaresAssigned = new ArrayList<>();
         Square start = from.getPosition();
 
-        for(int i=0; i<distance; i++) {
+        for(int i=0; i<=distance; i++) {
             ArrayList<Square> map = new ArrayList<>(table.getGameMap().getVisibility(start));
             switch (direction) {
                 case 'N':
