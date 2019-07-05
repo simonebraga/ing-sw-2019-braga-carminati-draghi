@@ -7,6 +7,8 @@ java --module-path javafx-sdk-12.0.1/lib --add-modules javafx.controls,javafx.fx
 -serverIp (IP address of the server)  
 -clientIp (IP address of the client. Specify this if server.jar is not running on the same machine of client.jar)
 
+To run automatically client.jar with the GUI interface and the CLI interface (clientIp and serverIp are default, so they are set on localhost) there are two bash files, client_cli.sh and client_gui.sh.
+
 ### server.jar options
 .jar file must be run using the following command  
 java -jar server.jar  
@@ -14,3 +16,4 @@ java -jar server.jar
 -serverIp (IP address of the server. Specify this if server.jar should be able to accept connections from clients that are not running on its machine)  
 -loginTimer (Lobby countdown length, in seconds)  
 -inactivityTime (Timer of the single network request, in seconds)
+
