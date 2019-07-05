@@ -964,7 +964,7 @@ public class CliMain implements ViewInterface {
      */
     private synchronized void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
 
-        printBoardHeader(nickname, isOwnBoard, player.getPoints(), player.getFigure());
+        printBoardHeader(nickname, isOwnBoard, player.getFigure());
         printAdrenalineLevel(player.getDamage().size());
         System.out.println("| Marks:");
         printMarkTrack(player.getMarks());
@@ -973,7 +973,7 @@ public class CliMain implements ViewInterface {
         System.out.println("| Ammunition:");
         printPlayerAmmo(player.getAmmo());
         System.out.print("| Bounties: ");
-        printBountyTrack(player.getDeaths(), settings.getMaxKills(), player.isHasReverseBoard());
+        printBountyTrack(player.getDeaths(), player.isHasReverseBoard());
         System.out.println("| Weapons:");
         printPlayerWeapons(player.getWeapons());
         if (isOwnBoard)
@@ -986,9 +986,8 @@ public class CliMain implements ViewInterface {
      *
      * @param nickname a String which is the username of the printing board. It will be printed inside the header.
      * @param isOwnBoard a boolean flag that says if this board is the current player own board.
-     * @param points an integer containing the player's points.
      */
-    private synchronized void printBoardHeader(String nickname, boolean isOwnBoard, int points, Figure figure) {
+    private synchronized void printBoardHeader(String nickname, boolean isOwnBoard, Figure figure) {
         if (isOwnBoard) System.out.print(ANSI_GREEN);
         System.out.print("+ ");
         if (nickname.length() > NICK_PRINT_SIZE)
@@ -1062,10 +1061,9 @@ public class CliMain implements ViewInterface {
      * This method prints all bounties remained on this player.
      *
      * @param deaths an integer saying how many times this player died.
-     * @param maxKills an integer which represents the total bounty track size.
      * @param hasFlippedBoard a boolean flag saying is the player board bounty track has flipped.
      */
-    private synchronized void printBountyTrack(int deaths, int maxKills, boolean hasFlippedBoard) {
+    private synchronized void printBountyTrack(int deaths, boolean hasFlippedBoard) {
 
         ArrayList<Integer> bountyValues;
         if (!hasFlippedBoard)

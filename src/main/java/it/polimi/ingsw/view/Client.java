@@ -229,8 +229,7 @@ public class Client implements ClientRemote {
         if (socket != null) {
             try {
                 socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
         view.logout();
