@@ -121,7 +121,7 @@ public class ShootCreator extends ShootCreatorAbstract implements EffectsCreator
         ArrayList<FunctionalEffect> effects= new ArrayList<>();
 
         if(optional){
-            if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("WantToShoot"))){
+            if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))){
                 return effects;
             }
         }
