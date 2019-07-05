@@ -57,14 +57,14 @@ public class CliMain implements ViewInterface {
     public static final String ANSI_PURPLE = "\u001B[35m";
 
     /**
-     * This finale attribute represents the UNICODE code for the "no ammo" symbol.
+     * This finale attribute represents the code for the "no ammo" symbol.
      */
-    private static final String UNICODE_NO_AMMO = "∅";
+    private static final String NO_AMMO_CHAR = "$";
 
     /**
-     * This finale attribute represents the UNICODE code for a skull symbol.
+     * This finale attribute represents the code for a skull symbol.
      */
-    private static final String UNICODE_SKULL = "☠";
+    private static final String SKULL_CHARACTER = "X";
 
     /**
      * This final attribute defines squares width in cli printing.
@@ -728,127 +728,127 @@ public class CliMain implements ViewInterface {
                 if (isLoaded)
                     return "FURNC ";
                 else
-                    return "FURNC" + UNICODE_NO_AMMO;
+                    return "FURNC" + NO_AMMO_CHAR;
             }
             case CYBERBLADE:{
                 if (isLoaded)
                     return "CYBLD ";
                 else
-                    return "CYBLD" + UNICODE_NO_AMMO;
+                    return "CYBLD" + NO_AMMO_CHAR;
             }
             case ELECTROSCYTHE:{
                 if (isLoaded)
                     return "ELECT ";
                 else
-                    return "ELECT" + UNICODE_NO_AMMO;
+                    return "ELECT" + NO_AMMO_CHAR;
             }
             case SHOCKWAVE:{
                 if (isLoaded)
                     return "SHOCK ";
                 else
-                    return "SHOCK" + UNICODE_NO_AMMO;
+                    return "SHOCK" + NO_AMMO_CHAR;
             }
             case ZX2:{
                 if (isLoaded)
                     return "ZX2   ";
                 else
-                    return "ZX2  " + UNICODE_NO_AMMO;
+                    return "ZX2  " + NO_AMMO_CHAR;
             }
             case THOR:{
                 if (isLoaded)
                     return "THOR  ";
                 else
-                    return "THOR " + UNICODE_NO_AMMO;
+                    return "THOR " + NO_AMMO_CHAR;
             }
             case SHOTGUN:{
                 if (isLoaded)
                     return "SHOTG ";
                 else
-                    return "SHOTG" + UNICODE_NO_AMMO;
+                    return "SHOTG" + NO_AMMO_CHAR;
             }
             case WHISPER:{
                 if (isLoaded)
                     return "WHISP ";
                 else
-                    return "WHISP" + UNICODE_NO_AMMO;
+                    return "WHISP" + NO_AMMO_CHAR;
             }
             case HEATSEEKER:{
                 if (isLoaded)
                     return "HTSKR ";
                 else
-                    return "HTSKR" + UNICODE_NO_AMMO;
+                    return "HTSKR" + NO_AMMO_CHAR;
             }
             case MACHINEGUN:{
                 if (isLoaded)
                     return "MACHG ";
                 else
-                    return "MACHG" + UNICODE_NO_AMMO;
+                    return "MACHG" + NO_AMMO_CHAR;
             }
             case TRACTORBEAM:{
                 if (isLoaded)
                     return "TRTBM ";
                 else
-                    return "TRTBM" + UNICODE_NO_AMMO;
+                    return "TRTBM" + NO_AMMO_CHAR;
             }
             case VORTEXCANNON:{
                 if (isLoaded)
                     return "VORTX ";
                 else
-                    return "VORTX" + UNICODE_NO_AMMO;
+                    return "VORTX" + NO_AMMO_CHAR;
             }
             case POWERGLOVE:{
                 if (isLoaded)
                     return "POWGV ";
                 else
-                    return "POWGV" + UNICODE_NO_AMMO;
+                    return "POWGV" + NO_AMMO_CHAR;
             }
             case SLEDGEHAMMER:{
                 if (isLoaded)
                     return "SLGHM ";
                 else
-                    return "SLGHM" + UNICODE_NO_AMMO;
+                    return "SLGHM" + NO_AMMO_CHAR;
             }
             case ROCKETLAUNCHER:{
                 if (isLoaded)
                     return "RKTLC ";
                 else
-                    return "RKTLC" + UNICODE_NO_AMMO;
+                    return "RKTLC" + NO_AMMO_CHAR;
             }
             case HELLION:{
                 if (isLoaded)
                     return "HELLN ";
                 else
-                    return "HELLN" + UNICODE_NO_AMMO;
+                    return "HELLN" + NO_AMMO_CHAR;
             }
             case RAILGUN:{
                 if (isLoaded)
                     return "RAILG ";
                 else
-                    return "RAILG" + UNICODE_NO_AMMO;
+                    return "RAILG" + NO_AMMO_CHAR;
             }
             case LOCKRIFLE:{
                 if (isLoaded)
                     return "LOCKR ";
                 else
-                    return "LOCKR" + UNICODE_NO_AMMO;
+                    return "LOCKR" + NO_AMMO_CHAR;
             }
             case PLASMAGUN:{
                 if (isLoaded)
                     return "PLASM ";
                 else
-                    return "PLASM" + UNICODE_NO_AMMO;
+                    return "PLASM" + NO_AMMO_CHAR;
             }
             case FLAMETHROWER:{
                 if (isLoaded)
                     return "FLMTW ";
                 else
-                    return "FLMTW" + UNICODE_NO_AMMO;
+                    return "FLMTW" + NO_AMMO_CHAR;
             }
             case GRENADELAUNCHER:{
                 if (isLoaded)
                     return "GNDLC ";
                 else
-                    return "GNDLC" + UNICODE_NO_AMMO;
+                    return "GNDLC" + NO_AMMO_CHAR;
             }
         }
         return null;
@@ -1006,8 +1006,8 @@ public class CliMain implements ViewInterface {
      * @param damage an integer containing how many times this player was hit.
      */
     private synchronized void printAdrenalineLevel(int damage) {
-        if (damage < 3) System.out.println("| Adrenaline level: " + UNICODE_NO_AMMO);
-        else if (damage <= 5) System.out.println("| Adrenaline level: I");
+        if (damage < 3) System.out.println("| Adrenaline level: 0");
+        else if (damage <= 5) System.out.println("| Adrenaline level: 1");
         else System.out.println("| Adrenaline level: " + ANSI_RED + "MAX" + ANSI_RESET);
     }
 
@@ -1076,7 +1076,7 @@ public class CliMain implements ViewInterface {
         //print skulls
         int i = 0;
         while ( i < deaths) {
-            System.out.print("[" + ANSI_RED + UNICODE_SKULL + ANSI_RESET + "] ");
+            System.out.print("[" + ANSI_RED + SKULL_CHARACTER + ANSI_RESET + "] ");
             bountyValues.get(i);
             i++;
         }
@@ -1102,7 +1102,7 @@ public class CliMain implements ViewInterface {
             if (weapon.getLoaded())
                 System.out.println(weapon.getWeaponName().name());
             else
-                System.out.println(ANSI_RED + weapon.getWeaponName().name() + UNICODE_NO_AMMO + ANSI_RESET);
+                System.out.println(ANSI_RED + weapon.getWeaponName().name() + NO_AMMO_CHAR + ANSI_RESET);
         }
     }
 
@@ -1139,7 +1139,7 @@ public class CliMain implements ViewInterface {
                 System.out.print(parseFigure(figure));
             }
             for (int i = 0; i < model.getKillCount(); i++) {
-                System.out.print(" | " + ANSI_RED + UNICODE_SKULL + ANSI_RESET);
+                System.out.print(" | " + ANSI_RED + SKULL_CHARACTER + ANSI_RESET);
             }
             System.out.println(" |");
         } else {
