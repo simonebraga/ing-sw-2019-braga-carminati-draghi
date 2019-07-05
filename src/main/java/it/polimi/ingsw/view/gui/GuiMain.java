@@ -492,7 +492,6 @@ public class GuiMain extends Application implements ViewInterface {
                 double reverseOffset = 0;
                 if (smartPlayer.isHasReverseBoard())
                     reverseOffset = (72.0 / 1124) * myBoardWidth;
-                System.out.println(smartPlayer.getDeaths());
                 for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
                     ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")));
                     imagePaneSkull.setPrefHeight((76.0 / 277) * myBoardHeight);
@@ -586,7 +585,6 @@ public class GuiMain extends Application implements ViewInterface {
                 double reverseOffset = 0;
                 if (smartPlayer.isHasReverseBoard())
                     reverseOffset = (72.0 / 1124) * playerBoardWidth;
-                System.out.println(smartPlayer.getDeaths());
                 for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
                     ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")));
                     imagePaneSkull.setPrefHeight((76.0 / 277) * playerBoardHeight);

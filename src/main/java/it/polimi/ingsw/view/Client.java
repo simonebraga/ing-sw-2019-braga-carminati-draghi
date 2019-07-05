@@ -38,6 +38,7 @@ public class Client implements ClientRemote {
     private int serverPortSocket;
     private int pingFrequency;
     private int pingLatency;
+    private Socket socket = null;
 
     private Gson gson = new Gson();
     ExecutorService executorService = Executors.newCachedThreadPool();
@@ -107,7 +108,8 @@ public class Client implements ClientRemote {
         } else if (i == 1) {
             // Socket setup
             try {
-                server = new ClientSocketSpeaker(new Socket(serverIp,serverPortSocket),this, pingLatency);
+                socket = new Socket(serverIp,serverPortSocket);
+                server = new ClientSocketSpeaker(socket,this, pingLatency);
             } catch (Exception e) {
                 System.err.println("Error with socket connection initialization");
                 throw new Exception();
@@ -224,6 +226,13 @@ public class Client implements ClientRemote {
      * This method is used to notify the view that the client is not logged in the server
      */
     private void notifyLogout() {
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         view.logout();
     }
 
