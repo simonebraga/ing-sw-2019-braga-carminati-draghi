@@ -31,12 +31,17 @@ public class SmartModel {
     private Map<String,SmartPlayer> smartPlayerMap;
     private int mapIndex;
     private Boolean isDomination;
-    private final int defaultPointtrackSize;
+    private int defaultPointtrackSize;
     private Map<Color,ArrayList<WeaponName>> spawnWeaponMap;
     private ArrayList<SmartTile> mapTiles;
     private ArrayList<Figure> killshotTrack;
     private Integer killCount;
     private Map<Color,ArrayList<Figure>> spawnDamageTrack;
+    private boolean isFrenezyMode;
+
+    public boolean isFrenezyMode() {
+        return isFrenezyMode;
+    }
 
     public Map<String, SmartPlayer> getSmartPlayerMap() {
         return smartPlayerMap;
@@ -74,7 +79,13 @@ public class SmartModel {
         this.mapIndex = mapIndex;
     }
 
-    public SmartModel() {
+    public synchronized void update(GameTable gameTable) {
+
+        if (gameTable.getGamePhase().equalsIgnoreCase("ff"))
+            isFrenezyMode = true;
+        else
+            isFrenezyMode = false;
+
         InputStream file = SmartModel.class.getClassLoader().getResourceAsStream("game_settings.json");
         ObjectMapper mapper = new ObjectMapper();
         SettingsJSONParser settings = new SettingsJSONParser();
@@ -88,9 +99,7 @@ public class SmartModel {
             defaultPointtrackSize = settings.getBounties().length;
         else
             defaultPointtrackSize = 0;
-    }
 
-    public synchronized void update(GameTable gameTable) {
         smartPlayerMap = new HashMap<>();
         for (Player player : gameTable.getPlayers()) {
             SmartPlayer smartPlayer = new SmartPlayer();
@@ -145,8 +154,19 @@ public class SmartModel {
                 smartPlayer.setPosY(-1);
             }
 
+            // Setup reverse board
+            smartPlayer.setHasReverseBoard(player.getHasBoardFlipped());
+
             // Setup deaths
-            smartPlayer.setDeaths(defaultPointtrackSize - player.getPointTrack().getValue().size());
+
+            int checkedDefaultPointtrackSize = defaultPointtrackSize;
+            if (smartPlayer.isHasReverseBoard() && settings!=null)
+                checkedDefaultPointtrackSize = settings.getFrenzyBounties().length;
+
+            smartPlayer.setDeaths(checkedDefaultPointtrackSize - player.getPointTrack().getValue().size());
+
+            if (smartPlayer.getDeaths() < 0)
+                smartPlayer.setDeaths(0);
 
             // Setup pointTrack
             smartPlayer.setPointTrack(player.getPointTrack().getValue());

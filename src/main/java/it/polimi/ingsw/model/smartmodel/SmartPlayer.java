@@ -14,10 +14,15 @@ public class SmartPlayer {
     private ArrayList<SmartWeapon> weapons;
     private ArrayList<SmartPowerup> powerups;
     private ArrayList<Integer> pointTrack;
+    private boolean hasReverseBoard;
     private int posX;
     private int posY;
     private int deaths;
     private int points;
+
+    public boolean isHasReverseBoard() {
+        return hasReverseBoard;
+    }
 
     public ArrayList<Figure> getDamage() {
         return damage;
@@ -57,6 +62,10 @@ public class SmartPlayer {
 
     public int getPoints() {
         return points;
+    }
+
+    public void setHasReverseBoard(boolean hasReverseBoard) {
+        this.hasReverseBoard = hasReverseBoard;
     }
 
     public void setDamage(ArrayList<Figure> damage) {
