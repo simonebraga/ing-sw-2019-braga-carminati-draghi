@@ -1243,19 +1243,19 @@ public class CliMain implements ViewInterface {
 
                 switch (c[i]) {
                     case 'N':{
-                        System.out.println(i + 1  + "North");
+                        System.out.println(i + 1  + " - North");
                         break;
                     }
                     case 'S':{
-                        System.out.println(i + 1 + "South");
+                        System.out.println(i + 1 + " - South");
                         break;
                     }
                     case 'E':{
-                        System.out.println(i + 1 + "East");
+                        System.out.println(i + 1 + " - East");
                         break;
                     }
                     case 'W':{
-                        System.out.println(i + 1 + "West");
+                        System.out.println(i + 1 + " - West");
                         break;
                     }
                 }
