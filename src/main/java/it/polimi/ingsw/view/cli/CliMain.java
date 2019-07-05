@@ -42,6 +42,21 @@ public class CliMain implements ViewInterface {
     public static final String ANSI_GREEN = "\u001B[32m";
 
     /**
+     * This final attribute represents the ANSI code yellow font color.
+     */
+    public static final String ANSI_YELLOW = "\u001B[33m";
+
+    /**
+     * This final attribute represents the ANSI code blue font color.
+     */
+    public static final String ANSI_BLUE = "\u001B[34m";
+
+    /**
+     * This final attribute represents the ANSI code purple font color.
+     */
+    public static final String ANSI_PURPLE = "\u001B[35m";
+
+    /**
      * This finale attribute represents the UNICODE code for the "no ammo" symbol.
      */
     private static final String UNICODE_NO_AMMO = "∅";
@@ -324,10 +339,6 @@ public class CliMain implements ViewInterface {
 
         printKillShotTrack();
         printSceneSpacing();
-        System.out.println("MAP:\n");
-        printMap();
-        printSceneSpacing();
-
         System.out.println("PLAYER BOARDS:\n");
         for (String nick : nicknames) {
             if (nick.equals(nickname))
@@ -335,6 +346,11 @@ public class CliMain implements ViewInterface {
             else
                 printBoard(nick, model.getSmartPlayerMap().get(nick), false);
         }
+        printSceneSpacing();
+        System.out.println("MAP:\n");
+        printMap();
+
+
     }
 
     /**
@@ -859,19 +875,19 @@ public class CliMain implements ViewInterface {
     private synchronized String parseFigure(Figure figure) {
         switch (figure) {
             case DESTRUCTOR:{
-                return ":D-STR";
+                return ANSI_YELLOW + ":D-STR" + ANSI_RESET;
             }
             case DOZER:{
                 return "DOZER ";
             }
             case BANSHEE:{
-                return "BANSHE";
+                return ANSI_BLUE + "BANSHE" + ANSI_RESET;
             }
             case VIOLET:{
-                return "VIOLET";
+                return ANSI_PURPLE + "VIOLET" + ANSI_RESET;
             }
             case SPROG:{
-                return "SPROG ";
+                return ANSI_GREEN + "SPROG " + ANSI_RESET;
             }
         }
         return VOID_INFO_SPACING;
