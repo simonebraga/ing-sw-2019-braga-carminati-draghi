@@ -427,7 +427,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("player",gson.toJson(figures)))).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -449,7 +449,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("weapon",gson.toJson(weapons)))).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -471,7 +471,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("string",gson.toJson(strings)))).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -498,7 +498,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> directions[clientMap.get(player.getUsername()).singleChoice("direction",gson.toJson(directions))]).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername()  + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -520,7 +520,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> colors[clientMap.get(player.getUsername()).singleChoice("color",gson.toJson(colors))]).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername()  + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -542,7 +542,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("powerup",gson.toJson(powerups)))).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername()  + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -566,7 +566,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> maps[clientMap.get(player.getUsername()).singleChoice("map",gson.toJson(maps))]).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -589,7 +589,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> modes[clientMap.get(player.getUsername()).singleChoice("mode",gson.toJson(modes))]).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -613,7 +613,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> arrayList.get(clientMap.get(player.getUsername()).singleChoice("square",gson.toJson(coords)))).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -640,7 +640,7 @@ public class Server implements ServerRemote {
                 return retList;
             }).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -667,7 +667,7 @@ public class Server implements ServerRemote {
                 return retList;
             }).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
@@ -685,7 +685,7 @@ public class Server implements ServerRemote {
         try {
             return executorService.submit(() -> clientMap.get(player.getUsername()).booleanQuestion(string)).get(inactivityTime,TimeUnit.SECONDS);
         } catch (NullPointerException | InterruptedException | ExecutionException | TimeoutException e) {
-            System.out.println(player + " didn't answer in the time limit.");
+            System.out.println(player.getUsername() + " didn't answer in the time limit.");
             forceLogout(player);
             throw new UnavailableUserException();
         }
