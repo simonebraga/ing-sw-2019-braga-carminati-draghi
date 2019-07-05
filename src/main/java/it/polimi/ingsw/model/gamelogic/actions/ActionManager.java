@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.gamelogic.actions;
 
+import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.gamelogic.turn.MessageRetriever;
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
@@ -58,6 +59,7 @@ public class ActionManager {
 
         ArrayList<String> possibleActions = new ArrayList<>();
         Map<Player, Square> initialSituation = sandboxInitialize(table);
+        ArrayList<Powerup> initialSituationPowerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
         ArrayList<Action> actions = new ArrayList<>();
         ArrayList<FunctionalEffect> effects = new ArrayList<>();
 
@@ -133,6 +135,19 @@ public class ActionManager {
                         new FunctionalFactory().createMove(player1, initialSituation.get(player1)).doAction();
                     }
                 });
+
+                //Useful only if the player moves, reloads and shoots.
+                for (Powerup initialSituationPowerUp : initialSituationPowerUps) {
+                    boolean found = false;
+                    for (Powerup powerup : player.getPowerupPocket().getPowerups()) {
+                        if(powerup == initialSituationPowerUp){
+                            found = true;
+                        }
+                    }
+                    if(!found)
+                        table.getPowerupDeck().getInactiveCards().remove(initialSituationPowerUp);
+                }
+                player.getPowerupPocket().setPowerups(initialSituationPowerUps);
                 return false;
             }
         }
