@@ -1,7 +1,5 @@
 package it.polimi.ingsw;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
@@ -15,16 +13,13 @@ import it.polimi.ingsw.model.playerclasses.Player;
 import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.network.UnavailableUserException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * This class contains the server main method.<br>
- *     It regulates network setup, game initialization, old saves loading, player turns and final scoring.
+ *     It regulates network setup, game initialization, player turns and final scoring.
  *
  * @author Draghi96
  */
@@ -36,11 +31,6 @@ public class ServerMain {
     private static final int LOGIN_PHASE_TIMER = 1000;
 
     /**
-     * This final attribute indicates the name of the file containing all save files names.
-     */
-    private static final String SAVE_LIST_PATH = "save_list.json";
-
-    /**
      * This final attribute indicates the number of maps available.
      */
     private static final int MAPS_NUMBER = 4;
@@ -49,16 +39,6 @@ public class ServerMain {
      * This final attribute indicates the minimum number of players to let the match continue.
      */
     private static final int MINIMUM_CONNECTED_USERS_THRESHOLD = 3;
-
-    /**
-     * This final attribute indicates the prefix of every save file name.
-     */
-    private static final String SAVE_FILE_PREFIX = "save";
-
-    /**
-     * This final attribute indicates the name of the directory in which will be stored all save files.
-     */
-    private static final String SAVE_FILES_DIRECTORY = "savefiles";
 
     /**
      * This final attribute indicates the first turns game phase.
@@ -213,92 +193,56 @@ public class ServerMain {
         Integer currentPlayerIndex = 0;
         Integer startingPlayerIndex = 0;
 
-        //create a new directory for save files if it doesn't exist yet
-        File savesDir = new File(SAVE_FILES_DIRECTORY);
-        if (!savesDir.exists()) {
-            boolean wasCreated = savesDir.mkdir();
-            if (wasCreated) {
-                System.out.println("New '" + SAVE_FILES_DIRECTORY + "' directory created");
-            }
-        }
-
-        //create a new save_list.json file in working directory if it doesn't exist yet
-        File savesListFile = new File(SAVE_LIST_PATH);
-        if (!savesListFile.exists()) {
-            try {
-                boolean wasCreated = savesListFile.createNewFile();
-                if (wasCreated) {
-                    System.out.println("New '" + SAVE_LIST_PATH + "' file created");
-                    ArrayList<String> saveListInitialization = new ArrayList<>();
-                    ObjectMapper mapper = new ObjectMapper();
-                    FileOutputStream saveListOutput = new FileOutputStream(savesListFile);
-                    mapper.writeValue(saveListOutput,saveListInitialization);
-                    saveListOutput.close();
-                    System.out.println("'" + SAVE_LIST_PATH + "' file initialized");
-                }
-            } catch (IOException e) {
-                System.out.println(" 'save_list.json' file cannot be created correctly");
-                e.printStackTrace();
-            }
-        }
-
-        //search in old save files a compatible match
-        //GameTable gameTable = oldSaveSearch(new ArrayList<>(server.getNicknameSet()));  //returns null if save files are not found
-        GameTable gameTable = null;
+        GameTable gameTable;
         
         Integer mapIndex = null;
         Character gameMode = null;
 
+        System.out.println("Creating new match...");
 
-        if (gameTable == null) {    //create new match
+        System.out.println("Binding clients to figures...");
 
-            System.out.println("Creating new match...");
-
-            System.out.println("Binding clients to figures...");
-
-            //binds each user to a unique player
-            ArrayList<Player> players = new ArrayList<>();
-            Figure[] allFigures = Figure.values();
-            Integer i = 0;
-            for (String nick : server.getNicknameSet()) {
-                players.add(new Player(allFigures[i], nick));    //should not overflow because users are never more than figures
-                i++;
-            }
-            System.out.println("Done");
-
-            //ask game mode to administrator if he's still connected
-            try {
-                gameMode = server.chooseMode(players.get(adminIndex));
-            } catch (UnavailableUserException e) {
-
-                System.out.println("No response from users");
-                System.exit(0);
-            }
-
-
-            //ask map index to administrator if he's still connected
-            try {
-                mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
-            } catch (UnavailableUserException e) {
-
-                System.out.println("No response from users");
-                System.exit(0);
-
-            }
-
-
-            //initiate a new match
-            System.out.println("Initializing new match...");
-            GameInitializer gameInitializer = new GameInitializer(gameMode, mapIndex, players);
-            gameTable = gameInitializer.run();
-            System.out.println("Done");
-
-            //if too many users dropped during this phase
-            checkPlayers(server,gameTable,true);
-
-            //finally created usable match
-            //save(gameTable);
+        //binds each user to a unique player
+        ArrayList<Player> players = new ArrayList<>();
+        Figure[] allFigures = Figure.values();
+        Integer i = 0;
+        for (String nick : server.getNicknameSet()) {
+            players.add(new Player(allFigures[i], nick));    //should not overflow because users are never more than figures
+            i++;
         }
+        System.out.println("Done");
+
+        //ask game mode to administrator if he's still connected
+        try {
+            gameMode = server.chooseMode(players.get(adminIndex));
+        } catch (UnavailableUserException e) {
+
+            System.out.println("No response from users");
+            System.exit(0);
+        }
+
+
+        //ask map index to administrator if he's still connected
+        try {
+            mapIndex = server.chooseMap(players.get(adminIndex), 0, MAPS_NUMBER-1);
+        } catch (UnavailableUserException e) {
+
+            System.out.println("No response from users");
+            System.exit(0);
+
+        }
+
+
+        //initiate a new match
+        System.out.println("Initializing new match...");
+        GameInitializer gameInitializer = new GameInitializer(gameMode, mapIndex, players);
+        gameTable = gameInitializer.run();
+        System.out.println("Done");
+
+        //if too many users dropped during this phase
+        checkPlayers(server,gameTable,true);
+
+        //finally created usable match
 
         //calculate starting player and current player indexes
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getCurrentTurnPlayer())) currentPlayerIndex++;
@@ -378,9 +322,6 @@ public class ServerMain {
         if(currentPlayerIndex==gameTable.getPlayers().size()) currentPlayerIndex = 0;
         gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
-        //auto save
-        //save(gameTable);
-
         //execute other first turns, from current player to starting player -1, if they are connected
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget())) {
 
@@ -403,13 +344,10 @@ public class ServerMain {
             if (currentPlayerIndex == gameTable.getPlayers().size()) currentPlayerIndex = 0;
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
-            //auto save
-            //save(gameTable);
         }
 
         //transitioning match phase
         gameTable.setGamePhase(ROLLING_TURNS_PHASE);
-        //save(gameTable);
     }
 
     /**
@@ -438,166 +376,9 @@ public class ServerMain {
 
             //pass turn to next player
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(i));
-
-            //save(gameTable);
         }
         //if this while stops without FinalFrenzy exception throw it's because there are less than 3 players connected
         checkPlayers(server, gameTable, false);
-    }
-
-    /**
-     * This private method serializes all match information into a json file using a parameter as name.<br>
-     *     It also updates the save_list.json file to show the latest save.
-     *
-     * @param gameTable a GameTable object that captures all match information.
-     */
-    private static void save(GameTable gameTable) {
-
-        String mySaveName = gameTable.getSaveFileName();
-        try {
-
-            //retrieve save_list.json and parse it into a list
-            ArrayList<String> fileNamesList = new ArrayList<>();
-            FileInputStream fileNamesInputStream;
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            File saveListFile = new File(SAVE_LIST_PATH);
-
-            //initialize file if it is empty
-            if (saveListFile.length() == 0) {
-                mapper.writeValue(saveListFile,fileNamesList.toArray());
-                System.out.println("New 'save_list.json' file created");
-            }
-            fileNamesInputStream = new FileInputStream(SAVE_LIST_PATH);
-            fileNamesList = new ArrayList<>(Arrays.asList(mapper.readValue(fileNamesInputStream,String[].class)));
-            fileNamesInputStream.close();
-
-            if (mySaveName.equals("new")) {    //create new save file
-
-                //find first available file name counter
-                int fileCounter = 0;
-                while (fileNamesList.contains(SAVE_FILE_PREFIX + fileCounter)) fileCounter++;
-
-                //update game table attribute
-                gameTable.setSaveFileName(SAVE_FILE_PREFIX + fileCounter);
-
-                //create a new save file in savefiles directory
-                File file = new File(SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
-                file.createNewFile();
-                System.out.println("New '" + SAVE_FILE_PREFIX + fileCounter + ".json' save file created");
-                FileOutputStream fileOutput = new FileOutputStream(  SAVE_FILES_DIRECTORY + "/" + SAVE_FILE_PREFIX + fileCounter + ".json");
-                mapper.writeValue(fileOutput, gameTable);
-                fileOutput.close();
-                System.out.println("New match saved");
-
-                //update save_list.json to show new save file in the list
-                fileNamesList.add(SAVE_FILE_PREFIX + fileCounter);
-
-                //rewrite list in save_list.json as an array of strings
-                fileOutput = new FileOutputStream(SAVE_LIST_PATH);
-                mapper.writeValue(fileOutput, fileNamesList.toArray());
-                fileOutput.close();
-
-            } else {    //overwrite on old save file
-
-                FileOutputStream fileOutputStream = new FileOutputStream(  SAVE_FILES_DIRECTORY + "/" + mySaveName + ".json");
-                mapper.writeValue(fileOutputStream,gameTable);
-                fileOutputStream.close();
-                System.out.println("Match save overwritten");
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This method checks if there are compatible old games save files given a collection of users nicknames.
-     *
-     * @param nicks the String collection by which users saved in old matches will be confronted.
-     * @return a GameTable object to be used as game table if compatible save files are found.<br>
-     *     It returns null if no file matches current users nicknames.
-     */
-    private static GameTable oldSaveSearch(ArrayList<String> nicks) {
-
-        System.out.println("Scanning old save files...");
-
-        try {
-
-            //get save files name list
-            ObjectMapper mapper = new ObjectMapper();
-            FileInputStream namesIn = new FileInputStream(SAVE_LIST_PATH);
-            String[] fileNamesList = mapper.readValue(namesIn,String[].class);
-            namesIn.close();
-
-            //search compatibles save files
-            for (String fileName : fileNamesList) {
-
-                //get save files 1 by 1
-                FileInputStream tableIn = new FileInputStream(SAVE_FILES_DIRECTORY + "/" + fileName + ".json");
-                GameTable oldTable = mapper.readValue(tableIn, GameTable.class);
-                tableIn.close();
-
-                //consider old match users in a collection
-                ArrayList<String> oldMatchUsers = new ArrayList<>();
-                for (Player player : oldTable.getPlayers()) {
-                    oldMatchUsers.add(player.getUsername());
-                }
-
-                //check if new users are compatible with old match users nicks
-                boolean everyNickMatches = true;
-                for (String nickname : nicks) {
-                    if (!oldMatchUsers.contains(nickname)) {
-                        everyNickMatches = false;
-                    }
-                }
-                if (everyNickMatches) {
-                    System.out.println("Compatible match found");
-                    return oldTable;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //no compatible save files where found
-        System.out.println("No compatible previous matches were found");
-        return null;
-    }
-
-    /**
-     * This method deletes a terminated match save file and removes it from the save_list.json file.
-     *
-     * @param fileName a String that represents the name of the file to be deleted.
-     */
-    private static void deleteSave(String fileName) {
-
-        try {
-
-            //retrieve save names list
-            ObjectMapper mapper = new ObjectMapper();
-            FileInputStream input = new FileInputStream(SAVE_LIST_PATH);
-            ArrayList<String> nameList = new ArrayList<>(Arrays.asList(mapper.readValue(input,String[].class)));
-            input.close();
-
-            //delete save file if listed
-            if (nameList.contains(fileName)) {
-                File save = new File(SAVE_FILES_DIRECTORY + "/" + fileName + ".json");
-                save.delete();
-
-                //update save names list
-                nameList.remove(fileName);
-                FileOutputStream output = new FileOutputStream(SAVE_LIST_PATH);
-                mapper.writeValue(output, (String[]) nameList.toArray());
-                output.close();
-
-                System.out.println("Match save file deleted");
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -703,7 +484,6 @@ public class ServerMain {
             if (currentPlayerIndex == gameTable.getPlayers().size()) currentPlayerIndex = 0;
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
-            //save(gameTable);
         }
     }
 
@@ -752,42 +532,27 @@ public class ServerMain {
     private static void gameOver(Server server, GameTable gameTable) {
 
         calculateFinalPoints(gameTable);
-        //deleteSave(gameTable.getSaveFileName());
+
+        String finalScoringMessage = new String();
 
         //announce scoreboard
         System.out.println("SCOREBOARD:");
-        for (Player p : gameTable.getPlayers()) {
-            if (server.isConnected(p)) {
-                try {
-                    server.sendMessage(p,"SCOREBOARD:");
-                } catch (UnavailableUserException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        finalScoringMessage = "SCOREBOARD: ";
+
         Player winner = gameTable.getPlayers().get(0);
         for (Player player : gameTable.getPlayers()) {
             if (player.getPoints() > winner.getPoints())
                 winner = player;
             System.out.println("\n" + player.getUsername() + ": " + player.getPoints() + " points");
-            for (Player p : gameTable.getPlayers()) {
-                if (server.isConnected(p)) {
-                    try {
-                        server.sendMessage(p,player.getUsername() + ": " + player.getPoints() + " points");
-                    } catch (UnavailableUserException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            finalScoringMessage = finalScoringMessage + "\n" + player.getUsername() + ": " + player.getPoints() + " points";
         }
         System.out.println("\nThe winner is " + winner.getUsername() + "!");
+        finalScoringMessage = finalScoringMessage + "\nThe winner is " + winner.getUsername() + "!";
         for (Player player : gameTable.getPlayers()) {
             if (server.isConnected(player)) {
                 try {
-                    server.sendMessage(player, "The winner is " + winner.getUsername() + "!");
-                } catch (UnavailableUserException e) {
-                    e.printStackTrace();
-                }
+                    server.sendMessage(player, finalScoringMessage);
+                } catch (UnavailableUserException e) {}
             }
         }
         System.exit(0);

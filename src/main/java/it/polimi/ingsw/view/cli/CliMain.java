@@ -995,9 +995,6 @@ public class CliMain implements ViewInterface {
             System.out.print(nickname);
         System.out.print("                    Figure: ");
         System.out.print(parseFigure(figure));
-        //fill until next border
-        printSpacesFromIndexToIndex(8, SQUARES_WIDTH - 1);
-        System.out.println("      Points: " + points);
         System.out.print(ANSI_RESET);
     }
 
