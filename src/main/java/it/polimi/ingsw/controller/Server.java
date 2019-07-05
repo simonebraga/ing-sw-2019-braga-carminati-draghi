@@ -50,13 +50,70 @@ public class Server implements ServerRemote {
 
     /**
      * This method is the constructor of the class. It sets up RMI and Socket connection, and also runs a ping thread that checks if clients disconnect
+     * It accepts parameters that overwrite the default ones
+     * @param serverIp is the ip of the server
+     * @param loginTimer is the login timer in the lobby
+     * @param inactivityTime is the inactivity time of the user
+     * @throws Exception if any step of the setup goes wrong
+     */
+    public Server(String serverIp, int loginTimer, int inactivityTime) throws Exception {
+
+        Properties properties = new Properties();
+        try {
+            properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
+        } catch (IOException e) {
+            System.err.println("Error reading network_settings.properties");
+            throw new Exception();
+        }
+
+        this.remoteName = properties.getProperty("remoteName");
+        this.ip = serverIp;
+        this.rmiPort = Integer.parseInt(properties.getProperty("serverRmiPort"));
+        this.socketPort = Integer.parseInt(properties.getProperty("serverSocketPort"));
+        this.timerLength = loginTimer;
+        this.pingFrequency = Integer.parseInt(properties.getProperty("pingFrequency"));
+        this.pingLatency = Integer.parseInt(properties.getProperty("pingLatency"));
+        this.inactivityTime = inactivityTime;
+        this.smartModel = null;
+
+        try {
+            new Thread(new ServerSocketAcceptor(socketPort,this,pingLatency)).start();
+        } catch (Exception e) {
+            System.err.println("Failed to start ServerSocketAcceptor");
+            throw new Exception();
+        }
+
+        System.setProperty("java.rmi.server.hostname",ip);
+        try {
+            UnicastRemoteObject.exportObject(this, rmiPort);
+        } catch (RemoteException e) {
+            System.err.println("Error exporting remote object");
+            throw new Exception();
+        }
+        try {
+            LocateRegistry.createRegistry(rmiPort).bind(remoteName,this);
+        } catch (RemoteException e) {
+            System.err.println("Error creating RMI registry");
+            throw new Exception();
+        } catch (AlreadyBoundException e) {
+            System.err.println("Error binding remote object in RMI registry");
+            throw new Exception();
+        }
+
+        System.out.println("Server created");
+
+        startPingThread();
+    }
+
+    /**
+     * This method is the constructor of the class. It sets up RMI and Socket connection, and also runs a ping thread that checks if clients disconnect
      * @throws Exception if any step of the setup goes wrong
      */
     public Server() throws Exception {
 
         Properties properties = new Properties();
         try {
-            properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
+            properties.load(Objects.requireNonNull(Server.class.getClassLoader().getResourceAsStream("network_settings.properties")));
         } catch (IOException e) {
             System.err.println("Error reading network_settings.properties");
             throw new Exception();

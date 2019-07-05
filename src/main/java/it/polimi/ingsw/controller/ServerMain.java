@@ -18,10 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -78,18 +75,114 @@ public class ServerMain {
     private static final String FINAL_FRENZY_PHASE = "ff";
 
     /**
+     * This final attribute is the message shows when there is an error in args parsing
+     */
+    private static final String ERROR_PARSING = "Error parsing arguments";
+
+    /**
+     * This final attribute is the name of the network properties file
+     */
+    private static final String NETWORK_PROPERTIES = "network_settings.properties";
+
+    /**
      * This method is the server main method.
      * <p>It quickly instantiates a Server object and runs its network setup,
      * then it waits until the login phase is done and proceeds to the next steps.</p>
      *
-     * @param args an array of strings containing hypothetical caller arguments.
+     * @param args an array of String which contains optional starting parameters:
+     *
+     *             Allowed parameters:
+     *             -serverIp String containing the ip address of the server
+     *             -loginTimer int representing the login phase timer
+     *             -inactivityTime int representing the single move timeout
+     *
+     *             Not specified parameters are loaded from a default configuration file
      */
     public static void main(String[] args) {
         try {
+
+            Properties networkProperties = new Properties();
+            try {
+                networkProperties.load(Objects.requireNonNull(ServerMain.class.getClassLoader().getResourceAsStream(NETWORK_PROPERTIES)));
+            } catch (IOException e) {
+                System.err.println("Error reading " + NETWORK_PROPERTIES);
+                throw new Exception();
+            }
+
+            String serverIp = null;
+            int loginTimer = -1;
+            int inactivityTime = -1;
+            for (int i = 0 ; i < args.length ; i++) {
+                if ((i+1 < args.length) && (args[i+1].toCharArray()[0] == '-')) {
+                    System.out.println(ERROR_PARSING);
+                    System.exit(0);
+                }
+                switch (args[i]) {
+                    case "-serverIp": {
+                        if (serverIp != null) {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        } i++;
+                        if (i < args.length)
+                            serverIp = args[i];
+                        else {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        }
+                        break;
+                    }
+                    case "-loginTimer": {
+                        if (loginTimer > 0) {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        } i++;
+                        if (i < args.length)
+                            loginTimer = Integer.parseInt(args[i]);
+                        else {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        }
+                        if (loginTimer < 0) {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        }
+                        break;
+                    }
+                    case "-inactivityTime": {
+                        if (inactivityTime > 0) {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        } i++;
+                        if (i < args.length)
+                            inactivityTime = Integer.parseInt(args[i]);
+                        else {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        }
+                        if (inactivityTime < 0) {
+                            System.out.println(ERROR_PARSING);
+                            System.exit(0);
+                        }
+                        break;
+                    }
+                    default: {
+                        System.out.println(ERROR_PARSING);
+                        System.exit(0);
+                    }
+                }
+            }
+
+            if (serverIp == null)
+                serverIp = networkProperties.getProperty("serverIp");
+            if (loginTimer < 0)
+                loginTimer = Integer.parseInt(networkProperties.getProperty("loginTimerLength"));
+            if (inactivityTime < 0)
+                inactivityTime = Integer.parseInt(networkProperties.getProperty("inactivityTime"));
+
             System.out.println("Adrenaline Server running...\n");
 
             //sets up network
-            Server server = new Server();
+            Server server = new Server(serverIp,loginTimer,inactivityTime);
             server.startLoginPhase();
 
             while (server.isLoginPhase()) {
