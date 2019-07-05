@@ -226,6 +226,7 @@ public class ServerMain {
         } catch (UnavailableUserException e) {
 
             System.out.println("No response from users");
+            players.forEach(server::forceLogout);
             System.exit(0);
         }
 
@@ -236,6 +237,7 @@ public class ServerMain {
         } catch (UnavailableUserException e) {
 
             System.out.println("No response from users");
+            players.forEach(server::forceLogout);
             System.exit(0);
 
         }
