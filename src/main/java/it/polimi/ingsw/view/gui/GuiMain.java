@@ -397,12 +397,25 @@ public class GuiMain extends Application implements ViewInterface {
             if (nickname.equals(this.nickname)) {
 
                 // Setup principal player board
-                ImagePane imagePaneMyBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())));
+                ImagePane imagePaneMyBoard;
+                if (!smartPlayer.isHasReverseBoard())
+                    imagePaneMyBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())));
+                else
+                    imagePaneMyBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString()  + "reverse")));
                 imagePaneMyBoard.setPrefHeight(myBoardHeight);
                 imagePaneMyBoard.setPrefWidth(myBoardWidth);
                 imagePaneMyBoard.setLayoutX(myBoardOffsetX);
                 imagePaneMyBoard.setLayoutY(myBoardOffsetY);
                 collectorPane.getChildren().add(imagePaneMyBoard);
+
+                if (smartModel.isFrenezyMode()) {
+                    ImagePane imagePane = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("sideboard" + smartPlayer.getFigure().toString())));
+                    imagePane.setPrefHeight(myBoardHeight * 0.9);
+                    imagePane.setPrefWidth((90.0/277) * myBoardHeight * 0.9);
+                    imagePane.setLayoutX(myBoardOffsetX);
+                    imagePane.setLayoutY(myBoardOffsetY);
+                    collectorPane.getChildren().add(imagePane);
+                }
 
                 // Setup principal player weapons
                 int weaponCounter = 0;
@@ -476,11 +489,15 @@ public class GuiMain extends Application implements ViewInterface {
                 }
 
                 // Setup principal player pointtrack
+                double reverseOffset = 0;
+                if (smartPlayer.isHasReverseBoard())
+                    reverseOffset = (72.0 / 1124) * myBoardWidth;
+                System.out.println(smartPlayer.getDeaths());
                 for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
                     ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")));
                     imagePaneSkull.setPrefHeight((76.0 / 277) * myBoardHeight);
                     imagePaneSkull.setPrefWidth((360.0 / 6 / 1124) * myBoardWidth);
-                    imagePaneSkull.setLayoutX(myBoardOffsetX + (232.0 / 1124) * myBoardWidth + i * (360.0 / 6 / 1124) * myBoardWidth);
+                    imagePaneSkull.setLayoutX(myBoardOffsetX + (232.0 / 1124) * myBoardWidth + reverseOffset + i * (360.0 / 6 / 1124) * myBoardWidth);
                     imagePaneSkull.setLayoutY(myBoardOffsetY + (176.0 / 277) * myBoardHeight);
                     collectorPane.getChildren().add(imagePaneSkull);
                 }
@@ -488,12 +505,25 @@ public class GuiMain extends Application implements ViewInterface {
             } else {
 
                 // Setup other players boards
-                ImagePane imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())));
+                ImagePane imagePanePlayerBoard;
+                if (!smartPlayer.isHasReverseBoard())
+                    imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString())));
+                else
+                    imagePanePlayerBoard = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("board" + smartPlayer.getFigure().toString()  + "reverse")));
                 imagePanePlayerBoard.setPrefHeight(playerBoardHeight);
                 imagePanePlayerBoard.setPrefWidth(playerBoardWidth);
                 imagePanePlayerBoard.setLayoutX(playerBoardOffsetX);
                 imagePanePlayerBoard.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter);
                 collectorPane.getChildren().add(imagePanePlayerBoard);
+
+                if (smartModel.isFrenezyMode()) {
+                    ImagePane imagePane = new ImagePane(properties.getProperty("boardsRoot").concat(properties.getProperty("sideboard" + smartPlayer.getFigure().toString())));
+                    imagePane.setPrefHeight(playerBoardHeight * 0.9);
+                    imagePane.setPrefWidth((90.0/277) * playerBoardHeight * 0.9);
+                    imagePane.setLayoutX(playerBoardOffsetX);
+                    imagePane.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter);
+                    collectorPane.getChildren().add(imagePane);
+                }
 
                 // Setup other players weapons
                 int weaponCounter = 0;
@@ -553,12 +583,16 @@ public class GuiMain extends Application implements ViewInterface {
                 }
 
                 // Setup other players pointtrack
+                double reverseOffset = 0;
+                if (smartPlayer.isHasReverseBoard())
+                    reverseOffset = (72.0 / 1124) * playerBoardWidth;
+                System.out.println(smartPlayer.getDeaths());
                 for (int i = 0 ; i < smartPlayer.getDeaths() ; i++) {
                     ImagePane imagePaneSkull = new ImagePane(properties.getProperty("blobRoot").concat(properties.getProperty("blobSKULL")));
                     imagePaneSkull.setPrefHeight((76.0 / 277) * playerBoardHeight);
                     imagePaneSkull.setPrefWidth((360.0 / 6 / 1124) * playerBoardWidth);
-                    imagePaneSkull.setLayoutX(playerBoardOffsetX + (232.0 / 1124) * playerBoardWidth + i * (360.0 / 6 / 1124) * playerBoardWidth);
-                    imagePaneSkull.setLayoutY(playerBoardOffsetY  + (playerBoardOffsetY + playerBoardHeight) * playerCounter + (176.0 / 277) * playerBoardHeight);
+                    imagePaneSkull.setLayoutX(playerBoardOffsetX + (232.0 / 1124) * playerBoardWidth + reverseOffset + i * (360.0 / 6 / 1124) * playerBoardWidth);
+                    imagePaneSkull.setLayoutY(playerBoardOffsetY + (playerBoardOffsetY + playerBoardHeight) * playerCounter + (176.0 / 277) * playerBoardHeight);
                     collectorPane.getChildren().add(imagePaneSkull);
                 }
 
