@@ -225,6 +225,7 @@ public class CliMain implements ViewInterface {
             properties.load(Objects.requireNonNull(Client.class.getClassLoader().getResourceAsStream("network_settings.properties")));
         } catch (IOException e) {
             System.out.println(ANSI_RED + "Cannot access network settings file." + ANSI_RESET);
+            scannerIn.nextLine();
             System.exit(0);
         }
 
@@ -247,6 +248,7 @@ public class CliMain implements ViewInterface {
             System.out.println("Client created");
         } catch (Exception e) {
             System.out.println(ANSI_RED + "Server not responding.\n" + ANSI_RESET);
+            scannerIn.nextLine();
             System.exit(0);
         }
         chooseNickName();
@@ -1159,6 +1161,7 @@ public class CliMain implements ViewInterface {
     @Override
     public synchronized void logout() {
         System.out.println(ANSI_RED + "You were forcefully disconnected" + ANSI_RESET);
+        scannerIn.nextLine();
         System.exit(0);
     }
 
