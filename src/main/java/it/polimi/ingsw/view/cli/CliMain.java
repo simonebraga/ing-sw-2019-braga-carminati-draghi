@@ -208,6 +208,8 @@ public class CliMain implements ViewInterface {
 
     /**
      * This method is temporarily used to quickly run this class methods.
+     *
+     * @param args an array of String which contains all command line arguments from user input.
      */
     public synchronized static void main(String[] args) {
         CliMain temp = new CliMain();
@@ -216,6 +218,8 @@ public class CliMain implements ViewInterface {
 
     /**
      * This method implements the application using CLI.
+     *
+     * @param args an array of String which contains all command line arguments from user input.
      */
     public synchronized void launch(String[] args) {
 
