@@ -880,7 +880,7 @@ public class CliMain implements ViewInterface {
                 return ANSI_YELLOW + ":D-STR" + ANSI_RESET;
             }
             case DOZER:{
-                return "DOZER ";
+                return ANSI_RESET + "DOZER " + ANSI_RESET;
             }
             case BANSHEE:{
                 return ANSI_BLUE + "BANSHE" + ANSI_RESET;
