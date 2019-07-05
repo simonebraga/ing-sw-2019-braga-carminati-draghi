@@ -21,6 +21,9 @@ import java.util.Map;
  */
 public class ActionManager {
 
+    private static final Integer ADRENALINE_LEVEL_1 = 3;
+    private static final Integer ADRENALINE_LEVEL_2 = 6;
+
     /**
      * The player that is doing the action
      */
@@ -71,7 +74,7 @@ public class ActionManager {
             }
         }else{
             possibleActions.add(MOVE);
-            if (player.getDamageTrack().getDamage().size() >= 6) {
+            if (player.getDamageTrack().getDamage().size() >= ADRENALINE_LEVEL_2) {
                 possibleActions.add(MOVE_AND_SHOOT);
             } else {
                 possibleActions.add(SHOOT);
@@ -120,7 +123,11 @@ public class ActionManager {
                     numberOfMoves = 3;
                 }
             } else {
-                numberOfMoves = 1;
+                if(player.getDamageTrack().getDamage().size() >= ADRENALINE_LEVEL_1) {
+                    numberOfMoves = 2;
+                }else{
+                    numberOfMoves = 1;
+                }
             }
             actions.add(new MoveAction(numberOfMoves));
             actions.add(new GrabAction());
