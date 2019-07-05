@@ -396,6 +396,7 @@ public class ServerMain {
             Integer[] points = {2, 1, 1, 1, 1, 1};
             for (Player player : gameTable.getPlayers()) {
                 if (player.getDamageTrack().getDamage().isEmpty()) {
+                    player.setHasBoardFlipped(true);
                     player.getPointTrack().setValue(new ArrayList<>(Arrays.asList(points)));
                 }
             }
