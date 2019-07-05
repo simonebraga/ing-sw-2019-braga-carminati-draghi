@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.gamelogic.turn;
 
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
+import it.polimi.ingsw.model.cardclasses.Powerup;
 import it.polimi.ingsw.model.effectclasses.FunctionalEffect;
 import it.polimi.ingsw.model.effectclasses.FunctionalFactory;
 import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
@@ -71,11 +72,23 @@ public class TurnManager {
         }
 
         //Reload
+        ArrayList<Powerup> initialSituationPowerUps = new ArrayList<>(player.getPowerupPocket().getPowerups());
         boolean resultAction = true;
         ArrayList<FunctionalEffect> reload = new ArrayList<>();
         try {
             reload.addAll(new ReloadAction().run(server, table, player, new Targets()));
         } catch (IllegalActionException | UnavailableUserException e) {
+            for (Powerup initialSituationPowerUp : initialSituationPowerUps) {
+                boolean found = false;
+                for (Powerup powerup : player.getPowerupPocket().getPowerups()) {
+                    if(powerup == initialSituationPowerUp){
+                        found = true;
+                    }
+                }
+                if(!found)
+                    table.getPowerupDeck().getInactiveCards().remove(initialSituationPowerUp);
+            }
+            player.getPowerupPocket().setPowerups(initialSituationPowerUps);
             resultAction = false;
         }
         while (!resultAction && server.isConnected(player)){
@@ -87,6 +100,17 @@ public class TurnManager {
                 reload.addAll(new ReloadAction().run(server, table, player, new Targets()));
                 resultAction = true;
             } catch (IllegalActionException | UnavailableUserException e) {
+                for (Powerup initialSituationPowerUp : initialSituationPowerUps) {
+                    boolean found = false;
+                    for (Powerup powerup : player.getPowerupPocket().getPowerups()) {
+                        if(powerup == initialSituationPowerUp){
+                            found = true;
+                        }
+                    }
+                    if(!found)
+                        table.getPowerupDeck().getInactiveCards().remove(initialSituationPowerUp);
+                }
+                player.getPowerupPocket().setPowerups(initialSituationPowerUps);
                 resultAction = false;
             }
         }

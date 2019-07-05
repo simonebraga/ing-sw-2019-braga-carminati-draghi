@@ -19,12 +19,13 @@ public class MainClient {
      *  -serverIp "a string containing the server ip to which create a connection<br>
      *  -clientIp "a string containign the custom client ip to use client-side<br>
      *  -interface "GUI | CLI" to specify which interface to use<br><br>
+     *  -resolution "an integer containing the vertical resolution wanted for the GUI
      *   Parameters can be in any order. Parameters fields must be preceded by '-'.<br>
      *   Default parameters are read from file. Default value for -interface parameter is "GUI".</p>
      */
     public static void main(String[] args) {
 
-        String[] newArgs = new String[2];
+        String[] newArgs = new String[3];
         int interfaceType = -1;
 
         for (int i = 0 ; i < args.length ; i++) {
@@ -64,12 +65,10 @@ public class MainClient {
                     break;
                 }
                 case "-interface": {
-
                     if (interfaceType != -1) {
                         System.out.println("Error parsing arguments");
                         System.exit(0);
                     }
-
                     i++;
                     if (i < args.length) {
                         switch (args[i].toLowerCase()) {
@@ -88,6 +87,24 @@ public class MainClient {
                     }
                     break;
                 }
+                case "-resolution": {
+                    if (newArgs[2] != null) {
+                        System.out.println("Error parsing arguments");
+                        System.exit(0);
+                    }
+                    i++;
+                    if (i < args.length)
+                        newArgs[2] = args[i];
+                    else {
+                        System.out.println("Error parsing arguments");
+                        System.exit(0);
+                    }
+                    if (Integer.parseInt(args[i]) < 0) {
+                        System.out.println("Error parsing arguments");
+                        System.exit(0);
+                    }
+                    break;
+                }
                 default: {
                     System.out.println("Error parsing arguments");
                     System.exit(0);
@@ -96,6 +113,10 @@ public class MainClient {
         }
         switch (interfaceType) {
             case 1: {
+                if (newArgs[2] != null) {
+                    System.out.println("Error parsing arguments");
+                    System.exit(0);
+                }
                 CliMain.main(newArgs);
                 break;
             }
