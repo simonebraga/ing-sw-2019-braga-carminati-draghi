@@ -971,7 +971,7 @@ public class CliMain implements ViewInterface {
         System.out.println("| Ammunition:");
         printPlayerAmmo(player.getAmmo());
         System.out.print("| Bounties: ");
-        printBountyTrack(player.getDeaths(), settings.getMaxKills());
+        printBountyTrack(player.getDeaths(), settings.getMaxKills(), player.isHasReverseBoard());
         System.out.println("| Weapons:");
         printPlayerWeapons(player.getWeapons());
         if (isOwnBoard)
@@ -1061,10 +1061,15 @@ public class CliMain implements ViewInterface {
      *
      * @param deaths an integer saying how many times this player died.
      * @param maxKills an integer which represents the total bounty track size.
+     * @param hasFlippedBoard a boolean flag saying is the player board bounty track has flipped.
      */
-    private synchronized void printBountyTrack(int deaths, int maxKills) {
+    private synchronized void printBountyTrack(int deaths, int maxKills, boolean hasFlippedBoard) {
 
-        ArrayList<Integer> bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
+        ArrayList<Integer> bountyValues;
+        if (!hasFlippedBoard)
+            bountyValues = new ArrayList<>(Arrays.asList(settings.getBounties()));
+        else
+            bountyValues = new ArrayList<>(Arrays.asList(settings.getFrenzyBounties()));
 
         //print skulls
         int i = 0;
