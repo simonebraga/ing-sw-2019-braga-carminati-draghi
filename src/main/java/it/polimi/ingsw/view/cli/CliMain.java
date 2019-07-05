@@ -964,7 +964,7 @@ public class CliMain implements ViewInterface {
      */
     private synchronized void printBoard(String nickname, SmartPlayer player, boolean isOwnBoard) {
 
-        printBoardHeader(nickname, isOwnBoard, player.getPoints(), player.getFigure());
+        printBoardHeader(nickname, isOwnBoard, player.getFigure());
         printAdrenalineLevel(player.getDamage().size());
         System.out.println("| Marks:");
         printMarkTrack(player.getMarks());
@@ -986,9 +986,8 @@ public class CliMain implements ViewInterface {
      *
      * @param nickname a String which is the username of the printing board. It will be printed inside the header.
      * @param isOwnBoard a boolean flag that says if this board is the current player own board.
-     * @param points an integer containing the player's points.
      */
-    private synchronized void printBoardHeader(String nickname, boolean isOwnBoard, int points, Figure figure) {
+    private synchronized void printBoardHeader(String nickname, boolean isOwnBoard, Figure figure) {
         if (isOwnBoard) System.out.print(ANSI_GREEN);
         System.out.print("+ ");
         if (nickname.length() > NICK_PRINT_SIZE)
