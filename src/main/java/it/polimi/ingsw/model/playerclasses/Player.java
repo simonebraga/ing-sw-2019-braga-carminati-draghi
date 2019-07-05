@@ -22,6 +22,7 @@ public class Player {
     private WeaponPocket weaponPocket;
     private PowerupPocket powerupPocket;
     private AmmoPocket ammoPocket;
+    private Boolean hasBoardFlipped;
 
     /**
      * This constructor sets all attributes to null.<br>
@@ -40,6 +41,7 @@ public class Player {
         this.weaponPocket=new WeaponPocket();
         this.powerupPocket=new PowerupPocket();
         this.ammoPocket=new AmmoPocket();
+        this.hasBoardFlipped=false;
     }
 
     /**
@@ -58,6 +60,7 @@ public class Player {
         this.weaponPocket = new WeaponPocket();
         this.powerupPocket = new PowerupPocket();
         this.ammoPocket = new AmmoPocket();
+        this.hasBoardFlipped=false;
     }
 
     public Figure getFigure() {
@@ -98,6 +101,15 @@ public class Player {
 
     public AmmoPocket getAmmoPocket() {
         return ammoPocket;
+    }
+
+    /**
+     * This method returns the value of hasBoardFlipper.
+     *
+     * @return a Boolean indicating if the player board has flipped.
+     */
+    public Boolean getHasBoardFlipped() {
+        return hasBoardFlipped;
     }
 
     /**
@@ -208,6 +220,15 @@ public class Player {
      */
     public void setAmmoPocket(AmmoPocket ammoPocket) {
         this.ammoPocket = ammoPocket;
+    }
+
+    /**
+     * This method sets a new value for hasBoardFlipped attribute.
+     *
+     * @param hasBoardFlipped a Boolean indicating if the board has been flipped.
+     */
+    public void setHasBoardFlipped(Boolean hasBoardFlipped) {
+        this.hasBoardFlipped = hasBoardFlipped;
     }
 
     /**
