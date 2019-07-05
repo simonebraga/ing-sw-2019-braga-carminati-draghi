@@ -107,23 +107,23 @@ public class ShootDirectionCreator implements EffectsCreator{
             switch(direction){
                 case 'N':
                     squaresTarget = map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
-                                    table.getGameMap().getCoord(square).get(1) >= table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
+                            table.getGameMap().getCoord(square).get(0) <= table.getGameMap().getCoord(player.getPosition()).get(0) &&
+                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
                     break;
                 case 'S':
+                    squaresTarget = map.stream().filter(square ->
+                            table.getGameMap().getCoord(square).get(0) >= table.getGameMap().getCoord(player.getPosition()).get(0) &&
+                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
+                    break;
+                case 'W':
                     squaresTarget = map.stream().filter(square ->
                             table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
                                     table.getGameMap().getCoord(square).get(1) <= table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
                     break;
-                case 'W':
-                    squaresTarget = map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0) <= table.getGameMap().getCoord(player.getPosition()).get(0) &&
-                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
-                    break;
                 default:
                     squaresTarget = map.stream().filter(square ->
-                            table.getGameMap().getCoord(square).get(0) >= table.getGameMap().getCoord(player.getPosition()).get(0) &&
-                                    table.getGameMap().getCoord(square).get(1).equals(table.getGameMap().getCoord(player.getPosition()).get(1))).collect(Collectors.toCollection(ArrayList::new));
+                            table.getGameMap().getCoord(square).get(0).equals(table.getGameMap().getCoord(player.getPosition()).get(0)) &&
+                                    table.getGameMap().getCoord(square).get(1) >= table.getGameMap().getCoord(player.getPosition()).get(1)).collect(Collectors.toCollection(ArrayList::new));
                     break;
             }
 
