@@ -1,11 +1,13 @@
 package it.polimi.ingsw;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.controller.Server;
 import it.polimi.ingsw.model.GameTable;
 import it.polimi.ingsw.model.enumeratedclasses.Figure;
 import it.polimi.ingsw.model.exceptionclasses.FrenzyModeException;
 import it.polimi.ingsw.model.gameinitialization.GameInitializer;
 import it.polimi.ingsw.model.gamelogic.actions.SpawnAction;
+import it.polimi.ingsw.model.gamelogic.settings.SettingsJSONParser;
 import it.polimi.ingsw.model.gamelogic.turn.TurnManager;
 import it.polimi.ingsw.model.mapclasses.DominationSpawnSquare;
 import it.polimi.ingsw.model.mapclasses.SpawnSquare;
@@ -14,6 +16,7 @@ import it.polimi.ingsw.model.smartmodel.SmartModel;
 import it.polimi.ingsw.network.UnavailableUserException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,14 +59,19 @@ public class ServerMain {
     private static final String FINAL_FRENZY_PHASE = "ff";
 
     /**
-     * This final attribute is the message shows when there is an error in args parsing
+     * This final attribute is the message shows when there is an error in args parsing.
      */
     private static final String ERROR_PARSING = "Error parsing arguments";
 
     /**
-     * This final attribute is the name of the network properties file
+     * This final attribute is the name of the network properties file.
      */
     private static final String NETWORK_PROPERTIES = "network_settings.properties";
+
+    /**
+     * This final attribute defines the game settings file path.
+     */
+    private static final String GAME_SETTINGS_PATH = "game_settings.json";
 
     /**
      * This method is the server main method.
@@ -218,6 +226,7 @@ public class ServerMain {
         } catch (UnavailableUserException e) {
 
             System.out.println("No response from users");
+            players.forEach(server::forceLogout);
             System.exit(0);
         }
 
@@ -228,6 +237,7 @@ public class ServerMain {
         } catch (UnavailableUserException e) {
 
             System.out.println("No response from users");
+            players.forEach(server::forceLogout);
             System.exit(0);
 
         }
@@ -393,7 +403,17 @@ public class ServerMain {
         if (!gameTable.getGamePhase().equals(FINAL_FRENZY_PHASE)) {
 
             //change bounty value to each undamaged player
-            Integer[] points = {2, 1, 1, 1, 1, 1};
+            Integer[] points = null;
+            InputStream file = ServerMain.class.getClassLoader().getResourceAsStream(GAME_SETTINGS_PATH);
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                SettingsJSONParser parser = mapper.readValue(file, SettingsJSONParser.class);
+                points = parser.getFrenzyBounties();
+                file.close();
+            } catch (IOException e) {
+                System.out.println("Unable to load settings.");
+                e.printStackTrace();
+            }
             for (Player player : gameTable.getPlayers()) {
                 if (player.getDamageTrack().getDamage().isEmpty()) {
                     player.setHasBoardFlipped(true);

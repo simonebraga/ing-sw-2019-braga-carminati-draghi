@@ -42,6 +42,7 @@ public class TimerTurn extends Thread{
             }
         }
         if(!stop.get()){
+            System.out.println(playerOfTurn.getUsername()+" disconnected because of the timer of the entire turn.");
             server.forceLogout(playerOfTurn);
         }
     }

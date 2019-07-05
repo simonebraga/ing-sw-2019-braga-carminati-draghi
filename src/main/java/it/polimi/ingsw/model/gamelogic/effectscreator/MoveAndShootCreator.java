@@ -187,7 +187,7 @@ public class MoveAndShootCreator implements EffectsCreator{
                     throw new IllegalActionException();
                 }
                 boolean canShootSpawnSquare = table.getIsDomination() && table.getGameMap().getSpawnSquares().contains(squaresAssigned.get(0)) && targets.getSquaresDamaged().contains(squaresAssigned.get((0)));
-                if(!server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))) {
+                if(server.booleanQuestion(player, new MessageRetriever().retrieveMessage("wantToShoot"))) {
                     if (!squaresAssigned.get(0).getPlayers().isEmpty() || canShootSpawnSquare) {
                         Boolean playerOrSquare = true;
                         if (table.getIsDomination()) {
