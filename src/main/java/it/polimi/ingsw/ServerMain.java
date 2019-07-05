@@ -445,34 +445,16 @@ public class ServerMain {
             if (tempPlayerIndex == gameTable.getPlayers().size() - 1) tempPlayerIndex = -1; //cycling array
         }
 
-        if (gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget()) &&
-            !gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getFrenzyBeginner())) {
-
-
-            //from current player to starting player -1, all before
-            cycleHalfFrenzyTurn(gameTable, server, currentPlayerIndex, gameTable.getStartingPlayerMarker().getTarget(), true);
-
-
-
-            //from current player to frenzy beginner -1, all after
-
-            cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex,gameTable.getFrenzyBeginner(),false);
-
-        } else if (!gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getStartingPlayerMarker().getTarget()) &&
-                    gameTable.getPlayers().get(tempPlayerIndex).equals(gameTable.getFrenzyBeginner())) {
-
-            //from current player to frenzy beginner -1, all after
-            cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex,gameTable.getFrenzyBeginner(),false);
-
-            //from frenzy beginner to starting player -1, all before
-            cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex,gameTable.getStartingPlayerMarker().getTarget(),true);
-
-
-        } else {    //frenzy beginner is starting player
-
-            //from starting player to starting player -1, all after
-            cycleHalfFrenzyTurn(gameTable,server,currentPlayerIndex, gameTable.getStartingPlayerMarker().getTarget(),false);
-
+        if(!gameTable.getStartingPlayerMarker().getTarget().equals(gameTable.getFrenzyBeginner())) {
+            currentPlayerIndex = cycleHalfFrenzyTurn(gameTable, server, currentPlayerIndex, gameTable.getStartingPlayerMarker().getTarget(), true);
+            cycleHalfFrenzyTurn(gameTable, server, currentPlayerIndex, gameTable.getFrenzyBeginner(), false);
+        }else{
+            if(currentPlayerIndex != 0) {
+                currentPlayerIndex = cycleHalfFrenzyTurn(gameTable, server, currentPlayerIndex, gameTable.getPlayers().get(currentPlayerIndex - 1), false);
+            }else{
+                currentPlayerIndex = cycleHalfFrenzyTurn(gameTable, server, currentPlayerIndex, gameTable.getPlayers().get(gameTable.getPlayers().size() - 1), false);
+            }
+            cycleHalfFrenzyTurn(gameTable, server, currentPlayerIndex, gameTable.getFrenzyBeginner(), false);
         }
 
         //end game
@@ -489,7 +471,7 @@ public class ServerMain {
      * @param stopPlayer the Player reference to get to by running final frenzy turns for players, in the players array order.
      * @param isBefore a boolean flag that indicates if this half of final frenzy turns are to be run as before or after starting player.
      */
-    private static void cycleHalfFrenzyTurn(GameTable gameTable, Server server, int currentPlayerIndex, Player stopPlayer, boolean isBefore) {
+    private static Integer cycleHalfFrenzyTurn(GameTable gameTable, Server server, Integer currentPlayerIndex, Player stopPlayer, boolean isBefore) {
 
         while (!gameTable.getPlayers().get(currentPlayerIndex).equals(stopPlayer)) {
 
@@ -503,12 +485,14 @@ public class ServerMain {
                 }
             }
 
+
             //cycling array
             currentPlayerIndex++;
             if (currentPlayerIndex == gameTable.getPlayers().size()) currentPlayerIndex = 0;
             gameTable.setCurrentTurnPlayer(gameTable.getPlayers().get(currentPlayerIndex));
 
         }
+        return currentPlayerIndex;
     }
 
     /**
