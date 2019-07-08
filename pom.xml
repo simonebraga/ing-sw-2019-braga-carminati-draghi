@@ -108,7 +108,7 @@
           <version>0.0.2</version>
           <configuration>
             <!-- fix with the correct GUI application -->
-            <mainClass>it.polimi.ingsw.MainClient</mainClass>
+            <mainClass>it.polimi.ingsw.ClientMain</mainClass>
           </configuration>
         </plugin>
         <!--end of JAVA FX-->
@@ -179,7 +179,7 @@
                 </filters>
                 <transformers>
                   <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                    <mainClass>it.polimi.ingsw.MainClient</mainClass>
+                    <mainClass>it.polimi.ingsw.ClientMain</mainClass>
                   </transformer>
                 </transformers>
               </configuration>

@@ -8,7 +8,7 @@ import it.polimi.ingsw.view.gui.GuiMain;
  *
  * @author simonebraga
  */
-public class MainClient {
+public class ClientMain {
 
     /**
      * This method is the first method of the client application and it gets optional commands as arguments. It will invoke the CLI or the GUI.
