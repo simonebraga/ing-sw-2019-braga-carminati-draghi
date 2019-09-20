@@ -6,6 +6,7 @@ Lo sviluppo di questo progetto è parte del corso di ingegneria del software del
 - ###   Simone Braga ([@simonebraga](https://github.com/simonebraga))
 - ###   Alessandro Carminati ([@AleCarminati](https://github.com/AleCarminati))
 - ###   Samuele Draghi ([@Draghi96](https://github.com/Draghi96))
+<br/>
 
 | Functionality | State |
 |:-----------------------|:------------------------------------:|
