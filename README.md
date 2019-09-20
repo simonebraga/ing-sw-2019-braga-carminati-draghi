@@ -1,9 +1,11 @@
-# Prova Finale Ingegneria del Software 2019
-## Gruppo AM42
+# Progetto di Ingegneria del Software (2019)
 
-- ###   10529465    Simone Braga ([@simonebraga](https://github.com/simonebraga))<br>simone1.braga@mail.polimi.it
-- ###   10527022    Alessandro Carminati ([@AleCarminati](https://github.com/AleCarminati))<br>alessandro4.carminati@mail.polimi.it
-- ###   10499079    Samuele Draghi ([@Draghi96](https://github.com/Draghi96))<br>samuele1.draghi@mail.polimi.it
+Lo sviluppo di questo progetto è parte del corso di ingegneria del software del Politecnico di Milano, e in qualità di prova finale è necessario per il conseguimento della laurea triennale in ingegneria informatica. Il progetto è svolto in gruppo, e lo scopo è quello di implementare, seguendo le regole dell'ingegneria del software, un gioco da tavolo assegnato.  
+[Clicca qui](https://czechgames.com/en/adrenaline/) per essere reindirizzato al sito ufficiale di "Adrenalina", il gioco assegnato per il progetto di quest'anno.
+
+- ###   Simone Braga ([@simonebraga](https://github.com/simonebraga))
+- ###   Alessandro Carminati ([@AleCarminati](https://github.com/AleCarminati))
+- ###   Samuele Draghi ([@Draghi96](https://github.com/Draghi96))
 
 | Functionality | State |
 |:-----------------------|:------------------------------------:|
